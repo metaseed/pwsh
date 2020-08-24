@@ -116,7 +116,7 @@ function Set-KnownFolderPath {
 [DllImport("shell32.dll")]
 public extern static int SHSetKnownFolderPath(ref Guid folderId, uint flags, IntPtr token, [MarshalAs(UnmanagedType.LPWStr)] string path);
 '@
-        $Type = Add-Type -MemberDefinition $Signature -Name 'KnownFolders' -Namespace 'SHSetKnownFolderPath' -PassThru
+        $Type = Add-Type -MemberDefinition $Signature -Name 'KnownFolders' -Namespace 'Win32Functions' -PassThru
     }
 
     # Validate the path
