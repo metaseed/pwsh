@@ -8,7 +8,7 @@ function mcd {
        [Parameter(Mandatory = $true)]
        $Path
     )
- 
+
     # mkdir path
     New-Item -Path $Path -ItemType Directory
     # cd path
