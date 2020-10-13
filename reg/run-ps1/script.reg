@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Directory\shell\run_script]
+@="&Run Script"
+
+; Available commands to pass are %L or %V
+; "%v " is a variable pointing to the location that was selected
+[HKEY_CLASSES_ROOT\Directory\shell\run_script\command]
+@="C:\\Program Files\\PowerShell\\7\\pwsh.exe -File \"m:\\script\\pwsh\\reg\\run-ps1\\script.ps1\" \"%L\""
