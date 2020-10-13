@@ -2,6 +2,7 @@ function sudo {
     Start-Process -Verb RunAs -FilePath "pwsh" -ArgumentList (@("-NoExit", "-Command") + $args)
 }
 
+# make and change directory
 function mcd {
     [CmdletBinding()]
     param(

@@ -3,10 +3,10 @@ param
 ( 
     [String]$Path = "D:\JianzhongSong\metaseed.vhdx"
 ) 
-if(test-path -Path $path)
+if(Test-Path -Path $path)
 { 
     $content = "select vdisk file= `"$path`"`nattach vdisk"  
-    out-file -InputObject $content -FilePath "$env:USERPROFILE\MountVHD.txt" -Encoding ascii -Force  
+    Out-File -InputObject $content -FilePath "$env:USERPROFILE\MountVHD.txt" -Encoding ascii -Force  
     schtasks /create /tn "MountVHD" /tr "diskpart.exe /s '$env:USERPROFILE\MountVHD.txt'" /sc ONLOGON /ru SYSTEM 
  
     write-host "Task added successfully. The specified VHD file ($Path) will be mounted next logon." 

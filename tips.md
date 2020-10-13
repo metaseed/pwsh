@@ -1,6 +1,6 @@
 * copy current dir
 ```
-# pwd: print word directory
+# pwd: print work directory
 (pwd).path|clip
 # scb: set-clipboard
 scb (pwd).path
