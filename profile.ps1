@@ -2,6 +2,7 @@
 # notepad $profile.CurrentUserAllHost
 # . m:\script\pwsh\profile.ps1
 $ver = $Host.Version;
+$myDoc = [Environment]::GetFolderPath('MyDocument');
 write-host "v$ver; profile: $PSCommandPath"
 . $PSScriptRoot\alias.ps1
 . $PSScriptRoot\presto\presto.ps1
