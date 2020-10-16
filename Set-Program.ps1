@@ -7,4 +7,4 @@ if(-NOT (Test-Path -Path $Program)) {
     Update-PathEnv $Program
     return
 }
-Write-Warning "'$Program' already there!"
+Write-Information "'$Program' already there!"

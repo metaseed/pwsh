@@ -16,7 +16,7 @@ function Update-PathEnv {
         Write-Information "current `$env:Path already contains $dir"
     }
 
-    $envPath = [Environment]::GetEnvironmentVariable("Path")
+    $envPath = [Environment]::GetEnvironmentVariable("Path", $scope)
     if(-not (Test-PathEnv $envPath $dir)) {
         [Environment]::SetEnvironmentVariable("Path", $env:Path, $scope)
         Write-Information "'$dir' was added to Environment variable: Path"
