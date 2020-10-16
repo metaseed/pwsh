@@ -1,6 +1,7 @@
 # include this file in $profile:
 # notepad $profile.CurrentUserAllHost
 # . m:\script\pwsh\profile.ps1
+$InformationPreference = 'Continue' # SilentlyContinue (default); whether to display Write-Information message
 $ver = $Host.Version;
 $myDoc = [Environment]::GetFolderPath('MyDocument');
 write-host "v$ver; profile: $PSCommandPath"
