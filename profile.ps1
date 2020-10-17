@@ -2,14 +2,13 @@
 # notepad $profile.CurrentUserAllHost
 # . m:\script\pwsh\profile.ps1
 
+write-host "v$Host.Version; profile: $PSCommandPath"
 $InformationPreference = 'Continue' # SilentlyContinue (default); whether to display Write-Information message
-$ver = $Host.Version;
 $myDoc = [Environment]::GetFolderPath('MyDocument');
-write-host "v$ver; profile: $PSCommandPath"
+$env:PSModulePath += ";$PSScriptRoot\Modules"
+$env:path += ";$PSScriptRoot"
+$env:path += ";" + ((get-childitem -attributes directory -path c:\program -name | ForEach-Object { join-path "c:\program\" $_ }) -join ';')
+Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 . $PSScriptRoot\alias.ps1
 . $PSScriptRoot\presto\presto.ps1
-$env:path += ";$PSScriptRoot"
-$env:PSModulePath += ";$PSScriptRoot\Modules"
-$env:path += ";" + ((get-childitem -attributes directory -path c:\program -name | % { join-path "c:\program\" $_ }) -join ';')
-Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 . $PSScriptRoot\utilities.ps1
