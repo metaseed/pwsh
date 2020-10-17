@@ -2,7 +2,7 @@
 ```
 # pwd: print work directory
 (pwd).path|clip
-# scb: set-clipboard
+# scb: set-clipboard; gcb: get-clipboard
 scb (pwd).path
 ```
 

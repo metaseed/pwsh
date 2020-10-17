@@ -4,5 +4,4 @@ if (!(Test-Path -Path $profile.CurrentUserAllHosts)) {
   Write-Host 'profile setup done!'
   return
 }
-$p = $profile.CurrentUserAllHosts
-Write-Host "profile already exist: $p"
+Write-Host "profile already exist: $profile.CurrentUserAllHosts"
