@@ -8,7 +8,7 @@ function Update-PathEnv {
         $Dir
     )
     
-    $scope = Test-Admin ? "Machine": "User"
+    $scope = (Test-Admin) ? "Machine": "User"
     if (-not (Test-PathEnv $env:Path $dir)) {
         $env:Path = "$dir;" + $env:Path
         Write-Information "'$dir' was added to current `$env:Path"
