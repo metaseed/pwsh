@@ -1,11 +1,11 @@
 # https://serverfault.com/questions/1018220/how-do-i-install-an-app-from-windows-store-using-powershell
-param (
-    [string]$Uri = "https://www.microsoft.com/p/snip-sketch/9mz95kl8mr0l",
-    [string]$Path = "."
-)
-Download-Appx $Uri $Path
-
-function Download-Appx {
+# param (
+#     [string]$Uri = "https://www.microsoft.com/p/snip-sketch/9mz95kl8mr0l",
+#     [string]$Path = "."
+# )
+# Get-Appx $Uri $Path
+#Add-AppPackage -Path 
+function Get-Appx {
     [CmdletBinding()]
     param (
         [string]$Uri,
@@ -21,7 +21,9 @@ function Download-Appx {
         }
         $Path = (Resolve-Path $Path).Path
         #Get Urls to download
-        Write-Host -ForegroundColor Yellow "Processing $Uri"
+        $urlParts = $Uri.Split("\")
+        $PackageName = $urlParts[$urlParts.Length-2]
+        Write-Host -ForegroundColor Yellow "Downloading $PackageName from $Uri"
         $WebResponse = Invoke-WebRequest -UseBasicParsing -Method 'POST' -Uri 'https://store.rg-adguard.net/api/GetFiles' -Body "type=url&url=$Uri&ring=Retail" -ContentType 'application/x-www-form-urlencoded'
         $LinksMatch = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | Select-String -Pattern '(?<=a href=").+(?=" r)').matches.value
         $Files = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ } | Select-String -Pattern '(?<=noreferrer">).+(?=</a>)').matches.value
