@@ -20,5 +20,5 @@ gcm code
 ```
 * exec cmd's command in pwsh and get result
 ```
-cmd /c ...
+cmd /c where code
 ```
