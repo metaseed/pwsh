@@ -24,3 +24,5 @@ gcm code
 ```
 cmd /c where code
 ```
+* grep, findstr
+select-string (sls)
