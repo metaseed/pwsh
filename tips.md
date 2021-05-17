@@ -2,8 +2,10 @@
 ```
 # pwd: print work directory
 (pwd).path|clip
-# scb: set-clipboard; gcb: get-clipboard
+scb (gl).path 
+# scb: set-clipboard; gcb: get-clipboard; gl: get-location
 scb (pwd).path
+gl|scb
 ```
 
 * make dir and change to that dir
