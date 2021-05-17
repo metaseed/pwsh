@@ -1,4 +1,4 @@
 $p = @{
-    util = "C:\repos\presto-utils";
-    cg = "C:\repos\_planck\planck\presto-controlgateway-service"
+    util = "C:\repos\SLB\presto-utils";
+    cg = "C:\repos\SLB\_planck\planck\presto-controlgateway-service"
 }
