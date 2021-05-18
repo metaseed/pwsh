@@ -1,7 +1,18 @@
-﻿$match = "ModuleTemplate" 
-$replacement = Read-Host "Please enter a Module name"
+﻿[CmdletBinding()]
+param (
+    [Parameter()]
+    [string]
+    [Alias('m')]
+    $Match = "MTemplate",
 
-$files = Get-ChildItem $(get-location) -filter *ModuleTemplate* -Recurse
+    # string to replated
+    [Parameter()]
+    [string]
+    [Alias('r')]
+    $replacement
+)
+
+$files = Get-ChildItem $(get-location) -filter "*$match*" -Recurse
 
 $files |
 Sort-Object -Descending -Property FullName |
@@ -9,7 +20,7 @@ Rename-Item -newname { $_.name -replace $match, $replacement } -force
 
 
 Get-ChildItem $(get-location) -include *.cs, *.csproj, *.sln, *.resx, *.targets, *.xml, *.config, *.xaml -Recurse |
-% {((Get-Content $_.fullname -Encoding UTF8) -creplace $match, $replacement)} |
-set-content $file.fullname -Encoding UTF8
-
-read-host -prompt "Done! Press any key to close."
+% { (Get-Content $_.fullname -Encoding UTF8) |
+    % { $_ -creplace $match, $replacement } |
+    set-content $_.fullname -Encoding UTF8 
+}

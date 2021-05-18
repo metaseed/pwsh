@@ -11,5 +11,5 @@ function Update-Env {
    } |
    Set-Content -Path { "Env:$($_.Name)" }
    
-   Write-Host 'environment variables updated!'
+   Write-Verbose 'environment variables updated!'
 }

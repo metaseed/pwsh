@@ -26,3 +26,7 @@ cmd /c where code
 ```
 * grep, findstr
 select-string (sls)
+
+* get Verb
+get-verb |%{$_.verb}|? {$_ -like '*start*'}
+get-verb |% verb|? {$_ -like '*start*'}
