@@ -1,2 +1,4 @@
+
 $VerbosePreference = "Continue"
-Connect-VM work
+
+Connect-VM work  

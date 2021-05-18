@@ -1,4 +1,5 @@
 # https://powershellmagazine.com/2012/10/11/connecting-to-hyper-v-virtual-machines-with-powershell/
+using module Hyper-V
 function Connect-VM {
     [CmdletBinding(DefaultParameterSetName = 'name')]
   
@@ -10,7 +11,7 @@ function Connect-VM {
       [Parameter(Position = 0,
         Mandatory, ValueFromPipelineByPropertyName,
         ValueFromPipeline, ParameterSetName = 'name')]
-      [Alias('VMName')]
+      [Alias('n')]
       [System.String]$Name,
   
       [Parameter(Position = 0,
@@ -19,10 +20,11 @@ function Connect-VM {
       [Alias('VMId', 'Guid')]
       [System.Guid]$Id,
   
-      # [Parameter(Position = 0, Mandatory,
-      #   ValueFromPipeline, ParameterSetName = 'inputObject')]
-      # [Microsoft.HyperV.PowerShell.VirtualMachine]$InputObject,
-  
+      [Parameter(Position = 0, Mandatory,
+        ValueFromPipeline, ParameterSetName = 'inputObj')]
+      [Microsoft.HyperV.PowerShell.VirtualMachine]$inputObj,
+
+      [Alias('s')]
       [switch]$Start
     )
   
@@ -33,11 +35,11 @@ function Connect-VM {
   
     process {
       try {
+        $pmsn = $PSCmdlet.ParameterSetName
         foreach ($computer in $ComputerName) {
-          Write-Verbose "ParameterSetName is '$($PSCmdlet.ParameterSetName)'"
+          Write-Verbose "ParameterSetName is '$($pmsn)'"
   
-          if ($PSCmdlet.ParameterSetName -eq 'name') {
-            # Get the VM by Id if Name can convert to a guid
+          if ($pmsn -eq 'name') {
             if ($Name -as [guid]) {
               Write-Verbose "Incoming value can cast to guid"
               $vm = Get-VM -Id $Name -ErrorAction SilentlyContinue
@@ -46,29 +48,30 @@ function Connect-VM {
               $vm = Get-VM -Name $Name -ErrorAction SilentlyContinue
             }
           }
-          elseif ($PSCmdlet.ParameterSetName -eq 'id') {
+          elseif ($pmsn -eq 'id') {
             $vm = Get-VM -Id $Id -ErrorAction SilentlyContinue
           }
           else {
-            $vm = $InputObject
+            $vm = $inputObj
           }
   
           if ($vm) {
             Write-Verbose "Executing 'vmconnect.exe $computer $($vm.Name) -G $($vm.Id) -C $InstanceCount'"
             vmconnect.exe $computer $vm.Name -G $vm.Id -C $InstanceCount
+
+            if ($Start) {
+              if ($vm.State -eq 'off' -or $vm.State -eq 'saved') {
+                Write-Verbose "Start switch was specified and VM state is '$($vm.State)'. Starting VM '$($vm.Name)'"
+                Start-VM -VM $vm
+              }
+              else {
+                Write-Verbose "Starting VM '$($vm.Name)'. Skipping, VM is not not in 'off' state."
+              }
+            }
+    
           }
           else {
             Write-Verbose "Cannot find vm: '$Name'"
-          }
-  
-          if ($StartVM -and $vm) {
-            if ($vm.State -eq 'off' -or $vm.State -eq 'saved') {
-              Write-Verbose "StartVM was specified and VM state is 'off'. Starting VM '$($vm.Name)'"
-              Start-VM -VM $vm
-            }
-            else {
-              Write-Verbose "Starting VM '$($vm.Name)'. Skipping, VM is not not in 'off' state."
-            }
           }
   
           $InstanceCount += 1
