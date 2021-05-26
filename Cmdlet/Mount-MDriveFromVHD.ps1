@@ -3,16 +3,24 @@ param
 ( 
     [String]$Path = "D:\JianzhongSong\metaseed.vhdx"
 ) 
-if(Test-Path $path)
-{
-    $content = "select vdisk file= `"$path`"`nattach vdisk"
+
+Assert-Admin
+
+if (Test-Path $path) {
+
+    $content = @"
+select vdisk file= "$path"
+attach vdisk
+"@
     $path = "$env:USERPROFILE\MountVHD.txt"
     Out-File -InputObject $content -FilePath $path -Encoding ascii -Force
     schtasks /create /tn "MountVHD" /sc ONLOGON /ru SYSTEM  /tr "diskpart.exe /s '$path'"
+
+    $Letter = (Mount-VHD -Path $Path  -PassThru | Get-Disk | Get-Partition | Get-Volume).DriveLetter
+    Set-Partition -DriveLetter $Letter -NewDriveLetter M
  
-    write-host "Task added successfully. The specified VHD file ($Path) will be mounted next logon." 
+    Write-Information "Task added successfully. The specified VHD file ($Path) will be mounted next logon." 
 } 
-else
-{
+else {
     Write-Warning "The path is invalid." 
 }

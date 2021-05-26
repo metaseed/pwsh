@@ -35,3 +35,25 @@ get-verb|? verb -like '*start*'
 * hide output
 "aa"|out-null
 "aa > $null
+
+* get cmd path
+gcm code |% source|split-path
+gcm code|select -exp source|split-path 
+get-command code|select-object -expandProperty Source|Split-Path
+
+* copy file content to clipboard
+gc file|scb
+
+* get date in file path
+get-date -Format FileDate
+20210526
+* get time zone relevant to UTC
+get-date "zz"
+-05 (day time saver included)
+could also call: get-timezone 
+
+* more page 
+gcm | oh -p
+get-command | out-host -paging
+* first 10
+gcm|select -first 10
