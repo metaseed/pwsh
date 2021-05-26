@@ -7,8 +7,8 @@ function Add-Path {
         [String]
         $Dir,
         # Machine or User, default based on current Admin right
-        [string]
-        $Scope
+        [object]
+        $Scope = $null
     )
     
     $Dir = [Path]::GetFullPath($Dir)
@@ -22,7 +22,7 @@ function Add-Path {
     }
     
     $isAdmin = Test-Admin
-    $scope = $Scope ??($isAdmin ? "Machine": "User")
+    $scope = $Scope ?? ($isAdmin ? "Machine": "User")
     $envPath = [Environment]::GetEnvironmentVariable("Path", $scope)
     $pathes = $isAdmin ?
             "$envPath;$([Environment]::GetEnvironmentVariable('Path', 'User'))" :
@@ -53,3 +53,4 @@ function Test-PathInStr {
     }
 }   
 
+# Add-Path $env:ProgramFiles\Git\mingw64\bin
