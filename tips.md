@@ -30,3 +30,8 @@ select-string (sls)
 * get Verb
 get-verb |%{$_.verb}|? {$_ -like '*start*'}
 get-verb |% verb|? {$_ -like '*start*'}
+get-verb|? verb -like '*start*'
+
+* hide output
+"aa"|out-null
+"aa > $null
