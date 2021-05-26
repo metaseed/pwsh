@@ -45,7 +45,7 @@ function Test-PathInStr {
         [String]$dir
     )
     $PathStr -split ';' |
-    where {
+    ? {
         if ([String]::IsNullOrEmpty($_)) { return $false }
 
         $path = [Path]::GetFullPath($_);
