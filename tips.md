@@ -48,12 +48,16 @@ gc file|scb
 get-date -Format FileDate
 20210526
 * get time zone relevant to UTC
-get-date "zz"
+get-date -f "zz"
 -05 (day time saver included)
 could also call: get-timezone 
+(UTC-06:00) Central Time (US & Canada)
 
 * more page 
 gcm | oh -p
 get-command | out-host -paging
 * first 10
 gcm|select -first 10
+*clear screen 
+cls
+ctrl+L
