@@ -7,8 +7,13 @@ $InformationPreference = 'Continue' # SilentlyContinue (default); whether to dis
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
 $env:PSModulePath += ";$PSScriptRoot\Modules"
 $env:path += ";$PSScriptRoot\Cmdlet"
-$env:path += ";" + ((get-childitem -attributes directory -path c:\App -name | ForEach-Object { join-path "c:\App\" $_ }) -join ';')
+$Private:appFolder = 'C:\App'
+if (Test-Path $Private:appFolder) {
+    #note: app folder has already been add to path when do mapping
+    $env:path += ";" + ((Get-ChildItem -Attributes Directory -Path $Private:appFolder -Name | ForEach-Object { join-path $Private:appFolder $_ }) -join ';')
+}
+. $PSScriptRoot\Lib\alias.ps1
 . $PSScriptRoot\Lib\PSReadlineConfig.ps1
-. $PSScriptRoot\alias.ps1
-. $PSScriptRoot\presto\presto.ps1
 . $PSScriptRoot\Lib\utilities.ps1
+. $PSScriptRoot\Lib\BeepMusic.ps1
+. $PSScriptRoot\presto\presto.ps1

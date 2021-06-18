@@ -1,6 +1,6 @@
 # https://www.undocumented-features.com/2020/10/23/announcing-the-end-of-a-script-with-a-powershell-music/
 
-Function Imperial-March {
+Function ImperialMarch {
     [console]::beep(440, 500) 
     [console]::beep(440, 500)
     [console]::beep(440, 500) 
@@ -21,7 +21,7 @@ Function Imperial-March {
     [console]::beep(440, 1000)
 }
 
-Function Mission-Impossible {
+Function MissionImpossible {
     [console]::beep(784, 150)
     Start-Sleep -m 300
     [console]::beep(784, 150)
@@ -344,7 +344,7 @@ $Duration = New-Object PSObject -Property @{
     ThirtySecond       = 31.25
 }
 
-Function Indiana-Jones {
+Function IndianaJones {
     [console]::Beep($Note.E4, $Duration.DottedQuarter)
     [console]::Beep($Note.F4, $Duration.Eighth)
     [console]::Beep($Note.G4, $Duration.Quarter)
