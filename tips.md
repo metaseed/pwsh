@@ -61,3 +61,8 @@ gcm|select -first 10
 *clear screen 
 cls
 ctrl+L
+
+## peek function implementation
+gcm mkdir |% scriptblock
+(Get-Command mkdir).ScriptBlock
+gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1 

@@ -7,6 +7,7 @@ $InformationPreference = 'Continue' # SilentlyContinue (default); whether to dis
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
 $env:PSModulePath += ";$PSScriptRoot\Modules"
 $env:path += ";$PSScriptRoot\Cmdlet"
+
 $Private:appFolder = 'C:\App'
 if (Test-Path $Private:appFolder) {
     #note: app folder has already been add to path when do mapping
