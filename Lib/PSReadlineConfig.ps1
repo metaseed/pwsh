@@ -5,7 +5,6 @@ $PSReadLineOptions = @{
     MaximumHistoryCount = 10000
 }
 Set-PSReadLineOption @PSReadLineOptions
-# vscode like key binding
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine # not work in vscode
 #not work in vscode
@@ -18,8 +17,7 @@ Set-PSReadlineKeyHandler -Key Ctrl+Shift+P `
 <#
 Get-PSReadLineKeyHandler -Bound -Unbound
 tips:
-remove cmd history:
-Remove-Item (Get-PSReadlineOption).HistorySavePath
+remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
 Ctrl+]: goto Brace
 ctrl-l: clear screen
 alt-.: last argument of previous command
