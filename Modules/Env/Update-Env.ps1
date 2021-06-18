@@ -1,7 +1,11 @@
-# update process_env from machine_env and user_env
-# if: it's path and contains ';' => all value from Machine and User would uniqued then appended .
-# else => value override from Manchine and then from User(if has same key name)
-function Update-Env { 
+<#
+.SYNOPSIS
+   update process_env from machine_env and user_env
+.DESCRIPTION
+   if: it's path and contains ';' => all value from Machine and User would uniqued then appended .
+   else => value override from Manchine and then from User(if has same key name)
+#>
+function Update-Env {
    @("Machine", "User") | 
    % { [Environment]::GetEnvironmentVariables($_).GetEnumerator() } |
    % {

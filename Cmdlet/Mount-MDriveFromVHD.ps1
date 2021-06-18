@@ -7,7 +7,6 @@ param
 Assert-Admin
 
 if (Test-Path $path) {
-
     $content = @"
 select vdisk file= "$path"
 attach vdisk
