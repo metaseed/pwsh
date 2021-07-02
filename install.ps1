@@ -15,4 +15,4 @@ mi ~/metaseed/ms_pwsh ~/metaseed/.ms_pwsh-del -Force -ErrorAction SilentlyContin
 ri ~/metaseed/.ms_pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
 
 mi ~/metaseed/pwsh-master ~/metaseed/ms_pwsh -Force
-. ~/metaseed/ms_pwsh/set-profile.ps1
+. ~/metaseed/ms_pwsh/config.ps1

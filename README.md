@@ -7,5 +7,5 @@ iwr https://pwsh.page.link/0 |iex
 > for using it in your script, then you could use its cmd-lets and modules
 
 ```powershell
-if(!$env:MS_PWSH) {iwr https://pwsh.page.link/0 |iex} else {. $env:MS_PWSH\up.ps1}
+if($env:MS_PWSH) {. $env:MS_PWSH\up.ps1 } else {iwr https://pwsh.page.link/0 |iex}
 ```
