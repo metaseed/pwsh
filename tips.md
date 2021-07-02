@@ -35,6 +35,8 @@ get-verb|? verb -like '*start*'
 * hide output
 "aa"|out-null
 "aa > $null
+* get all env variables start with
+gci env:planck*
 
 * get cmd path
 gcm code |% source|split-path
@@ -66,3 +68,7 @@ ctrl+L
 gcm mkdir |% scriptblock
 (Get-Command mkdir).ScriptBlock
 gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1 
+
+## beep
+1. just the Ctrl+G: inclose the Ctrl+G in a string and output it. 
+1. [Console]::Beep(1000,1000)

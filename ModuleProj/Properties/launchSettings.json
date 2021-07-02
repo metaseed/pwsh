@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ModuleProj": {
+      "commandName": "Executable",
+      "executablePath": "pwsh",
+      "commandLineArgs": "-noexit -command \"[reflection.assembly]::loadFrom('pwshModule.dll' ) | import-module\""
+    }
+  }
+}

@@ -1,5 +1,16 @@
 # https://www.undocumented-features.com/2020/10/23/announcing-the-end-of-a-script-with-a-powershell-music/
 
+function DingDong () {
+    '' #Ctr+G
+}
+
+function Beep {
+    param (
+        $frequency = 1000,
+        $duration = 1000
+    )
+    [Console]::Beep($frequency,$duration)
+}
 Function ImperialMarch {
     [console]::beep(440, 500) 
     [console]::beep(440, 500)
@@ -68,6 +79,13 @@ Function MissionImpossible {
     Start-Sleep -m 150
     [console]::beep(466, 150)
     [console]::beep(523, 150)
+}
+
+function DoReMi {
+    $frequencies = 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25
+    foreach($tone in $frequencies){
+        [Console]::beep($tone, 180)
+    }
 }
 
 Function Mario {
