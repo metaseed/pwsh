@@ -1,1 +1,1 @@
-. $PSScriptRoot\var.ps1
+. $PSScriptRoot\config\var.ps1

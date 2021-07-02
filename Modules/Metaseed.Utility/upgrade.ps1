@@ -12,7 +12,9 @@ function Test-Installation {
     $infoLocal = Get-Content $LocalInfoPath | ConvertFrom-Json
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $infoRemote = iwr $RemoteInfoUrl -TimeoutSec 10 | ConvertFrom-Json
-    return $infoRemote.version -ne $infoLocal.version ? $infoLocal.version : $false
+    $rv = New-Object Version($infoRemote.version)
+    $lv = New-Object version($infoLocal.version)
+    return $rv -gt $lv  ? $infoLocal.version : $false
 }
 function Update-Installation {
     param (
@@ -28,9 +30,7 @@ function Update-Installation {
     )
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {
-
-        write-host "> New version($ver), press Enter to upgrade, other key to continue"
-
+        write-host -f Yellow "> New version($ver), press Enter to upgrade, other key to continue"
         $key = [System.Console]::ReadKey().Key
         if ($key -eq [ConsoleKey]::Enter) {
             iwr $InstallUrl | iex
