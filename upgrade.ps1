@@ -1,4 +1,6 @@
 using module Metaseed.Utility
+# .local file only exist local and igored in .gitignore file
+if(Test-Path "$PSScriptRoot\.local") {return}
 
 $localInfo = "$PSScriptRoot\info.json"
 $days = ((Get-Date) - (gi $localInfo).LastWriteTime).Days
