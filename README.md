@@ -1,4 +1,4 @@
 ## install
 ```powershell
-iwr 
+iwr https://pwsh.page.link/0 |iex
 ```
