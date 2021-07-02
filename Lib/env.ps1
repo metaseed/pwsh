@@ -2,7 +2,7 @@
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
 $env:HostFile = "$env:windir\System32\drivers\etc\hosts"
 # config
-$env:PSModulePath += ";$PSScriptRoot\..\Modules"
+$env:PSModulePath += ";$PSScriptRoot\..\Module"
 $env:path += ";$PSScriptRoot\Cmdlet"
 & { #prevent expose $appFolder into the profile variable: provider
     $appFolder = 'C:\App'

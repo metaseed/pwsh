@@ -9,10 +9,10 @@ Expand-Archive $zip ~/metaseed -Force
 # directly ri the pwsh folder may cause error if it is used.
 # mi works even file is used
 # but mi would show error is des exists: because a file or directory with the same name already exists.
-# the .pwsh-del shouldn't be used/locked by any app
-ri ~/metaseed/.pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
-mi ~/metaseed/pwsh ~/metaseed/.pwsh-del -Force -ErrorAction SilentlyContinue
-ri ~/metaseed/.pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
+# the .ms_pwsh-del shouldn't be used/locked by any app
+ri ~/metaseed/.ms_pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
+mi ~/metaseed/ms_pwsh ~/metaseed/.ms_pwsh-del -Force -ErrorAction SilentlyContinue
+ri ~/metaseed/.ms_pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
 
-mi ~/metaseed/pwsh-master ~/metaseed/pwsh -Force
-. ~/metaseed/pwsh/set-profile.ps1
+mi ~/metaseed/pwsh-master ~/metaseed/ms_pwsh -Force
+. ~/metaseed/ms_pwsh/set-profile.ps1
