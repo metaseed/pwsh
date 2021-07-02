@@ -1,0 +1,1 @@
+. $PSScriptRoot/upgrade.ps1

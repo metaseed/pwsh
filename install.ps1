@@ -1,3 +1,5 @@
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 $zip = "temp:pwsh.zip"
 iwr 'http://github.com/metasong/pwsh/archive/refs/heads/master.zip' -OutFile $zip
 

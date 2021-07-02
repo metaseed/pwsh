@@ -12,7 +12,7 @@ function Get-Appx {
         [string]$Path = "."
     )
     process {
-        Write-Output ""
+        ""
         $StopWatch = [diagnostics.stopwatch]::startnew()
 
         if (-Not (Test-Path $Path)) {
