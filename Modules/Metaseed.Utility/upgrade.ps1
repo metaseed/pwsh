@@ -14,7 +14,6 @@ function Test-Installation {
     $infoRemote = iwr $RemoteInfoUrl -TimeoutSec 5 | ConvertFrom-Json
     return $infoRemote.version -ne $infoLocal.version  
 }
-
 function Update-Installation {
     param (
         # local info.json path
@@ -27,21 +26,13 @@ function Update-Installation {
         [string]
         $InstallUrl
     )
-    $j = Start-ThreadJob -ScriptBlock { 
-        Test-Installation $LocalInfoPath $RemoteInfoUrl 
-        $newVerson = Register-EngineEvent -SourceIdentifier MyEventSource -Forward
-        if ($newVerson) {
-            New-Event -SourceIdentifier MyEventSource
-        }
-    }
-    Register-EngineEvent -SourceIdentifier MyEventSource -Action {
-        "> New version($remoteVersion), press Enter to upgrade, other key to cancel"
+    if (Test-Installation $LocalInfoPath $RemoteInfoUrl) {
+
+        write-host "> New version($remoteVersion), press Enter to upgrade, other key to continue"
+
         $key = [System.Console]::ReadKey().Key
         if ($key -eq [ConsoleKey]::Enter) {
             iwr $InstallUrl | iex
         }
     }
-    
 }
-
-Update-Installation $PSScriptRoot\..\..\info.json 
