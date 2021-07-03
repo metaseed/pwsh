@@ -18,7 +18,7 @@ if(!$env:MS_PWSH){"&{$(iwr https://pwsh.page.link/0)} $v"|iex
 ```
 
 ## dev
-```bash
-git tag -a 1.0.2 -m "release"
-git push --tags
+### release
+```powershell
+./release.ps1
 ```
