@@ -6,7 +6,9 @@ function Test-Installation {
         $LocalInfoPath,
         # remote info.json url
         [string]
-        $RemoteInfoUrl
+        $RemoteInfoUrl,
+        [switch]
+        $Confirm
     )
     
     $infoLocal = Get-Content $LocalInfoPath | ConvertFrom-Json
@@ -26,15 +28,20 @@ function Update-Installation {
         $RemoteInfoUrl,
         # install.ps1 path
         [string]
-        $InstallUrl
+        $InstallUrl,
+        [switch]
+        $Confirm
     )
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {
-        write-host -f Yellow "> New version($ver), press Enter to upgrade, other key to continue"
-        $key = [System.Console]::ReadKey().Key
-        if ($key -eq [ConsoleKey]::Enter) {
-            iwr $InstallUrl | iex
+        if($Confirm) {
+            write-host -f Yellow "> New version($ver), press Enter to upgrade, other key to continue"
+            $key = [System.Console]::ReadKey().Key
+            if ($key -ne [ConsoleKey]::Enter) {
+                return
+            }
         }
+        iwr $InstallUrl | iex
     }
 }
 
