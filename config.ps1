@@ -5,10 +5,18 @@ if (Test-Path $profile.CurrentUserAllHosts) {
   "create new profile.CurrentUserAllHosts: $($profile.CurrentUserAllHosts)"
   New-Item -ItemType File -Path $profile.CurrentUserAllHosts -Force
 }
-Add-Content -Path $profile.CurrentUserAllHosts -Value ". $PSScriptRoot\profile.ps1"
-'profile setup done!'
+
+$p = ". $PSScriptRoot\profile.ps1"
+$has = gc $profile.CurrentUserAllHosts |? {$_ -like $p}
+if(!$has) {
+  Add-Content -Path $profile.CurrentUserAllHosts -Value $p
+  'profile setup done!'
+} else {
+  "already added to profie: $p"
+}
 
 [System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
 $env:MS_PWSH = $PSScriptRoot
+
 $env:PSModulePath += ";$PSScriptRoot\..\Module"
 $env:path += ";$PSScriptRoot\Cmdlet"
