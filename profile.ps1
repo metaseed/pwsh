@@ -12,3 +12,4 @@ $InformationPreference = 'Continue' # SilentlyContinue (default); whether to dis
 . $PSScriptRoot\Lib\BeepMusic.ps1
 . $PSScriptRoot\presto\main.ps1
 . $PSScriptRoot\up.ps1 1
+. $PSScriptRoot\Lib\lastResult.ps1
