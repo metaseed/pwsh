@@ -1,5 +1,4 @@
 using namespace System.IO
-using module Admin
 function Add-Path {
     param (
         # directory to add to path
