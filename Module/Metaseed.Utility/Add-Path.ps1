@@ -24,8 +24,8 @@ function Add-Path {
     $scope = $Scope ?? ($isAdmin ? "Machine": "User")
     $envPath = [Environment]::GetEnvironmentVariable("Path", $scope)
     $pathes = $isAdmin ?
-            "$envPath;$([Environment]::GetEnvironmentVariable('Path', 'User'))" :
-            "$envPath"
+    "$envPath;$([Environment]::GetEnvironmentVariable('Path', 'User'))" :
+    "$envPath"
 
     if (-not (Test-PathInStr $pathes $dir)) {
         [Environment]::SetEnvironmentVariable("Path", "$dir;$envPath", $scope)
@@ -35,6 +35,28 @@ function Add-Path {
         Write-Verbose "`Envirionment Variable Path already contains $dir"
     }
 
+}
+
+function Remove-DuplicationFromPath {
+    function clean {
+    
+        param (
+            # Machine or User, default based on current Admin right
+            [object]
+            $Scope = $null
+        )
+        $newPath = [System.Collections.ArrayList]::new()
+        $null = [Environment]::GetEnvironmentVariable("Path", $scope).Split(';') |
+        % {
+            if (!$newPath.Contains($_)) {
+                $newPath.Add($_)
+            }
+        } 
+        $p = $newPath -join ';'
+        [Environment]::SetEnvironmentVariable("Path", $p, $scope)
+    }
+    clean 'User'
+    clean 'Machine'
 }
 
 function Test-PathInStr {

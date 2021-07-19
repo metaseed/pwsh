@@ -7,7 +7,7 @@ if(-not (Test-Path $AppSource)) {
 if(-not (Test-Path $App)) {
     New-Item $App -ItemType SymbolicLink -Value $AppSource
     Write-Information "'$App' symble link folder created from $AppSource"
-    Add-Path $App
+    Add-Path $App 'User'
     return
 }
 Write-Information "'$App' already there!"
