@@ -22,3 +22,38 @@ $code = @'
 
 Add-Type -MemberDefinition $code -Namespace WinAPI -Name Explorer 
 [WinAPI.Explorer]::Refresh()
+
+
+# disable Connected User Experiences and Telemetry
+# https://www.windowscentral.com/how-opt-out-customer-experience-improvement-program-windows-10
+# http://www.kjrnet.com/Info/Windows%207%20Hidden%20Settings%202.html
+function Disable-Task {
+  [CmdletBinding()]
+  param (
+    [Parameter(ValueFromPipeline)]
+    $taskName
+  )
+  process {
+    $task = Get-ScheduledTask "$taskName" -ErrorAction SilentlyContinue
+    if ($null -ne $task) {
+      if ('Disabled' -eq $task.State) {
+        "Already disabled: TaskName: $($task.TaskName), TaskPath: $($task.TaskPath)"
+        return
+      }
+      Disable-ScheduledTask -TaskName $task.TaskName -TaskPath $task.TaskPath
+      $taskN = Get-ScheduledTask "$taskName" -ErrorAction SilentlyContinue
+      " $($task.State) -> $($taskN.State): TaskName: $($task.TaskName), TaskPath: $($task.TaskPath)"
+    }
+  }
+}
+$tasks = @('StartupAppTask',
+  'Microsoft Compatibility Appraiser', 'ProgramDataUpdater', 'PcaPatchDbTask', # Applicaton Experience
+  'Consolidator', 'UsbCeip', # Customer Experience Improvement Program
+  'Microsoft-Windows-DiskDiagnosticDataCollector', 'Microsoft-Windows-DiskDiagnosticResolver' # DiskDiagnostic
+)
+$tasks | Disable-Task
+$k = gci 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -ErrorAction SilentlyContinue
+if ($null -eq $k) {
+  ni 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -f
+}
+New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable' -Value 0 -PropertyType Dword
