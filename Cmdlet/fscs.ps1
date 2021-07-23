@@ -14,8 +14,15 @@ $file = Resolve-Path $file
 $dir = Split-Path $file
 $name = Split-Path $file -LeafBase
 $dll = "$dir\bin\$name.dll"
-dotnet "C:\Program Files\dotnet\sdk\5.0.102\FSharp\fsc.exe" $file -o $dll
+dotnet "$(get-LatestSdkPath)\FSharp\fsc.dll" $file -o $dll
 if($LASTEXITCODE -eq 0) {
-    kill -n ILSpy -f -ErrorAction SilentlyContinue
+    spps -n ILSpy -f -ErrorAction SilentlyContinue
     ILSpy.exe $dll
+}
+
+function get-LatestSdkPath {
+   $a =  dotnet --list-sdks
+   $sdk = $a[$a.length-1] # latest: 5.0.301 [C:\Program Files\dotnet\sdk]
+   $path = $sdk -split '[\[\]]'
+   return "$($path[1])\$($path[0].trim())"
 }
