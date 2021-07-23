@@ -3,6 +3,7 @@
 Set-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -name 'TaskbarSmallicons' -value 0 # 0: large icons; 1: small icons
 
 Set-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -name 'TaskbarGlomLevel' -value 0 # 0: Always Combine, Hide Labels; 1: Combine when full; 2: Never Combine
+
 'show My Pc on desktop'
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{20D04FE0-3AEA-1069-A2D8-08002B30309D}' -Value 'My PC'
 'show Document on desktop'
@@ -24,16 +25,16 @@ Add-Type -MemberDefinition $code -Namespace WinAPI -Name Explorer
 [WinAPI.Explorer]::Refresh()
 
 
-# disable Connected User Experiences and Telemetry
+'> Disable Connected User Experiences and Telemetry'
 # https://www.windowscentral.com/how-opt-out-customer-experience-improvement-program-windows-10
 # http://www.kjrnet.com/Info/Windows%207%20Hidden%20Settings%202.html
 function Disable-Task {
   [CmdletBinding()]
   param (
-    [Parameter(ValueFromPipeline)]
+    [Parameter(ValueFromPipeline)] # to support pipeline
     $taskName
   )
-  process {
+  process { # to process item one by one from pipeline
     $task = Get-ScheduledTask "$taskName" -ErrorAction SilentlyContinue
     if ($null -ne $task) {
       if ('Disabled' -eq $task.State) {
