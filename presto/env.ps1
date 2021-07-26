@@ -1,4 +1,4 @@
-$s.p = @{ # leak into (varriable:) 
+$env:p = @{ # leak into (varriable:) 
     util = "C:\repos\SLB\presto-utils";
     cg = "C:\repos\SLB\_planck\planck\presto-controlgateway-service";
     rg = 'C:\repos\SLB\_planck\planck\presto-riggateway-service';

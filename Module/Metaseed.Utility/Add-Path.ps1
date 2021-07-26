@@ -37,23 +37,52 @@ function Add-Path {
 
 }
 
-function Remove-DuplicationFromPath {
+function Remove-DuplicationEnvVarValue {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        # 'Path' or 'PSModulePath' ....
+        $var = 'Path'
+    )
     function clean {
     
         param (
             # Machine or User, default based on current Admin right
             [object]
-            $Scope = $null
+            $scope = $null
         )
+
+        $isAdmin = Test-Admin
+        $scope = $scope ?? ($isAdmin ? "Machine": "User")
+
         $newPath = [System.Collections.ArrayList]::new()
-        $null = [Environment]::GetEnvironmentVariable("Path", $scope).Split(';') |
+        $v = [Environment]::GetEnvironmentVariable($var, $scope)
+        if ($null -eq $v) {
+            "scope: $scope, do not have env:$var"
+            return
+        }
+        "process scope: $scope, env:$var..."
+        $null = $v.Split(';') |
         % {
-            if (!$newPath.Contains($_)) {
-                $newPath.Add($_)
+            if(!$_) {return}
+            $dup = $false
+            $path_test = [Path]::GetFullPath($_)
+            foreach ($p in $newPath) {
+                if ($p.Equals($path_test, [System.StringComparison]::OrdinalIgnoreCase) ) {
+                    $dup = $true
+                    break
+                }
             }
-        } 
+
+            if (!$dup) {
+                $newPath.Add($path_test)
+            }
+            else {
+                write-host "remove duplication: $_"
+            }
+        }
         $p = $newPath -join ';'
-        [Environment]::SetEnvironmentVariable("Path", $p, $scope)
+        [Environment]::SetEnvironmentVariable($var, $p, $scope)
     }
     clean 'User'
     clean 'Machine'
