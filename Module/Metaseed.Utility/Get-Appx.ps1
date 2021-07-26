@@ -61,5 +61,6 @@ function Get-Appx {
             $LastFile = $CurrentFile
         }
         "Time to process: " + $StopWatch.ElapsedMilliseconds
+        [Console]::Beep(1000,1000)
     }
 }

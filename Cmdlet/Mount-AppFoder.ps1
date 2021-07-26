@@ -1,3 +1,5 @@
+using module Metaseed.Utility
+
 Assert-Admin
 $App = "C:\App"
 $AppSource = "M:\App"

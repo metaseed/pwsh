@@ -1,5 +1,16 @@
-. $PSScriptRoot/upgrade.ps1
-. $PSScriptRoot/set-startup.ps1
-. $PSScriptRoot/Admin.ps1
-. $PSScriptRoot/Add-Path.ps1
-. $PSScriptRoot/Get-PendingReboot.ps1
+#Get public and private function definition files.
+$Public = Get-ChildItem $PSScriptRoot\*.ps1 -ErrorAction SilentlyContinue 
+$Private = Get-ChildItem $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue 
+
+#Dot source the files
+Foreach ($import in @($Public + $Private)) {
+    Try {
+        . $import.fullname
+    }
+    Catch {
+        Write-Error "Failed to import function $($import.fullname): $_"
+    }
+}
+
+# Modules
+# Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
