@@ -1,10 +1,3 @@
-# It may be required to run Powershell with the following command line: 
-# Powershell.exe -executionpolicy remotesigned -File 
-# https://blog.hildenco.com/2020/01/determining-installed-net-framework.html
-
-<#
-Invoke-WebRequest -Uri https://github.com/hd9/powershell/raw/master/list-dotnet-frameworks.ps1 -OutFile list-dotnet-frameworks.ps1; .\list-dotnet-frameworks.ps1
-#>
 function Get-DotNetFrameworkVersions() {
     function Get-Framework40Version($type) {
         # .net 4.0 is installed
