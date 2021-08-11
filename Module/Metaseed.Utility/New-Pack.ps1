@@ -59,6 +59,8 @@ function New-Pack {
     }
     catch {
         Write-Error $_
+    }
+    finally {
         Pop-Location
     }
 
