@@ -3,8 +3,8 @@ function New-Pack {
     param (
         [Parameter(Mandatory = $true)]
         [string]
-        [Alias('p')]
-        $FolderPath,
+        [Alias('f')]
+        $FolderWithExe,
         [Parameter()]
         [string]
         $StartExe,
@@ -16,27 +16,27 @@ function New-Pack {
         $OutExeName
     )
     $dir = gl
-    $FolderPath = Resolve-Path $FolderPath
+    $FolderWithExe = Resolve-Path $FolderWithExe
     Push-Location -Path $PSScriptRoot
     try {
         # pack
         if (!$StartExe) {
-            $exes = gci $FolderPath | ? { $_.Name -like '*.exe' }
+            $exes = gci $FolderWithExe | ? { $_.Name -like '*.exe' }
             $StartExe = $exes[0].Name
         }
         $exeName = Split-Path $StartExe -LeafBase
-        $temp = "$env:temp\$exeName"
-        $tempExe = "$temp\$StartExe"
-        $exePath = "$FolderPath\$StartExe"
-        $iconPath = "$temp\$exeName.ico"
+        $tempFolder = "$env:temp\$exeName"
+        $tempExe = "$tempFolder\$StartExe"
+        $exePath = "$FolderWithExe\$StartExe"
+        $iconPath = "$tempFolder\$exeName.ico"
         if (!$OutExeName) { $OutExeName = $StartExe }
         if (!$OutPath) {
             $OutPath = "$dir/$OutExeName"
         }
 
-        Remove-Item $temp -Recurse -Force -ErrorAction SilentlyContinue
-        New-Item -ItemType Directory $temp -Force > $null
-        .\Pack\warp-packer.exe --arch windows-x64 --input_dir $FolderPath --exec $StartExe --output $tempExe
+        Remove-Item $tempFolder -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory $tempFolder -Force > $null
+        .\Pack\warp-packer.exe --arch windows-x64 --input_dir $FolderWithExe --exec $StartExe --output $tempExe
 
         # remove cmd window
         $VsWherePath = "`"${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe`""
@@ -55,7 +55,7 @@ function New-Pack {
         '==============Result================='
         "$OutPath"
         "{0:N2} MB" -f ((Get-Item $OutPath).Length / 1MB)
-        Remove-Item $temp -Recurse -Force
+        Remove-Item $tempFolder -Recurse -Force
     }
     catch {
         Write-Error $_

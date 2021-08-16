@@ -13,4 +13,4 @@ Foreach ($import in @($Public + $Private)) {
 }
 
 # Modules
-# Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
+Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *

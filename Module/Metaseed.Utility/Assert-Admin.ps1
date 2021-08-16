@@ -15,3 +15,5 @@ function Assert-Admin {
         throw $msg
     }
 }
+
+Export-ModuleMember -Function Test-Admin

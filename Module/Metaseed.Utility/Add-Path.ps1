@@ -104,3 +104,4 @@ function Test-PathInStr {
 }   
 
 # Add-Path $env:ProgramFiles\Git\mingw64\bin
+Export-ModuleMember -Function Remove-DuplicationEnvVarValue
