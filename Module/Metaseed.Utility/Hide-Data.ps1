@@ -46,6 +46,6 @@ function Hide-Data {
         "File output: $outPath"
     }
 }
-# Compress-Data M:\keyboard.jpeg  $PSScriptRoot\admin.ps1, $PSScriptRoot\Add-Path.ps1
+# Hide-Data M:\keyboard.jpeg  $PSScriptRoot\admin.ps1, $PSScriptRoot\Add-Path.ps1
 # note: only the first zip could be seen and edit in 7zfm.exe, if add content behind the zip, then the first zip content can be viewed but can not be edited in 7zfm.exe
 # no password method provided by Compress-Archive and dotnet System.IO.Compression, although we do could directly use 7zip to support this.
