@@ -1,10 +1,29 @@
 # https://serverfault.com/questions/1018220/how-do-i-install-an-app-from-windows-store-using-powershell
-# param (
-#     [string]$Uri = "https://www.microsoft.com/p/snip-sketch/9mz95kl8mr0l",
-#     [string]$Path = "."
-# )
-# Get-Appx $Uri $Path
-#Add-AppPackage -Path 
+
+<#
+.SYNOPSIS
+get appx package from microsoft store and install it locally
+
+.DESCRIPTION
+sometime we can not directly access Microsoft Store directly to install an app,
+it may be because of some config from IT department. This tool helps to workaround it.
+
+.PARAMETER Uri
+the uri to the app in Microsoft Store.
+
+.PARAMETER Path
+the path to store the downloaded appx packages.
+
+.EXAMPLE
+Get-Appx https://www.microsoft.com/en-us/p/windbg/9pgjgd53tn86 c:/temp/windbg-appx
+
+.NOTES
+to install the package bundles directly, we need to enable Sideloading
+steps:
+  1. Settings > Update & Security > For Developers, Ensure the setting here is set to either “Sideload apps” or “Developer mode”.
+     If it’s set to “Windows Store apps”, you won’t be able to install .Appx or .AppxBundle software from outside the Windows Store.
+  2. double click to install or in powershell run `Add-AppxPackage -Path "C:\Path\to\File.Appx"`
+#>
 function Get-Appx {
     [CmdletBinding()]
     param (
