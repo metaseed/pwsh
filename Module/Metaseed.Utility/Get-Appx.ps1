@@ -1,5 +1,3 @@
-# https://serverfault.com/questions/1018220/how-do-i-install-an-app-from-windows-store-using-powershell
-
 <#
 .SYNOPSIS
 get appx package from microsoft store and install it locally
@@ -23,6 +21,10 @@ steps:
   1. Settings > Update & Security > For Developers, Ensure the setting here is set to either “Sideload apps” or “Developer mode”.
      If it’s set to “Windows Store apps”, you won’t be able to install .Appx or .AppxBundle software from outside the Windows Store.
   2. double click to install or in powershell run `Add-AppxPackage -Path "C:\Path\to\File.Appx"`
+
+.LINK
+https://serverfault.com/questions/1018220/how-do-i-install-an-app-from-windows-store-using-powershell
+
 #>
 function Get-Appx {
     [CmdletBinding()]
@@ -40,9 +42,10 @@ function Get-Appx {
         }
         $Path = (Resolve-Path $Path).Path
         #Get Urls to download
-        $urlParts = $Uri.Split("\")
+        $urlParts = $Uri.Split("/")
         $PackageName = $urlParts[$urlParts.Length-2]
-        Write-Host -ForegroundColor Yellow "Downloading $PackageName from $Uri"
+        Write-Host -ForegroundColor Yellow "Downloading '$PackageName' from $Uri"
+
         $WebResponse = Invoke-WebRequest -UseBasicParsing -Method 'POST' -Uri 'https://store.rg-adguard.net/api/GetFiles' -Body "type=url&url=$Uri&ring=Retail" -ContentType 'application/x-www-form-urlencoded'
         $LinksMatch = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | Select-String -Pattern '(?<=a href=").+(?=" r)').matches.value
         $Files = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ } | Select-String -Pattern '(?<=noreferrer">).+(?=</a>)').matches.value
@@ -73,7 +76,7 @@ function Get-Appx {
                 }
             }
             #Delete file outdated and already exist
-            elseif ((Test-Path "$Path\$CurrentFile")) {
+            elseif (Test-Path "$Path\$CurrentFile") {
                 Remove-Item "$Path\$CurrentFile"
                 "Removing $Path\$CurrentFile"
             }
