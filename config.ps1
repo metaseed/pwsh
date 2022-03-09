@@ -18,5 +18,5 @@ if(!$has) {
 [System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
 $env:MS_PWSH = $PSScriptRoot
 
-$env:PSModulePath += ";$PSScriptRoot\..\Module"
+$env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
 $env:path += ";$PSScriptRoot\Cmdlet"

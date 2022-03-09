@@ -10,7 +10,8 @@ function Update-Env {
    @("Machine", "User")  | 
    % { [Environment]::GetEnvironmentVariables($_).GetEnumerator() } |
    % {
-      if($_.Name -eq 'UserName' -or $_.Name -eq 'TEMP' -or $_.Name -eq 'TMP') { # special handle, otherwise username would be replaced to 'System'
+      # special handle, otherwise username would be replaced to 'System'
+      if($_.Name -eq 'UserName' -or $_.Name -eq 'TEMP' -or $_.Name -eq 'TMP') {
          return $_
       }
       # For Path variables, append the new values, if they're not already in there

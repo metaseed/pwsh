@@ -1,6 +1,6 @@
 #Get public and private function definition files.
-$Public = Get-ChildItem $PSScriptRoot\*.ps1 -ErrorAction SilentlyContinue 
-$Private = Get-ChildItem $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue 
+$Public = @(Get-ChildItem $PSScriptRoot\*.ps1 -ErrorAction SilentlyContinue) 
+$Private = @(Get-ChildItem $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue) 
 
 #Dot source the files
 Foreach ($import in @($Public + $Private)) {
