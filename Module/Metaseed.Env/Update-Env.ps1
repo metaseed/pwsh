@@ -1,3 +1,4 @@
+
 <#
 .SYNOPSIS
    update process_env from machine_env and user_env
@@ -6,13 +7,23 @@
    else => value override from Manchine and then from User(if has same key name)
 #>
 function Update-Env {
-   @("Machine", "User") | 
+   @("Machine", "User")  | 
    % { [Environment]::GetEnvironmentVariables($_).GetEnumerator() } |
    % {
+      if($_.Name -eq 'UserName' -or $_.Name -eq 'TEMP' -or $_.Name -eq 'TMP') { # special handle, otherwise username would be replaced to 'System'
+         return $_
+      }
       # For Path variables, append the new values, if they're not already in there
-      $envValue = Get-Content "Env:$($_.Name)"
-      if ($_.Name -match 'Path$' -and ($_.Value.Contains(';') -or $envValue.Contains(';'))) { 
+      $envValue = Get-Content "Env:$($_.Name)" -ErrorAction SilentlyContinue
+
+      if ($_.Name -match 'Path$|^PATHExt$' -and ($_.Value.Contains(';') -or $envValue.Contains(';'))) { 
          $_.Value = ("$envValue;$($_.Value)" -split ';' | Select-Object -unique) -join ';'
+      }
+      $update = $_.Value -ne $envValue
+      if($update) {
+         write-host "updated $($_.Name), from: $envValue"
+         write-host "    to: $($_.Value)"
+         write-host ''
       }
       $_
    } |
