@@ -4,7 +4,7 @@ function Git-Push {
   param (
   )
   $branch = git branch --show-current
-  if($LASTEXITCODE -ne 1) {throw 'not on a branch'}
+  if($LASTEXITCODE -ne 0) {throw 'not on a branch'}
 
   git ls-remote --exit-code --heads origin $branch
   if($LASTEXITCODE -eq 2) # local 2; remote 0
@@ -14,5 +14,6 @@ function Git-Push {
   } else {
     git push
   }
+  git status
 }
 
