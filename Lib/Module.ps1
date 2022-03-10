@@ -1,3 +1,4 @@
+# not work because the . operator to include file into just this file, not the file use the funciton
 function Export-Functions {
     param (
         $path
