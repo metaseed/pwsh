@@ -6,12 +6,9 @@ function Git-PushAll {
     [string]
     $message
   )
-  Write-Host 'git add .' -BackgroundColor blue
+  Write-Step 'git add .'
   git add .
-  ''
-  "git commit -am $message"
+  Write-Step "git commit -am $message"
   git commit -am $message
   Git-Push
-
-
 }
