@@ -1,3 +1,3 @@
-funciton Write-Step($message) {
+function Write-Step($message) {
   Write-Host $message -BackgroundColor blue -ForegroundColor yellow
 }
