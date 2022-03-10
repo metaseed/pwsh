@@ -21,6 +21,7 @@ function Git-Push {
     Write-Step "git push"
     git push
   }
+  Write-Step "git status"
   git status
 }
 
