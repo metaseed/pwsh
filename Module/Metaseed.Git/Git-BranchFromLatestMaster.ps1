@@ -5,6 +5,7 @@ function Git-BranchFromLatestMaster {
     [string]
     $BranchName
   )
+
   $current = git branch --show-current
   if($current -ne 'master') {
     git satus
