@@ -7,9 +7,9 @@ function Git-PushAll {
     $message
   )
   git status
-  Write-Step 'git add .'
-  git add .
-  Write-Step "git commit -am '$message'"
-  git commit -am $message
+
+  Enter-Continue
+  Write-Execute 'git add .'
+  Write-Execute "git commit -am '$message'"
   Git-Push
 }

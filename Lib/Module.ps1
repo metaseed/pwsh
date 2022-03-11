@@ -10,13 +10,13 @@ function Export-Functions {
     Foreach ($import in @($Public + $Private)) {
         Try {
             . $import.fullname
-            Write-Host $import.fullname
+            # Write-Host $import.fullname
         }
         Catch {
             Write-Error "Failed to import function $($import.fullname): $_"
         }
     }
     # Modules
-    return @($Public | Select-Object -ExpandProperty BaseName)
+    Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
     
 }
