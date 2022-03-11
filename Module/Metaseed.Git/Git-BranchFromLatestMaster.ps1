@@ -6,12 +6,12 @@ function Git-BranchFromLatestMaster {
     $BranchName
   )
 
-  $current = git branch --show-current
+  $current = Write-Execute 'git branch --show-current'
   if($current -ne 'master') {
-    git satus
-    git checkout master
+    Write-Execute 'git satus'
+    Write-Execute 'git checkout master'
   }
-  git pull
-  git checkout -b $BranchName
-  git status
+  Write-Execute 'git pull'
+  Write-Execute "git checkout -b $BranchName"
+  Write-Execute 'git status'
 }

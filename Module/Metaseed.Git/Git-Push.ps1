@@ -4,7 +4,6 @@ function Git-Push {
   param (
   )
   # get local branch name
-
   Write-Step "git branch --show-current"
   $branch = git branch --show-current
   if($LASTEXITCODE -ne 0) {throw 'not on a branch'}
