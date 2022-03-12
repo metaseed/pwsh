@@ -1,10 +1,12 @@
 * copy current dir
 ```
 # pwd: print work directory
-(pwd).path|clip
+(pwd).path|scb
+note: (pwd).path|clip when gcb would return [path, '']
 scb (gl).path 
 # scb: set-clipboard; gcb: get-clipboard; gl: get-location
 scb (pwd).path
+pwd|scb
 gl|scb
 ```
 
@@ -18,7 +20,7 @@ mcd dir
 
 ```
 get-command code
-gcm code
+(gcm code).source
 ```
 * exec cmd's command in pwsh and get result
 ```
@@ -32,9 +34,15 @@ get-verb |%{$_.verb}|? {$_ -like '*start*'}
 get-verb |% verb|? {$_ -like '*start*'}
 get-verb|? verb -like '*start*'
 
+* hide command error 
+// run below command in a none git dir
+// 0: success
+git status 2>$null; $LASTEXITCODE
+
 * hide output
 "aa"|out-null
-"aa > $null
+"aa" > $null
+
 * get all env variables start with
 gci env:planck*
 
@@ -60,7 +68,7 @@ gcm | oh -p
 get-command | out-host -paging
 * first 10
 gcm|select -first 10
-*clear screen 
+* clear screen 
 cls
 ctrl+L
 
