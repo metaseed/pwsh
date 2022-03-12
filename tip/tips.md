@@ -31,8 +31,9 @@ select-string (sls)
 
 * get Verb
 get-verb |%{$_.verb}|? {$_ -like '*start*'}
+get-verb |foreach-object {$_.verb}|where-object{$_ -like '*start*'}
 get-verb |% verb|? {$_ -like '*start*'}
-get-verb|? verb -like '*start*'
+get-verb|? verb -like *start*
 
 * hide command error 
 // run below command in a none git dir
@@ -55,10 +56,11 @@ get-command code|select-object -expandProperty Source|Split-Path
 gc file|scb
 
 * get date in file path
-get-date -Format FileDate
-20210526
+> get-date -Format FileDate
+> 20210526
+
 * get time zone relevant to UTC
-get-date -f "zz"
+get-date -f zz
 -05 (day time saver included)
 could also call: get-timezone 
 (UTC-06:00) Central Time (US & Canada)
@@ -72,11 +74,15 @@ gcm|select -first 10
 cls
 ctrl+L
 
+* jump to pair () []{}
+ctrl+]
+h get-history
+
 ## peek function implementation
 gcm mkdir |% scriptblock
 (Get-Command mkdir).ScriptBlock
 gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1 
 
 ## beep
-1. just the Ctrl+G: inclose the Ctrl+G in a string and output it. 
-1. [Console]::Beep(1000,1000)
+1. DingDong: just the Ctrl+G: inclose the Ctrl+G in a string and output it. (type ctrl+g in console and copy it to file: )
+1. Bee: [Console]::Beep(), [Console]::Beep(1000,1000)
