@@ -8,7 +8,7 @@ function Git-PushAll {
   )
   git status
 
-  Enter-Continue
+  Confirm-Continue
   Write-Execute 'git add .'
   Write-Execute "git commit -am '$message'"
   Git-Push

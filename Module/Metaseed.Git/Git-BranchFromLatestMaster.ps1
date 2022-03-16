@@ -8,7 +8,7 @@ function Git-BranchFromLatestMaster {
 
   $current = Write-Execute 'git branch --show-current'
   if($current -ne 'master') {
-    Write-Execute 'git satus'
+    Write-Execute 'git status'
     Write-Execute 'git checkout master'
   }
   Write-Execute 'git pull'

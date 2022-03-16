@@ -11,6 +11,7 @@ function Git-RebaseMaster {
     Write-Execute "git checkout $branch"
     Write-Execute "git merge master"
     Write-Execute "git push"
+    Write-Execute 'git status'
   }
 
 }
