@@ -16,11 +16,13 @@ $info = (Get-Content "$PSScriptRoot\info.json") | ConvertFrom-Json | % {
   else { $build = $version.Build + 1 }
   $_.version = "$major.$minor.$build"
   $_
-}|
+}
+$info|
 ConvertTo-Json|
 Set-Content "$PSScriptRoot\info.json"
 
 $msg = "release $($info.version)"
+
 git commit -am $msg
 git tag -a "'$($info.version)'" -m "'$msg'"
 git push --tags
