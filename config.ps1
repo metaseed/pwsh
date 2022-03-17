@@ -6,7 +6,7 @@ if (Test-Path $profile.CurrentUserAllHosts) {
   New-Item -ItemType File -Path $profile.CurrentUserAllHosts -Force
 }
 
-$p = ". $PSScriptRoot\profile.ps1"
+$p = ". $(Resolve-Path $PSScriptRoot\profile.ps1)"
 $has = gc $profile.CurrentUserAllHosts |? {$_ -like $p}
 if(!$has) {
   Add-Content -Path $profile.CurrentUserAllHosts -Value $p

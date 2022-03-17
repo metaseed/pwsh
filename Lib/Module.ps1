@@ -1,3 +1,8 @@
+# tip: 
+# to reload the module after changing:
+# ipmo metaseed.git -fo
+# import-module metaseed.git -force
+
 # not work because the . operator to include file into just this file, not the file use the funciton
 function Export-Functions {
     param (

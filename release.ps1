@@ -23,6 +23,7 @@ Set-Content "$PSScriptRoot\info.json"
 
 $msg = "release $($info.version)"
 
+git add .
 git commit -am $msg
 git tag -a "$($info.version)" -m "'$msg'"
 git push --tags

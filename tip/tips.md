@@ -1,3 +1,7 @@
+* reload profile
+```
+& $profile.CurrentUserAllHosts
+```
 * copy current dir
 ```
 # pwd: print work directory

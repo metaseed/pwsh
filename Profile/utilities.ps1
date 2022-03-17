@@ -16,3 +16,8 @@ function mcd {
     # cd path
     Set-Location -Path $Path
  }
+
+function admin () {
+    Start-Process pwsh -verb runas
+    exit 0
+}

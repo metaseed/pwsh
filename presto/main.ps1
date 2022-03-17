@@ -1,1 +1,0 @@
-. $PSScriptRoot\env.ps1
