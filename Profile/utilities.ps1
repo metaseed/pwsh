@@ -17,6 +17,7 @@ function mcd {
     Set-Location -Path $Path
  }
 
+# pwsh: to reload directly
 function admin () {
     Start-Process pwsh -verb runas
     exit 0
