@@ -20,6 +20,10 @@ function Git-ReDate {
   # config the rebase command use the sequence.editor notepad, override the one in .gitconfig
   start-job -scriptblock {git -c sequence.editor=notepad rebase --interactive "head~$using:commits"} -name redate
 
+  while(!Test-Path $rebaseFile) {
+    Start-Sleep 1
+  }
+
   (gc $rebaseFile)|
   # pick 4ca564e Do something
   # exec git commit --amend --no-edit --date "1 Oct 2019 12:00:00 PDT"
@@ -34,7 +38,7 @@ function Git-ReDate {
   # It changes both the committer and author dates.
   # replay commits from Head~'$commits' with additional git command on every commit
   # now, 1 day ago, 1 hour ago, or $(date)
-  git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date 'now'"
+  # git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date 'now'"
   ##
 
   if (!$NoPush) {
