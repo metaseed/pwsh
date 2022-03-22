@@ -20,7 +20,7 @@ function Git-ReDate {
   # config the rebase command use the sequence.editor notepad, override the one in .gitconfig
   start-job -scriptblock {git -c sequence.editor=notepad rebase --interactive "head~$using:commits"} -name redate
 
-  while(!Test-Path $rebaseFile) {
+  while(!(Test-Path $rebaseFile)) {
     Start-Sleep 1
   }
 
