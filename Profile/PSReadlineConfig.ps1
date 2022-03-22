@@ -1,18 +1,20 @@
 # https://megamorf.gitlab.io/cheat-sheets/powershell-psreadline/
 $PSReadLineOptions = @{
-    BellStyle = "None" # Prevent annoying beeping noises (e.g. when pressing backspace on empty line)
+    # Prevent annoying beeping noises (e.g. when pressing backspace on empty line)
+    BellStyle = "None" 
     # HistorySearchCursorMovesToEnd = $true
     MaximumHistoryCount = 10000
 }
 Set-PSReadLineOption @PSReadLineOptions
+
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
-Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine # not work in vscode
+# not work in vscode
+Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine 
 #not work in vscode
-Set-PSReadlineKeyHandler -Key Ctrl+Shift+P `
+Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -BriefDescription CopyPathToClipboard `
     -LongDescription "Copies the current path to the clipboard.(gl).path|scb" `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, ''] 
-
 
 <#
 Get-PSReadLineKeyHandler -Bound -Unbound

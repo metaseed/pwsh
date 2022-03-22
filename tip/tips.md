@@ -1,6 +1,11 @@
 * reload profile
 ```
 & $profile.CurrentUserAllHosts
+
+* to reload the module after changing:
+```
+ipmo metaseed.git -fo
+import-module metaseed.git -force
 ```
 * copy current dir
 ```

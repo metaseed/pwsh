@@ -15,6 +15,7 @@ function New-Pack {
         [string]
         $OutExeName
     )
+
     $dir = gl
     $FolderWithExe = Resolve-Path $FolderWithExe
     Push-Location -Path $PSScriptRoot
@@ -51,6 +52,7 @@ function New-Pack {
         sleep 1
         .\Pack\resource_hacker\ResourceHacker.exe -open $tempExe -save $OutPath -action addskip -mask ICONGROUP, MAINICON, -res $iconPath
         sleep 1
+        
         # display info 
         '==============Result================='
         "$OutPath"

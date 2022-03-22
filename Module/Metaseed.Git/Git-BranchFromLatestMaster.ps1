@@ -11,7 +11,7 @@ function Git-BranchFromLatestMaster {
     Write-Execute 'git status'
     Write-Execute 'git checkout master'
     if($LASTEXITCODE -ne 0) {
-      Write-Error "errorttt   "
+      Write-Error "Error when checkout master, nothing changed."
       return;
     }
   }

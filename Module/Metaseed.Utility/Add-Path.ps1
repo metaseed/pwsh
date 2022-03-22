@@ -49,16 +49,18 @@ function Remove-DuplicationEnvVarValue {
         param (
             # Machine or User, default based on current Admin right
             [object]
+            [ValidateSet('Machine', 'User')]
             $scope = $null
         )
 
         $isAdmin = Test-Admin
-        $scope = $scope ?? ($isAdmin ? "Machine": "User")
+        # trick: $scope is object not string, so we can use ??=. empty string not work for ??=
+        $scope ??= ($isAdmin ? "Machine": "User")
 
         $newPath = [System.Collections.ArrayList]::new()
         $v = [Environment]::GetEnvironmentVariable($var, $scope)
         if ($null -eq $v) {
-            "scope: $scope, do not have env:$var"
+            write-warning "scope: $scope, do not have env:$var"
             return
         }
         "process scope: $scope, env:$var..."
