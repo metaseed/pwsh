@@ -31,7 +31,8 @@ function Git-ReDate {
 
   # It changes both the committer and author dates.
   # replay commits from Head~'$commits' with additional git command on every commit
-  git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date '0 day ago'"
+  # now, 1 day ago, 1 hour ago
+  git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date `$(date -R -d '2 days ago')"
 
   if (!$NoPush) {
     git push --force
