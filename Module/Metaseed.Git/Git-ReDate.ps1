@@ -6,9 +6,14 @@ function Git-ReDate {
     # commits to modify
     [Parameter()]
     [Int]
-    $commits=3
+    $commits = 3,
+    [Parameter()]
+    [switch]
+    [Alias('np')]
+    $NoPush
+
   )
-  ## old way not finished, which use interactive way
+  ## old way not finished, which mimic interactive way
   # $git = Find-FromParent .git
   # $rebaseFile = "$git/rebase-merge/git-rebase-todo"
   # # config the rebase command use the sequence.editor notepad, override the one in .gitconfig
@@ -23,6 +28,12 @@ function Git-ReDate {
   # Receive-job redate
   ##
 
-  
+  # It changes both the committer and author dates.
+  # replay commits from Head~'$commits' with additional git command on every commit
+  git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date 'now'"
+
+  if (!$NoPush) {
+    git push --force
+  }
 
 }
