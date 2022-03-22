@@ -13,3 +13,7 @@ function Git-PushAll {
   Write-Execute "git commit -am '$message'"
   Git-Push
 }
+
+New-Alias gitp Git-PushAll
+
+# Export-ModuleMember -Alias  gip

@@ -29,6 +29,8 @@ function Connect-VM {
   )
   
   begin {
+    # get-vm need admin
+    Assert-Admin
     Write-Verbose "Initializing InstanceCount: 0"
     $InstanceCount = 0
   }
@@ -42,14 +44,14 @@ function Connect-VM {
         if ($pmsn -eq 'name') {
           if ($Name -as [guid]) {
             Write-Verbose "Incoming value can cast to guid"
-            $vm = Get-VM -Id $Name -ErrorAction SilentlyContinue
+            $vm = Get-VM -ComputerName $computer -Id $Name -ErrorAction SilentlyContinue
           }
           else {
-            $vm = Get-VM -Name $Name -ErrorAction SilentlyContinue
+            $vm = Get-VM -ComputerName $computer -Name $Name -ErrorAction SilentlyContinue
           }
         }
         elseif ($pmsn -eq 'id') {
-          $vm = Get-VM -Id $Id -ErrorAction SilentlyContinue
+          $vm = Get-VM -ComputerName $computer -Id $Id -ErrorAction SilentlyContinue
         }
         else {
           $vm = $inputObj
@@ -71,7 +73,7 @@ function Connect-VM {
     
         }
         else {
-          Write-Verbose "Cannot find vm: '$Name'"
+          Write-Information "Cannot find vm: '$Name'"
         }
   
         $InstanceCount += 1

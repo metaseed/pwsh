@@ -1,4 +1,5 @@
 # https://megamorf.gitlab.io/cheat-sheets/powershell-psreadline/
+# C:\Program Files\PowerShell\7\Modules\PSReadLine\SamplePSReadLineProfile.ps1
 $PSReadLineOptions = @{
     # Prevent annoying beeping noises (e.g. when pressing backspace on empty line)
     BellStyle = "None" 

@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.Globalization;
 // need to install Microsoft Access Database Engine: choco install made2010
+// https://docs.microsoft.com/en-us/powershell/scripting/developer/prog-guide/creating-a-windows-powershell-navigation-provider?view=powershell-7.2#code-sample
 namespace Metaseed.PowerShell.Providers
 {
    #region AccessDBProvider

@@ -20,3 +20,5 @@ function Git-BranchFromLatestMaster {
   Write-Execute "git checkout -b $BranchName"
   Write-Execute 'git status'
 }
+
+New-Alias gitb Git-BranchFromLatestMaster
