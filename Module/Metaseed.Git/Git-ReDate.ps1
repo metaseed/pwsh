@@ -30,6 +30,7 @@ function Git-ReDate {
   % {$_ -replace '(?<pick>^pick.*$)', ('${pick}'+"`nexec git commit --amend --no-edit --date `"1 Oct 2019 12:00:00 PDT`"")}|
   
   set-content $rebaseFile
+  
   get-process notepad  | ? MainWindowTitle -like 'git-rebase-to*'|% {$_.CloseMainWindow()}
   Receive-job redate
   ##
