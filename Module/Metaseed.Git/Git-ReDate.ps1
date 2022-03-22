@@ -3,7 +3,7 @@
 # https://stackoverflow.com/questions/454734/how-can-one-change-the-timestamp-of-an-old-commit-in-git#:~:text=Just%20do%20git%20commit%20%2D%2D,date%20you%20want%20to%20modify.
 function Git-ReDate {
   param (
-    # commits to modify
+    # commits to modify, not include the head~3
     [Parameter()]
     [Int]
     $commits = 3,
@@ -11,6 +11,7 @@ function Git-ReDate {
     [switch]
     [Alias('np')]
     $NoPush
+
 
   )
   ## old way not finished, which mimic interactive way
@@ -30,7 +31,7 @@ function Git-ReDate {
 
   # It changes both the committer and author dates.
   # replay commits from Head~'$commits' with additional git command on every commit
-  git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date 'now'"
+  git rebase HEAD~"$commits" --exec "git commit --amend --no-edit --date 'today'"
 
   if (!$NoPush) {
     git push --force
