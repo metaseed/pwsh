@@ -10,11 +10,7 @@ function Git-ReDate {
     [Parameter()]
     [switch]
     [Alias('np')]
-    $NoPush,
-    [Parameter()]
-    [string]
-    []
-    $date = 'now'
+    $NoPush
 
 
   )
