@@ -1,37 +1,42 @@
 function Git-DeleteAllLocalBranches {
   [CmdletBinding()]
   param (
+    # only delete merged branch
     [Parameter()]
     [boolean]
-    $merged = $false
+    $merged = $false,
+    # branches to keep, current branch is always kept.
+    [Parameter()]
+    [string[]]
+    $branchesToKeep = @('master', 'main', 'development')
+
   )
 
   # if your branches names contains non ascii characters
   # [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-  # list branches
+  ## list branches
+  $filter = "^(?!.*($($branchesToKeep -join '|')|\*)).*$"
   $branches = git branch "$($merged ?'--merged': '')" | 
-  # ^(?!.*(master|development|\*)).*$
-  # filter out branches contains 'master' or 'development' and the current branche (marked by *)
+  # ^(?!.*(master|main|\*)).*$
+  # filter out branches contains 'master' or 'main' and the current branche (marked by *)
   # note: if just filter out current: '^[^\*].*'
-  Select-String -Pattern '^(?!.*(master|development|\*)).*$' 
+  Select-String -Pattern $filter
 
   if($branches.Length -eq 0) {
-    Write-Host "No Branch to Delete!`nbranches available:" -ForegroundColor yellow
+    Write-Host "Filter: $filter`nNo Branch to Delete!`nbranches available:" -ForegroundColor yellow
     git branch
     return
   }
+
   Write-Warning "`n$($branches -join "`n")"
-  Write-Host "`nDelete these brancheds(Yes(y or Enter)/No(n))?"
-  $answer = [Console]::ReadKey().Key
-  if ($answer -eq 'y' -or $answer -eq [ConsoleKey]::Enter) {
-    $branches |
-    % { 
-   
-      git branch -d $_.ToString().Trim() 
-    }
-  } else {
-    Write-Host "`nNo Branches Deleted!" -ForegroundColor yellow
+  Write-Host "`nDelete these brancheds?"
+  Confirm-Continue
+
+  $branches |
+  % { 
+ 
+    git branch $($merged ? '-d': '-D') $_.ToString().Trim() 
   }
-  Write-Execute "git status"
+  Write-Execute "git branch"
 }

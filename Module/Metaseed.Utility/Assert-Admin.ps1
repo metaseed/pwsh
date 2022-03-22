@@ -32,7 +32,7 @@ Function RunAsAdmin {
         return $false
     }
 
-
+try{
     $AllParameters_String = @();
     ForEach ($Parameter in $AllParameters.GetEnumerator()) {
         $Parameter_Key = $Parameter.Key;
@@ -49,9 +49,14 @@ Function RunAsAdmin {
     $Arguments = "-NoExit", "-File `"$File`"" + $AllParameters_String
 
     $PSHost = If ($PSVersionTable.PSVersion.Major -le 5) { 'PowerShell' } Else { 'PwSh' }
-    
+
     Start-Process "$PSHost $($Wait ? '-Wait':'')" -Verb Runas -ArgumentList $Arguments;
     return $true
+}
+catch {
+    Add-Type -AssemblyName PresentationFramework
+[System.Windows.MessageBox]::Show("$_")  
+}
 }
 
 Export-ModuleMember -Function Test-Admin, RunAsAdmin
