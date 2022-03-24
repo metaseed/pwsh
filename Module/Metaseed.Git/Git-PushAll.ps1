@@ -2,13 +2,17 @@ function Git-PushAll {
   [CmdletBinding()]
   param (
     # commit message
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]
-    $message
+    $message,
+    [switch]
+    [alias('c')]
+    $confirm
   )
   git status
 
-  Confirm-Continue
+  if ($confirm) { Confirm-Continue }
+
   Write-Execute 'git add .'
   Write-Execute "git commit -am '$message'"
   Git-Push

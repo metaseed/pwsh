@@ -16,7 +16,9 @@ function Git-BranchFromLatestMaster {
     }
   }
 
-  Write-Execute 'git pull --rebase --autostash'
+  Write-Execute 'git stash' 'stash index&changes'
+  Write-Execute 'git pull --rebase' # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
+  Write-Execute 'git stash apply --index' 'restore index&changes' # --index: not merge index into worktree, the same as the state before stash
   Write-Execute "git checkout -b $BranchName"
   Write-Execute 'git status'
 }
