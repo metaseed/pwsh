@@ -16,7 +16,7 @@ function Git-BranchFromLatestMaster {
     }
   }
 
-  Write-Execute 'git pull'
+  Write-Execute 'git pull --rebase --autostash'
   Write-Execute "git checkout -b $BranchName"
   Write-Execute 'git status'
 }
