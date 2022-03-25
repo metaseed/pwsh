@@ -5,7 +5,8 @@ function Write-Execute {
   #>
   param (
     [string]$command,
-    [string]$message
+    [string]$message,
+    [switch]$noThrow
   )
   process {
     Write-Host "${command} $('' -eq $message ? '': ": $message")" -BackgroundColor blue -ForegroundColor yellow 
@@ -16,7 +17,11 @@ function Write-Execute {
   end {
     if (0 -ne $LASTEXITCODE) {
       Write-Error "Error execute command: $command"
-      Exit
+      if ($noThrow) {
+        Exit
+      } else {
+        throw
+      }
     }
   }
 }

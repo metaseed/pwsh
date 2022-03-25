@@ -10,11 +10,10 @@ function Git-Push {
   # are the local branch already pushed to remote?
   if(Git-HasRemoteBranch)
   {
+    Write-Execute "git push"
+  } else {
     # To push the current branch AND set the remote as upstream
     Write-Execute "git push --set-upstream origin $branch"
-  } else {
-    Write-Execute "git push"
   }
   Write-Execute "git status"
 }
-
