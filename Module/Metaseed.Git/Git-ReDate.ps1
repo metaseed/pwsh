@@ -73,7 +73,6 @@ function Git-ReDate {
     Write-Error 'Git-BranchFromLatestMaster execution error.'
   }
   finally {
-    Write-Host "-------$guard----"
     if ($guard -eq [GitSaftyGuard]::Stashed) {
       Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
     }
