@@ -5,6 +5,7 @@ function Git-BranchFromLatestMaster {
     [string]
     $BranchName
   )
+  Git-SaftyGuard
 
   $current = Write-Execute 'git branch --show-current'
   if($current -ne 'master') {
@@ -16,10 +17,11 @@ function Git-BranchFromLatestMaster {
     }
   }
 
-  Write-Execute 'git stash' 'stash index&changes'
+  ## rebase master onto remote
   Write-Execute 'git pull --rebase' # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
-  Write-Execute 'git stash apply --index' 'restore index&changes' # --index: not merge index into worktree, the same as the state before stash
+
   Write-Execute "git checkout -b $BranchName"
+  Write-Execute 'git stash apply --index' 'restore index&changes' # --index: not merge index into worktree, the same as the state before stash
   Write-Execute 'git status'
 }
 
