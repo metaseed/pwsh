@@ -42,19 +42,20 @@ function Git-ReDate {
     # exec git commit --amend --no-edit --date "1 Oct 2019 12:00:00 PDT"
     % {
       Write-Host ($line - $commits)
-      $date = (Get-date).AddHours(($line - $commits))
+      $dateTime = (Get-date).AddHours($line - $commits)
       if ($date -eq 'oneHourAheadWithRandomMinSec') {
-        $date = $date.AddMinutes($(get-random -Minimum 0 -Maximum 59)).AddSeconds($(get-random -Minimum 0 -Maximum 59))
+        $dateTime = $dateTime.AddMinutes($(get-random -Minimum 0 -Maximum 59)).AddSeconds($(get-random -Minimum 0 -Maximum 59))
       }
 
-      $_ -replace '(?<pick>^pick.*$)', ('${pick}' + "`nexec git commit --amend --no-edit --date `"$date`"")
       $line++
-    } |
-    set-content $rebaseFile
-    ## close editor to continue the git rebase
-    get-process notepad  | ? MainWindowTitle -like 'git-rebase-to*' | % { $_.CloseMainWindow() }
-    ## output results
-    Receive-job redate -Wait
+      $_ -replace '(?<pick>^pick.*$)', ('${pick}' + "`nexec git commit --amend --no-edit --date `"$dateTime`"")
+    } 
+    # |
+    # set-content $rebaseFile
+    # ## close editor to continue the git rebase
+    # get-process notepad  | ? MainWindowTitle -like 'git-rebase-to*' | % { $_.CloseMainWindow() }
+    # ## output results
+    # Receive-job redate -Wait
     ###
   }
 
