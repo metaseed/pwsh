@@ -15,7 +15,7 @@ function Git-SaftyGuard {
   assert on a branch and stash index&changes&untracked
   #>
   ## assert on a branch
-  git branch --show-current >$null
+  $branch = git branch --show-current #>$null
   if ($LASTEXITCODE -ne 0) {
     Write-Error 'not on a branch' 
     Exit 1
@@ -28,7 +28,7 @@ function Git-SaftyGuard {
   # }
 
   ## keep changes for safty
-  $msg = "'Git-SaftyGuard$($message ? '' : ":$message") - $(Get-date)'"
+  $msg = "'Git-SaftyGuard$($message ? '' : ":$message") - $(Get-date) - $branch'"
   $r =  Write-Execute "git stash push --include-untracked --message  $msg" 'stash keep index&tree&untracked'# --keep-index would just keep staged, the modifed is not kept in work directory.
   if ($r -eq 'No local changes to save') { return [GitSaftyGuard]::NoNeedStash }
 

@@ -1,4 +1,4 @@
-function Git-DeleteAllLocalBranches {
+function Git-DeleteBranches {
   [CmdletBinding()]
   param (
     # only delete merged branch
@@ -8,7 +8,10 @@ function Git-DeleteAllLocalBranches {
     # branches to keep, current branch is always kept.
     [Parameter()]
     [string[]]
-    $branchesToKeep = @('master', 'main', 'development')
+    $branchesToKeep = @('master', 'main', 'development'),
+    [switch]
+    [Alias('kr')]
+    $KeepRemote
 
   )
 
@@ -24,7 +27,7 @@ function Git-DeleteAllLocalBranches {
   # note: if just filter out current: '^[^\*].*'
   Select-String -Pattern $filter
 
-  if($branches.Length -eq 0) {
+  if ($branches.Length -eq 0) {
     Write-Host "Filter: $filter`nNo Branch to Delete!`nbranches available:" -ForegroundColor yellow
     git branch
     return
@@ -36,8 +39,16 @@ function Git-DeleteAllLocalBranches {
 
   $branches |
   % { 
- 
-    git branch $($merged ? '-d': '-D') $_.ToString().Trim() 
+    $branch = $_.ToString().Trim();
+    git branch $($merged ? '-d': '-D') $branch
+    if (-not $KeepRemote) {
+      # Pushing to delete remote branches also removes remote-tracking branches
+      git push origin -d "$branch"
+    }
+    # just delete remote tracking:
+    #   git branch --delete --remotes "origin/$branch"
   }
+  # Delete multiple obsolete remote-tracking branches
+  git fetch origin --prune
   Write-Execute "git branch"
 }
