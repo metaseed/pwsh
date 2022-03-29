@@ -1,0 +1,2 @@
+* view status
+gitk --all

@@ -3,8 +3,10 @@ function Git-RebaseMaster {
 
   try {
     ## rebase branch with remote
-    if (!(Git-HasRemoteBranch)) {
-      Write-Execute 'git pull --rebase' # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
+    if (Git-HasRemoteBranch) {
+      # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
+      # so we do saftyGuard first
+      Write-Execute 'git pull --rebase' 
     }
 
     $branch = git branch --show-current

@@ -35,4 +35,10 @@ function Git-BranchFromLatestMaster {
   Write-Execute 'git status'
 }
 
-New-Alias gitb Git-BranchFromLatestMaster
+Set-Alias gitb Git-BranchFromLatestMaster
+
+function Git-Branch {
+  git branch @args -v --sort=committerdate
+}
+# git config --global branch.sort -committerdate
+Export-ModuleMember Git-Branch
