@@ -6,9 +6,5 @@ bin
 ModuleProj/song.accdb
 .local
 Module/Metaseed.Utility/Pack/resource_hacker/ResourceHacker.ini
-Module/Metaseed.Utility/Pack/resource_hacker/samples/sample1.bmp
-Module/Metaseed.Utility/Pack/resource_hacker/samples/sample1.h
-Module/Metaseed.Utility/Pack/resource_hacker/samples/sample1.inc
-Module/Metaseed.Utility/Pack/resource_hacker/samples/sample1.rc
-Module/Metaseed.Utility/Pack/resource_hacker/samples/Sample2.dll
-Module/Metaseed.Utility/Pack/resource_hacker/samples/Thumbs.db
+Module/Metaseed.Utility/Pack/resource_hacker/samples/
+Module/Metaseed.Utility/handle

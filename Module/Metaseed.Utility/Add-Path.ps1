@@ -45,12 +45,13 @@ function Remove-DuplicationEnvVarValue {
         $var = 'Path'
     )
     function clean {
-    
         param (
             # Machine or User, default based on current Admin right
             [object]
             [ValidateSet('Machine', 'User')]
-            $scope = $null
+            $scope = $null,
+            [switch]
+            $keepDead
         )
 
         $isAdmin = Test-Admin
@@ -66,8 +67,15 @@ function Remove-DuplicationEnvVarValue {
         "process scope: $scope, env:$var..."
         $null = $v.Split(';') |
         % {
-            if(!$_) {return}
+            if (!$_) { return }
+            if (-not $keepDead -and -not (Test-Path $_)) { 
+                "remove dead path: $_"
+                return 
+            }
+
             $dup = $false
+            # getFullPath would not throw if path is not exist
+            # resolve-path throw if not exist
             $path_test = [Path]::GetFullPath($_)
             foreach ($p in $newPath) {
                 if ($p.Equals($path_test, [System.StringComparison]::OrdinalIgnoreCase) ) {
