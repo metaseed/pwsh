@@ -13,6 +13,7 @@ function Git-PushAll {
 
   if ($confirm) { Confirm-Continue }
 
+  Write-Execute 'git pull --rebase' 
   Write-Execute 'git add .'
   Write-Execute "git commit -am '$message'"
   Git-Push

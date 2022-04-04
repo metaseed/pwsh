@@ -8,7 +8,6 @@ function Find-FromParent {
         [Parameter(Position=2)]
         [string]
         $PathFrom = $pwd
-
   )
 
   $path = $pathFrom
@@ -25,4 +24,4 @@ function Find-FromParent {
   }
 }
 
-Find-FromParent .git 'M:\script\pwsh'
+# Find-FromParent .git 'M:\script\pwsh'

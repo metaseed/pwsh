@@ -10,8 +10,12 @@ if ($decision -eq 0) {
     Write-Host 'cancelled'
 }
 #>
-function Confirm-Continue([string] $mesage) {
-  Write-Host "`n$message`npress 'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
+function Confirm-Continue {
+  [CmdletBinding()]
+  param(
+    [string] $message
+  )
+  Write-Host "`n$message `npress'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
   $key = [Console]::ReadKey().Key
   if ($key -ne [ConsoleKey]::Enter) {
     exit

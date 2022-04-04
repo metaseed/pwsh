@@ -1,5 +1,11 @@
-function Git-RebaseMaster {
-  $guard = Git-SaftyGuard 'Git-RebaseMaster' -noKeep
+function Git-SyncMaster {
+  [CmdletBinding()]
+  param (
+    [Parameter()]
+    [switch]
+    $rebase
+  )
+  $guard = Git-SaftyGuard 'Git-SyncMaster' -noKeep
 
   try {
     ## rebase branch with remote
@@ -16,7 +22,12 @@ function Git-RebaseMaster {
       Write-Execute 'git pull --rebase'
       Write-Step 'rebase branch with master'
       Write-Execute "git checkout $branch"
-      Write-Execute "git rebase master"
+      if ($rebase) {
+        Write-Execute "git rebase --onto master --fork-point"
+      }
+      else {
+        Write-Execute "git merge master"
+      }
       Write-Execute "git-push"
     }
   }
