@@ -12,8 +12,12 @@ function Git-PushAll {
   git status
 
   if ($confirm) { Confirm-Continue }
-
-  Write-Execute 'git pull --rebase' 
+  if (Git-HasRemoteBranch) {
+    # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
+    # so we do saftyGuard first
+    Write-Execute 'git pull --rebase' 
+  }
+  
   Write-Execute 'git add .'
   Write-Execute "git commit -am '$message'"
   Git-Push

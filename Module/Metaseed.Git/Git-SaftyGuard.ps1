@@ -29,8 +29,12 @@ function Git-SaftyGuard {
 
   ## keep changes for safty
   $msg = "'Git-SaftyGuard$($message ? '' : ":$message") - $(Get-date) - $branch'"
-  $r =  Write-Execute "git stash push --include-untracked --message  $msg" 'stash keep index&tree&untracked'# --keep-index would just keep staged, the modifed is not kept in work directory.
-  if ($r -eq 'No local changes to save') { return [GitSaftyGuard]::NoNeedStash }
+  $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash keep index&tree&untracked'# --keep-index would just keep staged, the modifed is not kept in work directory.
+  $out='No local changes to save'
+  if ($r -eq $out) {
+    $out
+    return [GitSaftyGuard]::NoNeedStash 
+  }
 
   if (!($nokeep)) {
     Write-Execute "git stash apply --index" > $null # the index is not merged to changes but kept in index (stage)
