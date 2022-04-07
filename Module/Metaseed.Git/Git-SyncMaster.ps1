@@ -3,7 +3,7 @@ function Git-SyncMaster {
   param (
     [Parameter()]
     [switch]
-    $rebase
+    $merge
   )
   $guard = Git-SaftyGuard 'Git-SyncMaster' -noKeep
 
@@ -15,28 +15,37 @@ function Git-SyncMaster {
       Write-Execute 'git pull --rebase' 
     }
 
-    ## merge parent branch
-    # parent: change a file, branch child, revert change, merge into master
-    # then child: merge master
-    # result: change of the file
-    #
-    # fix: merge parent before merge master
     $parent = Git-Parent
-    if ($parent -ne 'master') {
-      Write-Execute "git merge $parent"
-    }
 
     $branch = git branch --show-current
     if ($branch -ne 'master') {
       Write-Step 'rebase master with remote'
       Write-Execute 'git checkout master'
       Write-Execute 'git pull --rebase'
+
       Write-Step 'sync branch with master'
-      Write-Execute "git checkout $branch"
-      if ($rebase) {
-        Write-Execute "git rebase --onto master --fork-point"
+      if (!$merge) {
+        if ($parent -ne 'master') {
+          # replay one by one, may resolve conflict several times
+          # so merge parent to reduce conflicts.
+          Write-Execute "git merge $parent -s ort -X theirs"
+        }
+        Write-Execute "git checkout $branch"
+        Write-Execute "git rebase --onto master $parent" #--fork-point"
       }
       else {
+        Write-Execute "git checkout $branch"
+        ## merge parent branch
+        if ($parent -ne 'master') {
+          # parent: change a file, branch child, revert change, merge into master
+          # then child: merge master
+          # result: change of the file
+          #
+          # fix: merge parent before merge master
+          Write-Execute "git merge $parent"
+        }
+        ##
+        # strategy ort with option prefer ours
         Write-Execute "git merge master -s ort -X ours"
       }
       Write-Execute "git-push"
