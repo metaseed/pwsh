@@ -48,6 +48,7 @@ function Git-SyncMaster {
         # strategy ort with option prefer ours
         Write-Execute "git merge master -s ort -X ours"
       }
+
       Write-Execute "git-push"
     }
   }

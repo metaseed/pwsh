@@ -7,10 +7,11 @@ function Git-BranchFromLatestMaster {
   )
   $guard = Git-SaftyGuard -noKeep 'Git-BranchFromLatestMaster'
 
+  Write-Execute 'git status'
+
   try {
     $current = Write-Execute 'git branch --show-current'
     if ($current -ne 'master') {
-      Write-Execute 'git status'
       Write-Execute 'git checkout master'
       if ($LASTEXITCODE -ne 0) {
         Write-Error "Error when checkout master, nothing changed."
@@ -19,7 +20,7 @@ function Git-BranchFromLatestMaster {
     }
 
     ## rebase master onto remote
-    Write-Execute 'git pull --rebase' # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
+    Write-Execute 'git pull --rebase' # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore), use Git-StashApply to do it
 
     Write-Execute "git checkout -b $BranchName"
   }
