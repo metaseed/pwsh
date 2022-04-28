@@ -9,7 +9,7 @@ function Write-Execute {
     [switch]$noThrow
   )
   process {
-    Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0
+    # Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0
     Write-Host "${command} $('' -eq $message ? '': ": $message")" -BackgroundColor blue -ForegroundColor yellow 
     # note: if put parenthesis around: return (iex $command), the output would be no color
     # i.e. Write-Execute 'git status', if there are modification, no red text for modification files

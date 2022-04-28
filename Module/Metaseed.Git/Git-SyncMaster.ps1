@@ -8,17 +8,23 @@ function Git-SyncMaster {
   $guard = Git-SaftyGuard 'Git-SyncMaster' -noKeep
 
   try {
-    ## rebase branch with remote
+    ## sync with remote
     if (Git-HasRemoteBranch) {
       # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
       # so we do saftyGuard first
-      Write-Execute 'git pull --rebase' 
+      Write-Execute 'git pull' 
     }
-
-    $parent = Git-Parent
 
     $branch = git branch --show-current
     if ($branch -ne 'master') {
+
+      $parent = Git-Parent
+      "parent branch of current branch is: $parent"
+      $owner = $branch.split('/')[0]
+      if (!$owner -and !$parent.Contains($owner) -and "$parent" -ne 'master') {
+        Confirm-Continue "parent branch of current branch is not master or from you($owner)"
+      }
+
       Write-Step 'rebase master with remote'
       Write-Execute 'git checkout master'
       Write-Execute 'git pull --rebase'
@@ -28,7 +34,7 @@ function Git-SyncMaster {
         if ($parent -ne 'master') {
           # replay one by one, may resolve conflict several times
           # so merge parent to reduce conflicts.
-          Write-Execute "git merge $parent -s ort -X theirs"
+          Write-Execute "git merge $parent -s ort -X ours"
         }
         Write-Execute "git checkout $branch"
         Write-Execute "git rebase --onto master $parent" #--fork-point"
@@ -45,8 +51,14 @@ function Git-SyncMaster {
           Write-Execute "git merge $parent"
         }
         ##
-        # strategy ort with option prefer ours
+        # strategy or with option prefer ours
         Write-Execute "git merge master -s ort -X ours"
+      }
+
+      # strange although we have pulled at start, if not pull again: Error:
+      #  Updates were rejected because the tip of your current branch is behind
+      if (Git-HasRemoteBranch) {
+        Write-Execute 'git pull' 
       }
 
       Write-Execute "git-push"

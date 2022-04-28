@@ -10,10 +10,7 @@ function Git-SaftyGuard {
     [Alias('nk')]
     $nokeep
   )
-  <#
-  .SYNOPSIS
-  assert on a branch and stash index&changes&untracked
-  #>
+
   ## assert on a branch
   $branch = git branch --show-current #>$null
   if ($LASTEXITCODE -ne 0) {
@@ -28,8 +25,10 @@ function Git-SaftyGuard {
   # }
 
   ## keep changes for safty
-  $msg = "'Git-SaftyGuard$($message ? '' : ":$message") - $(Get-date) - $branch'"
-  $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash keep index&tree&untracked'# --keep-index would just keep staged, the modifed is not kept in work directory.
+  $msg = "'Git-SaftyGuard$($message ? ":$message": '') - $(Get-date) - $branch'"
+  # --keep-index would keep staged (not stashed), the modifed is not kept in work directory and stashed.
+  # here we want to save all changes, so we don't use --keep-index.
+  $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash: index&tree&untracked'
   $out='No local changes to save'
   if ($r -eq $out) {
     $out
@@ -37,7 +36,8 @@ function Git-SaftyGuard {
   }
 
   if (!($nokeep)) {
-    Write-Execute "git stash apply --index" > $null # the index is not merged to changes but kept in index (stage)
+    # with --index: the index is not merged to changes but kept in index (stage)
+    Write-Execute "git stash apply --index" > $null 
   }
 
   return [GitSaftyGuard]::Stashed

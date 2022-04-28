@@ -20,7 +20,8 @@ function Git-BranchFromLatestMaster {
     }
 
     ## rebase master onto remote
-    Write-Execute 'git pull --rebase' # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore), use Git-StashApply to do it
+    # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore), use Git-StashApply to do it
+    Write-Execute 'git pull --rebase' 
 
     Write-Execute "git checkout -b $BranchName"
   }
@@ -29,7 +30,8 @@ function Git-BranchFromLatestMaster {
   }
   finally {
     if ($guard -eq [GitSaftyGuard]::Stashed) {
-      Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
+      # --index: not merge index into worktree, the same as the state before stash
+      Write-Execute 'git stash apply --index' 'restore index&tree&untracked'
     }
   }
 
