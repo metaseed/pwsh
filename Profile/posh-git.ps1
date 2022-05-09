@@ -24,5 +24,5 @@ try {
   $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)'
 }
 catch {
-  Write-Host "Could not import posh-git, to install it: `n PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
+  Write-Host "Could not import posh-git module, to install it: `n PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
 }
