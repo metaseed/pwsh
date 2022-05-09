@@ -30,7 +30,7 @@ function Git-SyncMaster {
       Write-Execute 'git pull --rebase'
 
       Write-Step 'sync branch with master'
-      if (!$merge) {
+      if (!$merge) { # rebase
         if ($parent -ne 'master') {
           # replay one by one, may resolve conflict several times
           # so merge parent to reduce conflicts.
