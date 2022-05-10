@@ -4,7 +4,7 @@ using module Metaseed.Utility
 param (
     [Parameter()]
     [int]
-    [ValidateRange(1, [int]::MaxValue)]
+    [ValidateRange(0, [int]::MaxValue)]
     $Days = 0
 )
 # .local file only exist local and igored in .gitignore file; used to prevent upgrade
