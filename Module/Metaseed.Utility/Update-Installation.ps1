@@ -45,6 +45,7 @@ function Update-Installation {
                 return
             }
         }
+        write-host -f Green "> Upgrading from '$RemoteInfoUrl' ($ver)..."
         iwr $InstallUrl | iex
     }
 }
