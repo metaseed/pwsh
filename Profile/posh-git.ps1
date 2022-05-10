@@ -1,6 +1,6 @@
-# two line
-try {
-  Import-Module posh-git
+
+Import-Module posh-git -ErrorAction SilentlyContinue
+if ($?) {
   $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "MM-dd HH:mm:ss") '
   $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
@@ -22,7 +22,4 @@ try {
     }
   }
   $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)'
-}
-catch {
-  Write-Verbose "Could not import posh-git module, to install it: `n PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
 }
