@@ -7,7 +7,7 @@
 # note: reload profile if modified codes in this repo
 # & $profile.CurrentUserAllHosts
 Clear-Host
-"v$($Host.Version); profile: $PSCommandPath"
+"pwsh v$($Host.Version)" #; profile: $PSCommandPath"
 $InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
 . $PSScriptRoot\profile\main.ps1
 . $PSScriptRoot\up.ps1 1
