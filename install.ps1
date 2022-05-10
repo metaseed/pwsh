@@ -8,7 +8,7 @@ param (
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 "install ms_pwsh ver: $Version..."
-$zip = "temp:pwsh.zip"
+$zip = "$env:temp/pwsh.zip"
 if($Version -eq 'latest') {
     $unzipped = 'pwsh-master'
     $url ='http://github.com/metasong/pwsh/archive/refs/heads/master.zip'
