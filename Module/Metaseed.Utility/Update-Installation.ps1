@@ -39,14 +39,15 @@ function Update-Installation {
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {
         if ($Confirm) {
-            write-host -f Yellow "> New version($ver), press Enter to upgrade, other key to continue"
+            write-host -f Yellow "> New version($ver) found at $InstallUrl,`n press Enter to upgrade, other key to continue"
             $key = [Console]::ReadKey().Key
             if ($key -ne [ConsoleKey]::Enter) {
                 return
             }
         }
-        write-host -f Green "> Upgrading from '$RemoteInfoUrl' ($ver)..."
-        iwr $InstallUrl | iex
+        write-host -f Green "> Upgrading ($ver) from '$RemoteInfoUrl'..."
+        # -UseBasicParsing for pwsh 5
+        iwr -UseBasicParsing $InstallUrl | iex
     }
 }
 

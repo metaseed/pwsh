@@ -3,7 +3,7 @@ param (
   [Parameter()]
   [string]
   [ValidateSet('major', 'minor', 'build')]
-  $Bump = 'patch'
+  $Bump = 'build'
 )
 
 $info = (Get-Content "$PSScriptRoot\info.json") | ConvertFrom-Json | % {
