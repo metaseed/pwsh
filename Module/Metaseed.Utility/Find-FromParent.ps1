@@ -1,3 +1,8 @@
+<#
+return a FileInfo object for the given file name.
+use .FullName to get the string path
+or "$path" to get fullpath
+#>
 function Find-FromParent {
     [CmdletBinding()]
     param (

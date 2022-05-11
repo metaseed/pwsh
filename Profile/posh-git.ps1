@@ -1,4 +1,12 @@
 
+# to install posh-git
+# PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
+# to update
+# PowerShellGet\Update-Module posh-git
+
+# the result:
+# 05-11 14:31:50 [master ≡ +0 ~5 -0 !] M:\Script\Pwsh
+# >
 Import-Module posh-git -ErrorAction SilentlyContinue
 if ($?) {
   $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "MM-dd HH:mm:ss") '

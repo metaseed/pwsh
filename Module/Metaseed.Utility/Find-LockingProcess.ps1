@@ -175,6 +175,8 @@ function Stop-LockingProcess {
     )
 
     $ProcS = Find-LockingProcess -Path $Path | Sort-Object -Property Pid -Unique
+    "find process that use the $Path, `n stop them..."
+    $ProcS
     Kill_Process -ProcessId $ProcS.Pid
 }
 

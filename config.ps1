@@ -3,7 +3,7 @@ if (Test-Path $profile.CurrentUserAllHosts) {
   "append current profile..."
 } else {
   "create new profile.CurrentUserAllHosts: $($profile.CurrentUserAllHosts)"
-  New-Item -ItemType File -Path $profile.CurrentUserAllHosts -Force
+  New-Item -ItemType File -Path $profile.CurrentUserAllHosts -Force | Out-Null
 }
 
 $p = ". $(Resolve-Path $PSScriptRoot\profile.ps1)"

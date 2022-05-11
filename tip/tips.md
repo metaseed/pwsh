@@ -68,6 +68,8 @@ gc file|scb
 > get-date -Format FileDate
 > 20210526
 
+> get-date -f "yyMMdd_HHMMss"
+> 220511_110541
 * get time zone relevant to UTC
 get-date -f zz
 -05 (day time saver included)
