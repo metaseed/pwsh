@@ -10,6 +10,7 @@
 # 05-11 14:31:50 [master ≡ +0 ~5 -0 !] M:\Script\Pwsh
 # >
 Import-Module posh-git -ErrorAction SilentlyContinue
+# only config when posh-git is installed
 if ($?) {
   $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "MM-dd HH:mm:ss") '
   $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta

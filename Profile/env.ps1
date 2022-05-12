@@ -1,6 +1,6 @@
 # new veriables
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
-$env:HostFile = "$env:windir\System32\drivers\etc\hosts"
+$env:Hosts = "$env:windir\System32\drivers\etc\hosts"
 # config
 $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
 $env:path += ";$(Resolve-Path $PSScriptRoot\..\Cmdlet)"

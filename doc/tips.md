@@ -77,7 +77,7 @@ could also call: get-timezone
 (UTC-06:00) Central Time (US & Canada)
 
 * more page 
-gcm | oh -p
+ga | oh -p
 get-command | out-host -paging
 * first 10
 gcm|select -first 10
