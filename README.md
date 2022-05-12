@@ -1,9 +1,11 @@
+## requirement
+powershell 7 or later
+
 ## install
 ```powershell
 iwr https://pwsh.page.link/0 |iex
 ```
 
-## install
 > for using it in your script, then you could use its cmd-lets and modules
 
 ### install latest and auto update
