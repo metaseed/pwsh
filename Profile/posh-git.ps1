@@ -4,6 +4,8 @@
 # to update
 # PowerShellGet\Update-Module posh-git
 
+# commandlet just run: setup-poshGgit
+
 # the result:
 # 05-11 14:31:50 [master ≡ +0 ~5 -0 !] M:\Script\Pwsh
 # >

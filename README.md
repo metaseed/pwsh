@@ -20,20 +20,18 @@ $v = 1.0.2
 if(!$env:MS_PWSH){"&{$(iwr https://pwsh.page.link/0)} $v"|iex
 ```
 
-## dev
-### release
-```powershell
-./release.ps1
-```
+
 
 ## Mis
 ### posh-git
 the profile contains posh-git config, to install posh-git
 ```powershell
-PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
-```
-to update
-```powershell
-PowerShellGet\Update-Module posh-git
+setup-poshGit
 ```
 https://github.com/dahlbyk/posh-git
+
+## Development
+### release
+```powershell
+./release.ps1
+```
