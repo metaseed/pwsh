@@ -1,3 +1,6 @@
+* gh
+gh Get-ChildItem -Online
+
 * reload profile
 ```
 & $profile.CurrentUserAllHosts
