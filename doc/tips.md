@@ -12,11 +12,13 @@ import-module metaseed.git -force
 # pwd: print work directory
 (pwd).path|scb
 note: (pwd).path|clip when gcb would return [path, '']
+clip is C:\WINDOWS\system32\clip.exe
 scb (gl).path 
 # scb: set-clipboard; gcb: get-clipboard; gl: get-location
 scb (pwd).path
 pwd|scb
 gl|scb
+pwd and gl is the aliases of get-location
 ```
 
 * make dir and change to that dir
@@ -34,6 +36,10 @@ get-command code
 * exec cmd's command in pwsh and get result
 ```
 cmd /c where code
+```
+* find cmd of nodejs
+```
+$notInstalled = (npm list -g vsts-npm-auth)[1] -like "*(empty)*"
 ```
 * grep, findstr
 select-string (sls)
@@ -82,8 +88,8 @@ get-command | out-host -paging
 * first 10
 gcm|select -first 10
 * clear screen 
-cls
-ctrl+L
+cls (remove all content)
+ctrl+L (just scroll all content to top)
 
 * jump to pair () []{}
 ctrl+]
