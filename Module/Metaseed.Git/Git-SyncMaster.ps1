@@ -37,7 +37,11 @@ function Git-SyncMaster {
           Write-Execute "git merge $parent -s ort -X ours"
         }
         Write-Execute "git checkout $branch"
-        Write-Execute "git rebase --onto master $parent" #--fork-point"
+        if($parent -eq 'master') {
+          Write-Execute "git rebase $parent -X theirs"
+        } else {
+          Write-Execute "git rebase --onto master $parent -X theirs" #--fork-point"
+        }
       }
       else {
         Write-Execute "git checkout $branch"
