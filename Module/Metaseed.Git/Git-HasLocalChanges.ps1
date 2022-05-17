@@ -4,7 +4,7 @@ function Git-HasLocalChanges {
   $status = git status
   $dirtyMsg = $status -match 'modified:|Untracked files:|Your branch is ahead of'
   if ($dirtyMsg.length -eq 0) {
-    Write-Host "Your do not have local changes`n$status`n`n"
+    Write-Host "Your do not have local changes`n$status"
     return $false
   }
   return $true
