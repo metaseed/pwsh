@@ -9,7 +9,7 @@ function Git-PushAll {
     [alias('c')]
     $confirm
   )
-  if(!Git-HasLocalChanges) { return}
+  if(!(Git-HasLocalChanges)) { return}
 
 
   if ($confirm) { Confirm-Continue }
