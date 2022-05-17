@@ -9,7 +9,12 @@ function Git-PushAll {
     [alias('c')]
     $confirm
   )
-  git status
+  $status = git status
+  $dirtyMsg = $status -match 'modified:|Untracked files:|Your branch is ahead of'
+  if ($dirtyMsg.length -eq 0) {
+    Write-Warning "Your do not have local modification to push to remote`n$status`n`n"
+    return
+  }
 
   if ($confirm) { Confirm-Continue }
   Write-Execute 'git add -A'
