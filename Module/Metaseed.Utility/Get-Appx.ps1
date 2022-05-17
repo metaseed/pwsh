@@ -15,6 +15,9 @@ the path to store the downloaded appx packages.
 .EXAMPLE
 Get-Appx https://www.microsoft.com/en-us/p/windbg/9pgjgd53tn86 c:/temp/windbg-appx
 
+.EXAMPLE
+Get-Appx "https://apps.microsoft.com/store/detail/app-installer/9NBLGGH4NNS1?hl=en-us&gl=US" c:/temp/app-installer-appx
+
 .NOTES
 to install the package bundles directly, we need to enable Sideloading
 steps:
@@ -30,16 +33,17 @@ function Get-Appx {
     [CmdletBinding()]
     param (
         [string]$Uri,
-        [string]$Path = "."
+        [string]$Path = ".",
+        [switch]$all
     )
     process {
-        ""
         $StopWatch = [diagnostics.stopwatch]::startnew()
 
         if (-Not (Test-Path $Path)) {
             Write-Host -ForegroundColor Green "Creating directory: $Path"
             New-Item -ItemType Directory -Force -Path $Path
         }
+
         $Path = (Resolve-Path $Path).Path
         #Get Urls to download
         $urlParts = $Uri.Split("/")
@@ -47,6 +51,7 @@ function Get-Appx {
         Write-Host -ForegroundColor Yellow "Downloading '$PackageName' from $Uri"
 
         $WebResponse = Invoke-WebRequest -UseBasicParsing -Method 'POST' -Uri 'https://store.rg-adguard.net/api/GetFiles' -Body "type=url&url=$Uri&ring=Retail" -ContentType 'application/x-www-form-urlencoded'
+        Write-Verbose "links: `n$($webresponse.Links -join '\n')"
         $LinksMatch = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | Select-String -Pattern '(?<=a href=").+(?=" r)').matches.value
         $Files = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ } | Select-String -Pattern '(?<=noreferrer">).+(?=</a>)').matches.value
         #Create array of links and filenames
@@ -55,6 +60,7 @@ function Get-Appx {
         }
         #Sort by filename descending
         $Array = $Array | sort-object @{Expression = { $_[1] }; Descending = $True }
+        Write-Verbose "Links To Download: `n$($Array -join '\n')"
         $LastFile = "temp123"
         for ($i = 0; $i -lt $LinksMatch.Count; $i++) {
             $CurrentFile = $Array[$i][1]
@@ -69,7 +75,7 @@ function Get-Appx {
             if (($CurrentFile.SubString(0, $FileIndex - 1)) -ne ($LastFile.SubString(0, $LastFileIndex - 1))) {
                 #If file not already downloaded, add to the download queue
                 if (-Not (Test-Path "$Path\$CurrentFile")) {
-                    "Downloading $Path\$CurrentFile"
+                    Write-Host "Downloading $Path\$CurrentFile"
                     $FilePath = "$Path\$CurrentFile"
                     $FileRequest = Invoke-WebRequest -Uri $CurrentUrl -UseBasicParsing #-Method Head
                     [System.IO.File]::WriteAllBytes($FilePath, $FileRequest.content)
@@ -78,7 +84,7 @@ function Get-Appx {
             #Delete file outdated and already exist
             elseif (Test-Path "$Path\$CurrentFile") {
                 Remove-Item "$Path\$CurrentFile"
-                "Removing $Path\$CurrentFile"
+                Write-Host "Removing $Path\$CurrentFile"
             }
             $LastFile = $CurrentFile
         }

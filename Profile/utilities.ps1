@@ -17,7 +17,7 @@ function mcd {
     Set-Location -Path $Path
 }
 
-# pwsh: to reload directly
+# pwsh: to reload directly without change admin rights
 function admin {
     Start-Process pwsh -verb runas 
     exit 0

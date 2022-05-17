@@ -1,7 +1,7 @@
 <# 
 .DESCRIPTION
 export all function of the file name, to export addtional function just add 
-              Export-ModuleMember -Function *** in the file
+              Export-ModuleMember *** in the file
 
 .NOTES
 to reload the module after changing:

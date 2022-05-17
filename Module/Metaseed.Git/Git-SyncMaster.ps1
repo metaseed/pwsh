@@ -3,7 +3,7 @@ function Git-SyncMaster {
   param (
     [Parameter()]
     [switch]
-    $merge
+    $rebase
   )
   $guard = Git-SaftyGuard 'Git-SyncMaster' -noKeep
 
@@ -19,7 +19,7 @@ function Git-SyncMaster {
     if ($branch -ne 'master') {
 
       $parent = Git-Parent
-      "parent branch of current branch is: $parent"
+      Write-Host "parent branch of current branch is: $parent" -ForegroundColor Green
       $owner = $branch.split('/')[0]
       if (!$owner -and !$parent.Contains($owner) -and "$parent" -ne 'master') {
         Confirm-Continue "parent branch of current branch is not master or from you($owner)"
@@ -30,7 +30,7 @@ function Git-SyncMaster {
       Write-Execute 'git pull --rebase'
 
       Write-Step 'sync branch with master'
-      if (!$merge) { # rebase
+      if ($rebase) { # rebase
         if ($parent -ne 'master') {
           # replay one by one, may resolve conflict several times
           # so merge parent to reduce conflicts.
@@ -65,7 +65,7 @@ function Git-SyncMaster {
         Write-Execute 'git pull' 
       }
 
-      Write-Execute "git-push"
+      git-push
     }
   }
   catch {
