@@ -1,14 +1,14 @@
 function Write-Step($message) {
   # Write-Progress -Activity  $message -status " " -Id 0
-
-  Write-Host "==> $message" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline
+  # $step = $script:step++ $script scope not working wellwrite
+  Write-Host "Step:=> $message" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline
   Write-Host ""
 }
 
 function Write-SubStep($message) {
   # Write-Progress -Activity  $message -status " " -Id 0
 
-  Write-Host "  --> $message" -ForegroundColor Green
+  Write-Host "  SubStep:-> $message" -ForegroundColor Green
 }
 
 function Write-Important {
@@ -18,6 +18,7 @@ function Write-Important {
   Write-Host -ForegroundColor DarkYellow  "⚠Attention: $msg"
   
 }
+
 
 Export-ModuleMember Write-SubStep, Write-Important
 
