@@ -12,7 +12,7 @@
 Import-Module posh-git -ErrorAction SilentlyContinue
 # only config when posh-git is installed
 if ($?) {
-  $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "MM-dd HH:mm:ss") '
+  $GitPromptSettings.DefaultPromptPrefix.Text = '┌─$(Get-Date -f "MM-dd HH:mm:ss") '
   $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $GitPromptSettings.DefaultPromptPath.ForegroundColor = 'Orange'
@@ -25,12 +25,16 @@ if ($?) {
     # $LASTEXITCODE
     if ($global:GitPromptValues.LastExitCode) {
       # a red exit code
-      "`e[31m(" + $global:GitPromptValues.LastExitCode + ") `e[0m"
+      "`e[31m(" + $global:GitPromptValues.LastExitCode + ")`e[0m"
     }
     else {
       # a red ! is DollarQuestion is false
-      "`e[31m! `e[0m"
+      "`e[31m!`e[0m"
     }
   }
-  $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)'
+  # ─
+  $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo)'
+  
+  $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = [ConsoleColor]::Magenta
+  $GitPromptSettings.DefaultPromptSuffix = ''
 }

@@ -19,6 +19,13 @@ function mcd {
 
 # pwsh: to reload directly without change admin rights
 function admin {
-    Start-Process pwsh -verb runas 
+    $wt = (Get-Command wt.exe -ErrorAction SilentlyContinue).Source
+    if ($null -eq $wt) {
+        Start-Process pwsh -verb runas 
+    } else {
+        # https://docs.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows
+        # wt -w 0 nt
+        Start-Process wt.exe -verb runas
+    }
     exit 0
 }
