@@ -63,17 +63,18 @@ function Get-Appx {
 
         $StopWatch = [diagnostics.stopwatch]::startnew()
 
+        #Get Urls to download
+        $urlParts = $Uri.Split("/")
+        $PackageName = $urlParts[$urlParts.Length - 2]
+        Write-Step "Downloading '$PackageName' from $Uri"
+
         ## make sure the path exists
+        $Path = "$Path/$PackageName"
         if (-Not (Test-Path $Path)) {
             Write-Step "Creating directory: $Path"
             New-Item -ItemType Directory -Force -Path $Path
         }
         $Path = (Resolve-Path $Path).Path
-
-        #Get Urls to download
-        $urlParts = $Uri.Split("/")
-        $PackageName = $urlParts[$urlParts.Length - 2]
-        Write-Step "Downloading '$PackageName' from $Uri"
 
         $WebResponse = Invoke-WebRequest -UseBasicParsing -Method 'POST' -Uri 'https://store.rg-adguard.net/api/GetFiles' -Body "type=url&url=$Uri&ring=Retail" -ContentType 'application/x-www-form-urlencoded'
         Write-Verbose "links:"
