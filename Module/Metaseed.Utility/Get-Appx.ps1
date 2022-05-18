@@ -13,10 +13,20 @@ the uri to the app in Microsoft Store.
 the path to store the downloaded appx packages.
 
 .EXAMPLE
+windbg:
 Get-Appx https://www.microsoft.com/en-us/p/windbg/9pgjgd53tn86 c:/temp/windbg-appx
 
 .EXAMPLE
-Get-Appx "https://apps.microsoft.com/store/detail/app-installer/9NBLGGH4NNS1?hl=en-us&gl=US" c:/temp/app-installer-appx
+winget:
+Get-Appx "https://apps.microsoft.com/store/detail/app-installer/9NBLGGH4NNS1?hl=en-us&gl=US" c:/temp -all
+sl c:\temp\app-installer
+import-module appx -usewindowspowershell
+Add-AppPackage .\Microsoft.UI.Xaml.2.7_7.2109.13004.0_x64__8wekyb3d8bbwe.appx
+Add-AppPackage .\Microsoft.DesktopAppInstaller_2022.127.2322.0_neutral_~_8wekyb3d8bbwe.msixbundle
+
+.Example
+windows terminal:
+get-appx "https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701" c:\temp -Verbose -all -Debug -force
 
 .NOTES
 to install the package bundles directly, we need to enable Sideloading
@@ -25,6 +35,7 @@ steps:
      If it’s set to “Windows Store apps”, you won’t be able to install .Appx or .AppxBundle software from outside the Windows Store.
   2. double click to install or in powershell run `Add-AppxPackage -Path "C:\Path\to\File.Appx"`
 
+  > note: if default download not work, try use the -all switcht
   > note: double click to install may not work, try Add-AppxPackage.
   > note: if `import-module appx` not work: https://github.com/PowerShell/PowerShell/issues/13138#issuecomment-677972433
   > try `import-module appx -usewindowspowershell`
@@ -88,7 +99,7 @@ function Get-Appx {
             $Matches_ = $WebResponse.Links 
         }
         else {
-            $Matches_ = $WebResponse.Links | where { $_ -match '\.appx|\.msixbundle' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ }
+            $Matches_ = $WebResponse.Links | where { $_ -match '\.appx|\.msixbundle|\.BlockMap' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ }
         }
         $LinksMatch = ($Matches_ | Select-String -Pattern '(?<=a href=").+(?=" r)').matches.value
         $Files = ($Matches_ | Select-String -Pattern '(?<=noreferrer">).+(?=</a>)').matches.value
@@ -103,7 +114,7 @@ function Get-Appx {
         for ($i = 0; $i -lt $LinksMatch.Count; $i++) {
             $CurrentFile = $Array[$i][1]
             $CurrentUrl = $Array[$i][0]
-            Write-Verbose "$CurrentFile :`n     $CurrentUrl"
+            Write-Verbose "$CurrentFile :`n     $CurrentUrl`n"
             if ($all) {
                 Download "$Path\$CurrentFile" $CurrentUrl $force
                 continue
@@ -119,7 +130,7 @@ function Get-Appx {
             #If current filename not equal to last filename
             $CurrentFileName = $CurrentFile.SubString(0, $FileIndex)
             $LastFileName = $LastFile.SubString(0, $LastFileIndex)
-            Write-Debug "CurrentFile: $CurrentFile, $CurrentFileName, $LastFile, $LastFileName"
+            Write-Debug "CurrentFile: $CurrentFile, $CurrentFileName, LastFile: $LastFile, $LastFileName"
             if ($CurrentFileName -ne $LastFileName) {
                 #If file not already downloaded, download it
                 Download "$Path\$CurrentFile" $CurrentUrl $force
