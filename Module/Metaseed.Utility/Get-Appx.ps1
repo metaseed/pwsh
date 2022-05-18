@@ -25,6 +25,10 @@ steps:
      If it’s set to “Windows Store apps”, you won’t be able to install .Appx or .AppxBundle software from outside the Windows Store.
   2. double click to install or in powershell run `Add-AppxPackage -Path "C:\Path\to\File.Appx"`
 
+  > note: double click to install may not work, try Add-AppxPackage.
+  > note: if `import-module appx` not work: https://github.com/PowerShell/PowerShell/issues/13138#issuecomment-677972433
+  > try `import-module appx -usewindowspowershell`
+
 .LINK
 https://serverfault.com/questions/1018220/how-do-i-install-an-app-from-windows-store-using-powershell
 
@@ -34,61 +38,106 @@ function Get-Appx {
     param (
         [string]$Uri,
         [string]$Path = ".",
-        [switch]$all
+        [switch]$all,
+        [switch]$force
     )
-    process {
-        $StopWatch = [diagnostics.stopwatch]::startnew()
 
-        if (-Not (Test-Path $Path)) {
-            Write-Host -ForegroundColor Green "Creating directory: $Path"
-            New-Item -ItemType Directory -Force -Path $Path
+    process {
+        function Download (
+            $FilePath,
+            $CurrentUrl,
+            $Force) {
+            if (Test-Path "$FilePath") {
+                if ($Force) {
+                    Remove-Item "$FilePath"
+                }
+                else {
+                    Write-Host "File already there, skip downing it: $FilePath"
+                    return
+                }
+            }
+            Write-Host "Downloading: $FilePath"
+            $FileRequest = Invoke-WebRequest -Uri "$CurrentUrl" -UseBasicParsing #-Method Head
+            [IO.File]::WriteAllBytes($FilePath, $FileRequest.content)
         }
 
+        $StopWatch = [diagnostics.stopwatch]::startnew()
+
+        ## make sure the path exists
+        if (-Not (Test-Path $Path)) {
+            Write-Step "Creating directory: $Path"
+            New-Item -ItemType Directory -Force -Path $Path
+        }
         $Path = (Resolve-Path $Path).Path
+
         #Get Urls to download
         $urlParts = $Uri.Split("/")
-        $PackageName = $urlParts[$urlParts.Length-2]
-        Write-Host -ForegroundColor Yellow "Downloading '$PackageName' from $Uri"
+        $PackageName = $urlParts[$urlParts.Length - 2]
+        Write-Step "Downloading '$PackageName' from $Uri"
 
         $WebResponse = Invoke-WebRequest -UseBasicParsing -Method 'POST' -Uri 'https://store.rg-adguard.net/api/GetFiles' -Body "type=url&url=$Uri&ring=Retail" -ContentType 'application/x-www-form-urlencoded'
-        Write-Verbose "links: `n$($webresponse.Links -join '\n')"
-        $LinksMatch = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | Select-String -Pattern '(?<=a href=").+(?=" r)').matches.value
-        $Files = ($WebResponse.Links | where { $_ -like '*.appx*' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ } | Select-String -Pattern '(?<=noreferrer">).+(?=</a>)').matches.value
+        Write-Verbose "links:"
+        # @{outerHTML=<a href="http://dl.delivery.mp.microsoft.com/filestreamingservice/files/f406a6eb-847d-4205-bc09-6bc41ca4d443" rel="noreferrer">Microsoft.UI.Xaml.2.7_7.2203.17001.0_arm64__8wekyb3d8bbwe.BlockMap</a>; tagName=A; href=http://dl.delivery.mp.microsoft.com/filestreamingservice/files/f406a6eb-847d-4205-bc09-6bc41ca4d443; rel=noreferrer}
+        # @{outerHTML=<a href="http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/89c97a5d-af5f-4f43-b6a9-a599d7449fbd?P1=1652886783&P2=404&P3=2&P4=nOCQsSkyGFSGwFx4LEvLV9r3%2b1nRiIl4KEkfd5Cix0ErNauQt%2fXdK4MfFum5FpfPBNmOS5JLPCw4y%2f6zhlzoGA%3d%3d" rel="noreferrer">Microsoft.UI.Xaml.2.7_7.2203.17001.0_arm64__8wekyb3d8bbwe.appx</a>; tagName=A; href=http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/89c97a5d-af5f-4f43-b6a9-a599d7449fbd?P1=1652886783&P2=404&P3=2&P4=nOCQsSkyGFSGwFx4LEvLV9r3%2b1nRiIl4KEkfd5Cix0ErNauQt%2fXdK4MfFum5FpfPBNmOS5JLPCw4y%2f6zhlzoGA%3d%3d; rel=noreferrer}
+        $WebResponse.Links | foreach {
+            Write-Verbose ($_ | select -ExpandProperty outerHTML | Select-String -Pattern '(?<=">).+(?=</a>)').Matches.Value
+        }
+        
+        if ($all) { 
+            $Matches_ = $WebResponse.Links 
+        }
+        else {
+            $Matches_ = $WebResponse.Links | where { $_ -match '\.appx|\.msixbundle' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ }
+        }
+        $LinksMatch = ($Matches_ | Select-String -Pattern '(?<=a href=").+(?=" r)').matches.value
+        $Files = ($Matches_ | Select-String -Pattern '(?<=noreferrer">).+(?=</a>)').matches.value
         #Create array of links and filenames
         for ($i = 0; $i -lt $LinksMatch.Count; $i++) {
             $Array += , @($LinksMatch[$i], $Files[$i])
         }
         #Sort by filename descending
         $Array = $Array | sort-object @{Expression = { $_[1] }; Descending = $True }
-        Write-Verbose "Links To Download: `n$($Array -join '\n')"
         $LastFile = "temp123"
+        Write-Verbose "`n`nLinks To Download:"
         for ($i = 0; $i -lt $LinksMatch.Count; $i++) {
             $CurrentFile = $Array[$i][1]
             $CurrentUrl = $Array[$i][0]
+            Write-Verbose "$CurrentFile :`n     $CurrentUrl"
+            if ($all) {
+                Download "$Path\$CurrentFile" $CurrentUrl $force
+                continue
+            }
+            ## only download the latest version of all files
             #Find first number index of current and last processed filename
-            if ($CurrentFile -match "(?<number>\d)") {}
-            $FileIndex = $CurrentFile.indexof($Matches.number)
-            if ($LastFile -match "(?<number>\d)") {}
-            $LastFileIndex = $LastFile.indexof($Matches.number)
-    
-            #If current filename product not equal to last filename product
-            if (($CurrentFile.SubString(0, $FileIndex - 1)) -ne ($LastFile.SubString(0, $LastFileIndex - 1))) {
-                #If file not already downloaded, add to the download queue
-                if (-Not (Test-Path "$Path\$CurrentFile")) {
-                    Write-Host "Downloading $Path\$CurrentFile"
-                    $FilePath = "$Path\$CurrentFile"
-                    $FileRequest = Invoke-WebRequest -Uri $CurrentUrl -UseBasicParsing #-Method Head
-                    [System.IO.File]::WriteAllBytes($FilePath, $FileRequest.content)
-                }
+            if ($CurrentFile -match "(?<number>_\d+)") {
+                $FileIndex = $CurrentFile.indexof($Matches.number)
+            }
+            if ($LastFile -match "(?<number>_\d+)") {
+                $LastFileIndex = $LastFile.indexof($Matches.number)
+            }
+            #If current filename not equal to last filename
+            $CurrentFileName = $CurrentFile.SubString(0, $FileIndex)
+            $LastFileName = $LastFile.SubString(0, $LastFileIndex)
+            Write-Debug "CurrentFile: $CurrentFile, $CurrentFileName, $LastFile, $LastFileName"
+            if ($CurrentFileName -ne $LastFileName) {
+                #If file not already downloaded, download it
+                Download "$Path\$CurrentFile" $CurrentUrl $force
             }
             #Delete file outdated and already exist
             elseif (Test-Path "$Path\$CurrentFile") {
+                Write-Host "Removing: $Path\$CurrentFile"
                 Remove-Item "$Path\$CurrentFile"
-                Write-Host "Removing $Path\$CurrentFile"
             }
-            $LastFile = $CurrentFile
+            else {
+                Write-Host "File already exist: $Path\$CurrentFile"
+            }
+
+            if ($CurrentFile -notlike '*.BlockMap') {
+                $LastFile = $CurrentFile
+            }
         }
-        "Time to process: " + $StopWatch.ElapsedMilliseconds
-        [Console]::Beep(1000,1000)
+        Write-Host "Time to process: $($StopWatch.ElapsedMilliseconds)ms"
+        [Console]::Beep(1000, 1000)
+        saps -Path $Path
     }
 }
