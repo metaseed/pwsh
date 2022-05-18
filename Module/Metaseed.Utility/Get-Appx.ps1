@@ -21,6 +21,7 @@ winget:
 Get-Appx "https://apps.microsoft.com/store/detail/app-installer/9NBLGGH4NNS1?hl=en-us&gl=US" c:/temp -all
 sl c:\temp\app-installer
 import-module appx -usewindowspowershell
+# need to manully install the xaml appx package
 Add-AppPackage .\Microsoft.UI.Xaml.2.7_7.2109.13004.0_x64__8wekyb3d8bbwe.appx
 Add-AppPackage .\Microsoft.DesktopAppInstaller_2022.127.2322.0_neutral_~_8wekyb3d8bbwe.msixbundle
 
@@ -35,7 +36,7 @@ steps:
      If it’s set to “Windows Store apps”, you won’t be able to install .Appx or .AppxBundle software from outside the Windows Store.
   2. double click to install or in powershell run `Add-AppxPackage -Path "C:\Path\to\File.Appx"`
 
-  > note: if default download not work, try use the -all switcht
+  > note: if default download not work, try use the -all switch
   > note: double click to install may not work, try Add-AppxPackage.
   > note: if `import-module appx` not work: https://github.com/PowerShell/PowerShell/issues/13138#issuecomment-677972433
   > try `import-module appx -usewindowspowershell`
@@ -67,12 +68,13 @@ function Get-Appx {
                     return
                 }
             }
-            Write-Host "Downloading: $FilePath"
+            Write-Step "Downloading: $FilePath"
             $FileRequest = Invoke-WebRequest -Uri "$CurrentUrl" -UseBasicParsing #-Method Head
             [IO.File]::WriteAllBytes($FilePath, $FileRequest.content)
         }
 
         $StopWatch = [diagnostics.stopwatch]::startnew()
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
         #Get Urls to download
         $urlParts = $Uri.Split("/")
@@ -83,7 +85,7 @@ function Get-Appx {
         $Path = "$Path/$PackageName"
         if (-Not (Test-Path $Path)) {
             Write-Step "Creating directory: $Path"
-            New-Item -ItemType Directory -Force -Path $Path
+            New-Item -ItemType Directory -Force -Path $Path | Out-Null
         }
         $Path = (Resolve-Path $Path).Path
 
