@@ -30,16 +30,18 @@ function Git-SyncMaster {
       Write-Execute 'git pull --rebase'
 
       Write-Step 'sync branch with master'
-      if ($rebase) { # rebase
+      if ($rebase) {
+        # rebase
         if ($parent -ne 'master') {
           # replay one by one, may resolve conflict several times
           # so merge parent to reduce conflicts.
           Write-Execute "git merge $parent -s ort -X ours"
         }
         Write-Execute "git checkout $branch"
-        if($parent -eq 'master') {
+        if ($parent -eq 'master') {
           Write-Execute "git rebase $parent -X theirs"
-        } else {
+        }
+        else {
           Write-Execute "git rebase --onto master $parent -X theirs" #--fork-point"
         }
       }
@@ -47,16 +49,22 @@ function Git-SyncMaster {
         Write-Execute "git checkout $branch"
         ## merge parent branch
         if ($parent -ne 'master') {
-          # parent: change a file, branch child, revert change, merge into master
-          # then child: merge master
-          # result: change of the file
-          #
-          # fix: merge parent before merge master
-          Write-Execute "git merge $parent"
+          $decision = $Host.UI.PromptForChoice('Question', "do you want to merge $parent into $branch?", @('&Yes', '&No'), 1)
+          if ($decision -eq 0) {
+            # parent: change do file commit, branch child, revert change, merge into master
+            # then child: merge master
+            # result: change of the file
+            #
+            # fix: merge parent before merge master
+            Write-Execute "git merge $parent"
+
+          } 
         }
         ##
-        # strategy or with option prefer ours
-        Write-Execute "git merge master -s ort -X ours"
+        # strategy or with option prefer
+        # if ours: we bump version and then conflict, then merge master with 'ours', the version in master is not used. 
+        # try theirs if have problem, try not using any stragety, and solve conflict manually
+        Write-Execute "git merge master -s ort -X theirs"
       }
 
       # strange although we have pulled at start, if not pull again: Error:

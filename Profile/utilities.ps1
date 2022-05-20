@@ -21,11 +21,11 @@ function mcd {
 function admin {
     $wt = (Get-Command wt.exe -ErrorAction SilentlyContinue).Source
     if ($null -eq $wt) {
-        Start-Process pwsh -verb runas 
+        Start-Process pwsh -verb runas -ArgumentList @("-WorkingDirectory", "$((gl).path)")
     } else {
         # https://docs.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows
         # wt -w 0 nt
-        Start-Process wt.exe -verb runas
+        Start-Process wt.exe -verb runas -ArgumentList @( "-w", '0', "-d", "$((gl).path)", "-p", "PowerShell")
     }
     exit 0
 }

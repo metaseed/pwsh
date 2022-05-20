@@ -1,4 +1,4 @@
-
+#  https://github.com/dahlbyk/posh-git
 # to install posh-git
 # PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 # to update
@@ -32,7 +32,7 @@ if ($?) {
       "`e[31m!`e[0m"
     }
   }
-  # ─
+  # ─→
   $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo)'
   
   $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = [ConsoleColor]::Magenta

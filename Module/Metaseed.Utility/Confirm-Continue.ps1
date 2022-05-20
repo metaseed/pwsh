@@ -1,9 +1,6 @@
 <# for choices:
-$title    = 'something'
-$question = 'Are you sure you want to proceed?'
-$choices  = '&Yes', '&No'
 
-$decision = $Host.UI.PromptForChoice($title, $question, $choices, 1)
+$decision = $Host.UI.PromptForChoice('title', 'Are you sure you want to proceed?', '&Yes', '&No', 1)
 if ($decision -eq 0) {
     Write-Host 'confirmed'
 } else {
@@ -15,7 +12,8 @@ function Confirm-Continue {
   param(
     [string] $message
   )
-  Write-Host "`n$message `npress'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
+  Write-Host "`n$message" -ForegroundColor Yellow
+  Write-Host "press'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
   $key = [Console]::ReadKey().Key
   if ($key -ne [ConsoleKey]::Enter) {
     exit
