@@ -20,3 +20,29 @@ function Get-ParentProcess {
   $parentProcess = Get-Process -Id $instance.ParentProcessId
   $parentProcess
 }
+
+function Get-ParentProcessByName {
+  param (
+    [Parameter(Mandatory = $true)]
+    [string]$processName
+  )
+  
+  $process = [System.Diagnostics.Process]::GetCurrentProcess()
+
+  while ($null -ne $process.Parent) {
+    $process.Parent.refresh()
+    if ($process.Parent.HasExited) {
+      break;
+    }
+
+    if ($process.Parent.ProcessName -eq $processName) {
+
+      return $process.Parent
+    }
+
+    $process = $process.Parent
+  }
+  return $null
+}
+
+Export-ModuleMember -Function Get-ParentProcessByName

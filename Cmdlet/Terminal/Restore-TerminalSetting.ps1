@@ -3,8 +3,8 @@
 param (
   [Parameter()]
   [ValidateSet('Stable', 'Preview', 'Unpackaged')]
-  [string[]]
-  $version
+  [string]
+  $version =""
 )
 
 # https://docs.microsoft.com/en-us/windows/terminal/install#settings-json-file
@@ -15,6 +15,31 @@ $Settings = @{
 }
 
 $backup = "M:/Script/Terminal/settings.json"
+if(! (test-path $backup)) {
+  Write-Warning 'Backup file not found.'
+  return;
+}
+
+if ($version -eq '') {
+  $installs = $Settings.GetEnumerator() | ? { test-path $_.value }
+  if ($null -eq $installs) {
+    Write-Host "No terminal settings found."
+    return
+  }
+  elseif ($installs.Count -gt 1) {
+    Write-Host "Multiple installs found. Please specify one of the following:"
+    $installs | % {
+      Write-Host "$($_.key): $($_.value)"
+    }
+    $decision = $Host.UI.PromptForChoice('Selection', 'select version to backup', ($installs.name | % { "&$_" }), 0)
+    $version = $installs[$decision].name
+  }
+  else {
+    # only one install found
+    $version = $installs[0].name
+  }
+}
+
 $location = $Settings[$version]
 if (test-path $backup) {
   Confirm-Continue "Overwrite existing setting.json for the WindowsTerminal $version version?"

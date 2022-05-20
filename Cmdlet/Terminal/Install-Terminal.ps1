@@ -6,30 +6,6 @@ param (
     $platform = 'Win10'
 )
 
-function Get-ParentProcessByName {
-  param (
-    [Parameter(Mandatory = $true)]
-    [string]$processName
-  )
-  
-  $process = [System.Diagnostics.Process]::GetCurrentProcess()
-
-  while ($null -ne $process.Parent) {
-    $process.Parent.refresh()
-    if ($process.Parent.HasExited) {
-      break;
-    }
-
-    if ($process.Parent.ProcessName -eq $processName) {
-
-      return $process.Parent
-    }
-
-    $process = $process.Parent
-  }
-  return $null
-}
-
 Write-Step 'query latest version...'
 (iwr https://github.com/microsoft/terminal/releases/latest) -match "(?<=<a href=`").*Microsoft.WindowsTerminal_$platform_.*\.msixbundle" |out-null
 $url = "http://github.com$($matches[0])"

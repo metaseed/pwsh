@@ -1,6 +1,6 @@
 <# for choices:
 
-$decision = $Host.UI.PromptForChoice('title', 'Are you sure you want to proceed?', '&Yes', '&No', 1)
+$decision = $Host.UI.PromptForChoice('title', 'Are you sure you want to proceed?', @('&Yes', '&No'), 1)
 if ($decision -eq 0) {
     Write-Host 'confirmed'
 } else {
