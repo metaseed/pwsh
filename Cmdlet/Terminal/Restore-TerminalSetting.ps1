@@ -14,7 +14,7 @@ $Settings = @{
   Unpackaged = "$env:LocalAppData\Microsoft\Windows Terminal\settings.json" # Scoop, Chocolately, etc)
 }
 
-$backup = "M:/Script/Terminal/settings.json"
+$backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
 if(! (test-path $backup)) {
   Write-Warning 'Backup file not found.'
   return;

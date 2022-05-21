@@ -31,7 +31,7 @@ if ($version -eq '') {
     $version = $installs[0].name
   }
 }
-$backup = "M:/Script/Terminal/settings.json"
+$backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
 $location = $Settings[$version]
 if (test-path $location) {
   Write-Step "Found $($location), backing up to $backup"
