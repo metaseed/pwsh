@@ -5,6 +5,7 @@ param (
     [ValidateSet('Win10', 'Win11')]
     $platform = 'Win10'
 )
+Assert-Admin
 
 Write-Step 'query latest version...'
 (iwr https://github.com/microsoft/terminal/releases/latest) -match "(?<=<a href=`").*Microsoft.WindowsTerminal_$platform_.*\.msixbundle" |out-null
@@ -39,4 +40,5 @@ iwr $url -OutFile "$env:temp/$file"
 Write-Step 'install windows terminal...'
 write-host "Add-AppxPackage '$env:temp/$file'"
 Add-AppxPackage "$env:temp/$file"
+Setup-Terminal
 Confirm-Continue "if err:`n please kill the 'Terninal' task in task manager and try again with: `n Add-AppxPackage '$env:temp/$file'"
