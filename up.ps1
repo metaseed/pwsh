@@ -1,4 +1,3 @@
-using module Metaseed.Utility
 
 [CmdletBinding()]
 param (
@@ -7,6 +6,7 @@ param (
     [ValidateRange(0, [int]::MaxValue)]
     $Days = 0
 )
+Import-Module Metaseed.Utility -DisableNameChecking
 # .local file only exist local and igored in .gitignore file; used to prevent upgrade
 if (Test-Path "$PSScriptRoot\.local") { return }
 

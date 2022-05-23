@@ -106,3 +106,5 @@ gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 ## beep
 1. DingDong: just the Ctrl+G: inclose the Ctrl+G in a string and output it. (type ctrl+g in console and copy it to file: )
 1. Bee: [Console]::Beep(), [Console]::Beep(1000,1000)
+
+* show unicode: [char]0x2261
