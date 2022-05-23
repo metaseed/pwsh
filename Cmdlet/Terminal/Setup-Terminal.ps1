@@ -6,3 +6,5 @@ iwr $CaskaydiaCoveNF -OutFile $path
 Write-Step 'Installing CaskaydiaCoveNF...'
 
 Install-Font -Path $path
+
+Pin-TaskBar '$env:MS_PWSH\Cmdlet\Terminal\Windows Terminal.lnk'

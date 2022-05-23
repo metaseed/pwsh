@@ -1,10 +1,6 @@
 # https://docs.microsoft.com/en-us/windows/configuration/configure-windows-10-taskbar
 # https://superuser.com/questions/1617185/how-to-pin-lnk-files-to-taskbar-in-powershell
 <#
-# Accepts a string like:
-  # cmd::Command Prompt|pwsh::PowerShell 7|python::Python
-
-.\pintotaskbar.ps1 "cmd::Command Prompt|pwsh::PowerShell 7|python::Python"
 #>
 function Pin-TaskBar {
   [CmdletBinding()]

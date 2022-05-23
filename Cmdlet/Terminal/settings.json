@@ -64,7 +64,7 @@
         {
             "backgroundImage": "%MS_PWSH%\\res\\img\\v.gif",
             "backgroundImageAlignment": "bottomRight",
-            "backgroundImageOpacity": 0.20000000000000001,
+            "backgroundImageOpacity": 0.2,
             "backgroundImageStretchMode": "none",
             "font": 
             {
