@@ -4,7 +4,7 @@ param (
   [ValidateSet('Stable', 'Preview', 'Unpackaged')]
   [string]
   $version = ''
-  )
+)
   
 . $PSScriptRoot/private/GetSettings.ps1
 if ($version -eq '') {
@@ -31,9 +31,17 @@ $location = $installs[$version]
 if (test-path $location) {
   Write-Step "Found $($location), backing up to $backup"
   if (-not (test-path $backup)) {
-    New-Item -ItemType File -Path $backup -Force |out-null
+    New-Item -ItemType File -Path $backup -Force | out-null
   }
-  Copy-Item $location $backup -Force
+  if ((gi $location).LastWriteTime -lt (gi $backup).LastWriteTime) {
+    $decision = $Host.UI.PromptForChoice('Skip Backup?', "Backup setting file is newer than the installed setting file. Skipping backup?", @('&Yes', '&No'), 0)
+    if ($decision -eq 0) {
+      Write-Host "Skipping backup"
+      return
+    }
+  }
+  Copy-Item -Path $location -Destination $backup -Force
+
 }
 else {
   Write-Error "Could not find $($location.Value), nothing to backup!"
