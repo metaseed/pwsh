@@ -1,31 +1,45 @@
 [CmdletBinding()]
 param (
-    [Parameter()]
-    [string]
-    [ValidateSet('Win10', 'Win11')]
-    $platform = 'Win10',
-    [Parameter()]
-    [string]
-    [ValidateSet('preview', 'release')]
-    $version = 'preview'
+  [Parameter()]
+  [string]
+  [ValidateSet('Win10', 'Win11')]
+  $platform = 'Win10',
+  [Parameter()]
+  [string]
+  [ValidateSet('preview', 'stable')]
+  $version = 'preview'
     
 )
 Assert-Admin
 
+$assets = Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern "_$($platform)_.*\.msixbundle$" -ErrorAction Stop
 
-Write-Step "query latest ($version)version..."
-(iwr https://github.com/microsoft/terminal/releases/latest) -match "(?<=<a href=`").*Microsoft.WindowsTerminal_$platform_.*\.msixbundle" |out-null
-$url = "http://github.com$($matches[0])"
-$file = ($url -split '/')[-1]
+if ($assets.Count -ne 1 ) {
+  foreach ($asset in $assets) {
+    Write-Host $asset.name
+  }
+  Write-Error "Expected one asset, but found $assets.Count"
+  return
+}
+
+$file = $assets[0].name
 write-host $file
 "$file" -match "_(\d+\.\d+\.\d+\.\d+)_"
 $ver_online = [Version]::new($matches[1]);
 Write-substep 'checking installed version...'
 Import-Module Appx -UseWindowsPowerShell *>$null
 $t = Get-AppxPackage *WindowsTerminal*
-if($t.Version -ge $ver_online) {
-  Write-Warning 'already latest version, no need to update'
-  return 1
+if ($t) {
+  if ($t.Version -ge $ver_online) {
+    Write-Warning 'already latest version, no need to update'
+    return 1
+  }
+  else {
+    write-host "new version available:  $ver_online, local: $t.Version"
+  }
+}
+else {
+  write-host "version available:  $ver_online"
 }
 
 Write-Step 'check running WindowsTerminal...'
@@ -36,15 +50,15 @@ if ($wts) {
   $Wt = Get-ParentProcessByName -processName 'WindowsTerminal'
   if ($Wt) {
     $path = $MyInvocation.MyCommand.Path
-    Start-Process pwsh -verb runas -ArgumentList @( "-NoExit", "-File", "$path","$processName" )
+    Start-Process pwsh -verb runas -ArgumentList @( "-NoExit", "-File", "$path", "$processName" )
   }
   stop-process -name "WindowsTerminal" -force
 }
 
 Write-Step 'download windows terminal...'
-iwr $url -OutFile "$env:temp/$file"
+Download-GithubRelease $assets
 Write-Step 'install windows terminal...'
 write-host "Add-AppxPackage '$env:temp/$file'"
 Add-AppxPackage "$env:temp/$file"
-Setup-Terminal
 Confirm-Continue "if err:`n please kill the 'Terninal' task in task manager and try again with: `n Add-AppxPackage '$env:temp/$file'"
+Setup-Terminal

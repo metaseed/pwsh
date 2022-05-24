@@ -15,3 +15,4 @@
 * `ls env:WT*`: WT profile and session id
 * https://github.com/gpduck/MSTerminalSettings/blob/preview/src/ExportedFunctions/Invoke-MSTerminalGif.ps1.
 * `win+``: quake mode toggle
+* https://docs.microsoft.com/en-us/windows/terminal/customize-settings/actions

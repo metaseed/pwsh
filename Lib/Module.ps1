@@ -8,7 +8,7 @@ to reload the module after changing:
 ipmo metaseed.git -fo
 import-module metaseed.git -force.
 
-folder start with '_' is not checked
+folder start with '_' is omitted
 .EXAMPLE
 . Export-Functions $PSScriptRoot
   note:   have to dot include the function, because
