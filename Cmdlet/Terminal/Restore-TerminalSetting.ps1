@@ -36,7 +36,7 @@ if ($version -eq '') {
 
 $location = $installs[$version]
 if (test-path $backup) {
-  Confirm-Continue "Overwrite existing setting.json for the WindowsTerminal $version version?"
+  # Confirm-Continue "Overwrite existing setting.json for the WindowsTerminal $version version?"
   if ((gi $location).LastWriteTime -gt (gi $backup).LastWriteTime) {
     $decision = $Host.UI.PromptForChoice('Skip Backup?', "installed setting file is newer than the backup setting file. Skipping backup?", @('&Yes', '&No'), 0)
     if ($decision -eq 0) {

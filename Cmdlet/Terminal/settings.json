@@ -13,6 +13,30 @@
       "keys": "alt+shift+f"
     },
     {
+      "command": "togglePaneZoom",
+      "keys": "alt+shift+z"
+    },
+    {
+      "command": "scrollUp",
+      "keys": "ctrl+up"
+    },
+    {
+      "command": "scrollDown",
+      "keys": "ctrl+down"
+    },
+    {
+      "command": "closeTab",
+      "keys": "ctrl+shift+w"
+    },
+    {
+        "command": "closePane",
+        "keys": "alt+shift+w"
+    },
+    {
+        "command": "restoreLastClosed",
+        "keys": "ctrl+shift+t"
+    },
+    {
       "command": {
         "action": "splitPane",
         "index": 0,
