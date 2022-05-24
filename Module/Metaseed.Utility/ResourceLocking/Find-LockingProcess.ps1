@@ -201,7 +201,7 @@ function DownloadHandleApp($Path) {
     }
 }
 
-$Script:HandleDir = "$PSScriptRoot\handle"
+$Script:HandleDir = "$PSScriptRoot\_handle"
 $Script:HandleApp = "$HandleDir\handle.exe"
 if (!(Test-Path -Path $Script:HandleApp)) {
     Add-Path $Script:HandleDir
