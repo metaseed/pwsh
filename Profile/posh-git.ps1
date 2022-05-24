@@ -1,7 +1,7 @@
 #  https://github.com/dahlbyk/posh-git
 # compare with: https://ohmyposh.dev/docs/segments/git
 # all config variables are in: 
-# dahlbyk/posh-git/src/PoshGitTypes.ps1
+# https://github.com/dahlbyk/posh-git/tree/master/src/PoshGitTypes.ps1
 # to install posh-git
 # PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 # to update
@@ -44,6 +44,7 @@ if ($?) {
 
   if($env:WT_SESSION) {
     # https://www.nerdfonts.com/cheat-sheet
-    $GitPromptSettings.BeforeStatus.Text = '['
+    $GitPromptSettings.BeforeStatus.Text = '[ '
+    $GitPromptSettings.BeforePath.Text = ' '
   }
 }

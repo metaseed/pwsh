@@ -94,9 +94,11 @@ gcm|select -first 10
 cls (remove all content)
 ctrl+L (just scroll all content to top)
 
-* jump to pair () []{}
-ctrl+]
-h get-history
+remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
+Ctrl+]: goto Brace (){}[]
+ctrl-l: clear screen
+alt-.: last argument of previous command
+ctrl-space: MenuComplete
 
 ## peek function implementation
 gcm mkdir |% scriptblock

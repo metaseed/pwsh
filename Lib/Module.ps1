@@ -7,6 +7,8 @@ export all function of the file name, to export addtional function just add
 to reload the module after changing:
 ipmo metaseed.git -fo
 import-module metaseed.git -force.
+
+folder start with '_' is not checked
 .EXAMPLE
 . Export-Functions $PSScriptRoot
   note:   have to dot include the function, because
@@ -19,12 +21,14 @@ function Export-Functions {
         $path
     )
     # Get public and private function definition files.
-    $Public = @(Get-ChildItem $path\*.ps1 -ErrorAction SilentlyContinue) # use @() to make sure return is an array, even 1 or no item
-    $Private = @(Get-ChildItem $path\Private\*.ps1 -ErrorAction SilentlyContinue )
+    $Public = @(Get-ChildItem $path\*.ps1 -ErrorAction SilentlyContinue -Recurse) # use @() to make sure return is an array, even 1 or no item
+    $Private = @(Get-ChildItem $path\Private\*.ps1 -ErrorAction SilentlyContinue -Recurse )
     #Dot source the files
     Foreach ($import in @($Public + $Private)) {
         Try {
-            . $import.fullname
+            if ($import.fullname -notmatch '\\_.*\\') {
+                . $import.fullname
+            }
             # Write-Host $import.fullname
         }
         Catch {

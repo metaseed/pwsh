@@ -19,14 +19,14 @@ function mcd {
 
 # pwsh: to reload directly without change admin rights
 function admin {
-    $wt = (Get-Command wt.exe -ErrorAction SilentlyContinue).Source
-    if (($null -eq $env:WT_SESSION) -and ($null -eq $wt)) {
+    # $wt = (Get-Command wt.exe -ErrorAction SilentlyContinue).Source -and ($null -ne $wt)
+    if (($null -ne $env:WT_SESSION) ) {
         # https://docs.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows
         # wt -w 0 nt
-        if (!Test-Admin) {
+        if (!(Test-Admin)) {
             Start-Process wt.exe -verb runas -ArgumentList @( "-w", '0', "-d", "$((gl).path)", "-p", "PowerShell")
         } else {
-            write-host 'already admin'
+            write-host 'already admin' -foregroundcolor Green
         }
     }
     else {
