@@ -18,7 +18,7 @@ function Git-SyncMaster {
     $branch = git branch --show-current
     if ($branch -ne 'master') {
 
-      $parent = Git-Parent
+      $parent = 'master' # Git-Parent
       Write-Host "parent branch of current branch is: $parent" -ForegroundColor Green
       $owner = $branch.split('/')[0]
       if (!$owner -and !$parent.Contains($owner) -and "$parent" -ne 'master') {

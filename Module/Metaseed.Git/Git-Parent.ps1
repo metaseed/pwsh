@@ -55,7 +55,7 @@ function Git-Parent {
             if (-not $p.HasExited) {
               $p.Kill()
             }
-            exit -1
+            throw -1
           }
         }
         else {
@@ -79,7 +79,7 @@ function Git-Parent {
         if (-not $p.HasExited) {
           $p.Kill()
         }
-        exit -1
+        throw -1
       }
       $allBranchesListed = $true
     }
@@ -110,7 +110,7 @@ function Git-Parent {
 
   if ($foundBranch -eq "") {
     Write-Host "Couldn't find parent branch."
-    exit -1
+    throw -1
   }
   return $foundBranch
 }
