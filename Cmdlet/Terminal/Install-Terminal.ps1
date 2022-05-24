@@ -3,11 +3,17 @@ param (
     [Parameter()]
     [string]
     [ValidateSet('Win10', 'Win11')]
-    $platform = 'Win10'
+    $platform = 'Win10',
+    [Parameter()]
+    [string]
+    [ValidateSet('preview', 'release')]
+    $version = 'preview'
+    
 )
 Assert-Admin
 
-Write-Step 'query latest version...'
+
+Write-Step "query latest ($version)version..."
 (iwr https://github.com/microsoft/terminal/releases/latest) -match "(?<=<a href=`").*Microsoft.WindowsTerminal_$platform_.*\.msixbundle" |out-null
 $url = "http://github.com$($matches[0])"
 $file = ($url -split '/')[-1]
