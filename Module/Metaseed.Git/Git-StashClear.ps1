@@ -2,7 +2,7 @@
 .Synopsis
 keep max cout stash and remove all the old ones
 #>
-function Git-DropStash {
+function Git-StashClear {
   [CmdletBinding()]
   param(
     [int]
@@ -20,7 +20,7 @@ function Git-DropStash {
   for ($i = 0; $i -lt ($count - $maxToKeep); $i++) {
     git stash drop $maxToKeep
   }
-  "current in stash:"
+  write-host "current in stash:"
   git stash list
 }
 
