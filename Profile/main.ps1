@@ -1,3 +1,4 @@
+. $PSScriptRoot\var.ps1
 . $PSScriptRoot\alias.ps1
 . $PSScriptRoot\env.ps1
 . $PSScriptRoot\utilities.ps1

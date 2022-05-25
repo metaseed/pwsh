@@ -2,10 +2,10 @@
 .SYNOPSIS
   Utility to discover/kill processes that have open handles to a file or folder.
 
-  Find-LockingProcess()
+  Find-ResourceLockingProcess()
     Retrieves process information that has a file handle open to the specified path.
-    Example: Find-LockingProcess -Path $Env:LOCALAPPDATA
-    Example: Find-LockingProcess -Path $Env:LOCALAPPDATA | Get-Process
+    Example: Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA
+    Example: Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA | Get-Process
 
   Stop-LockingProcess()
     Kills all processes that have a file handle open to the specified path.
@@ -107,16 +107,17 @@ function Kill_Process {
 <#
 .SYNOPSIS
 Retrieves process information that has a file handle open to the specified path.
+.LINK 
 We extract the output from the handle.exe utility from SysInternals:
-Link: https://docs.microsoft.com/en-us/sysinternals/downloads/handle
+https://docs.microsoft.com/en-us/sysinternals/downloads/handle
 
 .Example 
-Find-LockingProcess -Path $Env:LOCALAPPDATA
+Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA
 
 .Example
- Find-LockingProcess -Path $Env:LOCALAPPDATA | Get-Process
+ Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA | Get-Process
 #>
-function Find-LockingProcess {
+function Find-ResourceLockingProcess {
     [OutputType([array])]
     [CmdletBinding()]
     param (
@@ -174,7 +175,7 @@ function Stop-LockingProcess {
         [object] $Path
     )
 
-    $ProcS = Find-LockingProcess -Path $Path | Sort-Object -Property Pid -Unique
+    $ProcS = Find-ResourceLockingProcess -Path $Path | Sort-Object -Property Pid -Unique
     "find process that use the $Path, `n stop them..."
     $ProcS
     Kill_Process -ProcessId $ProcS.Pid

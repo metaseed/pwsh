@@ -4,7 +4,7 @@ function Git-SaftyGuard {
     [string]
     $message,
     # not keep index&changes, remember to pop/apply:
-    # Write-Execute 'git stash pop/apply --index' 'restore index&tree&untracked'
+    # git stash pop/apply --index
     # --index: not merge index into worktree, the same as the state before stash
     [switch]
     [Alias('nk')]
@@ -31,7 +31,7 @@ function Git-SaftyGuard {
   $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash: index&tree&untracked'
   $out='No local changes to save'
   if ($r -eq $out) {
-    $out
+    Write-Host $out -ForegroundColor Green
     return [GitSaftyGuard]::NoNeedStash 
   }
 
