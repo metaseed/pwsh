@@ -6,15 +6,17 @@
 * `win+alt+z` show/hide terminal
 * open windows explorer, and type `wt -d .` in address bar to launch terminal at current directory
 * `alt+shift++`: split pane ver
+* `F11`: full screen toggle
 * `alt+shift+-`: split pane her
 * `ctrl+shift+w`: close tab
 * `alt+shift+w`: close pane
-* `ctrl+sift+t`: restore last close tab or pane
+* `ctrl+shift+t`: restore last close tab or pane
 * `alt+shift+left/right/up/down`: resize pane
 * `alt+left/right/up/down`: move focus to pane
 * `ctrl+shift+1/2/3`: new tab profile index 1/2/3
 * `alt+shift+1/2/3`: new pane profile index 1/2/3
-* `ctrl+alt+1/2/3`: switch tab
+* `ctrl+alt+1/2/3`: switch tab 1/2/3
+* `ctrl+tab`: list tabs
 * `ctrl+shift+n`: new window
 * `alt+shift+z`: toggle pane zoom
 * `ctrl+up/down`: scroll up/down

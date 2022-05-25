@@ -27,6 +27,7 @@ function admin {
             Start-Process wt.exe -verb runas -ArgumentList @( "-w", '0', "-d", "$((gl).path)", "-p", "PowerShell")
         } else {
             write-host 'already admin' -foregroundcolor Green
+            pwsh
         }
     }
     else {

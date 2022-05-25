@@ -8,4 +8,4 @@ Write-Step 'Installing CaskaydiaCoveNF...'
 
 Install-Font -Path $path
 Restore-TerminalSetting
-Pin-TaskBar '$env:MS_PWSH\Cmdlet\Terminal\Windows Terminal.lnk' | Out-Null
+Pin-TaskBar "$env:MS_PWSH\Cmdlet\Terminal\WindowsTerminal.lnk" | Out-Null
