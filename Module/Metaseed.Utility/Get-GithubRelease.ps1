@@ -1,3 +1,4 @@
+
 function Get-GithubRelease {
   [CmdletBinding()]
   param (
@@ -47,7 +48,7 @@ function Download-GithubRelease {
   param (
     # assets
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [objeict]
+    [object]
     $assets,
     # output directory
     [string]
@@ -64,8 +65,9 @@ function Download-GithubRelease {
     $asset = $assets[0]
     $url = $asset.browser_download_url
     Write-Debug $url
-    $output = "$outputDir/$($asset.name)"
-    Write-Step 'downloading...'
+    $output = "$outputDir\$($asset.name)"
+    Write-Step "downloading $($asset.name)... "
+    Write-Host "from $url"
     Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing -OutFile $output
     Write-Debug "saved to $output"
     return $output

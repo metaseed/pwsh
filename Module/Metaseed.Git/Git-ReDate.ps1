@@ -43,7 +43,7 @@ function Git-ReDate {
 
       ## modify fit-rebase-todo file
       $line = +0;
-  (gc $rebaseFile) | # with the parenthesis, return string[]; without, return string to pipe line
+      (gc $rebaseFile) | # with the parenthesis, return string[]; without, return string to pipe line
       # pick 4ca564e Do something
       # exec git commit --amend --no-edit --date "1 Oct 2019 12:00:00 PDT"
       % {
