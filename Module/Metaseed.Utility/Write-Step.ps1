@@ -1,16 +1,16 @@
 function Write-Step($message) {
   # Write-Progress -Activity  $message -status " " -Id 0
   # $step = $script:step++ $script scope not working wellwrite
-  $icon = $env:WT_SESSION ? "step﯀ ": 'Step:=>'
+  $icon = 'Step:==>'
   Write-Host "$icon $message" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline
   Write-Host ""
 }
 
 function Write-SubStep($message) {
   # Write-Progress -Activity  $message -status " " -Id 0
-  $icon = $env:WT_SESSION ? "SubStep ": 'SubStep:->'
+  $icon = 'SubStep:-->'
 
-  Write-Host "   $icon$message" -ForegroundColor Green
+  Write-Host "   $icon $message" -ForegroundColor Green
 }
 
 function Write-Important {
