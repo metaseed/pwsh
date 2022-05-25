@@ -110,3 +110,7 @@ gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 1. Bee: [Console]::Beep(), [Console]::Beep(1000,1000)
 
 * show unicode: [char]0x2261
+
+## write format table to host
+  $process = [System.Diagnostics.Process]::GetCurrentProcess()
+  $process |Format-Table | Out-String|%{ Write-Verbose $_}

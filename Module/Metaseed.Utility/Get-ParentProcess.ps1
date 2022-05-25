@@ -8,6 +8,7 @@ C:\PS> C:\Script\Parent_Process.ps1 taskhost.
 Displays the parent process name of taskhost.
 #>
 function Get-ParentProcess {
+  [CmdletBinding()]
   Param($id)
   # ([String] $program)
   # $process = Get-Process -Name $program
@@ -21,14 +22,16 @@ function Get-ParentProcess {
   $parentProcess
 }
 
+
 function Get-ParentProcessByName {
+  [CmdletBinding()]
   param (
     [Parameter(Mandatory = $true)]
     [string]$processName
   )
   
   $process = [System.Diagnostics.Process]::GetCurrentProcess()
-
+  $process |Format-Table | Out-String|%{ Write-Verbose $_}
   while ($null -ne $process.Parent) {
     $process.Parent.refresh()
     if ($process.Parent.HasExited) {
