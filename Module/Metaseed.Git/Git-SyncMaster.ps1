@@ -3,7 +3,11 @@ function Git-SyncMaster {
   param (
     [Parameter()]
     [switch]
-    $rebase
+    $rebase,
+    [Parameter()]
+    [string]
+    #('ours', 'theirs','')]
+    $strategyOption = ''
   )
   $guard = Git-SaftyGuard 'Git-SyncMaster' -noKeep
 
@@ -18,7 +22,7 @@ function Git-SyncMaster {
     $branch = git branch --show-current
     if ($branch -ne 'master') {
 
-      $parent = 'master' # Git-Parent
+      $parent = 'master' # Git-Parent # git-parent has problem
       Write-Host "parent branch of current branch is: $parent" -ForegroundColor Green
       $owner = $branch.split('/')[0]
       if (!$owner -and !$parent.Contains($owner) -and "$parent" -ne 'master') {
@@ -62,9 +66,15 @@ function Git-SyncMaster {
         }
         ##
         # strategy or with option prefer
-        # if ours: we bump version and then conflict, then merge master with 'ours', the version in master is not used. 
-        # try theirs if have problem, try not using any stragety, and solve conflict manually
-        Write-Execute "git merge master -s ort -X theirs"
+        # if ours: we bump version and then conflict found online, then merge master with 'ours', the version in master is not used.
+        # if theirs: I modified a file, and other developer submited the change of same location to master, after async, ours is overrided.
+        # so we solve conflict manually by default
+        if ($strategyOption) {
+          Write-Execute "git merge master -s ort -X $strategyOption"
+        }
+        else {
+          Write-Execute "git merge master"
+        }
       }
 
       # strange although we have pulled at start, if not pull again: Error:
