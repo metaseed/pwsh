@@ -46,8 +46,8 @@ function Download-GithubRelease {
   [CmdletBinding()]
   param (
     # assets
-    [Parameter(Mandatory = $true)]
-    [object]
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+    [objeict]
     $assets,
     # output directory
     [string]
@@ -83,4 +83,4 @@ Export-ModuleMember Download-GithubRelease
 
 # tests:
 # Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version 'preview' -fileNamePattern '_win10_.*\.msixbundle'
-# Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version 'stable' -fileNamePattern '_win10_.*\.msixbundle$'
+# Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version 'stable' -fileNamePattern '_win10_.*\.msixbundle$' | Download-GithubRelease
