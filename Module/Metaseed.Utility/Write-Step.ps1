@@ -51,7 +51,7 @@ function Write-Important {
   
 }
 
-function Get-Steps {
+function Show-Steps {
   if ($__Session.Steps.Count -eq 0) {
     Write-Host "No executed steps"
     return
@@ -73,8 +73,8 @@ function Get-Steps {
   }
 }
 
-Set-Alias gs Get-Steps
-Export-ModuleMember Write-SubStep, Write-Important, Get-Steps -Alias gs
+Set-Alias ss Show-Steps
+Export-ModuleMember Write-SubStep, Write-Important, Show-Steps -Alias ss
 
 # get all colors:
 # [enum]::GetValues([System.ConsoleColor]) | Foreach-Object {Write-Host "Command's Executed Steps, $_" -ForegroundColor blue -backgroundColor $_ }
