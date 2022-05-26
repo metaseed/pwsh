@@ -20,11 +20,12 @@ function Write-Execute {
     # Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0
     $icon = $env:WT_SESSION ? '-->': '―→'
     $execute = $__Session.execute++
+    $exeStep = $__Session.ExeStep++
 
     $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
     $msg = "${command} $('' -eq $message ? '': ": $message")"
 
-    Write-Host "${indents}:Execute$execute$icon $msg" -ForegroundColor Blue
+    Write-Host "${indents}:Execute$($__Session.Step).$($__Session.SubStep).$execute($($exeStep))$icon $msg" -ForegroundColor Blue
     if ($replay) {
       return
     }

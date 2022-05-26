@@ -28,7 +28,7 @@ function Write-SubStep {
 
   $subStep = $__Session.subStep++
   # Write-Progress -Activity  $message -status " " -Id 0
-  $icon = ":SubStep${subStep}->>"
+  $icon = ":SubStep$($__Session.Step).${subStep}->>"
   $__Session.indents = 1
   $__Session.execute = 0
 
@@ -45,14 +45,15 @@ function Write-Important {
   if (! $replay) {
     $__Session.Steps += @{type = 'Important'; message = $message }
   }
+  $icon = $env:WT_SESSION ? '' : '!'
   $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
-  Write-Host -ForegroundColor DarkYellow  "$indents⚠Attention: $msg"
+  Write-Host -ForegroundColor DarkYellow  "$indents${icon}Attention: $msg"
   
 }
 
-function Replay-Steps {
+function Get-Steps {
   if ($__Session.Steps.Count -eq 0) {
-    Write-Host "No steps to replay"
+    Write-Host "No executed steps"
     return
   }
   Write-host "`nPreious Command's Executed Steps:" -ForegroundColor DarkYellow
@@ -72,8 +73,8 @@ function Replay-Steps {
   }
 }
 
-Set-Alias rs Replay-Steps
-Export-ModuleMember Write-SubStep, Write-Important, Replay-Steps -Alias rs
+Set-Alias gs Get-Steps
+Export-ModuleMember Write-SubStep, Write-Important, Get-Steps -Alias gs
 
 # get all colors:
 # [enum]::GetValues([System.ConsoleColor]) | Foreach-Object {Write-Host "Command's Executed Steps, $_" -ForegroundColor blue -backgroundColor $_ }
