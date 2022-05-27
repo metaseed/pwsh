@@ -2,8 +2,8 @@ function Set-StartTask {
     [CmdletBinding()]
     param (
         [string]$taskName,
-        [string] $exe,
-        [string] $arg
+        [string]$exe,
+        [string]$arg
     )
 
     $ErrorActionPreference = "Continue"

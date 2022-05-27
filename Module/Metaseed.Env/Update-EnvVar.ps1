@@ -5,7 +5,7 @@
    if: it's path and contains ';' => all value from Machine and User, then uniqued then appended .
    else => value override from Manchine and then from User(if has same key name)
 #>
-function Update-Env {
+function Update-EnvVar {
    @("Machine", "User")  | 
    % { [Environment]::GetEnvironmentVariables($_).GetEnumerator() } |
    % {
