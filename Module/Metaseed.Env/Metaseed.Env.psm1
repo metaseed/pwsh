@@ -1,2 +1,2 @@
-. $PSScriptRoot\Set-KnownFolderPath.ps1 
-. $PSScriptRoot\Update-Env.ps1
+. $PSScriptRoot\..\..\Lib\Module.ps1
+. Export-Functions $PSScriptRoot
