@@ -20,9 +20,22 @@ Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -LongDescription "Copies the current path to the clipboard.(gl).path|scb" `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, ''] 
 
-Set-PSReadlineKeyHandler -Key Enter -ScriptBlock { 
+Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
+    # session scale variables
+    # __SetStepSessionVariables
+    # https://stackoverflow.com/questions/67136144/getting-powershell-current-line-before-enter-is-pressed
+    # cursor is the cursor position in the line, start from 0
+    $line = $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
+    $lastSession = $global:__Session
     $global:__Session = @{}
-    __SetStepSessionVariables
+
+    New-Event -SourceIdentifier 'SetSessionScope' -EventArguments @{
+        scope     = $global:__Session;
+        lastScope = $lastSession;
+        line      = $line;
+        cursor    = $cursor;
+    }
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
