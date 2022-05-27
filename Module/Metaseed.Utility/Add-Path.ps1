@@ -10,6 +10,7 @@ function Add-Path {
         $Scope = $null
     )
     
+    # resolve-path return a PathInfo object
     $Dir = [Path]::GetFullPath($Dir)
 
     if (-not (Test-PathInStr $env:Path $dir)) {

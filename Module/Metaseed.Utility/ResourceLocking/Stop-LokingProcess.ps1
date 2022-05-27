@@ -1,21 +1,5 @@
 <#
 .SYNOPSIS
-  Utility to discover/kill processes that have open handles to a file or folder.
-
-  Find-ResourceLockingProcess()
-    Retrieves process information that has a file handle open to the specified path.
-    Example: Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA
-    Example: Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA | Get-Process
-
-  Stop-LockingProcess()
-    Kills all processes that have a file handle open to the specified path.
-    Example: Stop-LockingProcess -Path $Home\Documents 
-#>
-
-
-
-<#
-.SYNOPSIS
 Helper function to stop one or more processes with extra error handling and logging.
 We first try stop the process nicely by calling Stop-Process().
 But if the process is still running after the timeout expires then we
@@ -102,65 +86,6 @@ function Kill_Process {
     }
 }
 
-
-
-<#
-.SYNOPSIS
-Retrieves process information that has a file handle open to the specified path.
-.LINK 
-We extract the output from the handle.exe utility from SysInternals:
-https://docs.microsoft.com/en-us/sysinternals/downloads/handle
-
-.Example 
-Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA
-
-.Example
- Find-ResourceLockingProcess -Path $Env:LOCALAPPDATA | Get-Process
-#>
-function Find-ResourceLockingProcess {
-    [OutputType([array])]
-    [CmdletBinding()]
-    param (
-        [Parameter(Position = 0)]
-        [object] $Path
-    )
-
-    $AppInfo = Get-Command $Script:HandleApp -ErrorAction Stop
-    if ($AppInfo) {
-        findLocking $Path $AppInfo | sort -Unique -Property Pid, User, Path
-    }
-}
-
-function findLocking {
-    param (
-        [Parameter(Position = 0)]
-        [object] $Path,
-        [Parameter(Position = 1)]
-        [object]$AppInfo
-    )
-    #Initialize-SystemInternalsApp -AppRegName "Handle"
-    $PathName = (Resolve-Path -Path $Path).Path.TrimEnd("\") # Ensures proper .. expansion & slashe \/ type
-    #   -u         Show the owning user name when searching for handles.
-    $LineS = & $AppInfo.Path -accepteula -u $PathName -nobanner
-    # $LineS
-    foreach ($Line in $LineS) {
-        # "pwsh.exe           pid: 5808   type: File          Domain\UserName             48: D:\MySuff\Modules"
-        if ($Line -match "(?<proc>.+)\s+pid: (?<pid>\d+)\s+type: (?<type>\w+)\s+(?<user>.+)\s+(?<hnum>\w+)\:\s+(?<path>.*)\s*") {
-            $Proc = $Matches.proc.Trim()
-            if (@("handle.exe", "Handle64.exe") -notcontains $Proc) {
-                $Retval = [PSCustomObject]@{
-                    Pid     = $Matches.pid
-                    Process = $Proc
-                    User    = $Matches.user.Trim()
-                    # Handle  = $Matches.hnum
-                    Path    = $Matches.path
-                }
-                Write-Output $Retval
-            }
-        }
-    }
-}
-
 <#
 .SYNOPSIS
 Kills all processes that have a file handle open to the specified path.
@@ -175,36 +100,9 @@ function Stop-LockingProcess {
         [object] $Path
     )
 
-    $ProcS = Find-ResourceLockingProcess -Path $Path | Sort-Object -Property Pid -Unique
-    "find process that use the $Path, `n stop them..."
+    Write-Host "find process that use the $Path, `n stop them..."
+    $ProcS = Find-LockingProcess -Path $Path | Sort-Object -Property Pid -Unique
     $ProcS
     Kill_Process -ProcessId $ProcS.Pid
 }
 
-Export-ModuleMember -Function Stop-LockingProcess
-
-
-#########   Initialize Module   #########
-function DownloadHandleApp($Path) {
-    $ZipFile = "Handle.zip"
-    $ZipFilePath = "$Path\$ZipFile"
-    $Uri = "https://download.sysinternals.com/files/$ZipFile"
-    try {
-        Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue
-        $null = New-Item -ItemType Directory -Path $Path -Force -ErrorAction Stop
-        Invoke-RestMethod -Method Get -Uri $Uri -OutFile $ZipFilePath -ErrorAction Stop
-        Expand-Archive -Path $ZipFilePath -DestinationPath $Path -Force -ErrorAction Stop
-        Remove-Item -Path $ZipFilePath -ErrorAction SilentlyContinue
-    }
-    catch {
-        Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue
-        Throw "Failed to download dependency: handle.exe from: $Uri"
-    }
-}
-
-$Script:HandleDir = "$PSScriptRoot\_handle"
-$Script:HandleApp = "$HandleDir\handle.exe"
-if (!(Test-Path -Path $Script:HandleApp)) {
-    Add-Path $Script:HandleDir
-    DownloadHandleApp -Path $HandleDir
-}

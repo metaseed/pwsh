@@ -1,4 +1,4 @@
-function New-_Pack {
+function New-Pack {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
