@@ -19,13 +19,16 @@ function Write-Execute {
 
     # Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0
     $icon = $env:WT_SESSION ? '-->': '―→'
-    $execute = $__Session.execute++
-    $exeStep = $__Session.ExeStep++
+    $execute = ++$__Session.execute
+    $exeStep = ++$__Session.ExeStep
 
     $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
     $msg = "${command} $('' -eq $message ? '': ": $message")"
-
-    Write-Host "${indents}:Execute$($__Session.Step).$($__Session.SubStep).$execute($($exeStep))$icon $msg" -ForegroundColor Blue
+    $StepInfo = ""
+    $StepInfo += ($null -ne $__Session.Step) ? "$($__Session.Step)." : ''
+    $StepInfo += ($null -ne $__Session.SubStep) ? "$($__Session.SubStep).": ''
+    $allExe = ($null -ne $__Session.Step) -or ($null -ne $__Session.SubStep) ? "($($exeStep))": ''
+    Write-Host "${indents}:Execute $StepInfo$execute$allExe$icon $msg" -ForegroundColor Blue
     if ($replay) {
       return
     }

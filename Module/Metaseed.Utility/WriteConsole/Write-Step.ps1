@@ -8,11 +8,11 @@ function Write-Step {
     $__Session.Steps += @{type = 'Step'; message = $message }
   }
   # Write-Progress -Activity  $message -status " " -Id 0
-  $step = $__Session.step++
-  $__Session.subStep = 0
+  $step = ++$__Session.step
+  $__Session.subStep = $null
   $__Session.execute = 0
   $__Session.indents = 0
-  $icon = ":Step${step}==>"
+  $icon = ":Step ${step}==>"
   Write-Host "$icon $message" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline
   Write-Host ""
 }
@@ -26,9 +26,9 @@ function Write-SubStep {
     $__Session.Steps += @{type = 'SubStep'; message = $message }
   }
 
-  $subStep = $__Session.subStep++
+  $subStep = ++$__Session.subStep
   # Write-Progress -Activity  $message -status " " -Id 0
-  $icon = ":SubStep$($__Session.Step).${subStep}->>"
+  $icon = ":SubStep $($__Session.Step).${subStep}->>"
   $__Session.indents = 1
   $__Session.execute = 0
 
