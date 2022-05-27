@@ -11,8 +11,10 @@ Write-Execute 'echo abc'
 write-step 'dsdfsdf sdf d'
 Write-Execute 'echo abc' 
 Write-Execute 'echo abc' 
+Write-Error "Error!!!"
 Write-Important 'sdfsdf sdf d'
 Write-Important 'sdfsdf sdf d'
+Write-Error "Error!!!1111"
 Write-Execute 'echo abc' 
 write-Substep 'dsdfsdf sdf d'
 write-Substep 'dsdfsdf sdf d'

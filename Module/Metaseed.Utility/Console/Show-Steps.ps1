@@ -16,6 +16,8 @@ function Show-Steps {
     }
     elseif ($_.type -eq 'Action') {
       write-action $_.message -replay
+    } elseif($_.type -eq 'Error') {
+      WriteError $_.message -replay
     }
   }
 }
