@@ -14,8 +14,8 @@ function Show-Steps {
     elseif ($_.type -eq 'Important') {
       Write-Important $_.message -replay
     }
-    elseif ($_.type -eq 'Execute') {
-      write-execute $_.command $_.message -replay
+    elseif ($_.type -eq 'Action') {
+      write-action $_.message -replay
     }
   }
 }

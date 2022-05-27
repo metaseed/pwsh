@@ -13,25 +13,8 @@ function Write-Execute {
     [switch]$replay = $false
   )
   process {
-    if (! $replay) {
-      $__Session.Steps += @{type = 'Execute'; message = $message; command = $command }
-    }
-
-    # Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0
-    $icon = $env:WT_SESSION ? '-->': '―→'
-    $execute = ++$__Session.execute
-    $exeStep = ++$__Session.ExeStep
-
-    $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
     $msg = "${command} $('' -eq $message ? '': ": $message")"
-    $StepInfo = ""
-    $StepInfo += ($null -ne $__Session.Step) ? "$($__Session.Step)." : ''
-    $StepInfo += ($null -ne $__Session.SubStep) ? "$($__Session.SubStep).": ''
-    $allExe = ($null -ne $__Session.Step) -or ($null -ne $__Session.SubStep) ? "($($exeStep))": ''
-    Write-Host "${indents}:Execute $StepInfo$execute$allExe$icon $msg" -ForegroundColor Blue
-    if ($replay) {
-      return
-    }
+    Write-Action $msg $replay
     # note: if put parenthesis around: return (iex $command), the output would be no color
     # i.e. Write-Execute 'git status', if there are modification, no red text for modification files
     return iex $command
