@@ -1,11 +1,10 @@
 <# 
 .DESCRIPTION
+auto include all .ps1 into .psm1 except the foler/file that start with "_";
+auto export a function of the file name, except the file in the private sub-folder;
 
-folder/file start with '_' is omitted to include.(means it should be explictly included if needed)
-'private' folder is inculded, but do not implicitly export it's function of the file name.
-
-export all function of the file name, to export addtional function just add 
-              Export-ModuleMember *** in the file
+to export addtional function just add `Export-ModuleMember ***` in the file
+we could explictly include the _file/_folder files
 
 .NOTES
 to reload the module after changing:
@@ -23,9 +22,8 @@ function Export-Functions {
     param (
         $path
     )
-    # Get public and private function definition files.
+    # Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
     $All = @(Get-ChildItem $path\*.ps1 -ErrorAction SilentlyContinue -Recurse -Exclude _* | ? { $_.fullname -notmatch '\\_.*\\' }) # use @() to make sure return is an array, even 1 or no item
-    $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
     #Dot source the files
     Foreach ($import in $All) {
         Try {
@@ -37,6 +35,6 @@ function Export-Functions {
         }
     }
     # Modules
+    $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
     Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
-    
 }
