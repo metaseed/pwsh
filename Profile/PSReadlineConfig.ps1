@@ -21,6 +21,7 @@ Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, ''] 
 
 Set-PSReadlineKeyHandler -Key Enter -ScriptBlock { 
+    $global:__Session = @{}
     __SetStepSessionVariables
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
