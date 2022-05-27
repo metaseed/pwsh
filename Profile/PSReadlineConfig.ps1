@@ -21,19 +21,21 @@ Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, ''] 
 
 Set-PSReadlineKeyHandler -Key Enter -ScriptBlock { 
-    $line = $cursor = $null
     # https://stackoverflow.com/questions/67136144/getting-powershell-current-line-before-enter-is-pressed
     # cursor is the cursor position in the line, start from 0
+    $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
     if ($line -match '^\s*(Show-Steps|ss$)') {
+        # if is the Show-Steps command, then not clear the Steps value of the session
         $Steps = $global:__Session.Steps
-    } else {
+    }
+    else {
         $Steps = @()
     }
     # session scale variable
-    # used in write-step/substep/execute
     $global:__Session = @{
-        Steps =$Steps
+        # used in write-step/substep/execute
+        Steps = $Steps
     }
 
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()

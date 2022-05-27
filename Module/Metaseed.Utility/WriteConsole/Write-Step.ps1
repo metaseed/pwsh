@@ -39,7 +39,7 @@ function Write-SubStep {
 
 function Write-Important {
   param (
-    [string]$msg,
+    [string]$message,
     [switch]$replay = $fasle
   )
   if (! $replay) {
@@ -47,7 +47,7 @@ function Write-Important {
   }
   $icon = $env:WT_SESSION ? '' : '!'
   $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
-  Write-Host -ForegroundColor DarkYellow  "$indents${icon}Attention: $msg"
+  Write-Host -ForegroundColor DarkYellow  "$indents${icon}Attention: $message"
   
 }
 
