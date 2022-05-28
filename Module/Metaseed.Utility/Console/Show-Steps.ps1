@@ -17,7 +17,7 @@ function Show-Steps {
       Write-SubStep $_.message -replay
     }
     elseif ($_.type -eq 'Important') {
-      Write-Important $_.message -replay
+      Write-Attention $_.message -replay
     }
     elseif ($_.type -eq 'Action') {
       write-action $_.message -replay

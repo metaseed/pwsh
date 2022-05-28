@@ -1,4 +1,4 @@
-function Write-Important {
+function Write-Attention {
   param (
     [string]$message,
     [switch]$replay = $fasle
@@ -8,6 +8,8 @@ function Write-Important {
   }
   $icon = $env:WT_SESSION ? '' : '!'
   $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
-  Write-Host -ForegroundColor DarkYellow  "$indents${icon}Attention: $message"
+  Write-Host $indents -NoNewline
+  Write-Host -ForegroundColor DarkYellow  "${icon}Attention:" -BackgroundColor White -NoNewline
+  Write-Host " $message" -ForegroundColor DarkYellow
   
 }

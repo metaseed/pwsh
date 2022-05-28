@@ -33,7 +33,8 @@ function Write-SubStep {
   $__Session.execute = 0
 
   $indents = ' ' * $__IndentLength
-  Write-Host "$indents$icon $message" -ForegroundColor Green -BackgroundColor White -NoNewline
+  Write-host "$indents" -NoNewline
+  Write-Host "$icon $message" -ForegroundColor Green -BackgroundColor White -NoNewline
   Write-Host ""
 }
 
