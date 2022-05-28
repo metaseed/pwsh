@@ -3,3 +3,5 @@
 $m = @{
   pwsh = "$env:MS_PWSH"
 }
+# previent error when debuging
+$global:__Session = @{}

@@ -3,5 +3,7 @@ function WriteStepMsg($msg) {
     $__Session.lazyStepsInit = $null
     $__Session.Steps = @()
   }
-  $__Session.Steps += $msg
+  if($null -ne $__Session.Steps) {
+    $__Session.Steps += $msg
+  }
 }
