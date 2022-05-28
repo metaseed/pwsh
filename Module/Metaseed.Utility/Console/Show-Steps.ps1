@@ -24,6 +24,8 @@ function Show-Steps {
     } elseif($_.type -eq 'Error') {
       WriteError $_.message -replay
       $hasErr = $true
+    } elseif($_.type -eq 'Warning') {
+      WriteWarning $_.message -replay
     }
   }
   if($hasErr) {

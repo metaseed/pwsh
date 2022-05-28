@@ -20,5 +20,6 @@ function Write-Action {
   $StepInfo += ($null -ne $__Session.Step) ? "$($__Session.Step)." : ''
   $StepInfo += ($null -ne $__Session.SubStep) ? "$($__Session.SubStep).": ''
   $allExe = ($null -ne $__Session.Step) -or ($null -ne $__Session.SubStep) ? "($($exeStep))": ''
-  Write-Host "${indents}:Action $StepInfo$execute$allExe$icon $message" -ForegroundColor Blue
+  $ic = $env:WT_SESSION ? '🚀' : ''
+  Write-Host "${indents}▐${ic}Action $StepInfo$execute$allExe$icon $message" -ForegroundColor Blue
 }
