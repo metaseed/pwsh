@@ -1,3 +1,7 @@
+<#
+.NOTES
+use get-error and $error to get more information about the errors
+#>
 function Show-Steps {
   if ($__Session.Steps.Count -eq 0) {
     Write-Host "No executed steps"
@@ -24,3 +28,4 @@ function Show-Steps {
 
 Set-Alias ss Show-Steps
 Export-ModuleMember -Alias ss
+
