@@ -7,7 +7,7 @@ function Write-Action {
     [switch]$replay = $false
   )
   if (! $replay) {
-    $__Session.Steps += @{type = 'Action'; message = $message; }
+    WriteStepMsg @{type = 'Action'; message = $message; }
   }
 
   # Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0

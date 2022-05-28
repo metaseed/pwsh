@@ -7,7 +7,7 @@ function WriteError {
     [switch]$replay
   )
   if (! $replay) {
-    $__Session.Steps += @{type = 'Error'; message = $err; }
+    WriteStepMsg @{type = 'Error'; message = $err; }
   }
   else {
     Write-Host "ERROR: $err" -ForegroundColor Red

@@ -4,7 +4,7 @@ function Write-Important {
     [switch]$replay = $fasle
   )
   if (! $replay) {
-    $__Session.Steps += @{type = 'Important'; message = $message }
+    WriteStepMsg @{type = 'Important'; message = $message }
   }
   $icon = $env:WT_SESSION ? '' : '!'
   $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)

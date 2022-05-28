@@ -8,6 +8,7 @@ function Show-Steps {
     return
   }
   Write-host "`nPreious Command's Executed Steps:" -ForegroundColor DarkYellow
+  $hasErr = $false
   $__Session.Steps | % {
     if ($_.type -eq 'Step') {
       Write-Step $_.message -replay
@@ -22,7 +23,11 @@ function Show-Steps {
       write-action $_.message -replay
     } elseif($_.type -eq 'Error') {
       WriteError $_.message -replay
+      $hasErr = $true
     }
+  }
+  if($hasErr) {
+    Write-Host "`n use `$error or get-error to get more information about the errors" -ForegroundColor DarkYellow
   }
 }
 

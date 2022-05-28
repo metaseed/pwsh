@@ -5,7 +5,7 @@ function Write-Step {
     [switch]$replay = $fasle
   )
   if (! $replay) {
-    $__Session.Steps += @{type = 'Step'; message = $message }
+    WriteStepMsg @{type = 'Step'; message = $message }
   }
   # Write-Progress -Activity  $message -status " " -Id 0
   $step = ++$__Session.step
@@ -23,7 +23,7 @@ function Write-SubStep {
     [switch]$replay = $fasle
   )
   if (! $replay) {
-    $__Session.Steps += @{type = 'SubStep'; message = $message }
+    WriteStepMsg @{type = 'SubStep'; message = $message }
   }
 
   $subStep = ++$__Session.subStep
