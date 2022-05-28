@@ -32,3 +32,5 @@
 * https://github.com/gpduck/MSTerminalSettings/blob/preview/src/ExportedFunctions/Invoke-MSTerminalGif.ps1.
 * `win+``: quake mode toggle
 * https://docs.microsoft.com/en-us/windows/terminal/customize-settings/actions
+* %LocalAppData%\Microsoft\WindowsApps\wt.exe sp -p cmd ;  mf left
+* %LocalAppData%\Microsoft\WindowsApps\wt.exe -w _quake
