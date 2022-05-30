@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <OutputType>Exe</OutputType>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>TerminalBackground</AssemblyName>
+    <RootNamespace>Metaseed.TerminalBackground</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management.Automation" Version="7.2.4" />
+  </ItemGroup>
+
+</Project>
