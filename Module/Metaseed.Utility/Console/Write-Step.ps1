@@ -4,6 +4,7 @@ function Write-Step {
     [string]$message,
     [switch]$replay = $fasle
   )
+  $message = [Regex]::Replace($message , '\b.', {  $args[0].Value.ToUpper() })
   if (! $replay) {
     WriteStepMsg @{type = 'Step'; message = $message }
   }

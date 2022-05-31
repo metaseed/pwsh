@@ -23,7 +23,7 @@ function Git-SyncMaster {
     if ($branch -ne 'master') {
 
       $parent = 'master' # Git-Parent # git-parent has problem
-      Write-Host "parent branch of current branch is: $parent" -ForegroundColor Green
+      Write-Attention "parent branch of current branch is: $parent"
       $owner = $branch.split('/')[0]
       if (!$owner -and !$parent.Contains($owner) -and "$parent" -ne 'master') {
         Confirm-Continue "parent branch of current branch is not master or from you($owner)"
@@ -77,6 +77,7 @@ function Git-SyncMaster {
         }
       }
 
+      Write-Step 'push synced changes to remote...'
       # strange although we have pulled at start, if not pull again: Error:
       #  Updates were rejected because the tip of your current branch is behind
       if (Git-HasRemoteBranch) {

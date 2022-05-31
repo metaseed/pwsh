@@ -31,7 +31,7 @@ function Git-SaftyGuard {
   $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash: index&tree&untracked'
   $out='No local changes to save'
   if ($r -eq $out) {
-    Write-Host $out -ForegroundColor Green
+    Write-Attention $out
     return [GitSaftyGuard]::NoNeedStash 
   }
 
