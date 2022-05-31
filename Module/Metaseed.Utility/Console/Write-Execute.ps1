@@ -17,7 +17,7 @@ function Write-Execute {
     [switch]$replay = $false
   )
   process {
-    $msgIcon = $env:WT_SESSION ?  "📧": "@"
+    $msgIcon = $env:WT_SESSION ?  "💬:": "@:"
     $exe = $command ? $command : $script.ToString().Trim()
     $msg = "${exe} $('' -eq $message ? '': "$msgIcon $message")"
     Write-Action $msg $replay
