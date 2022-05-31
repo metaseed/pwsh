@@ -13,7 +13,8 @@ function Write-Execute {
     [switch]$replay = $false
   )
   process {
-    $msg = "${command} $('' -eq $message ? '': ": $message")"
+    $msgIcon = $env:WT_SESSION ?  "📧": "@"
+    $msg = "${command} $('' -eq $message ? '': "$msgIcon $message")"
     Write-Action $msg $replay
     # note: if put parenthesis around: return (iex $command), the output would be no color
     # i.e. Write-Execute 'git status', if there are modification, no red text for modification files

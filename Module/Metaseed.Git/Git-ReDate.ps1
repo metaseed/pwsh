@@ -17,7 +17,7 @@ function Git-ReDate {
     [ValidateSet('now', 'oneHourAhead', 'oneHourAheadWithRandomMinSec')]
     $date = 'oneHourAheadWithRandomMinSec'
   )
-  $guard = Git-SaftyGuard -noKeep 'Git-ReDate'
+  $guard = Git-SaftyGuard 'Git-ReDate'
   try {
     if ($date -eq 'now') {
       ### this way the date of commits are the same

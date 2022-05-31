@@ -9,14 +9,14 @@ function Git-SyncMaster {
     #('ours', 'theirs','')]
     $strategyOption = ''
   )
-  $guard = Git-SaftyGuard 'Git-SyncMaster' -noKeep
+  $guard = Git-SaftyGuard 'Git-SyncMaster'
 
   try {
     ## sync with remote
     if (Git-HasRemoteBranch) {
       # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
       # so we do saftyGuard first
-      Write-Execute 'git pull' 
+      Write-Execute 'git pull --rebase' 
     }
 
     $branch = git branch --show-current
@@ -93,7 +93,9 @@ function Git-SyncMaster {
     if ($guard -eq [GitSaftyGuard]::Stashed) {
       Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
     }
+    else {
+      Write-Execute 'git status'
+    }
   }
-  Write-Execute 'git status'
 
 }

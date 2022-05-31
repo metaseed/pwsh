@@ -1,0 +1,7 @@
+
+a long running service like program, that is single instance.
+
+
+## decisions
+* not use windows service, because it's window specific.
+* use Mutex -> single instance

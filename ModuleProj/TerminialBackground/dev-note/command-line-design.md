@@ -1,0 +1,1 @@
+terminalBackground -configPath <folder path>

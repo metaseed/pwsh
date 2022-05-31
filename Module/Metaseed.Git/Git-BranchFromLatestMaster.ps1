@@ -5,7 +5,7 @@ function Git-BranchFromLatestMaster {
     [string]
     $BranchName
   )
-  $guard = Git-SaftyGuard -noKeep 'Git-BranchFromLatestMaster'
+  $guard = Git-SaftyGuard 'Git-BranchFromLatestMaster'
 
   Write-Execute 'git status'
 

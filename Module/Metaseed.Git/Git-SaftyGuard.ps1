@@ -7,8 +7,8 @@ function Git-SaftyGuard {
     # git stash pop/apply --index
     # --index: not merge index into worktree, the same as the state before stash
     [switch]
-    [Alias('nk')]
-    $nokeep
+    [Alias('k')]
+    $keep
   )
 
   ## assert on a branch
@@ -35,7 +35,7 @@ function Git-SaftyGuard {
     return [GitSaftyGuard]::NoNeedStash 
   }
 
-  if (!($nokeep)) {
+  if ($keep) {
     # with --index: the index is not merged to changes but kept in index (stage)
     Write-Execute "git stash apply --index" > $null 
   }

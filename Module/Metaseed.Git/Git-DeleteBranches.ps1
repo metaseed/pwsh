@@ -15,7 +15,7 @@ function Git-DeleteBranches {
 
   )
 
-  Git-SaftyGuard 'Git-DeleteAllLocalBranches'
+  Git-SaftyGuard 'Git-DeleteAllLocalBranches' -keep
   # if your branches names contains non ascii characters
   # [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
