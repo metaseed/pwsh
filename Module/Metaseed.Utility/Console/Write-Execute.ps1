@@ -18,7 +18,7 @@ function Write-Execute {
   )
   process {
     $msgIcon = $env:WT_SESSION ?  "📧": "@"
-    $exe = $command ? $command : $script.ToString()
+    $exe = $command ? $command : $script.ToString().Trim()
     $msg = "${exe} $('' -eq $message ? '': "$msgIcon $message")"
     Write-Action $msg $replay
     # note: if put parenthesis around: return (iex $command), the output would be no color
