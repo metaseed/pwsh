@@ -83,11 +83,7 @@ Function write-error {
   process {
     try {
       $steppablePipeline.Process($_)
-      $err = ""
-      $PSBoundParameters.GetEnumerator() | % {
-        $err += "$($_.Key): $($_.Value)`n"
-      }
-      WriteError $err
+      WriteError $PSBoundParameters
     }
     catch {
       throw

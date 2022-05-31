@@ -10,6 +10,11 @@ function WriteError {
     WriteStepMsg @{type = 'Error'; message = $err; }
   }
   else {
-    Write-Host "ERROR: $err" -ForegroundColor Red
+    $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
+    $errMsg = "${indents}ERROR`n"
+    $PSBoundParameters.GetEnumerator() | % {
+      $errMsg += "$indents$($_.Key): $($_.Value)`n"
+    }
+    Write-Host "$errMsg" -ForegroundColor Red
   }
 }

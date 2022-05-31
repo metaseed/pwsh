@@ -10,6 +10,11 @@ function WriteWarning {
     WriteStepMsg @{type = 'Warning'; message = $warning; }
   }
   else {
-    Write-Host "Warning: $warning" -ForegroundColor Yellow
+    $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
+    $msg = "${indents}Warning`n"
+    $PSBoundParameters.GetEnumerator() | % {
+      $msg += "$indents$($_.Key): $($_.Value)`n"
+    }
+    Write-Host "$msg" -ForegroundColor Yellow
   }
 }

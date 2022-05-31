@@ -31,7 +31,7 @@ function Write-Execute {
   }
   end {
     if (0 -ne $LASTEXITCODE) {
-      $errorMsg = "Error execute command: $command" 
+      $errorMsg = "Error execute command: $exe" 
       if ($noThrow) {
         if ($noStop) {
           Write-Error $errorMsg 

@@ -35,12 +35,7 @@ Function Write-Warning {
  	
 	process {
 		try {
-			$steppablePipeline.Process($_)
-			$warning = ""
-			$PSBoundParameters.GetEnumerator() | % {
-				$warning += "$($_.Key): $($_.Value)`n"
-			}
-			WriteWarning $warning
+			WriteWarning $PSBoundParameters
 		}
 		catch {
 			throw
