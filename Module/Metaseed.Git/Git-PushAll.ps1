@@ -16,10 +16,6 @@ function Git-PushAll {
   Write-Execute 'git add -A' 'adds, modifies, and removes index entries to match the working tree'
   Write-Execute "git commit -m '$message'"
 
-  if (Git-HasRemoteBranch) {
-    Write-Execute 'git pull --rebase' 
-  }
-
   Git-Push
 }
 

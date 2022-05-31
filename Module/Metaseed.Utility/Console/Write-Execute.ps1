@@ -5,30 +5,48 @@ function Write-Execute {
   #>
   [CmdletBinding()]
   param (
-    [Parameter(Mandatory = $true, Position = 0)]
+    [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'stringCmd')]
     [string]$command,
+    [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'scriptBlock')]
+    [scriptblock]$script,
     [Parameter( Position = 1)]
     [string]$message,
     [switch]$noThrow,
+    [switch]$noStop,
     [switch]$replay = $false
   )
   process {
     $msgIcon = $env:WT_SESSION ?  "📧": "@"
-    $msg = "${command} $('' -eq $message ? '': "$msgIcon $message")"
+    $exe = $command ? $command : $script.ToString()
+    $msg = "${exe} $('' -eq $message ? '': "$msgIcon $message")"
     Write-Action $msg $replay
     # note: if put parenthesis around: return (iex $command), the output would be no color
     # i.e. Write-Execute 'git status', if there are modification, no red text for modification files
-    return iex $command
+    if ($command) {
+      return iex $command
+    }
+    else {
+      return . $script
+    }
   }
   end {
     if (0 -ne $LASTEXITCODE) {
-      Write-Error "Error execute command: $command"
+      $errorMsg = "Error execute command: $command" 
       if ($noThrow) {
-        Exit
+        if ($noStop) {
+          Write-Error $errorMsg 
+        }
+        else {
+          Write-Error $errorMsg -ErrorAction stop
+        }
       }
       else {
+        Write-Error $errorMsg
         throw
       }
     }
   }
 }
+
+# $a = Write-Execute { git pu } -noThrow -noStop 2>&1
+# write-host "ttt: $a"
