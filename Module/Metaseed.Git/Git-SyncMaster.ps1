@@ -10,10 +10,11 @@ function Git-SyncMaster {
     $strategyOption = ''
   )
   $guard = Git-SaftyGuard 'Git-SyncMaster'
-
+  
   try {
-    ## sync with remote
-    if (Git-HasRemoteBranch) {
+    Write-Step 'sync with remote'
+    $hasRemote = Git-HasRemoteBranch
+    if ($hasRemote) {
       # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
       # so we do saftyGuard first
       Write-Execute 'git pull --rebase' 
@@ -33,7 +34,7 @@ function Git-SyncMaster {
       Write-Execute 'git checkout master'
       Write-Execute 'git pull --rebase'
 
-      Write-Step 'sync branch with master'
+      Write-Step "sync branch with master - $($rebase ? 'rebase': 'merge')"
       if ($rebase) {
         # rebase
         if ($parent -ne 'master') {
@@ -80,7 +81,7 @@ function Git-SyncMaster {
       Write-Step 'push synced changes to remote...'
       # strange although we have pulled at start, if not pull again: Error:
       #  Updates were rejected because the tip of your current branch is behind
-      if (Git-HasRemoteBranch) {
+      if ($hasRemote) {
         Write-Execute 'git pull' 
       }
 
@@ -94,9 +95,10 @@ function Git-SyncMaster {
     if ($guard -eq [GitSaftyGuard]::Stashed) {
       Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
     }
-    else {
-      Write-Execute 'git status'
-    }
+    # else {
+    # we have git status in git-push  
+    #   Write-Execute 'git status'
+    # }
   }
 
 }

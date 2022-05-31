@@ -12,6 +12,7 @@ function Write-Execute {
     [Parameter( Position = 1)]
     [string]$message,
     [switch]$noThrow,
+    # to get output msg when error into a variable
     [switch]$noStop,
     [switch]$replay = $false
   )

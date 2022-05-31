@@ -33,15 +33,18 @@ function Git-BranchFromLatestMaster {
       # --index: not merge index into worktree, the same as the state before stash
       Write-Execute 'git stash apply --index' 'restore index&tree&untracked'
     }
+    else {
+      Write-Execute 'git status'
+
+    }
   }
 
-  Write-Execute 'git status'
 }
 
 Set-Alias gitb Git-BranchFromLatestMaster
 
 function Git-Branch {
-  Write-Execute "git branch @args -v --sort=committerdate"
+  Write-Execute "git branch @args -v --sort=committerdate" 'note: -v - show commit sha and msg'
 }
 # git config --global branch.sort -committerdate
 Export-ModuleMember Git-Branch
