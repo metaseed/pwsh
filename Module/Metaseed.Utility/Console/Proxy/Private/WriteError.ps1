@@ -12,7 +12,7 @@ function WriteError {
   else {
     $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
     $errMsg = "${indents}ERROR`n"
-    $PSBoundParameters.GetEnumerator() | % {
+    $err.GetEnumerator() | % {
       $errMsg += "$indents$($_.Key): $($_.Value)`n"
     }
     Write-Host "$errMsg" -ForegroundColor Red

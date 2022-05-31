@@ -12,9 +12,11 @@ function WriteWarning {
   else {
     $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
     $msg = "${indents}Warning`n"
-    $PSBoundParameters.GetEnumerator() | % {
+    $warning.GetEnumerator() | % {
       $msg += "$indents$($_.Key): $($_.Value)`n"
     }
     Write-Host "$msg" -ForegroundColor Yellow
   }
 }
+
+# Write-step 'ddd';write-substep 'kkk'; Write-Warning 'iii';
