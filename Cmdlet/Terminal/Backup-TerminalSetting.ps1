@@ -6,7 +6,7 @@ param (
   $version = ''
 )
   
-. $PSScriptRoot/private/GetSettings.ps1
+. $PSScriptRoot/_private/GetSettings.ps1
 if ($version -eq '') {
   $installs = GetSettings
   if ( $installs.keys.count -eq 0 ) {
@@ -23,13 +23,17 @@ if ($version -eq '') {
   }
   else {
     # only one install found
+    $installs.GetEnumerator() | % {
+      Write-Host "$($_.name): $($_.value)"
+    }
     $version = ($installs.GetEnumerator())[0].name
   }
 }
 $backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
 $location = $installs[$version]
 if (test-path $location) {
-  Write-Step "Found $($location), backing up to $backup"
+  Write-Action 'Backing up terminal settings...'
+  Write-Host "Found $($location), backing up to $backup"
   if (-not (test-path $backup)) {
     New-Item -ItemType File -Path $backup -Force | out-null
   }
@@ -40,7 +44,7 @@ if (test-path $location) {
       return
     }
   }
-  Copy-Item -Path $location -Destination $backup -Force
+  Write-Execute {Copy-Item -Path $location -Destination $backup -Force}
 
 }
 else {

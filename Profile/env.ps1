@@ -11,5 +11,5 @@ $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
     }
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path += ";$CmdLetFolder"
-    $env:path += ";$((Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Name | ForEach-Object { join-path $CmdLetFolder $_ }) -join ';')"
+    $env:path += ";$((Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Name -Recurse -Exclude _* | ForEach-Object { join-path $CmdLetFolder $_ }) -join ';')"
 }

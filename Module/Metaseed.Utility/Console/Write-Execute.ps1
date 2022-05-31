@@ -27,7 +27,7 @@ function Write-Execute {
       return iex $command
     }
     else {
-      return . $script
+      return & $script
     }
   }
   end {

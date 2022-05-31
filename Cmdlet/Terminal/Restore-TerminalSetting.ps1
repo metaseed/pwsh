@@ -6,7 +6,8 @@ param (
   [string]
   $version =""
 )
-. $PSScriptRoot/private/GetSettings.ps1
+Write-Action "restore windows terminal settings..."
+. $PSScriptRoot/_private/GetSettings.ps1
 
 $backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
 if(! (test-path $backup)) {
@@ -22,7 +23,7 @@ if ($version -eq '') {
   }
   elseif ($installs.Keys.Count -gt 1) {
     Write-Host "Multiple installs found. Please specify one of the following:"
-    $installs | % {
+    $installs.GetEnumerator() | % {
       Write-Host "$($_.name): $($_.value)"
     }
     $decision = $Host.UI.PromptForChoice('Selection', 'select version to backup', ($installs.keys | % { "&$_" }), 0)
@@ -30,7 +31,11 @@ if ($version -eq '') {
   }
   else {
     # only one install found
-    $version = ($installs.GetEnumerator())[0].name
+    $installs.GetEnumerator() | % {
+      Write-Host "$($_.name): $($_.value)"
+    }
+    $ins = ($installs.GetEnumerator())[0]
+    $version = $ins.name
   }
 }
 
@@ -44,7 +49,7 @@ if (test-path $backup) {
       return
     }
   }
-  Copy-Item  $backup $location -Force
+  write-execute {Copy-Item  $backup $location -Force}#.GetNewClosure()
 }
 else {
   Write-Error "Could not find $backup, nothing to restore!"

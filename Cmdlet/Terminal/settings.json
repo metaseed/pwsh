@@ -29,12 +29,12 @@
       "keys": "ctrl+shift+w"
     },
     {
-        "command": "closePane",
-        "keys": "alt+shift+w"
+      "command": "closePane",
+      "keys": "alt+shift+w"
     },
     {
-        "command": "restoreLastClosed",
-        "keys": "ctrl+shift+t"
+      "command": "restoreLastClosed",
+      "keys": "ctrl+shift+t"
     },
     {
       "command": {
@@ -57,13 +57,13 @@
       "keys": "alt+shift+2"
     },
     {
-        "command": {
-          "action": "splitPane",
-          "index": 2,
-          "split": "auto"
-        },
-        "keys": "alt+shift+3"
+      "command": {
+        "action": "splitPane",
+        "index": 2,
+        "split": "auto"
       },
+      "keys": "alt+shift+3"
+    },
     {
       "command": "paste",
       "keys": "ctrl+v"
@@ -82,6 +82,14 @@
         "splitMode": "duplicate"
       },
       "keys": "alt+shift+d"
+    },
+    {
+      "command": { "action": "moveFocus", "direction": "previousInOrder" },
+      "keys": "alt+home"
+    },
+    {
+      "command": { "action": "moveFocus", "direction": "nextInOrder" },
+      "keys": "alt+end"
     }
   ],
   "confirmCloseAllTabs": false,
