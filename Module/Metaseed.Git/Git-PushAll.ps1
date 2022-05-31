@@ -19,7 +19,7 @@ function Git-PushAll {
   if (Git-HasRemoteBranch) {
     Write-Execute 'git pull --rebase' 
   }
-  
+
   Git-Push
 }
 
