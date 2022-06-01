@@ -17,7 +17,7 @@ Assert-Admin
 
 Breakable-Pipeline {
   Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern "_$($platform)_.*\.msixbundle$" -ErrorAction Stop |
-  %{
+  % {
     $assets = $_
     if ($assets.Count -ne 1 ) {
       foreach ($asset in $assets) {
@@ -71,14 +71,17 @@ Breakable-Pipeline {
       $Wt = Get-ParentProcessByName -processName 'WindowsTerminal'
       if ($Wt) {
         # $path = $MyInvocation.MyCommand.Path
-        Start-Process pwsh -verb runas -ArgumentList @( "-NoExit", "-Command",  $install )
-      } else {
+        Start-Process pwsh -verb runas -ArgumentList @( "-NoExit", "-Command", $install )
+      }
+      else {
         pwsh -NoExit -Command $install
       }
       stop-process -name "WindowsTerminal" -force
       stop-process -name "OpenConsole" -force
-    } 
-  } else {
-    pwsh -NoExit -Command $install
+     
+    }
+    else {
+      pwsh -NoExit -Command $install
+    }
   }
 }
