@@ -1,3 +1,5 @@
+. $PSScriptRoot/Get-AllPwshFiles.ps1
+
 <# 
 .DESCRIPTION
 auto include all .ps1 into .psm1 except the foler/file that start with "_";
@@ -23,7 +25,7 @@ function Export-Functions {
         $path
     )
     # Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
-    $All = @(Get-ChildItem $path\*.ps1 -ErrorAction SilentlyContinue -Recurse -Exclude _* | ? { $_.fullname -notmatch '\\_.*\\' }) # use @() to make sure return is an array, even 1 or no item
+    $All = Get-AllPwshFiles $path
     #Dot source the files
     Foreach ($import in $All) {
         Try {
@@ -38,3 +40,5 @@ function Export-Functions {
     $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
     Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
 }
+
+Export-ModuleMember Export-Functions

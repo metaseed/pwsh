@@ -30,7 +30,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     $lastSession = $global:__Session
     $global:__Session = @{}
 
-    New-Event -SourceIdentifier 'SetSessionScope' -EventArguments @{
+    New-Event -SourceIdentifier 'SessionScopeEvent' -EventArguments @{
         scope     = $global:__Session;
         lastScope = $lastSession;
         line      = $line;

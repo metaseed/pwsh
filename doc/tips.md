@@ -114,3 +114,11 @@ gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 ## write format table to host
   $process = [System.Diagnostics.Process]::GetCurrentProcess()
   $process |Format-Table | Out-String|%{ Write-Verbose $_}
+
+## execute job and capture scope variables
+$a = 10
+$b = &{
+write-host $a
+play-ring
+}&
+receive-job $b
