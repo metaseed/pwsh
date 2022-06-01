@@ -11,7 +11,8 @@ function Assert-Admin {
     else {
         $msg = "You do not have Administrator rights to run this script!`nPlease re-run this script as an Administrator!"
         Write-Warning $msg
-        exit
+        # https://stackoverflow.com/questions/2022326/terminating-a-script-in-powershell#answer-45030002
+        Break Script
     }
 }
 

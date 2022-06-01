@@ -54,6 +54,7 @@ Breakable-Pipeline {
     Write-Step 'check running WindowsTerminal...'
     $install = @"
     & {
+      start-sleep -s 2
       Write-Step 'install windows terminal...'
       write-host `"Add-AppxPackage '$env:temp/$file'`"
       Import-Module Appx -UseWindowsPowerShell *>`$null
@@ -77,5 +78,7 @@ Breakable-Pipeline {
       stop-process -name "WindowsTerminal" -force
       stop-process -name "OpenConsole" -force
     } 
+  } else {
+    pwsh -NoExit -Command $install
   }
 }
