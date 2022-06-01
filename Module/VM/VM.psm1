@@ -1,2 +1,2 @@
 . $PSScriptRoot\Connect-VM.ps1
-# Export-ModuleMember -Function Connect-VM
+Export-ModuleMember -Function Connect-VM

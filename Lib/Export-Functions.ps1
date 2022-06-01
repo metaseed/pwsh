@@ -12,6 +12,11 @@ we could explictly include the _file/_folder files
 to reload the module after changing:
 ipmo metaseed.git -fo
 import-module metaseed.git -force.
+.NOTES
+when make this function in as module, even dot source the funciton
+it still not work. so do this:
+. $env:MS_PWSH/Lib/Export-Functions.ps1
+. Export-Functions $PSScriptRoot
 
 .EXAMPLE
 . Export-Functions $PSScriptRoot
@@ -40,5 +45,3 @@ function Export-Functions {
     $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
     Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
 }
-
-Export-ModuleMember Export-Functions

@@ -10,4 +10,4 @@ function Get-AllPwshFiles {
    ? { $_.fullname -notmatch '\\_.*\\' }) 
   return $All
 }
-Export-ModuleMember Get-AllPwshFiles
+# Export-ModuleMember Get-AllPwshFiles
