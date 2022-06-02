@@ -2,6 +2,8 @@ function Write-Execute {
   <#
   .SYNOPSIS
   Write command to execute and excute command; if error then Exit
+  .Notes
+  we could use -ErrorAction SilentlyContinue to ignore all error
   #>
   [CmdletBinding()]
   param (

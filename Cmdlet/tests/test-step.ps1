@@ -1,3 +1,6 @@
+[CmdletBinding()]
+param (
+)
 write-step 'dsdfsdf sdf d'
 write-Substep 'dsdfsdf sdf d'
 write-Substep 'dsdfsdf sdf d'
@@ -17,7 +20,7 @@ Write-Error "Error!!!"
 Write-Warning "Warning !!!"
 Write-Attention 'sdfsdf sdf d'
 Write-Attention 'sdfsdf sdf d'
-Write-Error "Error!!!1111"
+Write-Error "Error!!!1111" -ErrorAction SilentlyContinue
 Write-Execute 'echo abc' 
 write-Substep 'dsdfsdf sdf d'
 Write-Notice 'sdfsdf sdf d'
