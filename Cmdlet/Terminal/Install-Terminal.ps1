@@ -56,7 +56,7 @@ Breakable-Pipeline {
     & {
       start-sleep -s 2
       Write-Step 'install windows terminal...'
-      write-host `"Add-AppxPackage '$env:temp/$file'`"
+      write-host `"Add-AppxPackage '$env:temp\$file'`"
       Import-Module Appx -UseWindowsPowerShell *>`$null
       Add-AppxPackage `"$env:temp/$file`"
       Write-host `"when err: please kill the 'Terninal' task in task manager and try again with:  Add-AppxPackage '$env:temp\$file'`"
