@@ -1,4 +1,3 @@
-$__IndentLength = 2
 . $env:MS_PWSH/Lib/Export-Functions.ps1
 # . $PSScriptRoot\..\Metaseed.Lib\_Special\Export-Functions.ps1
 # https://stackoverflow.com/questions/15187510/dot-sourcing-functions-from-file-to-global-scope-inside-of-function

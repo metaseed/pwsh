@@ -16,7 +16,7 @@ function Show-Steps {
     elseif ($_.type -eq 'SubStep') {
       Write-SubStep $_.message -replay
     }
-    elseif ($_.type -eq 'Important') {
+    elseif ($_.type -eq 'Attention') {
       Write-Attention $_.message -replay
     }
     elseif ($_.type -eq 'Action') {
@@ -26,7 +26,10 @@ function Show-Steps {
       $hasErr = $true
     } elseif($_.type -eq 'Warning') {
       WriteWarning $_.message -replay
+    }elseif($_.type -eq 'Notice') {
+      Write-Notice $_.message -replay
     }
+
   }
   if($hasErr) {
     Write-Host "`n use `$error or get-error to get more information about the errors" -ForegroundColor DarkYellow

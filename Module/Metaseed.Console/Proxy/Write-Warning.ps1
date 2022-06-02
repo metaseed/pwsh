@@ -35,6 +35,7 @@ Function Write-Warning {
  	
 	process {
 		try {
+      $steppablePipeline.Process($_)
 			WriteWarning $PSBoundParameters
 		}
 		catch {
