@@ -9,7 +9,7 @@ Set-Alias nsl mcd
         $codePath = (Get-Command 'code-insiders' -ErrorAction SilentlyContinue).Source
         if ($null -ne $codePath) {
             # "C:\Users\metaseed\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
-            Set-Alias code code-insiders
+            Set-Alias code code-insiders -Scope Global
         }
     }
 }

@@ -14,6 +14,7 @@ Clear-Host
 # if(-not $env:MS_PWSH) {
 #   $env:MS_PWSH = [System.Environment]::GetEnvironmentVariable("MS_PWSH", "User")
 # }
+
 $InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
 . $PSScriptRoot\profile\main.ps1
 . $PSScriptRoot\up.ps1 1
