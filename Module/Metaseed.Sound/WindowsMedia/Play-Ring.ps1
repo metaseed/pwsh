@@ -10,4 +10,5 @@ function Play-Ring {
   Play-Sound $path
 }
 
-#$null = Play-Ring 1&
+#currently by default async
+#$null = Play-Ring 1& # not needed

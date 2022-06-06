@@ -23,7 +23,7 @@ function GetWindowsSounds {
   return $Sounds
 }
 
-function Play-Windows {
+function Play-WindowsSound {
   [CmdletBinding()]
   param (
     [Parameter(Position = 0)]
@@ -45,8 +45,9 @@ function Play-Windows {
   Play-Sound $path
 }
 #Note: directly use ArgumentCompleter and call GetWindowsSounds in it's script block not works!
-Register-ArgumentCompleter -CommandName 'Play-Windows' -ParameterName 'name' -ScriptBlock {
+Register-ArgumentCompleter -CommandName 'Play-WindowsSound' -ParameterName 'name' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
   $Sounds = GetWindowsSounds $wordToComplete
   return $Sounds
 }
+# ipmo Metaseed.Sound -fo; 
