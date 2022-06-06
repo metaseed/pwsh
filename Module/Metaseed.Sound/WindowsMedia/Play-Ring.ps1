@@ -10,4 +10,4 @@ function Play-Ring {
   Play-Sound $path
 }
 
-# Play-Ring 1
+#$null = Play-Ring 1&

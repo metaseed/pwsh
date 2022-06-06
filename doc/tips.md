@@ -122,3 +122,10 @@ write-host $a
 play-ring
 }&
 receive-job $b
+
+## foreach parallel write to console work
+1,2,3|% -Parallel {write-host $_}
+note: in job we can not directly write to console
+* modify outside variable
+$a = @{}
+1,2,3|% -Parallel {write-host $_; ($using:a).b = $_}

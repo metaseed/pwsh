@@ -7,7 +7,6 @@ function Kill-Service {
     [string[]]$processes,
     [int]$timeout = 5 # seconds to wait
   )
-  spsv $processes -Force -ErrorAction SilentlyContinue
   
   Write-Information 'try to checking unstopped services...'
   $find = $false
@@ -49,6 +48,12 @@ function Kill-Service {
     Stop-Process -Force -Id $_.ProcessId -ErrorAction Continue
   }
   if (-not $find) {
-    Write-Warning "> no killing/stopping to $processes"
+    Write-Notice "no killing/stopping to $processes"
+    return
   }
+
+  start-sleep 1
+  spsv $processes -Force -ErrorAction SilentlyContinue
 }
+
+
