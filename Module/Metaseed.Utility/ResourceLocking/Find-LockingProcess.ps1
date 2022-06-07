@@ -32,6 +32,10 @@ function findLocking {
         [Parameter(Position = 1)]
         [object]$AppInfo
     )
+    if(!(test-path $path)){
+        Write-Error "Path $path does not exist"
+        return
+    }
     #Initialize-SystemInternalsApp -AppRegName "Handle"
     $PathName = (Resolve-Path -Path $Path).Path.TrimEnd("\") # Ensures proper .. expansion & slashe \/ type
     #   -u         Show the owning user name when searching for handles.

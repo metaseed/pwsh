@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Metaseed.TerminalBackground
@@ -14,7 +15,12 @@ namespace Metaseed.TerminalBackground
       var rootCommand = new RootCommand();
       rootCommand.SetHandler(async (string[] arg) =>
       {
-        Console.WriteLine("Hello World!");
+        Console.WriteLine("start");
+        new Timer(async (object state) =>
+        {
+          await Task.Delay(5000);
+          Console.WriteLine("tick");
+        }, null, 0, 1000);
         
       });
       var option = new Option("--verbose");
