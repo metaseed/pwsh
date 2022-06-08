@@ -67,15 +67,9 @@ Function Get-PendingReboot {
     http://technet.microsoft.com/en-us/library/cc960241.aspx
     http://blogs.msdn.com/b/hansr/archive/2006/02/17/patchreboot.aspx
 
-    SCCM 2012/CCM_ClientSDK:
     http://msdn.microsoft.com/en-us/library/jj902723.aspx
 
 .NOTES
-    Author:  Brian Wilhite
-    Email:   bcwilhite (at) live.com
-    Date:    29AUG2012
-    PSVer:   2.0/3.0/4.0/5.0
-    Updated: 27JUL2015
     UpdNote: Added Domain Join detection to PendComputerRename, does not detect Workgroup Join/Change
              Fixed Bug where a computer rename was not detected in 2008 R2 and above if a domain join occurred at the same time.
              Fixed Bug where the CBServicing wasn't detected on Windows 10 and/or Windows Server Technical Preview (2016)

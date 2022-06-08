@@ -1,3 +1,6 @@
+<#
+s: shell
+#>
 [CmdletBinding()]
 param (
     [Parameter()]

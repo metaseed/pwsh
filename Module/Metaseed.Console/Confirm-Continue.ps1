@@ -12,10 +12,14 @@ function Confirm-Continue {
   param(
     [string] $message
   )
-  Write-Host "`n$message" -ForegroundColor Yellow
+  Write-Attention "`n$message"
   Write-Host "press'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
+  Play-Alarm
   $key = [Console]::ReadKey().Key
   if ($key -ne [ConsoleKey]::Enter) {
+    Write-Host 'stopped!'
     exit
   }
+  Write-Host "continuing..."
 }
+# todo: music and background changing

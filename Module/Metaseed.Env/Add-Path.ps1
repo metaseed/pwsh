@@ -39,8 +39,6 @@ function Add-Path {
 
 }
 
-
-
 function Test-PathInStr {
     [CmdletBinding()]
     param (
