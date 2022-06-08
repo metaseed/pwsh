@@ -1,5 +1,5 @@
 
-Function Beep-MissionImpossible {
+Function MissionImpossible {
   [console]::beep(784, 150)
   Start-Sleep -m 300
   [console]::beep(784, 150)
@@ -46,4 +46,8 @@ Function Beep-MissionImpossible {
   Start-Sleep -m 150
   [console]::beep(466, 150)
   [console]::beep(523, 150)
+}
+
+function Beep-MissionImpossible {
+   MissionImpossible
 }

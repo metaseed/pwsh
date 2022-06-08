@@ -13,14 +13,19 @@ function New-Pack {
         $OutPath,
         [Parameter()]
         [string]
-        $OutExeName
+        $OutExeName,
+        [Parameter()]
+        [switch]
+        [Alias('k')]
+        $keepConsole
+
     )
 
     $dir = gl
     $FolderWithExe = Resolve-Path $FolderWithExe
     Push-Location -Path $PSScriptRoot
     try {
-        # pack
+        Write-Action 'Creating new pack...'
         if (!$StartExe) {
             $exes = gci $FolderWithExe | ? { $_.Name -like '*.exe' }
             $StartExe = $exes[0].Name
@@ -39,19 +44,25 @@ function New-Pack {
         New-Item -ItemType Directory $tempFolder -Force > $null
         .\_Pack\warp-packer.exe --arch windows-x64 --input_dir $FolderWithExe --exec $StartExe --output $tempExe
 
-        # remove cmd window
-        $VsWherePath = "`"${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe`""
-        $config = Invoke-Expression "& $VsWherePath -latest -format json" | ConvertFrom-Json
-        $base = $config.InstallationPath
-        . "$base\Common7\Tools\Launch-VsDevShell.ps1"
-        editbin /subsystem:windows $tempExe
-        sl $PSScriptRoot
+        if (-not $keepConsole) {
+            write-action "remove cmd window..."
+            $VsWherePath = "`"${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe`""
+            $config = Invoke-Expression "& $VsWherePath -latest -format json" | ConvertFrom-Json
+            $base = $config.InstallationPath
+            . "$base\Common7\Tools\Launch-VsDevShell.ps1"
+            editbin /subsystem:windows $tempExe
+            sl $PSScriptRoot
+        }
 
-        # set icon
+        write-action "set icon..."
         .\_Pack\resource_hacker\ResourceHacker.exe -open $exePath -action extract -mask ICONGROUP, IDI_ICON1, -save $iconPath
         sleep 1
-        .\_Pack\resource_hacker\ResourceHacker.exe -open $tempExe -save $OutPath -action addskip -mask ICONGROUP, MAINICON, -res $iconPath
-        sleep 1
+        if(test-path $iconPath) {
+            .\_Pack\resource_hacker\ResourceHacker.exe -open $tempExe -save $OutPath -action addskip -mask ICONGROUP, MAINICON, -res $iconPath
+            sleep 1
+        } else {
+            copy-item $tempExe $OutPath -Force
+        }
         
         # display info 
         '==============Result================='
