@@ -13,10 +13,12 @@ function Git-Branch {
     # $commitMsg = $matches[3]
     $shaAndMsg = git show -s --pretty=reference $commitSha
     # 9580c652eb (bump version: {{release}}.0.218, 2022-03-29)
+    # write-host -ForegroundColor gray $branchNameWithSpaces -noNewLine
+    # Write-Host -ForegroundColor Cyan $shaAndMsg
     return "$branchNameWithSpaces $shaAndMsg"
     #  jsong12/feat/config-page-nav                                         1df27ce6fa (ok, 2022-05-06)
   }
-  return $branches
+   return $branches
 }
 # git config --global branch.sort -committerdate
  
