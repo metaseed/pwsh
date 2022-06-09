@@ -57,7 +57,7 @@ function Git-DeleteBranches {
     # just delete remote tracking:
     #   git branch --delete --remotes "origin/$branch"
   }
-  # Delete multiple obsolete remote-tracking branches
+  # Delete multiple obsolete remote-tracking branches locally
   git fetch origin --prune
   Write-Execute "git-branch"
 }

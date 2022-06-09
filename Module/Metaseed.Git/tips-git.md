@@ -4,4 +4,4 @@
 gitk --all
 
 ## accept conflict changes
-git checkout --theirs/ours <file/.>
+git checkout --theirs/ours <file>/.
