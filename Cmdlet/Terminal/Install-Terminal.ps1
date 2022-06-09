@@ -10,6 +10,7 @@ param (
   $version = 'preview',
   [Parameter()]
   [switch]
+  [alias('f')]
   $force
 
 )

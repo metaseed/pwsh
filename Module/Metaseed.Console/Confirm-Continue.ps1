@@ -14,11 +14,11 @@ function Confirm-Continue {
   )
   Write-Attention "`n$message"
   Write-Host "press'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
-  Play-Alarm
+  Beep-DingDong
   $key = [Console]::ReadKey().Key
   if ($key -ne [ConsoleKey]::Enter) {
-    Write-Host 'stopped!'
-    exit
+    Write-Host ' stopped!'
+    break SCRIPT
   }
   Write-Host "continuing..."
 }

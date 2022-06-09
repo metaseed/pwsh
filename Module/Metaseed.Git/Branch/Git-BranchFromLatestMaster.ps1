@@ -43,8 +43,3 @@ function Git-BranchFromLatestMaster {
 
 Set-Alias gitb Git-BranchFromLatestMaster
 
-function Git-Branch {
-  Write-Execute "git branch @args -v --sort=committerdate" 'note: -v - show commit sha and msg'
-}
-# git config --global branch.sort -committerdate
-Export-ModuleMember Git-Branch
