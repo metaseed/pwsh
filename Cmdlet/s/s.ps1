@@ -55,4 +55,3 @@ end {
   $__LibFolder = "$PSScriptRoot\_Lib"
   & $file @PSBoundParameters
 }
-# todo: setup git source and modify MS_PWSH profile
