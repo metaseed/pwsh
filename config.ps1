@@ -33,5 +33,4 @@ else {
 $env:MS_PWSH = $PSScriptRoot
 write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 
-$env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\Module)"
-$env:path += ";$PSScriptRoot\Cmdlet"
+. $PSScriptRoot\profile.ps1
