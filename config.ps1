@@ -17,7 +17,7 @@ if (!$has) {
   }
   if ($has1) {
     # means $MS_PWSH is not the current $PSScriptRoot
-    (Get-Content $profile.CurrentUserAllHosts) | % { $_.Replace($p1, $p) | set-content $profile.CurrentUserAllHosts -Force }
+    (Get-Content $profile.CurrentUserAllHosts) | % { $_.Replace($p1, $p) }| set-content $profile.CurrentUserAllHosts -Force
     write-host "replace $p1 with $p in $($profile.CurrentUserAllHosts)"
   } 
   else {
