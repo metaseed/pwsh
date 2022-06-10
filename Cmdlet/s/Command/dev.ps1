@@ -25,6 +25,7 @@ try {
     New-Item -itemtype file -Force -Path "$root/.local" | Out-Null
   }
   code $root
+  code $PROFILE.CurrentUserAllHosts
 }
 catch {
   write-error $_.Exception.Message
