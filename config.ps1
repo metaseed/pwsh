@@ -5,7 +5,7 @@ else {
   write-host "create new profile.CurrentUserAllHosts: $($profile.CurrentUserAllHosts)"
   New-Item -ItemType File -Path $profile.CurrentUserAllHosts -Force | Out-Null
 }
-
+## set profile
 $p = ". $(Resolve-Path $PSScriptRoot\profile.ps1)"
 $has = gc $profile.CurrentUserAllHosts | ? { $_ -like $p }
 if (!$has) {
@@ -28,7 +28,7 @@ if (!$has) {
 else {
   write-host "no action, because already added to profie: $p"
 }
-
+## environment variables
 [System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
 $env:MS_PWSH = $PSScriptRoot
 write-host "set env:MS_PWSH to $($env:MS_PWSH)"

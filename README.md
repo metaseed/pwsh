@@ -14,7 +14,7 @@ iwr https://pwsh.page.link/0 |iex
 
 ### install latest and auto update
 ```powershell
-if($env:MS_PWSH) {. $env:MS_PWSH\up.ps1} else {iwr https://pwsh.page.link/0|iex}
+if($env:MS_PWSH) {. $env:MS_PWSH\upgrade.ps1} else {iwr https://pwsh.page.link/0|iex}
 # \up.ps1 1: check update every 1 day, default is 0: immediately
 ```
 ### install specific version
