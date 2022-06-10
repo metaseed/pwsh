@@ -22,7 +22,7 @@ function Update-Installation {
     param (
         # local info.json path
         [string]
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         $LocalInfoPath,
         # remote info.json url
         [string]
@@ -30,9 +30,24 @@ function Update-Installation {
         # install.ps1 path
         [string]
         $InstallUrl,
+        [int]$days = 0, 
         [switch]
         $Confirm
     )
+    # .local file only exist local and igored in .gitignore file; used to prevent upgrade
+    $localFolder = Split-Path $localInfoPath
+    $localFile = "$localFolder/.local"
+    if (Test-Path $localFile) { 
+        return 
+    }
+
+    if ($days -gt 0) { 
+        $_days = ((Get-Date) - (gi $localInfo).LastWriteTime).Days
+        if ($_days -lt $days) {
+            return
+        }
+    }
+
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {
         if ($Confirm) {
@@ -45,6 +60,7 @@ function Update-Installation {
         write-host -f Green "> Upgrading ($ver) from '$RemoteInfoUrl'..."
         # -UseBasicParsing for pwsh 5
         iwr -UseBasicParsing $InstallUrl | iex
+        (gi $localInfo).LastWriteTime = Get-Date
     }
 }
 
