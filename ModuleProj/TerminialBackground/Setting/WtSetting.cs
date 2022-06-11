@@ -28,11 +28,14 @@ namespace Metaseed.TerminalBackground
     //{
     //  IProfiles profiles { get; set; }
     //}
-    public class Setting
+
+
+    public class WtSetting
     {
+        public static int DefaultDuration = 5;
         public string Path = null;
 
-        public Setting()
+        public WtSetting()
         {
             string appDir = Environment.GetEnvironmentVariable("LocalAppData");
             string Stable = @$"{appDir}\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json";
@@ -71,8 +74,8 @@ namespace Metaseed.TerminalBackground
         public void SetSettings(JsonObject settings)
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
-            // File.WriteAllText(Path, settings.ToJsonString(options));
-            File.WriteAllText("C:\\Users\\metaseed\\OneDrive\\Documents/1.json", settings.ToJsonString(options));
+             File.WriteAllText(Path, settings.ToJsonString(options));
+            //File.WriteAllText("C:\\Users\\metaseed\\OneDrive\\Documents/1.json", settings.ToJsonString(options));
             //using (var file = File.Create("C:\\Users\\metaseed\\OneDrive\\Documents/1.json"))
             //{
             //    var options = new JsonSerializerOptions { WriteIndented = true };
