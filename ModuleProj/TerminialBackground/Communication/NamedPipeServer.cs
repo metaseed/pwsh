@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 // https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-use-anonymous-pipes-for-local-interprocess-communication
 namespace Metaseed.TerminalBackground.Communication
 {
-    public sealed class NamedPipeServer : IIpcServer
+    public sealed class NamedPipeServer : IWtBgIpcServer
     {
-        private readonly NamedPipeServerStream _server = new NamedPipeServerStream(nameof(IIpcClient), PipeDirection.In);
+        private readonly NamedPipeServerStream _server = new NamedPipeServerStream(nameof(IWtBgIpcClient), PipeDirection.In);
 
         private void OnReceived(DataReceivedEventArgs e)
         {

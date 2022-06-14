@@ -1,6 +1,8 @@
 using namespace System.Security.Principal
 
 function Test-Admin {
+    # $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+    # $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
     ([WindowsPrincipal] [WindowsIdentity]::GetCurrent()).IsInRole([WindowsBuiltInRole] "Administrator")
 }
 

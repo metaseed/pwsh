@@ -74,12 +74,19 @@ function Git-SyncMaster {
           Write-Execute "git merge master -s ort -X $strategyOption"
         }
         else {
-          Write-Execute "git merge master"
+          # noThrow: eitherwise the 'git stash apply' would applied and include the changes in stash.
+          Write-Execute "git merge master" -noThrow -noStop
+          $mergeError = 0 -ne $LASTEXITCODE
+          if ($mergeError) {
+            # not apply stash if merge error, otherwise the stash will be applied and the changes to be pushed
+            Write-Attention "merge error($LASTEXITCODE), please resolve conflict manually.`nyou local changes are stored on stash, you could do 'git stash apply --index' to restore the changes."
+            return
+          }
         }
       }
 
       Write-Step 'push synced changes to remote...'
-      # strange although we have pulled at start, if not pull again: Error:
+      # strange although we have pulled   at start, if not pull again: Error:
       #  Updates were rejected because the tip of your current branch is behind
       if ($hasRemote) {
         Write-Execute 'git pull' 
@@ -92,8 +99,11 @@ function Git-SyncMaster {
     Write-Error 'Git-RebaseMaster execution error.'
   }
   finally {
+
     if ($guard -eq [GitSaftyGuard]::Stashed) {
-      Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
+      if (! $mergeError) {
+        Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
+      }
     }
     # else {
     # we have git status in git-push  

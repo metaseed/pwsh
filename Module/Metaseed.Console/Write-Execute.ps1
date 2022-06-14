@@ -4,6 +4,10 @@ function Write-Execute {
   Write command to execute and excute command; if error then Exit
   .Notes
   we could use -ErrorAction SilentlyContinue to ignore all error
+  .OUTPUTS
+  -nothrow -nostop: check 0 -ne $LASTEXITCODE
+  or stop execute if without -nostop
+  or throw exception if without -nothrow
   #>
   [CmdletBinding()]
   param (
@@ -14,7 +18,7 @@ function Write-Execute {
     [Parameter( Position = 1)]
     [string]$message,
     [switch]$noThrow,
-    # to get output msg when error into a variable
+    # to get output msg when error into a variable, or continue execution and test errors
     [switch]$noStop,
     [switch]$replay = $false
   )
@@ -40,6 +44,7 @@ function Write-Execute {
           Write-Error $errorMsg 
         }
         else {
+          # note we can catch the error in the catch block if the -erroraction is set to stop
           Write-Error $errorMsg -ErrorAction stop
         }
       }

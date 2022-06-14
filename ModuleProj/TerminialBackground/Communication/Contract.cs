@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Metaseed.TerminalBackground.Communication
 {
-    public interface IIpcClient
+    public interface IWtBgIpcClient
     {
         void Send(string data);
     }
 
-    public interface IIpcServer : IDisposable
+    public interface IWtBgIpcServer : IDisposable
     {
         void Start();
         void Stop();

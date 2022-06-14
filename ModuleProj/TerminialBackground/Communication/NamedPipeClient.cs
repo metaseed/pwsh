@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 // shared mem is only for windows
 namespace Metaseed.TerminalBackground.Communication
 {
-    public class NamedPipeClient : IIpcClient
+    public class NamedPipeClient : IWtBgIpcClient
     {
         public void Send(string data)
         {
-            using var client = new NamedPipeClientStream(".", nameof(IIpcClient), PipeDirection.Out);
+            using var client = new NamedPipeClientStream(".", nameof(IWtBgIpcClient), PipeDirection.Out);
             client.Connect();
 
             using var writer = new StreamWriter(client);
