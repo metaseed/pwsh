@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,34 +7,44 @@ namespace Metaseed.TerminalBackground
 {
     public static class Program
     {
-        static Mutex appMutex;
-        static readonly CyclicBackground cyclicBackground = new CyclicBackground();
+#if DEBUG
+        static bool showConsole = true;
+#else
+        static bool showConsole = false;
+#endif
+
+        static Mutex  appMutex;
+        private static Server server;
         [STAThread]
         [System.Diagnostics.DebuggerNonUserCode]
         public static async Task Main(string[] args)
         {
-            bool notRunningYet;
-            appMutex = new Mutex(true, "WinTerminalBackgroundImage", out notRunningYet);
-
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(async (string[] arg) =>
+            appMutex = new Mutex(true, "WinTerminalBackgroundImage", out var notRunningYet);
+            if (notRunningYet)
             {
-                Console.WriteLine("start");
-               
-
-            });
-            // var option = new Option("--verbose");
-            // option.AddAlias("-v");
-            // rootCommand.Add(option);
-            //  await rootCommand.InvokeAsync(args);
-
-            // rootCommand.Add(new ConfigCommand()); 
-
-            while (true)
-            {
-                await cyclicBackground.Run();
+                server = new Server();
             }
+            var rootCommand = new RootCommand();
+            rootCommand.SetHandler(() =>
+            {
+                Console.WriteLine("started and waiting for commands");
+            });
+            rootCommand.Add(new StartSubCommand());
+            rootCommand.Add(new StopSubCommand());
+            rootCommand.Add(new SetBackgroundImageSubCommand());
+            await rootCommand.InvokeAsync(args);
+
+            if (!notRunningYet) return;
+            
+
+            if (showConsole)
+            {
+                ShowConsole.ShowConsoleWindow();
+            }
+            new ManualResetEvent(false).WaitOne();
 
         }
+
+
     }
 }

@@ -54,15 +54,18 @@ namespace Metaseed.TerminalBackground
 
                 _settings.SetSettings(_wtSettings);
                 await Task.Delay(_duration * 1000, token);
-        
+                Console.WriteLine("cyclically background changed");
         }
 
         public void StopCyclic()
         {
+            if (!IsStarted) return;
+            IsStarted = false;
             cyclicTocken.Cancel();
+            cyclicTocken = new CancellationTokenSource();
         }
 
-        public async Task SetBackgroundImage(string profile, int durationInSeconds, string jsonProfile)
+        public async Task SetBackgroundImage(string profile, float durationInSeconds, string jsonProfile)
         {
             var wtProfile      = findWtProfile(profile);
             var bgProfile      = findBgProfile(profile);
@@ -71,7 +74,7 @@ namespace Metaseed.TerminalBackground
             var wtProfileBackup = wtProfile.Deserialize<JsonNode>();
             SetProfileValue(bgBackground, wtProfile);
 
-            await Task.Delay(durationInSeconds * 1000);
+            await Task.Delay((int)Math.Floor(durationInSeconds * 1000));
             bgProfile["_explicitSet"] = false;
 
             JsonNode valueToSet;

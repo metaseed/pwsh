@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.PowerShell.Commands;
+﻿using System.Threading.Tasks;
 
 namespace Metaseed.TerminalBackground
 {
@@ -16,7 +11,7 @@ namespace Metaseed.TerminalBackground
             cyclicBackground.StartCyclic();
         }
 
-        public static void SetBackgroundImage(string profile, int durationInSeconds, string jsonProfileValueString)
+        public static void SetBackgroundImage(string profile, float durationInSeconds, string jsonProfileValueString)
         {
             Task.Run(async () =>
             {

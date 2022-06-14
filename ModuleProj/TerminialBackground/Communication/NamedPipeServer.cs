@@ -40,12 +40,14 @@ namespace Metaseed.TerminalBackground.Communication
 
         public void Stop()
         {
+            Console.WriteLine("Server stopped!");
             this._server.Disconnect();
         }
 
         void IDisposable.Dispose()
         {
             this.Stop();
+            Console.WriteLine("Server disposed!");
 
             this._server.Dispose();
         }

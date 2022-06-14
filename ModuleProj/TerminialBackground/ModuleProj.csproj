@@ -8,6 +8,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>TerminalBackground</AssemblyName>
     <RootNamespace>Metaseed.TerminalBackground</RootNamespace>
+    <ApplicationIcon />
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
