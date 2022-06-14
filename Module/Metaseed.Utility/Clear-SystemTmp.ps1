@@ -247,9 +247,8 @@ function Clear-SystemTmp {
   # $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }     
     
   Write-Step "Cleaning Recycle Bin"
-  $ErrorActionPreference = 'SilentlyContinue'
   $RecycleBin = "C:\`$Recycle.Bin"
-  $BinFolders = Get-ChildItem $RecycleBin -Directory -Force
+  $BinFolders = Get-ChildItem $RecycleBin -Directory -Force -ErrorAction SilentlyContinue 
 
   Foreach ($Folder in $BinFolders) {
     # Translate the SID to a User Account
@@ -265,13 +264,9 @@ function Clear-SystemTmp {
     }
     $Files = @()
 
-    if ($PSVersionTable.PSVersion -Like "*2*") {
-      $Files = Get-ChildItem $Folder.FullName -Recurse -Force
-    }
-    else {
-      $Files = Get-ChildItem $Folder.FullName -File -Recurse -Force
-      $Files += Get-ChildItem $Folder.FullName -Directory -Recurse -Force
-    }
+
+    $Files = Get-ChildItem $Folder.FullName -File -Recurse -Force  -ErrorAction SilentlyContinue
+    $Files += Get-ChildItem $Folder.FullName -Directory -Recurse -Force  -ErrorAction SilentlyContinue
 
     $FileTotal = $Files.Count
 
@@ -284,10 +279,12 @@ function Clear-SystemTmp {
   }
       
   Write-Step "Cleaning C:\temp and c:\tmp folders"
+  Write-SubStep "clearing C:\temp"
   # Listing all files in C:\Temp\* recursively, using Force parameter displays hidden files.
   $TempItems = Get-ChildItem -Path "C:\Temp\*" -Recurse -Force
   $TempItems | % { Remove-Item $_ -Force -ErrorAction SilentlyContinue -Verbose  -Recurse }
-
+  
+  Write-SubStep "clearing C:\tmp"
   $TempItems = Get-ChildItem -Path "C:\tmp\*" -Recurse -Force
   $TempItems | % { Remove-Item $_ -Force -ErrorAction SilentlyContinue -Verbose  -Recurse }
 
