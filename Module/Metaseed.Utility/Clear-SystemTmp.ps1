@@ -1,23 +1,5 @@
+# todo: not done yet
 function Clear-SystemTmp {
-
-  write-Step "Removing Junk files in $env:temp..."
-  Remove-Item -Recurse  "$env:temp\*" -Force -ErrorAction Continue
-  
-  # Empty Recycle Bin # http://demonictalkingskull.com/2010/06/empty-users-recycle-bin-with-powershell-and-gpo/   
-  Write-Step "Emptying Recycle Bin..."
-  $objShell = New-Object -ComObject Shell.Application   
-  $objFolder = $objShell.Namespace(0xA)   
-  $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }   
-  
-  # Remove Windows Temp Directory
-  $WinTemp = "$env:windir\Temp"
-  Write-Step "Removing Junk files in $WinTemp..."
-  Remove-Item -Recurse "$WinTemp\*" -Force 
-  
-  # Running Disk Clean up Tool    
-  write-step "Running Windows disk Clean up Tool..."
-  cleanmgr /sagerun:1 | out-Null
-
   #Calling Powershell as Admin and setting Execution Policy to Bypass to avoid Cannot run Scripts error
   Invoke-Admin $PSCommandPath $PSBoundParameters -break
 
@@ -213,6 +195,7 @@ function Clear-SystemTmp {
       Write-Host -ForegroundColor Yellow "Done...`n"
       # Clear Windows Temp Folder
       Write-Host -ForegroundColor Yellow "Clearing Windows Temp Folder`n"
+
       Foreach ($user in $Users) {
         Remove-Item -Path "C:\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
         Remove-Item -Path "$env:windir\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
@@ -367,6 +350,10 @@ function Clear-SystemTmp {
       }
 
       # Empty Recycle Bin
+      # $objShell = New-Object -ComObject Shell.Application   
+      # $objFolder = $objShell.Namespace(0xA)   
+      # $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }     
+    
       if ($Cleanbin -eq 'Y') {
         Write-Host -ForegroundColor Green "Cleaning Recycle Bin`n"
         $ErrorActionPreference = 'SilentlyContinue'
@@ -455,3 +442,4 @@ function Clear-SystemTmp {
       Cleanup
     }
   }
+}
