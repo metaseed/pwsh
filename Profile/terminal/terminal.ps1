@@ -1,0 +1,1 @@
+Start-WTCyclicBgImg $PSScriptRoot\settings.json

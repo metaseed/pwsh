@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ModuleProj": {
+      "commandName": "Project",
+      "commandLineArgs": "start"
+    }
+  }
+}

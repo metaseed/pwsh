@@ -3,6 +3,7 @@ symbolCache.db
 .vs
 obj
 bin
+Metaseed.Terminal/bin/*
 ModuleProj/song.accdb
 .local
 Module/Metaseed.Utility/Pack/resource_hacker/ResourceHacker.ini

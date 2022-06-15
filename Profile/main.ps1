@@ -9,4 +9,5 @@
 . $PSScriptRoot\PSReadlineConfig.ps1
 . $PSScriptRoot\last-output.ps1
 . $PSScriptRoot\posh-git.ps1
+. $PSScriptRoot\terminal\terminal.ps1
 # }

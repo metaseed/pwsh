@@ -2,7 +2,9 @@
 
   <PropertyGroup>
       <OutputType>Exe</OutputType>
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <!-- <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract> -->
 <!-- hide console -->
 <!-- <OutputType>WinExe</OutputType> -->
     <TargetFramework>net6.0</TargetFramework>
@@ -10,6 +12,10 @@
     <RootNamespace>Metaseed.TerminalBackground</RootNamespace>
     <ApplicationIcon />
     <StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\Module\Metaseed.Terminal\release</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

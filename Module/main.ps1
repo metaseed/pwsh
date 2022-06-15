@@ -10,5 +10,6 @@ Import-Module Metaseed.Console -DisableNameChecking
 Import-Module Metaseed.Utility -DisableNameChecking 
 Import-Module Metaseed.Git -DisableNameChecking 
 Import-Module Metaseed.Sound -DisableNameChecking
+Import-Module Metaseed.Terminal -DisableNameChecking
 
 # }
