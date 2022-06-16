@@ -1,4 +1,4 @@
-function New-Pack {
+# function New-Pack {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
@@ -77,4 +77,4 @@ function New-Pack {
         Pop-Location
     }
 
-}
+# }
