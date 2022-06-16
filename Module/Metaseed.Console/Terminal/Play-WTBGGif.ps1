@@ -4,7 +4,7 @@ function GetGifs {
     [Parameter()]
     $wordToComplete
   )
-  $gifs = @(Get-ChildItem "$psscriptroot\gifs\*.gif" | % { $_.BaseName})|
+  $gifs = @(Get-ChildItem "$psscriptroot\gifs\*.gif"','% { $_.BaseName})|
   ? { 
     if($wordToComplete) {
       return $_ -like ($wordToComplete -split '' -join '*').TrimStart('*')
@@ -19,9 +19,15 @@ function Play-WTBGGif {
       [Parameter( Position=0)]
       $name = 'fireworks',
       [Parameter( Position=1)]
-      [int]$durationInseconds = 6
+      [int]$durationInseconds = 6,
+      [Parameter( Position=2)]
+      [ValidateSet('center','topLeft','bottomLeft','left','topRight','bottomRight','right','top','bottom')]
+      [string]$alignment = 'center',
+      [ValidateSet('none','uniformToFill','fill','uniform')]
+      [string]$stretchMode = 'none'
+
     )
-    $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$psscriptroot\gifs\$name.gif") + ',"backgroundImageStretchMode": "none","backgroundImageAlignment": "center","backgroundImageOpacity":0.8}'
+    $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$psscriptroot\gifs\$name.gif") + ',"backgroundImageStretchMode": "'+$stretchMode +'","backgroundImageAlignment": "'+ $alignment +'","backgroundImageOpacity":0.8}'
     Set-WTBgImg defaults $durationInseconds $str
 }
 
