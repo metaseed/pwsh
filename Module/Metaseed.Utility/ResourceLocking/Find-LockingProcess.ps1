@@ -40,7 +40,7 @@ function findLocking {
     $PathName = (Resolve-Path -Path $Path).Path.TrimEnd("\") # Ensures proper .. expansion & slashe \/ type
     #   -u         Show the owning user name when searching for handles.
     $LineS = & $AppInfo.Path -accepteula -u $PathName -nobanner
-    # $LineS
+
     foreach ($Line in $LineS) {
         # "pwsh.exe           pid: 5808   type: File          Domain\UserName             48: D:\MySuff\Modules"
         if ($Line -match "(?<proc>.+)\s+pid: (?<pid>\d+)\s+type: (?<type>\w+)\s+(?<user>.+)\s+(?<hnum>\w+)\:\s+(?<path>.*)\s*") {

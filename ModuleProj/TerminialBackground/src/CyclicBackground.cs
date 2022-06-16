@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -77,27 +78,44 @@ namespace Metaseed.TerminalBackground
 
         public async Task SetBackgroundImage(string profile, float durationInSeconds, string jsonProfile)
         {
-            var wtProfile = findWtProfile(profile);
-            var bgProfile = findBgProfile(profile);
-            var bgBackground = JsonNode.Parse(jsonProfile);
-            bgProfile["_explicitSet"] = true;
-            var wtProfileBackup = wtProfile.Deserialize<JsonNode>();
-            SetProfileValue(bgBackground, wtProfile);
-
-            await Task.Delay((int)Math.Floor(durationInSeconds * 1000));
-            bgProfile["_explicitSet"] = false;
-
-            JsonNode valueToSet;
-            var index = bgProfile["_usedIndex"]?.GetValue<int>() ?? -1;
-            if (index == -1)
+            try
             {
-                valueToSet = wtProfileBackup;
+                var wtProfile = findWtProfile(profile);
+                var bgProfile = findBgProfile(profile);
+                var bgBackground = JsonNode.Parse(jsonProfile);
+                bgProfile["_explicitSet"] = true;
+                var wtProfileBackup = wtProfile.Deserialize<JsonNode>();
+                var keyToRemove = new List<string>();
+                foreach (var (key, value) in bgBackground.AsObject())
+                {
+                    if (wtProfile[key] == null)
+                    {
+                        keyToRemove.Add(key);
+                    }
+                }
+                SetProfileValue(bgBackground, wtProfile);
+                _settings.SetSettings(_wtSettings);
+                await Task.Delay((int)Math.Floor(durationInSeconds * 1000));
+                bgProfile["_explicitSet"] = false;
+
+                foreach (var key in keyToRemove)
+                {
+                    wtProfile.AsObject().Remove(key);
+                }
+                SetProfileValue(wtProfileBackup, wtProfile);
+                var index = bgProfile["_usedIndex"]?.GetValue<int>() ?? -1;
+                if (index != -1)
+                {
+                    var valueToSet = bgProfile["backgrounds"].AsArray()[index];
+                    SetProfileValue(valueToSet, wtProfile);
+                }
+
+                _settings.SetSettings(_wtSettings);
             }
-            else
+            catch (Exception e)
             {
-                valueToSet = bgProfile["backgrounds"].AsArray()[index];
+                Console.WriteLine(e);
             }
-            SetProfileValue(valueToSet, wtProfile);
         }
 
         private JsonNode findWtProfile(string name)
