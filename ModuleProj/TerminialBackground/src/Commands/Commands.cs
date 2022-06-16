@@ -9,13 +9,15 @@ public class StartSubCommand : Command
     {
         AddAlias("sa");
         AddAlias("start");
-        AddOption(new Option<string>(new[] { "-settingsPath", "-settings", "-s" }, "the settings for cyclic background image"));
+        var o = new Option<string>(new[] {"--settingsPath", "-settings", "-s"},
+            "the settings for cyclic background image");
+        AddOption(o);
 
         this.SetHandler((string settingsPath) =>
         {
             new Client().StartCyclic(settingsPath);
             //return WtBackgroundImage.StartCyclic;
-        });
+        }, o);
     }
 }
 
@@ -38,14 +40,18 @@ public class SetBackgroundImageSubCommand : Command
     public SetBackgroundImageSubCommand() : base("SetBackgroundImage", "Set background image directly")
     {
         AddAlias("sbg");
-        AddOption(new Option<string>(new[] { "-p", "-profile" }, "the profile to modify"));
-        AddOption(new Option<float>(new[] { "-d", "-duration", "-durationInSeconds" }, "duration in seconds"));
-        AddOption(new Option<float>(new[] { "-v", "-value", "-jsonProfileValueString" }, "json string value to modify the profile"));
+        var p = new Option<string>(new[] {"-p", "--profile"}, "the profile to modify");
+        AddOption(p);
+        var d = new Option<float>(new[] {"-d", "--duration", "-durationInSeconds"}, "duration in seconds");
+        AddOption(d);
+        var v = new Option<float>(new[] {"-v", "--value", "-jsonProfileValueString"},
+            "json string value to modify the profile");
+        AddOption(v);
 
         this.SetHandler((string profile, float durationInSeconds, string jsonProfileValueString) =>
         {
             new Client().SetBackgroundImage(profile, durationInSeconds, jsonProfileValueString);
             //WtBackgroundImage.SetBackgroundImage(profile, durationInSeconds, jsonProfileValueString);
-        });
+        }, p, d, v);
     }
 }

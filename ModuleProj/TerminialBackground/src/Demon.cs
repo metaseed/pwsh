@@ -58,6 +58,11 @@ namespace Metaseed.TerminalBackground
         public void StartCyclic(string settingsPath)
         {
             settingsPath = settingsPath.Trim('"', '\'');
+            if (!File.Exists(settingsPath))
+            {
+                Console.WriteLine("file not exist!");
+                return;
+            }
             var p = JsonSerializer.Serialize(settingsPath);
             var data = $"{{\"command\":\"StartCyclic\", \"settingsPath\": {p}}}";
             //Console.WriteLine("send:" + data);
