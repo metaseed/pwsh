@@ -15,7 +15,7 @@ function Get-ParentProcess {
   # #get the process id of the given process
   # $id = $process.Id
   #Obtain The parent process id.
-  $instance = Get-CimInstance  Win32_Process -Filter "ProcessId = '$id'"
+  $instance = Get-CimInstance Win32_Process -Filter "ProcessId = '$id'"
   $instance.ParentProcessId
   #Fetch the process with the parentprocess id.
   $parentProcess = Get-Process -Id $instance.ParentProcessId

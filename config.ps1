@@ -9,13 +9,13 @@ else {
 $p = ". $(Resolve-Path $PSScriptRoot\profile.ps1)"
 $has = gc $profile.CurrentUserAllHosts | ? { $_ -like $p }
 if (!$has) {
-  $has1 = $false
+  $hasOld = $false
   $p1 = ''
   if ($env:MS_PWSH) {
     $p1 = ". $(Resolve-Path $env:MS_PWSH\profile.ps1)"
-    $has1 = gc $profile.CurrentUserAllHosts | ? { $_ -like $p1 }
+    $hasOld = gc $profile.CurrentUserAllHosts | ? { $_ -like $p1 }
   }
-  if ($has1) {
+  if ($hasOld) {
     # means $MS_PWSH is not the current $PSScriptRoot
     (Get-Content $profile.CurrentUserAllHosts) | % { $_.Replace($p1, $p) }| set-content $profile.CurrentUserAllHosts -Force
     write-host "replace $p1 with $p in $($profile.CurrentUserAllHosts)"

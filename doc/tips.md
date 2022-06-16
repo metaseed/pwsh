@@ -9,6 +9,7 @@ gh Get-ChildItem -Online
 ```
 ipmo metaseed.git -fo
 import-module metaseed.git -force
+rmo metaseed.git
 ```
 * copy current dir
 ```
@@ -28,6 +29,7 @@ pwd and gl is the aliases of get-location
 ```
 # mcd is a function in profile
 mcd dir
+nsl dir (new and set location)
 ```
 
 * cmd's where command
@@ -73,12 +75,12 @@ get-command code|select-object -expandProperty Source|Split-Path
 * copy file content to clipboard
 gc file|scb
 
-* get date in file path
+* get date to be used in file path
 > get-date -Format FileDate
 > 20210526
 
-> get-date -f "yyMMdd_HHMMss"
-> 220511_110541
+> get-date -f "yyMMdd_HHmmss"
+> 220616_115046
 * get time zone relevant to UTC
 get-date -f zz
 -05 (day time saver included)
@@ -106,8 +108,8 @@ gcm mkdir |% scriptblock
 gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1 
 
 ## beep
-1. DingDong: just the Ctrl+G: inclose the Ctrl+G in a string and output it. (type ctrl+g in console and copy it to file: )
-1. Bee: [Console]::Beep(), [Console]::Beep(1000,1000)
+1. beep-DingDong: just the Ctrl+G: inclose the Ctrl+G in a string and output it. (type ctrl+g in console and copy it to file: )
+1. [Console]::Beep(), [Console]::Beep(1000,1000)
 
 * show unicode: [char]0x2261
 

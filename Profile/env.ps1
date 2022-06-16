@@ -6,8 +6,7 @@ $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
 & { #prevent expose $appFolder into the profile variable: provider
     $appFolder = 'C:\App'
     if (Test-Path $appFolder) {
-        #note: app folder has already been add to path when do mapping
-        $env:path += ";$((Get-ChildItem -Attributes Directory -Path $appFolder -Name | ForEach-Object { join-path $appFolder $_ }) -join ';')"
+        $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Name | ForEach-Object { join-path $appFolder $_ }) -join ';')"
     }
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path += ";$CmdLetFolder"
