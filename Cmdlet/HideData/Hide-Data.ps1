@@ -26,7 +26,7 @@ process {
             Remove-Item $outPath -Force -ErrorAction SilentlyContinue
         }
         else {
-            'Nothing changed!'
+            Write-Notice 'Nothing changed!'
             return
         }
     }
