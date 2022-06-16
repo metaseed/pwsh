@@ -4,7 +4,7 @@ function GetGifs {
     [Parameter()]
     $wordToComplete
   )
-  $gifs = @(Get-ChildItem "$psscriptroot\gifs\*.gif"','% { $_.BaseName})|
+  $gifs = @(Get-ChildItem "$psscriptroot\gifs" -include "*.gif"|% { $_.BaseName})|
   ? { 
     if($wordToComplete) {
       return $_ -like ($wordToComplete -split '' -join '*').TrimStart('*')
@@ -14,6 +14,7 @@ function GetGifs {
   }
   return $gifs
 }
+
 function Play-WTBGGif {
     param(
       [Parameter( Position=0)]
