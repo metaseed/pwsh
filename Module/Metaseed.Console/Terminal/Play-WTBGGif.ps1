@@ -4,19 +4,22 @@ function GetGifs {
     [Parameter()]
     $wordToComplete
   )
-  $gifs = @(Get-ChildItem "$psscriptroot\gifs" -include "*.gif"|% { $_.BaseName})|
+  $gifs = @(Get-ChildItem "$psscriptroot\gifs" -Recurse |% { $_.BaseName})|
   ? { 
     if($wordToComplete) {
-      return $_ -like ($wordToComplete -split '' -join '*').TrimStart('*')
+      return $_ -like ($wordToComplete -split '' -join '*')
     } else {
       return $_
     }
   }
   return $gifs
 }
-
+<#
+.SYNOPSIS play a gif for a set seconds
+#>
 function Play-WTBGGif {
     param(
+      # if dir: random gif in dir, if file, play that gif
       [Parameter( Position=0)]
       $name = 'fireworks',
       [Parameter( Position=1)]
@@ -28,7 +31,11 @@ function Play-WTBGGif {
       [string]$stretchMode = 'none'
 
     )
-    $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$psscriptroot\gifs\$name.gif") + ',"backgroundImageStretchMode": "'+$stretchMode +'","backgroundImageAlignment": "'+ $alignment +'","backgroundImageOpacity":0.8}'
+    $it = Get-ChildItem "$psscriptroot\gifs" -Recurse | Where-Object { $_.BaseName -eq $name } 
+    if($it.Attributes -eq 'Directory') {
+      $it = Get-ChildItem "$psscriptroot\gifs\$name\*.gif" -Recurse | get-Random
+    }
+    $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "'+$stretchMode +'","backgroundImageAlignment": "'+ $alignment +'","backgroundImageOpacity":0.8}'
     Set-WTBgImg defaults $durationInseconds $str
 }
 
