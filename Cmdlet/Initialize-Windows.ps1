@@ -24,6 +24,16 @@ $code = @'
 Add-Type -MemberDefinition $code -Namespace WinAPI -Name Explorer 
 [WinAPI.Explorer]::Refresh()
 
+# Set up the parameters for Set-ItemProperty
+$sipParams = @{
+  Path  = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+  Name  = 'LaunchTo'
+  # 1: this pc; 2: quick access; 3: downloads
+  Value = 1 # Set the LaunchTo value for "This PC", default is 2 (Quick Access)
+}
+
+# Run Set-ItemProperty with the parameters we set above
+Set-ItemProperty @sipParams
 
 '> Disable Connected User Experiences and Telemetry'
 # https://www.windowscentral.com/how-opt-out-customer-experience-improvement-program-windows-10

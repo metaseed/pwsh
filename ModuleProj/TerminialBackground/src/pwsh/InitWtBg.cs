@@ -9,6 +9,8 @@ namespace Metaseed.TerminalBackground.src.pwsh
     {
         protected override void EndProcessing()
         {
+            Client.HostUI = Host.UI;
+
             var dir = Path.GetDirectoryName(typeof(WTBackgroundImageInit).Assembly.Location);
             var exe = $"{dir}\\TerminalBackground.exe";
             var proc = new Process

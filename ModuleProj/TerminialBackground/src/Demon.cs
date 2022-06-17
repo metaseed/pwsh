@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Host;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -53,34 +54,42 @@ namespace Metaseed.TerminalBackground
 
     public class Client
     {
+        public static PSHostUserInterface HostUI;
         private readonly WtClient _client = new WtClient();
 
         public void StartCyclic(string settingsPath)
         {
+            if (settingsPath == null) settingsPath = "";
             settingsPath = settingsPath.Trim('"', '\'');
-            if (!File.Exists(settingsPath))
+            if (!String.IsNullOrEmpty(settingsPath) && !File.Exists(settingsPath))
             {
-                Console.WriteLine("file not exist!");
+                HostUI?.WriteDebugLine($"'{settingsPath}' not exist.");
+                if (HostUI == null) Console.WriteLine($"'{settingsPath}' not exist.");
                 return;
             }
+
             var p = JsonSerializer.Serialize(settingsPath);
             var data = $"{{\"command\":\"StartCyclic\", \"settingsPath\": {p}}}";
-            //Console.WriteLine("send:" + data);
+            // hide output from profile loading
+            //HostUI?.WriteDebugLine("send:" + data);
+            if (HostUI == null) Console.WriteLine("send:" + data);
             _client.Send(data);
         }
 
         public void StopCyclic()
         {
             var data = "{\"command\":\"StopCyclic\"}";
-            Console.WriteLine("send:" + data);
             _client.Send(data);
-
+            //HostUI?.WriteDebugLine("send:" + data);
+            if (HostUI == null) Console.WriteLine("send:" + data);
         }
 
         public void SetBackgroundImage(string profile, float durationInSeconds, string jsonProfileValueString)
         {
             var data = $"{{\"command\": \"SetBackgroundImage\", \"profile\":\"{profile}\", \"durationInSeconds\": {durationInSeconds}, \"jsonProfileValueString\": {jsonProfileValueString} }}";
-            Console.WriteLine("send:" + data);
+            //HostUI?.WriteDebugLine("send:" + data);
+            if (HostUI == null) Console.WriteLine("send:" + data);
+
             _client.Send(data);
         }
 

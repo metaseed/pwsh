@@ -75,3 +75,11 @@ function Install-DotNetFramwork4() {
 }
  
 
+
+function Get-DotnetVersions {
+
+    Get-DotNetFrameworkVersions
+    dotnet --list-runtimes
+    dotnet --list-sdks
+    
+}

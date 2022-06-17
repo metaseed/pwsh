@@ -1,0 +1,1 @@
+﻿spps -n TerminalBackground, pwsh, WindowsTerminal

@@ -43,6 +43,7 @@ namespace TerminialBackground
 
         protected override void EndProcessing()
         {
+            Client.HostUI = Host.UI;
             new Client().SetBackgroundImage(Profile, DurationInSeconds, JsonProfileValueString);
         }
     }

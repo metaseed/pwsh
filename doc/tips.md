@@ -131,3 +131,8 @@ note: in job we can not directly write to console
 * modify outside variable
 $a = @{}
 1,2,3|% -Parallel {write-host $_; ($using:a).b = $_}
+
+## open 'this pc'
+explorer file:
+* open c:
+explorer c:

@@ -11,6 +11,9 @@ namespace TerminialBackground
     [Cmdlet("Start", "WTCyclicBgImg")]
     public class WTStartCyclicBackgroundImage : PSCmdlet
     {
+        public WTStartCyclicBackgroundImage()
+        {
+        }
         [Parameter(
             Position                        = 0,
             ValueFromPipeline               = true,
@@ -18,11 +21,7 @@ namespace TerminialBackground
         public string SettingsPath { get; set; }
         protected override void EndProcessing()
         {
-            if (!File.Exists(SettingsPath))
-            {
-                Console.WriteLine($"'{SettingsPath}' not exist.");
-                return;
-            }
+            Client.HostUI = Host.UI;
             // the path '/' => '//'
             new Client().StartCyclic(SettingsPath);
 
