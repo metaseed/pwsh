@@ -1,7 +1,5 @@
 Set-Alias ga Get-Alias
 Set-Alias gh Get-Help
-# nsl: new directory and set location: make and change dir
-Set-Alias nsl mcd
 
 & { # prevent $codePath leak in to profile variable: provider
     $codePath = (Get-Command 'code' -ErrorAction SilentlyContinue).Source
