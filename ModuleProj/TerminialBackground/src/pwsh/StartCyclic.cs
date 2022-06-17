@@ -21,7 +21,7 @@ namespace TerminialBackground
         public string SettingsPath { get; set; }
         protected override void EndProcessing()
         {
-            Client.HostUI = Host.UI;
+            Client.CommandRuntime = CommandRuntime;
             // the path '/' => '//'
             new Client().StartCyclic(SettingsPath);
 

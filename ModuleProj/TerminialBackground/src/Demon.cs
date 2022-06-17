@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Text;
 using System.Text.Json;
@@ -54,7 +55,7 @@ namespace Metaseed.TerminalBackground
 
     public class Client
     {
-        public static PSHostUserInterface HostUI;
+        public static ICommandRuntime CommandRuntime;
         private readonly WtClient _client = new WtClient();
 
         public void StartCyclic(string settingsPath)
@@ -63,16 +64,16 @@ namespace Metaseed.TerminalBackground
             settingsPath = settingsPath.Trim('"', '\'');
             if (!String.IsNullOrEmpty(settingsPath) && !File.Exists(settingsPath))
             {
-                HostUI?.WriteDebugLine($"'{settingsPath}' not exist.");
-                if (HostUI == null) Console.WriteLine($"'{settingsPath}' not exist.");
+                CommandRuntime?.WriteVerbose($"'{settingsPath}' not exist.");
+                if (CommandRuntime == null) Console.WriteLine($"'{settingsPath}' not exist.");
                 return;
             }
 
             var p = JsonSerializer.Serialize(settingsPath);
             var data = $"{{\"command\":\"StartCyclic\", \"settingsPath\": {p}}}";
             // hide output from profile loading
-            //HostUI?.WriteDebugLine("send:" + data);
-            if (HostUI == null) Console.WriteLine("send:" + data);
+            CommandRuntime?.WriteVerbose("send:" + data);
+            if (CommandRuntime == null) Console.WriteLine("send:" + data);
             _client.Send(data);
         }
 
@@ -80,15 +81,15 @@ namespace Metaseed.TerminalBackground
         {
             var data = "{\"command\":\"StopCyclic\"}";
             _client.Send(data);
-            //HostUI?.WriteDebugLine("send:" + data);
-            if (HostUI == null) Console.WriteLine("send:" + data);
+            CommandRuntime?.WriteVerbose("send:" + data);
+            if (CommandRuntime == null) Console.WriteLine("send:" + data);
         }
 
         public void SetBackgroundImage(string profile, float durationInSeconds, string jsonProfileValueString)
         {
             var data = $"{{\"command\": \"SetBackgroundImage\", \"profile\":\"{profile}\", \"durationInSeconds\": {durationInSeconds}, \"jsonProfileValueString\": {jsonProfileValueString} }}";
-            //HostUI?.WriteDebugLine("send:" + data);
-            if (HostUI == null) Console.WriteLine("send:" + data);
+            CommandRuntime?.WriteVerbose("send:" + data);
+            if (CommandRuntime == null) Console.WriteLine("send:" + data);
 
             _client.Send(data);
         }

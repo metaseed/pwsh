@@ -10,7 +10,7 @@ namespace TerminialBackground
     {
         protected override void EndProcessing()
         {
-            Client.HostUI = Host.UI;
+            Client.CommandRuntime = CommandRuntime;
 
             new Client().StopCyclic();
         }
