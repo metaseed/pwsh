@@ -1,2 +1,4 @@
 # Import-Module Metaseed.Terminal  -DisableNameChecking
-Start-WTCyclicBgImg $PSScriptRoot\settings.json
+if ($env:WT_SESSION) {
+  Start-WTCyclicBgImg $PSScriptRoot\settings.json
+}

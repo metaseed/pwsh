@@ -12,6 +12,7 @@
 # the result:
 # 05-11 14:31:50 [master ≡ +0 ~5 -0 !] M:\Script\Pwsh
 # >
+
 Import-Module posh-git -ErrorAction SilentlyContinue
 # only config when posh-git is installed
 if ($?) {
