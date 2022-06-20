@@ -4,14 +4,16 @@ Set-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 
 Set-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -name 'TaskbarGlomLevel' -value 0 # 0: Always Combine, Hide Labels; 1: Combine when full; 2: Never Combine
 
-'show My Pc on desktop'
+write-action 'show My Pc on desktop'
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{20D04FE0-3AEA-1069-A2D8-08002B30309D}' -Value 'My PC'
-'show Document on desktop'
+write-action 'show Document on desktop'
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{59031a47-3f72-44a7-89c5-5595fe6b30ee}' -Value 'Document'
-'show Network Location on desktip'
+write-action 'show Network Location on desktip'
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}' -Value 'Network Location'
-'show Recycle Bin on desktop'
+write-action 'show Recycle Bin on desktop'
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' -Value 'Recycle Bin'
+
+# An application should use this function if it performs an action that may affect the Shell.
 $code = @'
   [System.Runtime.InteropServices.DllImport("Shell32.dll")] 
   private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
@@ -24,18 +26,16 @@ $code = @'
 Add-Type -MemberDefinition $code -Namespace WinAPI -Name Explorer 
 [WinAPI.Explorer]::Refresh()
 
-# Set up the parameters for Set-ItemProperty
+Write-Action 'when open explorer, show this pc versus quick access'
 $sipParams = @{
   Path  = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
   Name  = 'LaunchTo'
   # 1: this pc; 2: quick access; 3: downloads
   Value = 1 # Set the LaunchTo value for "This PC", default is 2 (Quick Access)
 }
-
-# Run Set-ItemProperty with the parameters we set above
 Set-ItemProperty @sipParams
 
-'> Disable Connected User Experiences and Telemetry'
+write-action 'Disable Connected User Experiences and Telemetry'
 # https://www.windowscentral.com/how-opt-out-customer-experience-improvement-program-windows-10
 # http://www.kjrnet.com/Info/Windows%207%20Hidden%20Settings%202.html
 function Disable-Task {
