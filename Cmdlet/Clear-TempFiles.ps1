@@ -10,7 +10,7 @@ $LogDate = Get-Date -Format "MM-d-yy-HHmm"
     
 # Set Deletion Date for Downloads Folder
 $DelDownloadsDate = (Get-Date).AddDays(-20)
-$DelTempDate = (Get-Date).AddDays(-60)
+$DelTempDate = (Get-Date).AddDays(-30)
 
 # Set Deletion Date for Inetpub Log Folder
 $DelInetLogDate = (Get-Date).AddDays(10)
@@ -184,14 +184,15 @@ Foreach ($user in $Users) {
     Remove-Item -Path "$env:windir\Logs\CBS\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     Remove-Item -Path "$env:ProgramData\Microsoft\Windows\WER\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     # Only grab log files sitting in the root of the Logfiles directory
-    $Sys32Files = Get-ChildItem -Path "$env:windir\System32\LogFiles" | Where-Object { ($_.name -like "*.log") -and ($_.lastwritetime -lt $System32LogDate) }
-    foreach ($File in $Sys32Files) {
-      Remove-Item -Path "$env:windir\System32\LogFiles\$($file.name)" -Force -ErrorAction SilentlyContinue -Verbose
+    Get-ChildItem -Path "$env:windir\System32\LogFiles" | Where-Object { ($_.name -like "*.log") -and ($_.lastwritetime -lt $System32LogDate) } |
+    % {
+      Remove-Item -Path "$env:windir\System32\LogFiles\$($_.name)" -Force -ErrorAction SilentlyContinue -Verbose
     }
   }
 }
 
 # Clear Inetpub Logs Folder
+# the default folder for Microsoft Internet Information Services (IIS)
 if (Test-Path "C:\inetpub\logs\LogFiles\") {
   Write-Step "Clearing Inetpub Logs Folder that older than $(((get-date) - $DelInetLogDate).Days)"
   Get-ChildItem -Path "C:\inetpub\logs\LogFiles\" | 
@@ -204,13 +205,15 @@ if (Test-Path "C:\inetpub\logs\LogFiles\") {
 $Users | % {
   $user = $_
   $UserDownloads = "$UsersPath\$user\Downloads"
-  $d = Get-ChildItem -Path "$UserDownloads" -Force 
-  if ($d.Count -gt 0) {
-    Write-Step "Deleting files older than $(((get-date) - $DelDownloadsDate).Days) days from User($user) Downloads folder"
-    $d |
-    Where-Object LastWriteTime -LT $DelDownloadsDate | 
-    % {
-      Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+  if (test-path $UserDownloads) {
+    $d = Get-ChildItem -Path "$UserDownloads" -Force 
+    if ($d.Count -gt 0) {
+      Write-Step "Deleting files older than $(((get-date) - $DelDownloadsDate).Days) days from User($user) Downloads folder"
+      $d |
+      Where-Object LastWriteTime -LT $DelDownloadsDate | 
+      % {
+        Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+      }
     }
   }
 }
@@ -280,27 +283,30 @@ $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }
 Write-Step "Cleaning C:\temp and c:\tmp folders"
 Write-SubStep "clearing C:\temp"
 # Listing all files in C:\Temp\* recursively, using Force parameter displays hidden files.
-$TempItems = Get-ChildItem -Path "C:\Temp\*"  -Force |
+Get-ChildItem -Path "C:\Temp\*"  -Force |
 ? LastWriteTime -LT $DelTempDate | 
 % {
   Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
 }
 
 Write-SubStep "clearing C:\tmp"
-$TempItems = Get-ChildItem -Path "C:\tmp\*" -Recurse -Force |
+Get-ChildItem -Path "C:\tmp\*" -Recurse -Force |
 ? LastWriteTime -LT $DelTempDate | 
 % {
   Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
 }
+
 Write-Step "Clearing Application temp Folders..."
 # Delete files older than 7 days from Office Cache Folder
-Write-SubStep "Clearing Office Cache Folder"
 Foreach ($user in $Users) {
   $officecache = "$UsersPath\$user\AppData\Local\Microsoft\Office\16.0\GrooveFileCache"
   if (Test-Path $officecache) {
-    $OldFiles = Get-ChildItem -Path "$officecache\" -Recurse -File -ErrorAction SilentlyContinue | Where-Object LastWriteTime -LT $DelOfficeCacheDate 
-    foreach ($file in $OldFiles) {
-      Remove-Item -Path "$officecache\$file" -Force -ErrorAction SilentlyContinue -Verbose
+    $OldFiles = Get-ChildItem -Path "$officecache\" -ErrorAction SilentlyContinue 
+    if ($oldFiles.Count -gt 0) {
+      Write-SubStep "Cleaning $officecache"
+      $OldFiles |
+      Where-Object LastWriteTime -LT $DelOfficeCacheDate |
+      Remove-Item -Path "$officecache\$_" -Force -Recurse -ErrorAction SilentlyContinue -Verbose
     }
   } 
 }
@@ -329,23 +335,23 @@ Foreach ($user in $Users) {
     Remove-Item -Path "$UsersPath\$user\Dropbox*\.dropbox.cache\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
   }
 }
-Write-Step "clean other mislienous application folders..."
+
 # Delete files older than 7 days from Azure Log folder
 if (Test-Path "C:\WindowsAzure\Logs") {
   Write-SubStep "Deleting files older than 7 days from Azure Log folder"
   $AzureLogs = "C:\WindowsAzure\Logs"
-  $OldFiles = Get-ChildItem -Path "$AzureLogs\" -Recurse -File -ErrorAction SilentlyContinue | Where-Object LastWriteTime -LT $DelAZLogDate
-  foreach ($file in $OldFiles) {
-    Remove-Item -Path "$AzureLogs\$file" -Force -ErrorAction SilentlyContinue -Verbose
+  Get-ChildItem -Path "$AzureLogs\"  -ErrorAction SilentlyContinue | Where-Object LastWriteTime -LT $DelAZLogDate |
+  % {
+    Remove-Item -Path $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
   }
 } 
 # Delete files older than 30 days from LFSAgent Log folder https://www.lepide.com/
 if (Test-Path "$env:windir\LFSAgent\Logs") {
   Write-SubStep "Deleting files older than 30 days from LFSAgent Log folder"
   $LFSAgentLogs = "$env:windir\LFSAgent\Logs"
-  $OldFiles = Get-ChildItem -Path "$LFSAgentLogs\" -Recurse -File -ErrorAction SilentlyContinue | Where-Object LastWriteTime -LT $DelLFSAGentLogDate
-  foreach ($file in $OldFiles) {
-    Remove-Item -Path "$LFSAgentLogs\$file" -Force -ErrorAction SilentlyContinue -Verbose
+  Get-ChildItem -Path "$LFSAgentLogs\" -ErrorAction SilentlyContinue | Where-Object LastWriteTime -LT $DelLFSAGentLogDate |
+  % {
+    Remove-Item -Path $_ -Recurse -Force -ErrorAction SilentlyContinue -Verbose
   }
 }         
 
