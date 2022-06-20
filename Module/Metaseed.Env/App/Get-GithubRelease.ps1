@@ -22,23 +22,24 @@ function Get-GithubRelease {
     $fileNamePattern
   )
   
-  Write-Step "query latest ($version)version..."
+  Write-Step "query version($version)..."
 
-  if($version -eq 'stable'){
+  if ($version -eq 'stable') {
     $url = "https://api.github.com/repos/$OrgName/$RepoName/releases/latest"
-  }else{
+  }
+  else {
     $url = "https://api.github.com/repos/$OrgName/$RepoName/releases"
   }
 
   $response = Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing 
 
-  if($version -eq 'preview'){
+  if ($version -eq 'preview') {
     # first one is the latest release
     $response = $response.SyncRoot[0]
   }
 
-  $assets = @($response.assets | where {$_.name -match $fileNamePattern} | select -Property 'name','browser_download_url')
-
+  Write-Verbose $response.body
+  $assets = @($response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', 'browser_download_url', @{label = 'releaseNote'; expression = {$response.body} })
   return $assets
 
 }
@@ -54,14 +55,16 @@ function Download-GithubRelease {
     [string]
     $outputDir = $env:TEMP
   )
-  if($assets.count -eq 0){
+  if ($assets.count -eq 0) {
     Write-Error "no file found"
-  } elseif($assets.count -gt 1){
-    foreach($asset in $assets){
+  }
+  elseif ($assets.count -gt 1) {
+    foreach ($asset in $assets) {
       Write-Host $asset.name
     }
     Write-Error "multiple files found:"
-  } else {
+  }
+  else {
     $asset = $assets[0]
     $url = $asset.browser_download_url
     Write-Debug $url

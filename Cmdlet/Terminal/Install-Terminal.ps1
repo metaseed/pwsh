@@ -17,7 +17,7 @@ param (
 Assert-Admin
 
 Breakable-Pipeline {
-  Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern "_$($platform)_.*\.msixbundle$" -ErrorAction Stop |
+  Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern "_$($platform)_.*\.msixbundle$" |
   % {
     $assets = $_
     if ($assets.Count -ne 1 ) {
@@ -40,7 +40,8 @@ Breakable-Pipeline {
         break;
       }
       else {
-        write-host "new version available:  $ver_online, local: $t.Version"
+        Write-Host $assets[0].releaseNote
+        write-host "new version available:  $ver_online, local: $($t.Version)"
       }
     }
     else {
