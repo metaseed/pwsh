@@ -10,6 +10,7 @@ $LogDate = Get-Date -Format "MM-d-yy-HHmm"
     
 # Set Deletion Date for Downloads Folder
 $DelDownloadsDate = (Get-Date).AddDays(-20)
+$DelTempDate = (Get-Date).AddDays(-60)
 
 # Set Deletion Date for Inetpub Log Folder
 $DelInetLogDate = (Get-Date).AddDays(10)
@@ -39,12 +40,7 @@ if ($WUfoldersize -gt 1.5) {
 }
 
 # Get Disk Size
-$Before = Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq "3" } | Select-Object SystemName,
-@{ Name = "Drive" ; Expression = { ( $_.DeviceID ) } },
-@{ Name = "Size (GB)" ; Expression = { "{0:N1}" -f ( $_.Size / 1gb) } },
-@{ Name = "FreeSpace (GB)" ; Expression = { "{0:N1}" -f ( $_.Freespace / 1gb ) } },
-@{ Name = "PercentFree" ; Expression = { "{0:P1}" -f ( $_.FreeSpace / $_.Size ) } } |
-Format-Table -AutoSize | Out-String
+$Before = Show-DiskSpace
 
 # Define log file location
 $Cleanuplog = "$env:temp\Cleanup$LogDate.log"
@@ -284,13 +280,18 @@ $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }
 Write-Step "Cleaning C:\temp and c:\tmp folders"
 Write-SubStep "clearing C:\temp"
 # Listing all files in C:\Temp\* recursively, using Force parameter displays hidden files.
-$TempItems = Get-ChildItem -Path "C:\Temp\*" -Recurse -Force
-$TempItems | % { Remove-Item $_ -Force -ErrorAction SilentlyContinue -Verbose  -Recurse }
-  
-Write-SubStep "clearing C:\tmp"
-$TempItems = Get-ChildItem -Path "C:\tmp\*" -Recurse -Force
-$TempItems | % { Remove-Item $_ -Force -ErrorAction SilentlyContinue -Verbose  -Recurse }
+$TempItems = Get-ChildItem -Path "C:\Temp\*"  -Force |
+? LastWriteTime -LT $DelTempDate | 
+% {
+  Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+}
 
+Write-SubStep "clearing C:\tmp"
+$TempItems = Get-ChildItem -Path "C:\tmp\*" -Recurse -Force |
+? LastWriteTime -LT $DelTempDate | 
+% {
+  Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+}
 Write-Step "Clearing Application temp Folders..."
 # Delete files older than 7 days from Office Cache Folder
 Write-SubStep "Clearing Office Cache Folder"
@@ -370,12 +371,7 @@ Play-Ring
 Write-Notice "All Tasks Done!"
 
 # Get Drive size after clean
-$After = Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq "3" } | Select-Object SystemName,
-@{ Name = "Drive" ; Expression = { ( $_.DeviceID ) } },
-@{ Name = "Size (GB)" ; Expression = { "{0:N1}" -f ( $_.Size / 1gb) } },
-@{ Name = "FreeSpace (GB)" ; Expression = { "{0:N1}" -f ( $_.Freespace / 1gb ) } },
-@{ Name = "PercentFree" ; Expression = { "{0:P1}" -f ( $_.FreeSpace / $_.Size ) } } |
-Format-Table -AutoSize | Out-String
+$After = Show-DiskSpace
 
 # Sends some before and after info for ticketing purposes
 Write-Notice "Before: $Before"
