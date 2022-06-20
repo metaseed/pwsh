@@ -3,6 +3,7 @@ $App = "C:\App"
 $AppSource = "M:\App"
 if(-not (Test-Path $AppSource)) {
     Write-Error "make sure the M: disk is mapped!"
+    return
 }
 if(-not (Test-Path $App)) {
     New-Item $App -ItemType SymbolicLink -Value $AppSource
@@ -10,4 +11,4 @@ if(-not (Test-Path $App)) {
     Add-Path $App 'User'
     return
 }
-Write-Host "'$App' already there!"
+Write-Host "'$App' already mapped!"

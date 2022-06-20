@@ -1,14 +1,15 @@
 
 [CmdletBinding()]
 param (
-  # local source folder to clone the source code
+  # clone the source code into the pwsh sub-folder of the folder
   [Parameter()]
   [string]$PWSHFolder
 )
 if (Test-Path $PWSHFolder -PathType leaf) {
-  write-error "a file $PWSHFolder already exists"
+  write-error "a file $PWSHFolder already exists, please remove it first or try a different folder"
   return
 }
+
 if (! (Test-Path $PWSHFolder -PathType Container)) {
   write-host "$PWSHFolder does not exist, create it..."
   New-Item -ItemType Directory -Path $PWSHFolder -Force | Out-Null

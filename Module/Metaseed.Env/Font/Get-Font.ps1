@@ -1,3 +1,8 @@
+#Requires -Version 3.0
+
+# Supported font extensions
+$ValidExts = @('.otf', '.ttf')
+$ValidExtsRegex = '\.(otf|ttf)$'
 <#
     .SYNOPSIS
     Retrieves all registered fonts
@@ -27,18 +32,6 @@
     .LINK
     https://github.com/ralish/PSWinGlue
 #>
-
-#Requires -Version 3.0
-
-[CmdletBinding()]
-Param(
-    [ValidateSet('System', 'User')]
-    [String]$Scope = 'System'
-)
-
-# Supported font extensions
-$ValidExts = @('.otf', '.ttf')
-$ValidExtsRegex = '\.(otf|ttf)$'
 
 Function Get-Fonts {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '')]
@@ -126,4 +119,4 @@ if ($Scope -eq 'User' -and !(Test-PerUserFontsSupported)) {
     throw 'Per-user fonts are only supported from Windows 10 1809.'
 }
 
-Get-Fonts @PSBoundParameters
+# Get-Fonts @PSBoundParameters
