@@ -39,8 +39,8 @@ function Get-GithubRelease {
   }
 
   Write-Verbose $response.body
-  $assets = @($response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', 'browser_download_url', @{label = 'releaseNote'; expression = {$response.body} })
-  return $assets
+  $assets = $response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', 'browser_download_url', @{label = 'releaseNote'; expression = {$response.body} }
+  return @($assets)
 
 }
 

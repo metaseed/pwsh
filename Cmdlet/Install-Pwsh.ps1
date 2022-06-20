@@ -10,12 +10,12 @@ Assert-Admin
 Breakable-Pipeline {
   Get-GithubRelease -OrgName 'Powershell' -RepoName 'PowerShell' -Version $version -fileNamePattern 'win-x64.msi$' |
   % {
-    $asset = $_
+    $assets = $_
     if ($assets.Count -ne 1 ) {
       foreach ($asset in $assets) {
         Write-Host $asset.name
       }
-      Write-Error "Expected one asset, but found $assets.Count"
+      Write-Error "Expected one asset, but found $($assets.Count)"
       break;
     }
     

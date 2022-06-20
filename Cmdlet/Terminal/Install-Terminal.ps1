@@ -24,8 +24,8 @@ Breakable-Pipeline {
       foreach ($asset in $assets) {
         Write-Host $asset.name
       }
-      Write-Error "Expected one asset, but found $assets.Count"
-      break;
+      Write-Error "Expected one asset, but found $($assets.Count)"
+      break; # break pipeline
     }
     $file = $assets[0].name
     write-host $file
