@@ -6,5 +6,7 @@ function Git-Root {
   param (
   )
   git rev-parse --show-toplevel
-  
+  if ($LASTEXITCODE -ne 0) {
+    return ''
+  }
 }
