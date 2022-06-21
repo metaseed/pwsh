@@ -136,3 +136,8 @@ $a = @{}
 explorer file:
 * open c:
 explorer c:
+## -contains operator
+work on list not on string
+'abc' -contains 'a' not work
+'abc'.contains('a') work
+'abc','e','fd' -contains 'fd' work
