@@ -12,16 +12,7 @@ param (
   $Part = 'build'
 )
 Write-SubStep 'try to find info.json...'
-$path = $pwd
-do {
-  $info = Get-ChildItem $path | ? name -eq 'info.json'
-  if ($null -ne $info) { break }
-  $path = $path | split-path
-} while ($path -ne '')
-if ($null -eq $info) {
-  Write-Warning "could not find 'info.json' from any parent folder"
-  return;
-}
+$info = Find-FromParent 'info.json'
 Write-Notice "find info.json at: $($info.FullName)"
 
 Write-SubStep 'bump version...'
