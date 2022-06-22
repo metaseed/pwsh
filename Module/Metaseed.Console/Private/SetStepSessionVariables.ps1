@@ -3,7 +3,8 @@ Register-EngineEvent -SourceIdentifier  'SessionScopeEvent' {
     # $cursor = $event.SourceArgs.cursor
     $scope = $event.SourceArgs.scope
     $lastScope = $event.SourceArgs.lastScope
-    # Write-host "SessionScopeEvent: $scope, $line, $cursor"
+    Write-Debug "SessionScopeEvent: $scope, $line, $cursor"
+    # cylically set last steps
     $scope.Steps  = $lastScope.Steps
     $scope.lazyStepsInit = $true
     # if ($line -match '^\s*(Show-Steps|ss$)') {
