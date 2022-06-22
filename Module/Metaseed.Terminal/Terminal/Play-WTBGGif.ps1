@@ -15,7 +15,7 @@ function GetGifs {
   return $gifs
 }
 <#
-.SYNOPSIS play a gif for a set seconds
+.SYNOPSIS play a gif for the set seconds
 #>
 function Play-WTBGGif {
     param(
@@ -33,8 +33,9 @@ function Play-WTBGGif {
     )
     $it = Get-ChildItem "$psscriptroot\gifs" -Recurse | Where-Object { $_.BaseName -eq $name } 
     if($it.Attributes -eq 'Directory') {
-      $it = Get-ChildItem $it -Recurse | get-Random
+      $it = Get-ChildItem $it -Recurse | ? {$_.Attributes -eq 'Archive'} | get-Random
     }
+    Write-Verbose $it
     $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "'+$stretchMode +'","backgroundImageAlignment": "'+ $alignment +'","backgroundImageOpacity":0.8}'
     Set-WTBgImg defaults $durationInseconds $str
 }

@@ -45,7 +45,7 @@ if ($?) {
 
   if ($env:WT_SESSION) {
     # https://www.nerdfonts.com/cheat-sheet
-    $GitPromptSettings.LocalWorkingStatusSymbol ='' # something to add to stage/index
+    $GitPromptSettings.LocalWorkingStatusSymbol = '' # something in the working dir to add to stage/index
     $GitPromptSettings.LocalStagedStatusSymbol = '' # something on stage to commit
     $GitPromptSettings.BeforeStatus.Text = '[ '
     $GitPromptSettings.BeforePath.Text = ' '

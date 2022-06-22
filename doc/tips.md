@@ -96,6 +96,7 @@ gcm|select -first 10
 cls (remove all content)
 ctrl+L (just scroll all content to top)
 
+F8: complete command line from history
 remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
 Ctrl+]: goto Brace (){}[]
 ctrl-l: clear screen
