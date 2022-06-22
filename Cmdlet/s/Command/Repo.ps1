@@ -1,0 +1,1 @@
+saps msedge https://github.com/metaseed/pwsh

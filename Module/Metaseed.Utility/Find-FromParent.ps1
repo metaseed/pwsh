@@ -6,10 +6,10 @@ function Find-FromParent {
     [CmdletBinding()]
     param (
         # support wildcard
-        [Parameter(Position=1, Mandatory)]
+        [Parameter(Position=0, Mandatory)]
         [string]
         $FileOrFolder,
-        [Parameter(Position=2)]
+        [Parameter(Position=1)]
         [string]
         $PathFrom = $pwd
   )

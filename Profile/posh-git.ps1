@@ -43,8 +43,10 @@ if ($?) {
   $GitPromptSettings.DefaultPromptSuffix = ''
   $GitPromptSettings.EnableStashStatus = $true
 
-  if($env:WT_SESSION) {
+  if ($env:WT_SESSION) {
     # https://www.nerdfonts.com/cheat-sheet
+    $GitPromptSettings.LocalWorkingStatusSymbol ='' # something to add to stage/index
+    $GitPromptSettings.LocalStagedStatusSymbol = '' # something on stage to commit
     $GitPromptSettings.BeforeStatus.Text = '[ '
     $GitPromptSettings.BeforePath.Text = ' '
   }

@@ -18,17 +18,9 @@ function Git-SaftyGuard {
   )
 
   ## assert on a branch
-  $branch = git branch --show-current #>$null
-  if ($LASTEXITCODE -ne 0) {
-    Write-Error 'not on a branch' 
+  if(!(Test-GitRepo)) {
     break SCRIPT
   }
-  # ## another way to assert on-branch
-  # git rev-parse 2>$null
-  # if ($LASTEXITCODE -ne 0) {
-  #   Write-Error 'No Source Branch Name. Please run this command from a git repo foler'
-  #   Exit 1
-  # }
 
   ## keep changes for safty
   $msg = "'Git-SaftyGuard$($message ? ":$message": '') - $(Get-date) - $branch'"
