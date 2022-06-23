@@ -5,17 +5,17 @@
     "random": true,
     "backgrounds": [
       {
-        "backgroundImage": "%MS_PWSH%\\res\\img\\v.gif",
+        "backgroundImage": "%WTBackground%\\res\\bg\\v.gif",
         "backgroundImageAlignment": "bottomRight",
         "backgroundImageOpacity": 0.20000000000000001,
         "backgroundImageStretchMode": "none"
       },
       {
-        "backgroundImage": "%MS_PWSH%\\res\\img\\hacker.gif",
+        "backgroundImage": "%WTBackground%\\res\\bg\\hacker.gif",
         "backgroundImageStretchMode": "fill"
       },
       {
-        "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
+        "backgroundImage": "%WTBackground%\\res\\bg\\circle.gif",
         "backgroundImageStretchMode": "none",
         "backgroundImageAlignment": "center",
         "opacity": 100
@@ -27,12 +27,12 @@
       "random": false,
       "backgrounds": [
         {
-          "backgroundImage": "%MS_PWSH%\\res\\img\\v.gif",
+          "backgroundImage": "%WTBackground%\\res\\bg\\v.gif",
           "backgroundImageAlignment": "bottomRight",
           "backgroundImageStretchMode": "none"
         },
         {
-          "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
+          "backgroundImage": "%WTBackground%\\res\\bg\\circle.gif",
           "opacity": 100,
           "backgroundImageStretchMode": "none",
           "backgroundImageAlignment": "center"

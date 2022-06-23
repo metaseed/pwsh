@@ -4,7 +4,8 @@ function GetGifs {
     [Parameter()]
     $wordToComplete
   )
-  $gifs = @(Get-ChildItem "$psscriptroot\gifs" -Recurse |% { $_.BaseName})|
+  $gifFolder = $env:WTBackgroundGif ? $env:WTBackgroundGif : "$psscriptroot\res\gifs"
+  $gifs = @(Get-ChildItem $gifFolder -Recurse |% { $_.BaseName})|
   ? { 
     if($wordToComplete) {
       return $_ -like ($wordToComplete -split '' -join '*')
@@ -17,7 +18,7 @@ function GetGifs {
 <#
 .SYNOPSIS play a gif for the set seconds
 #>
-function Play-WTBGGif {
+function Show-WTBGGif {
     param(
       # if dir: random gif in dir, if file, play that gif
       [Parameter( Position=0)]
@@ -31,7 +32,9 @@ function Play-WTBGGif {
       [string]$stretchMode = 'none'
 
     )
-    $it = Get-ChildItem "$psscriptroot\gifs" -Recurse | Where-Object { $_.BaseName -eq $name } 
+    $gifFolder = $env:WTBackgroundGif ? $env:WTBackgroundGif : "$psscriptroot\res\gifs"
+
+    $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $name } 
     if($it.Attributes -eq 'Directory') {
       $it = Get-ChildItem $it -Recurse | ? {$_.Attributes -eq 'Archive'} | get-Random
     }
@@ -42,7 +45,7 @@ function Play-WTBGGif {
 
 
 #Note: directly use ArgumentCompleter and call GetWindowsSounds in it's script block not works!
-Register-ArgumentCompleter -CommandName 'Play-WTBGGif' -ParameterName 'name' -ScriptBlock {
+Register-ArgumentCompleter -CommandName 'Show-WTBGGif' -ParameterName 'name' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
   $gifs = GetGifs $wordToComplete
   return $gifs

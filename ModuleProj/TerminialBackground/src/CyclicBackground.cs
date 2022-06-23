@@ -15,7 +15,7 @@ namespace Metaseed.TerminalBackground
         private JsonObject _bgSettings;
         private int _duration;
         private readonly WtSetting _settings;
-        public bool IsStarted = false;
+        Task CyclicTask;
         private CancellationTokenSource cyclicTocken = new CancellationTokenSource();
 
         public CyclicBackground()
@@ -27,28 +27,44 @@ namespace Metaseed.TerminalBackground
             _bgSettings = BgSetting.GetBackgroundSettings($"{dirPath}\\settings.json");
         }
 
+        object _startCyclicLock = new object();
+
         public void StartCyclic(string settingsPath)
         {
-            if (IsStarted)
+            lock (_startCyclicLock)
             {
-                Logger.Inst.Log("already started, no action this time");
-                return;
-            }
-            _bgSettings = BgSetting.GetBackgroundSettings(settingsPath);
-            _duration = _bgSettings["duration"]?.GetValue<int?>() ?? WtSetting.DefaultDuration;
-            Task.Run(async () =>
-            {
-                while (true)
+                if (CyclicTask != null)
                 {
-                    await Run(cyclicTocken.Token);
-                    Logger.Inst.Log("cyclically background changed");
+                    Logger.Inst.Log("the Cyclic task already started, restart it");
+                    StopCyclic().Wait();
                 }
-            }, cyclicTocken.Token);
-            IsStarted = true;
+
+                _bgSettings = BgSetting.GetBackgroundSettings(settingsPath);
+                _duration = _bgSettings["duration"]?.GetValue<int?>() ?? WtSetting.DefaultDuration;
+                CyclicTask = Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            var run = Run(cyclicTocken.Token);
+                            if (run.IsCanceled) break;
+                            await run;
+                            //Logger.Inst.Log("cyclically background changed");
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Inst.Log(e.ToString());
+                        }
+                    }
+                }, cyclicTocken.Token);
+            }
         }
 
         private async Task Run(CancellationToken token)
         {
+            await Task.Delay(_duration * 1000, token);
+
             var wtProfile = findWtProfile("defaults");
             var bgProfile = _bgSettings["defaults"];
             ModifyProfile(bgProfile, wtProfile);
@@ -64,19 +80,26 @@ namespace Metaseed.TerminalBackground
             }
 
             _settings.SetSettings(_wtSettings);
-            await Task.Delay(_duration * 1000, token);
         }
 
-        public void StopCyclic()
+        public async Task StopCyclic()
         {
-            if (!IsStarted)
+            if (CyclicTask == null)
             {
                 Logger.Inst.Log("already stopped, no action this time");
                 return;
             }
-            IsStarted = false;
             cyclicTocken.Cancel();
             cyclicTocken = new CancellationTokenSource();
+            try
+            {
+                await CyclicTask;
+            }
+            catch
+            {
+                // cancel happens
+            }
+            CyclicTask = null;
         }
 
         public async Task SetBackgroundImage(string profile, float durationInSeconds, string jsonSettings, Task finish)
