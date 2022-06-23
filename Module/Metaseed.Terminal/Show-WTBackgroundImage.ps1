@@ -32,6 +32,8 @@ function Show-WTBackgroundImage {
       [Parameter( Position=1)]
       [int]$durationInseconds = 6,
       [Parameter( Position=2)]
+      [string]$profile = 'defaults',
+      [Parameter()]
       [ValidateSet('center','topLeft','bottomLeft','left','topRight','bottomRight','right','top','bottom')]
       [string]$alignment = 'center',
       [ValidateSet('none','uniformToFill','fill','uniform')]
@@ -51,7 +53,7 @@ function Show-WTBackgroundImage {
       Write-Verbose $it
     }
     $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "'+$stretchMode +'","backgroundImageAlignment": "'+ $alignment +'","backgroundImageOpacity":0.8}'
-    Set-WTBgImg defaults $durationInseconds $str
+    Set-WTBgImg $profile $durationInseconds $str
 }
 
 
