@@ -1,35 +1,10 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Nodes;
 
 namespace Metaseed.TerminalBackground
 {
-    //public interface IProfile
-    //{
-    //  string guid { get; set; }
-    //  bool hidden { get; set; }
-    //  string name { get; set; }
-    //  string backgroundImage { get; set; }
-    //  string backgroundImageAlignment { get; set; }
-    //  string backgroundImageOpacity   { get; set; }
-    //  string backgroundImageStretchMode { get; set; }
-    //  string opacity {get;set;}
-    //  bool useAcrylic { get; set; }
-    //}
-    //public interface IProfiles
-    //{
-    //  IProfile defaults { get; set; }
-    //  IProfile[] list { get; set; }
-    //}
-    //public interface ISetting
-    //{
-    //  IProfiles profiles { get; set; }
-    //}
-
-
     public class WtSetting
     {
         public static int DefaultDuration = 5;
@@ -75,12 +50,6 @@ namespace Metaseed.TerminalBackground
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
              File.WriteAllText(Path, settings.ToJsonString(options));
-            //File.WriteAllText("C:\\Users\\metaseed\\OneDrive\\Documents/1.json", settings.ToJsonString(options));
-            //using (var file = File.Create("C:\\Users\\metaseed\\OneDrive\\Documents/1.json"))
-            //{
-            //    var options = new JsonSerializerOptions { WriteIndented = true };
-            //          JsonSerializer.Serialize(file, settings,options);
-            //}
         }
     }
 }

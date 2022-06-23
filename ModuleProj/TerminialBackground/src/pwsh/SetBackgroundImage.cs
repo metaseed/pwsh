@@ -5,7 +5,6 @@ using Metaseed.TerminalBackground;
 
 namespace TerminialBackground
 {
-    /// Test-SampleCmdlet 1 Cat
     [Cmdlet("Set", "WTBgImg")]
     //[OutputType(typeof(FavoriteStuff))]
     public class WTBackgroundImage : PSCmdlet
@@ -48,10 +47,4 @@ namespace TerminialBackground
             new Client().SetBackgroundImage(Profile, DurationInSeconds, JsonProfileValueString);
         }
     }
-
-    //public class FavoriteStuff
-    //{
-    //    public int FavoriteNumber { get; set; }
-    //    public string FavoritePet { get; set; }
-    //}
 }

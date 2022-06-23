@@ -11,11 +11,9 @@ namespace Metaseed.TerminalBackground
             {
                 settingsPath = ".\\settings.json";
             }
-            using (var file = File.OpenRead(settingsPath))
-            {
-                var settings = JsonNode.Parse(file).AsObject();
-                return settings;
-            }
+            using var file = File.OpenRead(settingsPath);
+            var settings = JsonNode.Parse(file).AsObject();
+            return settings;
         }
     }
 }

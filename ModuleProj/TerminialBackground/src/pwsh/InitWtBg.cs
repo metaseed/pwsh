@@ -11,8 +11,8 @@ namespace Metaseed.TerminalBackground.src.pwsh
         {
             Client.CommandRuntime = CommandRuntime;
 
-            var dir = Path.GetDirectoryName(typeof(WTBackgroundImageInit).Assembly.Location);
-            var exe = $"{dir}\\TerminalBackground.exe";
+            var dirPath = Path.GetDirectoryName(typeof(WTBackgroundImageInit).Assembly.Location);
+            var exe = $"{dirPath}\\TerminalBackground.exe";
             var proc = new Process
             {
                 StartInfo = new ProcessStartInfo()
@@ -20,8 +20,8 @@ namespace Metaseed.TerminalBackground.src.pwsh
                     FileName         = exe,
                     UseShellExecute  = true,
                     CreateNoWindow   = true,
-                    WindowStyle      = ProcessWindowStyle.Hidden,
-                    WorkingDirectory = dir
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    WorkingDirectory = dirPath
                 }
             };
 

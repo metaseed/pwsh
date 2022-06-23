@@ -1,6 +1,4 @@
-﻿using System;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
+﻿using System.Management.Automation;
 using Metaseed.TerminalBackground;
 
 namespace TerminialBackground
@@ -11,7 +9,6 @@ namespace TerminialBackground
         protected override void EndProcessing()
         {
             Client.CommandRuntime = CommandRuntime;
-
             new Client().StopCyclic();
         }
     }

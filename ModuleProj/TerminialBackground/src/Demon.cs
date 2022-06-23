@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Host;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading;
-using System.Threading.Tasks;
 using Metaseed.TerminalBackground.Communication;
 
 namespace Metaseed.TerminalBackground
@@ -21,10 +14,10 @@ namespace Metaseed.TerminalBackground
         public Server()
         {
             _server.Start();
-            Console.WriteLine("Server started");
+            Logger.Inst.Log("Server started");
             _server.Received += (sender, args) =>
             {
-                Console.WriteLine($"received:{args.Data}");
+                Logger.Inst.Log($"received:{args.Data}");
                 var data = JsonNode.Parse(args.Data);
                 var command = data["command"].GetValue<string>();
                 if (command == "StartCyclic")
@@ -62,10 +55,10 @@ namespace Metaseed.TerminalBackground
         {
             if (settingsPath == null) settingsPath = "";
             settingsPath = settingsPath.Trim('"', '\'');
-            if (!String.IsNullOrEmpty(settingsPath) && !File.Exists(settingsPath))
+            if (!string.IsNullOrEmpty(settingsPath) && !File.Exists(settingsPath))
             {
                 CommandRuntime?.WriteVerbose($"'{settingsPath}' not exist.");
-                if (CommandRuntime == null) Console.WriteLine($"'{settingsPath}' not exist.");
+                if (CommandRuntime == null) Logger.Inst.Log($"'{settingsPath}' not exist.");
                 return;
             }
 
@@ -73,7 +66,7 @@ namespace Metaseed.TerminalBackground
             var data = $"{{\"command\":\"StartCyclic\", \"settingsPath\": {p}}}";
             // hide output from profile loading
             CommandRuntime?.WriteVerbose("send:" + data);
-            if (CommandRuntime == null) Console.WriteLine("send:" + data);
+            if (CommandRuntime == null) Logger.Inst.Log("send:" + data);
             _client.Send(data);
         }
 
@@ -82,14 +75,14 @@ namespace Metaseed.TerminalBackground
             var data = "{\"command\":\"StopCyclic\"}";
             _client.Send(data);
             CommandRuntime?.WriteVerbose("send:" + data);
-            if (CommandRuntime == null) Console.WriteLine("send:" + data);
+            if (CommandRuntime == null) Logger.Inst.Log("send:" + data);
         }
 
         public void SetBackgroundImage(string profile, float durationInSeconds, string jsonProfileValueString)
         {
             var data = $"{{\"command\": \"SetBackgroundImage\", \"profile\":\"{profile}\", \"durationInSeconds\": {durationInSeconds}, \"jsonProfileValueString\": {jsonProfileValueString} }}";
             CommandRuntime?.WriteVerbose("send:" + data);
-            if (CommandRuntime == null) Console.WriteLine("send:" + data);
+            if (CommandRuntime == null) Logger.Inst.Log("send:" + data);
 
             _client.Send(data);
         }

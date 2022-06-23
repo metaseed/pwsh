@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -21,13 +22,16 @@ namespace Metaseed.TerminalBackground
         {
             _settings = new WtSetting();
             _wtSettings = _settings.GetSettings();
+            var dirPath = Path.GetDirectoryName(typeof(CyclicBackground).Assembly.Location);
+
+            _bgSettings = BgSetting.GetBackgroundSettings($"{dirPath}\\settings.json");
         }
 
         public void StartCyclic(string settingsPath)
         {
             if (IsStarted)
             {
-                Console.WriteLine("already started, no action this time");
+                Logger.Inst.Log("already started, no action this time");
                 return;
             }
             _bgSettings = BgSetting.GetBackgroundSettings(settingsPath);
@@ -37,7 +41,7 @@ namespace Metaseed.TerminalBackground
                 while (true)
                 {
                     await Run(cyclicTocken.Token);
-                    Console.WriteLine("cyclically background changed");
+                    Logger.Inst.Log("cyclically background changed");
                 }
             }, cyclicTocken.Token);
             IsStarted = true;
@@ -67,8 +71,7 @@ namespace Metaseed.TerminalBackground
         {
             if (!IsStarted)
             {
-                Console.WriteLine("already stopped, no action this time");
-
+                Logger.Inst.Log("already stopped, no action this time");
                 return;
             }
             IsStarted = false;
@@ -76,13 +79,13 @@ namespace Metaseed.TerminalBackground
             cyclicTocken = new CancellationTokenSource();
         }
 
-        public async Task SetBackgroundImage(string profile, float durationInSeconds, string jsonProfile)
+        public async Task SetBackgroundImage(string profile, float durationInSeconds, string jsonSettings, Task finish)
         {
             try
             {
                 var wtProfile = findWtProfile(profile);
                 var bgProfile = findBgProfile(profile);
-                var bgBackground = JsonNode.Parse(jsonProfile);
+                var bgBackground = JsonNode.Parse(jsonSettings);
                 bgProfile["_explicitSet"] = true;
                 var wtProfileBackup = wtProfile.Deserialize<JsonNode>();
                 var keyToRemove = new List<string>();
@@ -95,7 +98,8 @@ namespace Metaseed.TerminalBackground
                 }
                 SetProfileValue(bgBackground, wtProfile);
                 _settings.SetSettings(_wtSettings);
-                await Task.Delay((int)Math.Floor(durationInSeconds * 1000));
+                var delay = Task.Delay((int)Math.Floor(durationInSeconds * 1000));
+                await Task.WhenAny(delay, finish);
                 bgProfile["_explicitSet"] = false;
 
                 foreach (var key in keyToRemove)
@@ -114,7 +118,7 @@ namespace Metaseed.TerminalBackground
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Logger.Inst.Log(e.ToString());
             }
         }
 
