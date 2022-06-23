@@ -18,11 +18,11 @@ function GetGifs {
 <#
 .SYNOPSIS play a gif for the set seconds
 #>
-function Show-WTBGGif {
+function Show-WTBackgroundImage {
     param(
-      # if dir: random gif in dir, if file, play that gif
+      # image name. if dir: random gif in dir, if file, play that gif
       [Parameter( Position=0)]
-      $name = 'fireworks',
+      $image = 'fireworks',
       [Parameter( Position=1)]
       [int]$durationInseconds = 6,
       [Parameter( Position=2)]
@@ -34,7 +34,7 @@ function Show-WTBGGif {
     )
     $gifFolder = $env:WTBackgroundGif ? $env:WTBackgroundGif : "$psscriptroot\res\gifs"
 
-    $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $name } 
+    $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image } 
     if($it.Attributes -eq 'Directory') {
       $it = Get-ChildItem $it -Recurse | ? {$_.Attributes -eq 'Archive'} | get-Random
     }
@@ -45,7 +45,7 @@ function Show-WTBGGif {
 
 
 #Note: directly use ArgumentCompleter and call GetWindowsSounds in it's script block not works!
-Register-ArgumentCompleter -CommandName 'Show-WTBGGif' -ParameterName 'name' -ScriptBlock {
+Register-ArgumentCompleter -CommandName 'Show-WTBackgroundImage' -ParameterName 'image' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
   $gifs = GetGifs $wordToComplete
   return $gifs

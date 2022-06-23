@@ -18,5 +18,5 @@ if ($env:WT_SESSION) {
 }
 ```
 
-## Show-WTBGGif
+## Show-WTBackgroundImage
 show a gif for while, the Gifs 

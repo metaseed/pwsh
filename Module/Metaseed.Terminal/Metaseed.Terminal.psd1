@@ -3,6 +3,6 @@
   RootModule        = 'Metaseed.Terminal.psm1'
   NestedModules     = '_bin\TerminalBackground.dll'
   Author            = 'Metaseed'
-  FunctionsToExport = @('Set-WTBgImg', 'Initialize-WTBgImg', 'Start-WTCyclicBgImg', 'Stop-WTCyclicBgImg', 'Show-WTBGGif')
+  FunctionsToExport = @('Set-WTBgImg', 'Initialize-WTBgImg', 'Start-WTCyclicBgImg', 'Stop-WTCyclicBgImg', 'Show-WTBackgroundImage')
 
 }
