@@ -19,4 +19,18 @@ if ($env:WT_SESSION) {
 ```
 
 ## Show-WTBackgroundImage
-show a gif for while, the Gifs 
+show a gif for while.
+the image could be a web gif, i.e.
+```
+Show-WTBackgroundImage https://media.giphy.com/media/h4fRaq5CW5Ll3FLPq0/giphy.gif
+```
+or a absolute image path on disk.
+
+or a file name in the folder configured at the environment variable `WTBackgroundImage`:
+there could be sub folders inside the $env:WTBackgroundImage.
+if the parameter is a folder a radom image inside the folder would be used.
+and you could provide a name inside the default folder: $env:WTBackground\res\gif
+```
+Show-WtBackgroundImage success # would radom use a image in the folder success
+```
+you could look at the folder structure in the $env:WTBackground\res\gif, to config your own $env: WTBackgroundImage

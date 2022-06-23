@@ -4,7 +4,13 @@ function GetGifs {
     [Parameter()]
     $wordToComplete
   )
-  $gifFolder = $env:WTBackgroundGif ? $env:WTBackgroundGif : "$psscriptroot\res\gifs"
+   $isUrl = [uri]::IsWellFormedUriString($wordToComplete, 'Absolute') #-and ([uri] $uri).Scheme -in 'http', 'https'
+  if($isUrl -or (Test-Path $wordToComplete)) {
+    return $wordToComplete
+  }
+
+  $gifFolder = $env:WTBackgroundImage ? @("$env:WTBackgroundImage", "$psscriptroot\res\gifs") : "$psscriptroot\res\gifs"
+
   $gifs = @(Get-ChildItem $gifFolder -Recurse |% { $_.BaseName})|
   ? { 
     if($wordToComplete) {
@@ -32,13 +38,18 @@ function Show-WTBackgroundImage {
       [string]$stretchMode = 'none'
 
     )
-    $gifFolder = $env:WTBackgroundGif ? $env:WTBackgroundGif : "$psscriptroot\res\gifs"
+    $isUrl = [uri]::IsWellFormedUriString($image, 'Absolute') #-and ([uri] $uri).Scheme -in 'http', 'https'
+    if($isUrl -or (Test-Path $image)) {
+      $it = $image
+    }  else {
+      $gifFolder = $env:WTBackgroundImage ? @("$env:WTBackgroundImage", "$psscriptroot\res\gifs") : "$psscriptroot\res\gifs"
 
-    $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image } 
-    if($it.Attributes -eq 'Directory') {
-      $it = Get-ChildItem $it -Recurse | ? {$_.Attributes -eq 'Archive'} | get-Random
+      $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image } 
+      if($it.Attributes -eq 'Directory') {
+        $it = Get-ChildItem $it -Recurse | ? {$_.Attributes -eq 'Archive'} | get-Random
+      }
+      Write-Verbose $it
     }
-    Write-Verbose $it
     $str =  '{"backgroundImage": ' +  (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "'+$stretchMode +'","backgroundImageAlignment": "'+ $alignment +'","backgroundImageOpacity":0.8}'
     Set-WTBgImg defaults $durationInseconds $str
 }
