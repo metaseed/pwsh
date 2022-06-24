@@ -13,25 +13,14 @@ param (
         $fakeBoundParameters )
       . $psscriptroot\_config.ps1
 
-      $appsKeys = $apps.keys
-      $app = $appsKeys | ? {
-        $_ -like "*${wordToComplete}*"
-      }
-      if ($app) {
-        return $app
-      }
-
-      $word = ($wordToComplete -split '' -join '*')
-      return $appsKeys | ? {
-        $_ -like "${word}"
-      }
+      . $env:MS_PWSH\Lib\WebConfigMatch.ps1
     })]
   [Parameter(Position = 0)]
   [string]$web,
   
   [Parameter()]
   [Hashtable]
-  $webs,
+  $urls,
 
   # browser profile to use
   [Parameter()]
@@ -44,21 +33,21 @@ param (
   $list
 )
 . "$PSScriptRoot\_config.ps1"
-if($webs) {
-  $webs|%{$apps.$($_.key)= $_.value}
+if ($urls) {
+  $webs | % { $webs.$($_.key) = $_.value }
 }
-if($list) {
+if ($list) {
   write-host "`nAvailable Names:"
-  $apps|Format-Table
+  $webs | Format-Table
   return
 }
 
 # note: directly use $Verbose not work
-if($PsBoundParameters.Verbose) {
- $apps|format-table
+if ($PsBoundParameters.Verbose) {
+  $webs | format-table
 }
-Write-Verbose $apps.$web
-saps msedge -ArgumentList @("--profile-directory=`"$prof`"", $apps.$web)
+if ($web) { Write-Verbose $webs[$web] }
+saps msedge -ArgumentList @("--profile-directory=`"$prof`"", $webs[$web])
 
 # note: it's linked
-# ni -Type HardLink M:\Work\Slb-Presto\drilldev\command\Web\
+# ni -Type HardLink M:\Work\Slb-Presto\drilldev\command\Web\Web.ps1 -Value M:\Script\Pwsh\Cmdlet\s\Command\Web\Web.ps1
