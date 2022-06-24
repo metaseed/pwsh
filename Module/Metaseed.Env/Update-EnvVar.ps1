@@ -24,9 +24,9 @@ function Update-EnvVar {
       $envValue = Get-Content "Env:$($_.Name)" -ErrorAction SilentlyContinue
       $update = $_.Value -ne $envValue
       if ($update) {
-         write-host "updated $($_.Name), from: $envValue"
-         write-host "    to: $($_.Value)"
-         write-host ''
+         Write-Verbose "Update-EnvVar: updated $($_.Name), from: $envValue"
+         Write-Verbose "    to: $($_.Value)"
+         Write-Verbose ''
       } else {
          return $false
       }

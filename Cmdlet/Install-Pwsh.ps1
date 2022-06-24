@@ -33,6 +33,7 @@ Breakable-Pipeline {
   % {
     Confirm-Continue "to install power shell: $_ `nwe would kill all running pwsh processes.`n"
     Start-Process msiexec.exe -ArgumentList "/package $_ /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1"
+    Write-Notice "installation started in background, please check later..."
     Get-Process -Name pwsh | Stop-Process -Force
   }
 }
