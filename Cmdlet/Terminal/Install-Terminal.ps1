@@ -70,7 +70,7 @@ Breakable-Pipeline {
     if ($wts) {
       Confirm-Continue "Windows Terminal is running. Do you want to kill it?"
 
-      $Wt = Get-ParentProcessByName -processName 'WindowsTerminal'
+      $Wt = Get-ParentProcess -ParentProcessName 'WindowsTerminal'
 
       if ($Wt) {
         # $path = $MyInvocation.MyCommand.Path
