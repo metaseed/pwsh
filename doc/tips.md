@@ -146,3 +146,7 @@ work on list not on string
 ## web browser
 saps msedge
 saps chrome
+
+# resource monitor
+resmon
+taskmgr

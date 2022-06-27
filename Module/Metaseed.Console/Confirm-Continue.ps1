@@ -10,16 +10,20 @@ if ($decision -eq 0) {
 function Confirm-Continue {
   [CmdletBinding()]
   param(
-    [string] $message
+    [string] $message,
+    [System.ConsoleKey]$ConfirmKey =  [ConsoleKey]::Enter,
+    [switch] $Result
   )
-  Write-Attention "`n$message"
-  Write-Host "press'Enter' to continue, 'Any key' to stop...`n" -ForegroundColor blue
+  Write-Attention "$message"
+  Write-Host "Press'$ConfirmKey' to Confirm, 'Any key' to $($Result ? 'cancel': 'stop')..." -ForegroundColor Yellow
   Beep-DingDong
   $key = [Console]::ReadKey().Key
-  if ($key -ne [ConsoleKey]::Enter) {
-    Write-Host ' stopped!'
-    break SCRIPT
+  if ($key -ne $ConfirmKey ) {
+    Write-Host "`n Stopped!"
+    if($Result) { return $false}
+    else {break SCRIPT}
   }
-  Write-Host "continuing..."
+  Write-Host "`nContinuing..."
+  if($Result) {return $true}
 }
 # todo: music and background changing
