@@ -28,7 +28,7 @@ Breakable-Pipeline {
       break; # break pipeline
     }
     $file = $assets[0].name
-    write-host $file
+    write-host "online available: $file"
     "$file" -match "_(\d+\.\d+\.\d+\.\d+)_"
     $ver_online = [Version]::new($matches[1]);
     Write-substep 'checking installed version...'
@@ -48,12 +48,14 @@ Breakable-Pipeline {
       write-host "version to install:  $ver_online"
     }
 
-    Write-Step 'download windows terminal...'
+    # Write-Step 'download windows terminal...'
     return $_
   } |
   Download-GithubRelease |
   % {
     Write-Step 'check running WindowsTerminal...'
+
+    $wts = get-process -name "WindowsTerminal" -ErrorAction SilentlyContinue
     $install = @"
     & {
       start-sleep -s 2
@@ -65,12 +67,11 @@ Breakable-Pipeline {
       Setup-Terminal
     }
 "@
-
-    $wts = get-process -name "WindowsTerminal" -ErrorAction SilentlyContinue
     if ($wts) {
       Confirm-Continue "Windows Terminal is running. Do you want to kill it?"
 
       $Wt = Get-ParentProcessByName -processName 'WindowsTerminal'
+
       if ($Wt) {
         # $path = $MyInvocation.MyCommand.Path
         Start-Process pwsh -verb runas -ArgumentList @( "-NoExit", "-Command", $install )

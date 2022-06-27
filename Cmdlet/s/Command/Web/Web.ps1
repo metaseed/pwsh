@@ -46,7 +46,7 @@ if ($list) {
 if ($PsBoundParameters.Verbose) {
   $webs | format-table
 }
-if ($web) { Write-Verbose $webs[$web] }
+if ($webs[$web]) { Write-Verbose $webs[$web] }
 saps msedge -ArgumentList @("--profile-directory=`"$prof`"", $webs[$web])
 
 # note: it's linked
