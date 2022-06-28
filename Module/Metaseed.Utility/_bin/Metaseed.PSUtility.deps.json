@@ -6,12 +6,12 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "Metaseed.PSUtlity/1.0.0": {
+      "Metaseed.PSUtility/1.0.0": {
         "dependencies": {
           "PowerShellStandard.Library": "7.0.0-preview.1"
         },
         "runtime": {
-          "Metaseed.PSUtlity.dll": {}
+          "Metaseed.PSUtility.dll": {}
         }
       },
       "PowerShellStandard.Library/7.0.0-preview.1": {
@@ -25,7 +25,7 @@
     }
   },
   "libraries": {
-    "Metaseed.PSUtlity/1.0.0": {
+    "Metaseed.PSUtility/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

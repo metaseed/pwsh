@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <AssemblyName>Metaseed.PSUtlity</AssemblyName>
-    <RootNamespace>Metaseed.PSUtlity</RootNamespace>
+    <AssemblyName>Metaseed.PSUtility</AssemblyName>
+    <RootNamespace>Metaseed.PSUtility</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\Module\Metaseed.Utility\_bin</OutputPath>

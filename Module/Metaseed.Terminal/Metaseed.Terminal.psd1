@@ -1,7 +1,7 @@
 @{
-  ModuleVersion     = '1.0.4'
+  ModuleVersion     = '1.0.6'
   # RootModule        = 'Metaseed.Terminal.psm1'
-  NestedModules     = @('Metaseed.Terminal.psm1','_bin\TerminalBackground.dll')
+  NestedModules     = @("_bin\TerminalBackground.dll", 'Metaseed.Terminal.psm1')
   Author            = 'Metaseed'
-  # FunctionsToExport = @('Set-WTBgImg', 'Initialize-WTBgImg', 'Start-WTCyclicBgImg', 'Stop-WTCyclicBgImg')
+  FunctionsToExport = @('Show-WTBackgroundImage','Set-WTBgImg', 'Initialize-WTBgImg', 'Start-WTCyclicBgImg', 'Stop-WTCyclicBgImg')
 }
