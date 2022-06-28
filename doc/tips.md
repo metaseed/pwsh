@@ -154,3 +154,15 @@ taskmgr
 ## use embedded module inside Module
 * one way: export all function(from embedded module or rootModule) inside FunctionsToExport. (could not use  Export-ModuleMember in psm1)
 * another way: remove the root module and put it inside the  `NestedModules     = @('Metaseed.Terminal.psm1','_bin\TerminalBackground.dll')`
+## create pwsh dotnet module
+```
+dotnet new -i Microsoft.PowerShell.Standard.Module.Template
+dotnet new psmodule
+dotnet build
+Import-Module "bin\Debug\netstandard2.0\$module.dll"
+Get-Module $module
+```
+```
+snl Utility
+dotnet new psmodule
+```

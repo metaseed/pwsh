@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>Metaseed.PSUtlity</AssemblyName>
+    <RootNamespace>Metaseed.PSUtlity</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\Module\Metaseed.Utility\_bin</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version=" 7.0.0-preview.1">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
