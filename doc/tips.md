@@ -150,3 +150,7 @@ saps chrome
 # resource monitor
 resmon
 taskmgr
+
+## use embedded module inside Module
+* one way: export all function(from embedded module or rootModule) inside FunctionsToExport. (could not use  Export-ModuleMember in psm1)
+* another way: remove the root module and put it inside the  `NestedModules     = @('Metaseed.Terminal.psm1','_bin\TerminalBackground.dll')`
