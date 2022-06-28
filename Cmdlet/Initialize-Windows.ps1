@@ -68,3 +68,10 @@ if ($null -eq $k) {
   ni 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -f
 }
 New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable' -Value 0 -PropertyType Dword
+
+# 
+# https://theitbros.com/managing-windows-defender-using-powershell/
+# disable realtime monitor
+# Set-MpPreference -DisableRealtimeMonitoring $true
+# disable Windows Defender
+# New-ItemProperty -Path “HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender” -Name DisableAntiSpyware -Value 1 -PropertyType DWORD -Force
