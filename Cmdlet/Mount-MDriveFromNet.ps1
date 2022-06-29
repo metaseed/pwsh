@@ -4,5 +4,6 @@ Assert-Admin
 Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'EnableLinkedConnections' -Value 1
 net use M: /delete /y
 # net use M: \\tsclient\M /Persistent:yes # have to share the M drive in the local resources when connect the the VM, this make the vm slow so not using
+# username: dir\jsong12
 net use M: \\slb-fncl5y2\M /Persistent:yes # have to share M disk from host, 
 # maybe need to restart

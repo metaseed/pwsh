@@ -6,8 +6,8 @@ Import-Module Metaseed.Lib -DisableNameChecking
 Import-Module Metaseed.Utility -DisableNameChecking 
 Import-Module Metaseed.Management -DisableNameChecking
 Import-Module Metaseed.Console -DisableNameChecking
-Import-Module Metaseed.Terminal -DisableNameChecking
-Import-Module Metaseed.Git -DisableNameChecking 
+# Import-Module Metaseed.Terminal -DisableNameChecking
+# Import-Module Metaseed.Git -DisableNameChecking 
 Import-Module Metaseed.Sound -DisableNameChecking
 
 # note: this file maybe delted because the modules coulc be dynamically loaded

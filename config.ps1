@@ -28,10 +28,6 @@ if (!$has) {
 else {
   write-host "no action, because already added to profie: $p"
 }
-## environment variables
-[System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
-$env:MS_PWSH = $PSScriptRoot
-write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 
 ## set $env:PSModulePath
 $m = resolve-path("$PSScriptRoot\Module")
@@ -42,10 +38,10 @@ if(-not $modPath) {
   $modPath = $m
 } else {
   if($MS_PWSH -and ("$MS_PWSH\Module" -ne $m)) {
-    if($modPath.Contains("$MS_PWSH\Module")) {
-      $modPath = $modPath.Replace("$MS_PWSH\Module", "")
-    } elseif($modPath.Contains("$MS_PWSH\Module;")){
+    if($modPath.Contains("$MS_PWSH\Module;")) {
       $modPath = $modPath.Replace("$MS_PWSH\Module;", "")
+    } elseif($modPath.Contains("$MS_PWSH\Module")){
+      $modPath = $modPath.Replace("$MS_PWSH\Module", "")
     }
   }
 
@@ -54,5 +50,10 @@ if(-not $modPath) {
   }
 }
 [Environment]::SetEnvironmentVariable("PSModulePath", $modPath, 'User')
+
+## environment variables
+[System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
+$env:MS_PWSH = $PSScriptRoot
+write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 
 . $PSScriptRoot\profile.ps1

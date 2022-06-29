@@ -7,5 +7,5 @@ iwr $CaskaydiaCoveNF -OutFile $path
 Write-Step 'Installing CaskaydiaCoveNF...'
 
 Install-Font -Path $path
-Restore-TerminalSetting
+Restore-TerminalSetting -force
 Pin-TaskBar "$env:MS_PWSH\Cmdlet\Terminal\WindowsTerminal.lnk" | Out-Null

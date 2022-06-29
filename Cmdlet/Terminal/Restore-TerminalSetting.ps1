@@ -4,7 +4,9 @@ param (
   [Parameter()]
   [ValidateSet('Stable', 'Preview', 'Unpackaged')]
   [string]
-  $version =""
+  $version ="",
+  [switch]
+  $force
 )
 Write-Action "restore windows terminal settings..."
 . $PSScriptRoot/_private/GetSettings.ps1
@@ -42,14 +44,15 @@ if ($version -eq '') {
 $location = $installs[$version]
 if (test-path $backup) {
   # Confirm-Continue "Overwrite existing setting.json for the WindowsTerminal $version version?"
-  if ((gi $location).LastWriteTime -gt (gi $backup).LastWriteTime) {
+  if (! $force -and (gi $location).LastWriteTime -gt (gi $backup).LastWriteTime) {
     $decision = $Host.UI.PromptForChoice('Skip Restore?', "installed setting file is newer than the backuped setting file. Skipping restore?", @('&Yes', '&No'), 1)
     if ($decision -eq 0) {
       Write-Host "Skipping restore."
       return
     }
   }
-  write-execute {Copy-Item  $backup $location -Force}#.GetNewClosure()
+  Copy-Item  $backup $location -Force
+  # write-execute {}#.GetNewClosure()
 }
 else {
   Write-Error "Could not find $backup, nothing to restore!"

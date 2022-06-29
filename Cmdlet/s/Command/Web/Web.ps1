@@ -47,7 +47,8 @@ if ($PsBoundParameters.Verbose) {
   $webs | format-table
 }
 if ($webs[$web]) { Write-Verbose $webs[$web] }
-saps msedge -ArgumentList @("--profile-directory=`"$prof`"", $webs[$web])
+# edge://flags/#allow-insecure-localhost
+saps msedge -ArgumentList @( '--ignore-certificate-errors', '--ignore-urlfetcher-cert-requests', "--profile-directory=`"$prof`"", $webs[$web])
 
 # note: it's linked
 # ni -Type HardLink M:\Work\Slb-Presto\drilldev\command\Web\Web.ps1 -Value M:\Script\Pwsh\Cmdlet\s\Command\Web\Web.ps1

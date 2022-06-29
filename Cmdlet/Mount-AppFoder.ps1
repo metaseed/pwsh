@@ -11,4 +11,7 @@ if(-not (Test-Path $App)) {
     Add-Path $App 'User'
     return
 }
+if((gi c:\app ).LinkType -ne 'symboliclink') {
+    Write-Attention "C:\app is there but it is not a symbolic link"
+}
 Write-Host "'$App' already mapped!"

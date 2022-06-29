@@ -75,3 +75,28 @@ New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Na
 # Set-MpPreference -DisableRealtimeMonitoring $true
 # disable Windows Defender
 # New-ItemProperty -Path “HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender” -Name DisableAntiSpyware -Value 1 -PropertyType DWORD -Force
+
+# Network Discovery:
+# https://www.majorgeeks.com/content/page/how_to_turn_on_or_off_network_discovery.html
+netsh advfirewall firewall set rule group="Network Discovery" new enable=Yes
+# File and Printer Sharing:
+netsh advfirewall firewall set rule group="File and Printer Sharing" new enable=Yes
+# Hide file extensions for known file types"
+Set-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced HideFileExt "0" # 1 to hide
+# spps -n explorer # restart explorer to take effect
+
+# UAC: user account control
+# show current config
+$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+$filter="ConsentPromptBehaviorAdmin|ConsentPromptBehaviorUser|EnableInstallerDetection|EnableLUA|EnableVirtualization|PromptOnSecureDesktop|ValidateAdminCodeSignatures|FilterAdministratorToken"
+(Get-ItemProperty $path).psobject.properties | where {$_.name -match $filter} | select name,value
+# disable 
+$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+New-ItemProperty -Path $path -Name 'ConsentPromptBehaviorAdmin' -Value 0 -PropertyType DWORD -Force | Out-Null #2
+New-ItemProperty -Path $path -Name 'ConsentPromptBehaviorUser' -Value 3 -PropertyType DWORD -Force | Out-Null
+New-ItemProperty -Path $path -Name 'EnableInstallerDetection' -Value 1 -PropertyType DWORD -Force | Out-Null
+New-ItemProperty -Path $path -Name 'EnableLUA' -Value 1 -PropertyType DWORD -Force | Out-Null
+New-ItemProperty -Path $path -Name 'EnableVirtualization' -Value 1 -PropertyType DWORD -Force | Out-Null
+New-ItemProperty -Path $path -Name 'PromptOnSecureDesktop' -Value 0 -PropertyType DWORD -Force | Out-Null #1
+New-ItemProperty -Path $path -Name 'ValidateAdminCodeSignatures' -Value 0 -PropertyType DWORD -Force | Out-Null
+# New-ItemProperty -Path $path -Name 'FilterAdministratorToken' -Value 0 -PropertyType DWORD -Force | Out-Null

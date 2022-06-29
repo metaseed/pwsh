@@ -166,3 +166,6 @@ Get-Module $module
 snl Utility
 dotnet new psmodule
 ```
+
+## show all properties of obj
+gi c:\app|format-list -p(roperty) *
