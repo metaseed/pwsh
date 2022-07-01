@@ -69,12 +69,15 @@ if ($null -eq $k) {
 }
 New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable' -Value 0 -PropertyType Dword
 
-# 
+# In Windows 11, before disabling Windows Defender through the registry or a GPO, you must manually disable the Tamper Protection feature. Tamper Protection prevents changes to Windows Defender security features via PowerShell, registry settings, and/or Group Policy options. 
+# need to disable first: Tamper Protection
 # https://theitbros.com/managing-windows-defender-using-powershell/
 # disable realtime monitor
 # Set-MpPreference -DisableRealtimeMonitoring $true
 # disable Windows Defender
-# New-ItemProperty -Path “HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender” -Name DisableAntiSpyware -Value 1 -PropertyType DWORD -Force
+# New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name DisableAntiSpyware -Value 1 -PropertyType DWORD -Force
+# to reset need to `win` search "Windows Security", then 'app settings' then reset
+
 
 # Network Discovery:
 # https://www.majorgeeks.com/content/page/how_to_turn_on_or_off_network_discovery.html

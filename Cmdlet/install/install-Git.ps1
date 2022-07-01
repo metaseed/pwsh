@@ -52,8 +52,10 @@ $gitConfig = @"
 # included config
 [include]
 	path = M:\\tools\\git\\.gitconfig
+; put slb repos in the 'SLB' folder
+; https://git-scm.com/docs/git-config#_includes
 [includeIf "gitdir:**/SLB/**"] ; put slb repos in the 'SLB' folder
-	path=M:\\tool\\git\\.slb.gitconfig
+	path = M:\\tool\\git\\.slb.gitconfig
 
 "@
 $conf = gc $home/.gitconfig -raw

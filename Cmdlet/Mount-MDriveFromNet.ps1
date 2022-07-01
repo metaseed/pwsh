@@ -5,5 +5,8 @@ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
 net use M: /delete /y
 # net use M: \\tsclient\M /Persistent:yes # have to share the M drive in the local resources when connect the the VM, this make the vm slow so not using
 # username: dir\jsong12
-net use M: \\slb-fncl5y2\M /Persistent:yes # have to share M disk from host, 
+# https://lazyadmin.nl/it/net-use-command/
+# above link fix: after restart the map connection is lost, have to manually map in explorer
+net use M: \\slb-fncl5y2\M /Persistent:yes /user:dir\jsong12 * /savecred # have to share M disk from host,
+# New-PSDrive -Persist -Name M -PSProvider FileSystem -Root "\\slb-fncl5y2\M"
 # maybe need to restart
