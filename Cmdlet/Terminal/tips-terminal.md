@@ -23,6 +23,9 @@
 * `ctrl+shift+up/down`: scroll up/down
 * `ctrl+shift+home/end/pageup/pagedown`: scroll top/end/pageup/pagedown
 * `ctrl+-/+`: font size
+* `ctrl+shift+m`: toggle markMode
+* `alt+a`: switch selection point
+* `alt-+v`: toggle block(column) selection mode
 
 * https://redketchup.io/gif-resizer
 * https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/CascadiaCode

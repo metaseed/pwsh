@@ -169,3 +169,6 @@ dotnet new psmodule
 
 ## show all properties of obj
 gi c:\app|format-list -p(roperty) *
+
+## open solution
+saps (find-fromParent *.sln)

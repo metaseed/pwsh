@@ -2,9 +2,9 @@ function Git-PushAll {
   [CmdletBinding()]
   param (
     # commit message
-    [Parameter(Mandatory = $true)]
+    [Parameter()]
     [string]
-    $message,
+    $message = 'ok',
     [switch]
     [alias('c')]
     $confirm

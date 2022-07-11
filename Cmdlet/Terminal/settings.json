@@ -6,9 +6,20 @@
         {
             "command": 
             {
+                "action": "closeTab"
+            },
+            "keys": "ctrl+shift+w"
+        },
+        {
+            "command": 
+            {
                 "action": "globalSummon"
             },
             "keys": "win+alt+z"
+        },
+        {
+            "command": "toggleFocusMode",
+            "keys": "alt+shift+f"
         },
         {
             "command": 
@@ -16,10 +27,6 @@
                 "action": "scrollUp"
             },
             "keys": "ctrl+up"
-        },
-        {
-            "command": "toggleFocusMode",
-            "keys": "alt+shift+f"
         },
         {
             "command": "togglePaneZoom",
@@ -33,13 +40,6 @@
             "keys": "ctrl+down"
         },
         {
-            "command": 
-            {
-                "action": "closeTab"
-            },
-            "keys": "ctrl+shift+w"
-        },
-        {
             "command": "closePane",
             "keys": "alt+shift+w"
         },
@@ -50,19 +50,19 @@
         {
             "command": 
             {
+                "action": "copy",
+                "singleLine": false
+            },
+            "keys": "ctrl+c"
+        },
+        {
+            "command": 
+            {
                 "action": "splitPane",
                 "index": 0,
                 "split": "auto"
             },
             "keys": "alt+shift+1"
-        },
-        {
-            "command": 
-            {
-                "action": "copy",
-                "singleLine": false
-            },
-            "keys": "ctrl+c"
         },
         {
             "command": "find",
@@ -103,17 +103,25 @@
             "command": 
             {
                 "action": "moveFocus",
-                "direction": "previousInOrder"
+                "direction": "nextInOrder"
             },
-            "keys": "alt+home"
+            "keys": "alt+end"
         },
         {
             "command": 
             {
                 "action": "moveFocus",
-                "direction": "nextInOrder"
+                "direction": "previousInOrder"
             },
-            "keys": "alt+end"
+            "keys": "alt+home"
+        },
+        {
+            "command": "switchSelectionEndpoint",
+            "keys": "alt+a"
+        },
+        {
+            "command": "toggleBlockSelection",
+            "keys": "alt+v"
         }
     ],
     "alwaysShowNotificationIcon": true,
@@ -121,9 +129,9 @@
     "copyFormatting": "none",
     "copyOnSelect": true,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-    "focusFollowMouse": false,
+    "focusFollowMouse": true,
     "launchMode": "focus",
-    "minimizeToNotificationArea": true,
+    "minimizeToNotificationArea": false,
     "multiLinePasteWarning": false,
     "profiles": 
     {
@@ -160,15 +168,13 @@
                 "opacity": 100
             },
             {
-                "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
-                "backgroundImageAlignment": "center",
-                "commandline": "powershell.exe -NoExit -Command \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 39ba5f6d -SkipAutomaticLocation -DevCmdArguments \"\"\"-arch=x64 -host_arch=x64\"\"\"}\"",
-                "guid": "{dfb25331-1d4b-4fa7-9286-61ef498fe355}",
+                "commandline": "powershell.exe -NoExit -Command \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 714f30aa -SkipAutomaticLocation -DevCmdArguments \"\"\"-arch=x64 -host_arch=x64\"\"\"}\"",
+                "guid": "{eec5ba16-4bcd-430c-bb08-e16929dd00a2}",
                 "hidden": false,
                 "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
-                "name": "VS2019",
-                "startingDirectory": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional"
-            },
+                "name": "VS2022",
+                "startingDirectory": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional"
+            }
             {
                 "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",

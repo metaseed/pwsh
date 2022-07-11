@@ -65,6 +65,9 @@ Breakable-Pipeline {
       Add-AppxPackage `"$env:temp/$file`"
       Write-host `"when err: please kill the 'Terninal' task in task manager and try again with:  Add-AppxPackage '$env:temp\$file'`"
       Setup-Terminal
+      start-sleep -s 1
+      wt -w _quake
+      # stop-process -id ([System.Diagnostics.Process]::GetCurrentProcess().Id)
     }
 "@
     if ($wts) {
@@ -79,8 +82,7 @@ Breakable-Pipeline {
       else {
         pwsh -NoExit -Command $install
       }
-      stop-process -name "WindowsTerminal" -force
-      stop-process -name "OpenConsole" -force
+      stop-process -name "WindowsTerminal", "OpenConsole", "ShellExperienceHost" -force
      
     }
     else {
