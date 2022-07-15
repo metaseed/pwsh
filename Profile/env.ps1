@@ -6,7 +6,10 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 & { #prevent expose $appFolder into the profile variable: provider
     $appFolder = 'C:\App'
     if (Test-Path $appFolder) {
-        $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Name | ForEach-Object { join-path $appFolder $_ }) -join ';')"
+        $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Depth 2 -Name | ForEach-Object { join-path $appFolder $_ }) -join ';')"
+        if (Test-Path "$appFolder\software") {
+            $env:path += ";$((Get-ChildItem -Attributes Directory -Depth 2 -Path ("$appFolder\software") -Name | ForEach-Object { join-path "$appFolder\software" $_ }) -join ';')"
+        }
     }
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path += ";$CmdLetFolder"

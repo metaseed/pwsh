@@ -392,6 +392,16 @@ if ($CleanWU -eq 'Y') {
 # Open Text File
 Invoke-Item $Cleanuplog
 
+@(
+  # dmp files
+  "$env:windir\LiveKernelReports",
+  "$env:windir.old",
+  "$env:windir\Downloaded Program Files" # activex of ie
+)|% {
+Remove-Item -Path "$_\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
+}
+
+
 # Stop Script
 Stop-Transcript
 # }

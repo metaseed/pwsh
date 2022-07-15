@@ -34,3 +34,6 @@ and you could provide a name inside the default folder: $env:WTBackground\res\gi
 Show-WtBackgroundImage success # would radom use a image in the folder success
 ```
 you could look at the folder structure in the $env:WTBackground\res\gif, to config your own $env: WTBackgroundImage
+
+## matrixRain.gif
+https://codepen.io/metasong/full/WNzodaB
