@@ -17,8 +17,9 @@ var columns = canvas.width/font_size;
 var drops = [];
 //x: the x coordinate
 //drops[x]: y co-ordinate of the drop
+let maxH = Math.floor(canvas.height / font_size);
 for(var x = 0; x < columns; x++)
-	drops[x] = 1; // initial value of y
+	drops[x] = 1 + Math.floor(Math.random() * maxH); // initial value of y
 
 //drawing the characters
 function draw()
