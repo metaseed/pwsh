@@ -48,17 +48,17 @@ function init() {
 
     const loader = new THREE.TextureLoader();
     const textureSphereBg = loader.load('https://i.ibb.co/4gHcRZD/bg3-je3ddz.jpg');
-    const texturenucleus = loader.load('https://i.ibb.co/hcN2qXk/star-nc8wkw.jpg');
-    const textureStar = loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png");
-    const texture1 = loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png");  
+    const textureNucleus = loader.load('https://i.ibb.co/hcN2qXk/star-nc8wkw.jpg');
+    const textureStar = loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png");  
+    const texture1 = loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png");
     const texture2 = loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png");
     const texture4 = loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png");
 
 
     /*  Nucleus  */   
-    texturenucleus.anisotropy = 16;
+    textureNucleus.anisotropy = 16;
     let icosahedronGeometry = new THREE.IcosahedronGeometry(30, 10);
-    let lambertMaterial = new THREE.MeshPhongMaterial({ map: texturenucleus });
+    let lambertMaterial = new THREE.MeshPhongMaterial({ map: textureNucleus });
     nucleus = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
     scene.add(nucleus);
 
@@ -134,7 +134,6 @@ function init() {
 
 
 function animate() {
-
     //Stars  Animation
     stars.geometry.vertices.forEach(function (v) {
         v.x += (0 - v.x) / v.velocity;
@@ -170,7 +169,7 @@ function animate() {
     nucleus.rotation.y += 0.002;
 
 
-    //Sphere Beckground Animation
+    //Sphere Background Animation
     sphereBg.rotation.x += 0.002;
     sphereBg.rotation.y += 0.002;
     sphereBg.rotation.z += 0.002;
