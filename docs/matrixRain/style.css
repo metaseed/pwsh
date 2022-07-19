@@ -12,6 +12,7 @@ canvas {
 }
 .record-button {
   z-index: 1;
+  background-color: transparent;
   position: absolute;
   display: none;
 }

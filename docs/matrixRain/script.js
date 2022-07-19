@@ -59,7 +59,8 @@ let mediaRecorder;
 const recordBtn = document.querySelector("button");
 recordBtn.addEventListener("click", e=>{
    isRecording  = !isRecording;
-   recordBtn.textContent =isRecording?'stop recording':'start recording'
+   recordBtn.textContent =isRecording?'⏹':'⏺'
+   recordBtn.title = isRecording?'stop recording':'start recording'
    if(isRecording) {
       const stream = canvas.captureStream(25);
       mediaRecorder = new MediaRecorder(stream, {
