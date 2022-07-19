@@ -7,7 +7,7 @@ param (
 )
 Assert-Admin
 $app = 'ScreenToGif'
-$dir = 'C:\app\software'
+$dir = 'C:\app'
 Breakable-Pipeline {
   Get-GithubRelease -OrgName 'NickeManarin' -RepoName $app -Version $version -fileNamePattern '(?<!\.Light).Portable.x64.zip$' |
   % {
