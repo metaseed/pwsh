@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+}
+
+#wrapper {
+  position: relative;
+  height: 100vh;
+  background: #000;
+  font-family: 'Comfortaa', cursive;
+}
+
+#canvas_container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+}
+
+canvas {
+  display: block;
+}
+
+.text {
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  cursor: pointer;
+  color: rgb(255, 255, 255);
+  background-color: rgba(0, 0, 0, 0.81);
+  font-size: 1.6rem;
+  line-height: 1.5;
+  user-select: none;
+  overflow: hidden;
+  display: flex;
+  align-items:center;
+}
+
+.text span {
+  color: #e7aa27;
+}
+
+.text .quoteText {
+  width: 85%;
+  margin: 0 auto;
+}
+
+.text .quoteText span {
+  font-weight: 700;
+}
+
+.clickInfo {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: -80px;
+  z-index: 11;
+  cursor: pointer;
+  color: #F9B31C;
+  background-color: rgba(23, 23, 23, 0.9);
+  padding: 10px 0;
+  font-size: 20px;
+}
+
+.btn {
+  position: absolute;
+  bottom: 5%;
+  right: 0px;
+  transform: translateX(-50%);
+  border: 1px solid white;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.7em;
+  background: transparent;
+  color: #F9B31C;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .3s;
+  z-index: 11;
+}
+
+.btn_works {
+  left: 100px;
+  right: unset;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #ffffff;
+  color: #2a2b2f;
+}
+
+@media only screen and (max-width:815px) {
+  .text {
+    font-size: 1.2rem;
+  }
+
+  .text span {
+    afont-size: 0.8rem !important;
+  }
+
+  .clickInfo {
+    font-size: 1rem;
+  }
+}
