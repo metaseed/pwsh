@@ -19,7 +19,6 @@ if(!($env:MS_WTBackground)) {
     }
 
 }
-Initialize-WTBgImg
 
 . $PSScriptRoot/Show-WTBackgroundImage.ps1
 
