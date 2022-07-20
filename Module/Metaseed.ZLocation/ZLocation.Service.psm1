@@ -65,7 +65,7 @@ function Get-ZLocationDatabaseFilePath
 # Returns path to legacy ZLocation backup file.
 function Get-ZLocationLegacyBackupFilePath
 {
-    if($env:USERPROFILE -ne $null) {
+    if($null -ne $env:USERPROFILE) {
         Join-Path $env:USERPROFILE 'z-location.txt'
     }
 }

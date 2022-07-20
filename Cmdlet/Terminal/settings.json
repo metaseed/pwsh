@@ -174,7 +174,7 @@
                 "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
                 "name": "VS2022",
                 "startingDirectory": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional"
-            }
+            },
             {
                 "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",

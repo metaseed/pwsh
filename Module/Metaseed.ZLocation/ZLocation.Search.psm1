@@ -1,6 +1,6 @@
 Set-StrictMode -Version Latest
 
-if ((Get-Variable IsWindows -ErrorAction Ignore) -eq $null) { $IsWindows = $true }
+if ($null -eq (Get-Variable IsWindows -ErrorAction Ignore)) { $IsWindows = $true }
 
 function Find-Matches {
     param (
@@ -16,7 +16,7 @@ function Find-Matches {
         }
     }
 
-    if ($query -ne $null -and $query.Length -gt 0) {
+    if ($null -ne $query -and $query.Length -gt 0) {
         $lowerPrefix = $query[-1].ToLower()
         # we should prefer paths that start with the query over paths with bigger weight
         # that don't.
@@ -69,7 +69,7 @@ function Test-FuzzyMatch {
         return [bool]($left.IndexOf($right, [System.StringComparison]::OrdinalIgnoreCase) -ge 0)
     }
 
-    if ($query -eq $null) {
+    if ($null -eq $query) {
         return $true
     }
     $n = $query.Length

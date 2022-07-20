@@ -26,7 +26,7 @@ Breakable-Pipeline {
       Write-Host "You are using the latest version of PowerShell.`n $version is the latest version available."
       break
     }
-    write-host "You are using PowerShell $version.`n The latest version is $ver_online."
+    write-host "You are using PowerShell $version.`nThe latest version is $ver_online."
     return $_
   } |
   Download-GithubRelease | 
