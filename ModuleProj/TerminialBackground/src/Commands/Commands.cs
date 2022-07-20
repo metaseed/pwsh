@@ -1,5 +1,4 @@
 
-using System;
 using System.CommandLine;
 using Metaseed.TerminalBackground;
 
