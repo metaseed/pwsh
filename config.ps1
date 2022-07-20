@@ -55,5 +55,7 @@ if(-not $modPath) {
 [System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
 $env:MS_PWSH = $PSScriptRoot
 write-host "set env:MS_PWSH to $($env:MS_PWSH)"
-
+# rebuilds the command cache and re-examines all modules in all PowerShell default locations
+# so the dynamic module-command would work
+Get-Module -ListAvailable -Refresh > $null
 . $PSScriptRoot\profile.ps1
