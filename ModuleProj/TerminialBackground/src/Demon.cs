@@ -13,8 +13,8 @@ namespace Metaseed.TerminalBackground
     public static void StartProcess()
     {
         var name = Process.GetCurrentProcess().MainModule.FileName;
-    //   Logger.Inst.Log($"main module {name}");
-    //  main module C:\Program Files\PowerShell\7\pwsh.exe
+    // Logger.Inst.Log($"main module {name}");
+    // main module C:\Program Files\PowerShell\7\pwsh.exe
     // main module M:\Script\Pwsh\Module\Metaseed.Terminal\_bin\TerminalBackground.exe
       if(name.EndsWith("TerminalBackground.exe")) {
         return;

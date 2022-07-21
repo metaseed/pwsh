@@ -14,29 +14,39 @@ function Write-AllSubCommands {
       $newFolder = $false
       for ($i = 0; $i -lt $parts.Length - 1; $i++) {
           if ($parts[$i] -eq $partsToPrint[$i]) {
-              $parts[$i] = ' ' * $parts[$i].Length
+                $parts[$i] = ' ' * $parts[$i].Length
           }
           else {
               # new folder
               if (! $newFolder) {
-                  Write-Host ""
+                  # Write-Host ""
                   $newFolder = $true
               }
               $partsToPrint[$i] = $parts[$i]
           }
           # write-Host "$($parts[$i] -eq $partsToPrint[$i]), $($parts[$i]), $($partsToPrint[$i])"
       }
-      $parts[$parts.Length - 1] = $_.BaseName 
-      $cmd = $parts -join ' '
+      # $parts[$parts.Length - 1] = $_.BaseName
+      if($parts.Length -gt 1) {
+        $folderParts = $parts[0..($parts.length -2)]
+      }
+      if($folderParts) {
+        $folders =  '│' + ($folderParts -join ' ') + '│'
+      } else {
+        $folders = '│'
+      }
+      $cmd = $_.BaseName
+      # $cmd = $parts -join ' '
       $syn = (Get-Help $_.FullName).Synopsis.TrimEnd("`n")
       if ($syn.startswith("$($_.BaseName).ps1")) {
           $syn = $syn.Substring("$($_.BaseName).ps1".Length).trim()
       }
+      Write-Host -NoNewline "${folders}"
+      Write-Host -NoNewline "${cmd}" -ForegroundColor Green
       if ($syn) {
-        Write-Host "${cmd}: $syn"
-      }
-      else {
-        Write-Host "${cmd}"
+        Write-Host ": $syn"
+      } else {
+        write-Host ""
       }
   }
 }
