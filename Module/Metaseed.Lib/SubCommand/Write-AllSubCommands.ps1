@@ -1,28 +1,32 @@
 <#
-bootstrap/
-├── css/
-│   ├── bootstrap.css
-│   ├── bootstrap.min.css
-│   ├── bootstrap-theme.css
-│   └── bootstrap-theme.min.css
-├── js/
-│   ├── bootstrap.js
-│   └── bootstrap.min.js
-└── fonts/
-    ├── glyphicons-halflings-regular.eot
-    ├── glyphicons-halflings-regular.svg
-    ├── glyphicons-halflings-regular.ttf
-    └── glyphicons-halflings-regular.woff
+ Command
+├──  Automation
+│   ├──  Toru
+│   │   ├── Add-Stand
+│   │   ├── auth
+│   │   ├── sync-depth
+│   │   ├── toru-makeConnection
+│   │   └── toru
+│   ├──  Web
+│   │   └──  npm
+│   │       ├── npm-auth
+│   │       └── npm-i
+│   ├── grant-driller
+│   ├── Init-CGOpcua
+│   ├── restart-Symphony
+...
+└── update
 #>
 
 function buildTree($item) {
+  # omit folder or file starts with '_'
   if ($item.location.basename -match '^_') { return }
-
-  if (($item.location.Attributes -ne 'Directory') -and ($item.location.Extension -ne '.ps1')) {
+  # omit none '.ps1' file
+  if (($item.location.PSIsContainer) -and ($item.location.Extension -ne '.ps1')) {
     return
   }
 
-  if ($item.location.Attributes -eq "Directory") {
+  if ($item.location.PSIsContainer) {
     $children = Get-ChildItem $item.location
     for ($i = 0; $i -lt $children.count; $i++) {
       $child = @{location = $children[$i]; parent = $item; children = @(); }

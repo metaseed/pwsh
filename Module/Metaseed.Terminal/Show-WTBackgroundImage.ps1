@@ -49,8 +49,8 @@ function Show-WTBackgroundImage {
     $gifFolder = $env:WTBackgroundImage ? @("$env:WTBackgroundImage", "$psscriptroot\res\gifs") : "$psscriptroot\res\gifs"
 
     $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image } 
-    if ($it.Attributes -eq 'Directory') {
-      $it = Get-ChildItem $it -Recurse | ? { $_.Attributes -ne 'Directory' } | get-Random
+    if ($it.PSIsContainer) {
+      $it = Get-ChildItem $it -Recurse | ? PSIsContainer | get-Random
     }
     Write-Verbose $it
   }
