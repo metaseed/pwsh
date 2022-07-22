@@ -70,7 +70,12 @@ function showTree($item) {
   }
 
   if ($item.location.Attributes -eq "Directory") {
-    write-Host "$($item.location.basename)\"
+    if ($env:WT_SESSION) {
+      write-Host " $($item.location.basename)"
+    }
+    else {
+      write-Host "$($item.location.basename)\"
+    }
     $children = $item.children
     for ($i = 0; $i -lt $children.count; $i++) {
       showTree $children[$i]
@@ -78,14 +83,14 @@ function showTree($item) {
 
   }
   else {
+    write-Host "$($item.location.basename)" -ForegroundColor Green -NoNewline
     # slow so remove
     # $Synopsis = (Get-Help $item.location.FullName).Synopsis.TrimEnd("`n")
     # if ($Synopsis.startswith("$($item.location.BaseName).ps1")) {
     #   $Synopsis = $Synopsis.Substring("$($item.location.BaseName).ps1".Length).trim()
     # }
-    write-Host "$($item.location.basename)" -ForegroundColor Green -NoNewline
-    if ($Synopsis) {
-      write-Host ":$Synopsis"
+    if ($synopsis) {
+      write-Host ":$synopsis"
     }
     else {
       write-Host ""
@@ -95,7 +100,7 @@ function showTree($item) {
 
 function Write-AllSubCommands {
   param($commandFolder)
-  Write-Host "You could run these commands:"
+  Write-Host "You could run these sub-commands: (get help: dd <command> -h)`n"
 
   $t = buildTree( @{location = (gi $commandFolder); children = @(); } )
   showTree($t)
