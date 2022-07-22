@@ -22,7 +22,7 @@ function buildTree($item) {
   # omit folder or file starts with '_'
   if ($item.location.basename -match '^_') { return }
   # omit none '.ps1' file
-  if (($item.location.PSIsContainer) -and ($item.location.Extension -ne '.ps1')) {
+  if (!($item.location.PSIsContainer) -and ($item.location.Extension -ne '.ps1')) {
     return
   }
 
@@ -81,7 +81,7 @@ function showTree($item) {
   }
 
   # draw item name
-  if ($item.location.Attributes -eq "Directory") {
+  if ($item.location.PSIsContainer) {
     if ($env:WT_SESSION) {
       # with folder icon
       write-Host " $($item.location.basename)"
@@ -119,3 +119,4 @@ function Write-AllSubCommands {
   showTree($t)
   Write-Host "`nto get help: dd <command> -h"
 }
+# Write-AllSubCommands 'M:\Work\SLB\Presto\drilldev'
