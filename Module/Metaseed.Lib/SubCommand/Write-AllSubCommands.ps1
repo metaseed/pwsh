@@ -51,7 +51,7 @@ function showTree($item) {
 
     $index = $pp.children.IndexOf($p)
     if ($index -lt ($pp.children.count - 1)) {
-      Write-Host -NoNewline "|   "
+      Write-Host -NoNewline "│   "
     }
     else {
       Write-Host -NoNewline "    "
@@ -78,10 +78,11 @@ function showTree($item) {
 
   }
   else {
-    $Synopsis = (Get-Help $item.location.FullName).Synopsis.TrimEnd("`n")
-    if ($Synopsis.startswith("$($item.location.BaseName).ps1")) {
-      $Synopsis = $Synopsis.Substring("$($item.location.BaseName).ps1".Length).trim()
-    }
+    # slow so remove
+    # $Synopsis = (Get-Help $item.location.FullName).Synopsis.TrimEnd("`n")
+    # if ($Synopsis.startswith("$($item.location.BaseName).ps1")) {
+    #   $Synopsis = $Synopsis.Substring("$($item.location.BaseName).ps1".Length).trim()
+    # }
     write-Host "$($item.location.basename)" -ForegroundColor Green -NoNewline
     if ($Synopsis) {
       write-Host ":$Synopsis"
