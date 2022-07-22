@@ -1,0 +1,1 @@
+New-Alias weather Show-Weather

@@ -1,5 +1,6 @@
 Set-Alias ga Get-Alias
 Set-Alias gh Get-Help
+. $PSScriptRoot\..\Cmdlet\_alias.ps1
 
 & { # prevent $codePath leak in to profile variable: provider
     $codePath = (Get-Command 'code' -ErrorAction SilentlyContinue).Source

@@ -42,6 +42,8 @@ function Write-Animate {
     [ValidateSet('start', 'center', 'end')]
     [string]$position = 'center',
     [int]$Speed = 30,
+    # forely set a small width, if your terminal is too wide.
+    [int]$TerminalWidth = $Host.UI.RawUI.WindowSize.Width,
     [string]$ForegroundColor = $HOST.UI.RawUI.ForegroundColor,
     [string]$BackgroundColor = $HOST.UI.RawUI.BackgroundColor
   )
@@ -59,8 +61,6 @@ function Write-Animate {
     Write-Animate "--metasong" 'end'
     return
   }
-
-  $TerminalWidth = $Host.UI.RawUI.WindowSize.Width # characters
 
   $StartPosition = $HOST.UI.RawUI.CursorPosition
 
