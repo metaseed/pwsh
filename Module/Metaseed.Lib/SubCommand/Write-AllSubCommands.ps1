@@ -31,6 +31,7 @@ function buildTree($item) {
     for ($i = 0; $i -lt $children.count; $i++) {
       $child = @{location = $children[$i]; parent = $item; children = @(); }
       $c = buildTree $child
+      # removed items are not added
       if ($c) { $item.children += $c }
     }
   }
@@ -39,9 +40,9 @@ function buildTree($item) {
 }
 
 function showTree($item) {
-
   $parent = $item.parent
 
+  # build parent-chain
   $parents = @()
   $p = $parent
   while ($p) {
@@ -49,19 +50,25 @@ function showTree($item) {
     $p = $p.parent
   }
 
+  # draw grand parents' links that cross this line 
+  # reverse parse the parent-chain: 0, 1, 2, 3
+  # (3,2) (2,1) (1,0k)
   for ($i = $parents.count - 1; $i -gt 0; $i--) {
     $pp = $parents[$i]
     $p = $parents[$i - 1]
 
     $index = $pp.children.IndexOf($p)
     if ($index -lt ($pp.children.count - 1)) {
+      # not last child, a line to next child
       Write-Host -NoNewline "│   "
     }
     else {
+      # last child of the parent, no line to next child.
       Write-Host -NoNewline "    "
     }
   }
 
+  # draw parent child link
   if ($parent) {
     $i = $parent.children.IndexOf($item)
     $isLast = $i -eq ($parent.children.count - 1)
@@ -73,8 +80,10 @@ function showTree($item) {
     }
   }
 
+  # draw item name
   if ($item.location.Attributes -eq "Directory") {
     if ($env:WT_SESSION) {
+      # with folder icon
       write-Host " $($item.location.basename)"
     }
     else {
@@ -104,8 +113,9 @@ function showTree($item) {
 
 function Write-AllSubCommands {
   param($commandFolder)
-  Write-Host "You could run these sub-commands: (get help: dd <command> -h)`n"
+  Write-Host "You could run these sub-commands:`n"
 
   $t = buildTree( @{location = (gi $commandFolder); children = @(); } )
   showTree($t)
+  Write-Host "`nto get help: dd <command> -h"
 }
