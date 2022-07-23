@@ -14,7 +14,7 @@ $path = (split-path $mo.Path) + "\$module.psd1"
 $func = $mo.ExportedFunctions.Keys -join "','"
 $content = gc $path -raw
 if($content -notlike '*FunctionsToExport*') {
-  $newContent = $content  -replace "ModuleVersion.+`n", "`$0    FunctionsToExport = @('$func')`n" 
+  $newContent = $content  -replace "ModuleVersion.+`n", "`$0  FunctionsToExport = @('$func')`n" 
 } else{
   $newContent = $content  -replace "(FunctionsToExport\s*=\s*@\().+\)", "`$1'$func')" 
 }
