@@ -8,34 +8,6 @@
   write-animated "Hello World" -position start
   write-animated "Hello World" -position end
 #>
-function Write-Animate {
-  param($Line1 = "", $Line2 = "", $Line3 = "", $Line4 = "", $Line5 = "", $Line6 = "", $Line7 = "", $Line8 = "", $Line9 = "", [int]$Speed = 30, 
-    [ValidateSet('start', 'center', 'end')]
-    [string]$position = 'center')
-
-
-  if ($Line1 -eq "") {
-    $Line1 = 
-    $Line2 = " "
-    $Line3 = 
-    $Line4 = " "
-    $Line5 = "Best regards,"
-    $Line6 = "--metasong"
-  }
-  write-host ""
-  WriteLine $Line1 $Speed
-  WriteLine $Line2 $Speed
-  WriteLine $Line3 $Speed
-  WriteLine $Line4 $Speed
-  WriteLine $Line5 $Speed -position end
-  WriteLine $Line6 $Speed -position end
-  WriteLine $Line7 $Speed
-  WriteLine $Line8 $Speed
-  WriteLine $Line9 $Speed
-  write-host ""
-
-}
-
 function Write-Animate { 
   param(
     [string]$Line,

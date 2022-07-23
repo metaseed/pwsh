@@ -14,6 +14,7 @@
 
 # note: this file maybe delted because the modules coulc be dynamically loaded
 # https://powershell.one/powershell-internals/modules/overview
+# https://docs.microsoft.com/en-us/powershell/scripting/developer/module/importing-a-powershell-module?view=powershell-7.2
 # dynamic module loading:
 # This feature is driven by an internal command cache that lists all available commands, 
 # and the location of the modules providing these commands.

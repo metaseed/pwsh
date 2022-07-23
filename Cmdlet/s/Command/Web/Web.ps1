@@ -25,18 +25,14 @@ param (
   # browser profile to use
   [Parameter()]
   [string]
-  $prof = "Profile 1",
+  $prof = "Profile 1"
 
-  # list available names
-  [Parameter()]
-  [switch]
-  $list
 )
 . "$PSScriptRoot\_config.ps1"
 if ($urls) {
   $webs | % { $webs.$($_.key) = $_.value }
 }
-if ($list) {
+if (!($web)) {
   write-host "`nAvailable Names:"
   $webs | Format-Table
   return

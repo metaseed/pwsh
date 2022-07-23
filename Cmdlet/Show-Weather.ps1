@@ -1,8 +1,10 @@
 # https://github.com/chubin/wttr.in
 <#
 .EXAMPLE
+weather
 weather laizhou
 weather -o -m
+weather -v1
 #>
 [CmdletBinding()]
 param (
