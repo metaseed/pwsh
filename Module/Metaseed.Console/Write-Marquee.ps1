@@ -55,5 +55,5 @@ function Write-Marquee {
 
 }
 
-Write-Marquee "Hello World" -ForegroundColor green -Repeat 2 -Width 60
+# Write-Marquee "Hello World" -ForegroundColor green -Repeat 2 -Width 60
 # Write-Marquee "write-host -nonewline textToDisplay -ForegroundColor ForegroundColor -BackgroundColor BackgroundColor PS M:\Script\Pwsh\Module\Metaseed.Console> " -ForegroundColor green -Repeat 2
