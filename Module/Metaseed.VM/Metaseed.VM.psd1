@@ -1,6 +1,6 @@
 @{
   RootModule        = 'Metaseed.VM.psm1'
   ModuleVersion     = '1.0.0'
-  CmdletsToExport = @('')
+  CmdletsToExport = @()
   FunctionsToExport = @('Connect-VM')
 }

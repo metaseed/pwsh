@@ -6,6 +6,7 @@ RootModule = 'Metaseed.ZLocation.psm1'
 
 # Version number of this module.
 ModuleVersion = '1.4.3'
+  CmdletsToExport = @()
 
 # ID used to uniquely identify this module
 # GUID = '18e8ca17-7f67-4f1c-85ff-159373bf69f5'
@@ -63,7 +64,6 @@ FunctionsToExport = @(
 )
 
 # Cmdlets to export from this module
-CmdletsToExport = @()
 
 # Variables to export from this module
 VariablesToExport = @()
