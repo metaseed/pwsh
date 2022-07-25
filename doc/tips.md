@@ -144,7 +144,7 @@ work on list not on string
 'abc','e','fd' -contains 'fd' work
 
 ## web browser
-saps msedge
+saps msedge or Start-Process microsoft-edge://
 saps chrome
 
 # resource monitor
@@ -172,3 +172,7 @@ gi c:\app|format-list -p(roperty) *
 
 ## open solution
 saps (find-fromParent *.sln)
+
+## ANSI escape sequence
+https://duffney.io/usingansiescapesequencespowershell/#:~:text=ANSI%20escape%20sequences%20are%20often,character%20representing%20an%20escape%20character.
+https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
