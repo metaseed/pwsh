@@ -42,9 +42,9 @@ function Write-Marquee {
 		$End = $Length - $Width
 		foreach ($Pos in 1 .. $End) {
 			$HOST.UI.RawUI.CursorPosition = $StartPosition
+			start-sleep -milliseconds $speed
 			$textToDisplay = $textDisplay.Substring($Pos, $Width)
 			write-host -nonewline $textToDisplay -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
-			start-sleep -milliseconds $speed
 		}
 		if ($Repeat -gt 0) {
 			$Repeat--
