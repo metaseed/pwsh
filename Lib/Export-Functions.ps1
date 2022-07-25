@@ -30,20 +30,19 @@ function Export-Functions {
     param (
         $path
     )
-    # Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
+    write-verbose "Get all ps1 files except that start with '_' or in the subfolder that start with '_'."
     $All = Get-AllPwshFiles $path
-    #Dot source the files
-    Foreach ($import in $All) {
+    write-verbose "Dot source the files"
+    foreach ($import in $All) {
         Try {
             . $import.fullname
-            # Write-Host $import.fullname
+            Write-Verbose "import file: $($import.fullname)"
         }
         Catch {
             Write-Error "Failed to import function $($import.fullname): $_"
         }
     }
-    # Modules
+    Write-Verbose "export function for Modules: $path"
     $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
-    Export-ModuleMember $($Public | Select-Object -ExpandProperty BaseName) 
+    Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
 }
-Export-ModuleMember -Alias *

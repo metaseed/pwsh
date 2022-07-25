@@ -1,5 +1,5 @@
 # Begin of ProxyCommand for command: Write-Warning
-Function Write-Warning {
+function Write-Warning {
 	<#
 .SYNOPSIS
 	Write-Warning [-Message] <string> [<CommonParameters>]
