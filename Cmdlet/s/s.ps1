@@ -9,7 +9,7 @@ param(
         $wordToComplete,
         $commandAst,
         $fakeBoundParameters )
-      return Complete-Command "$PSScriptRoot\_Command" $wordToComplete
+      return Complete-Command "$PSScriptRoot\Command" $wordToComplete
     })]
   [Parameter(Position = 0)]
   $Command,
@@ -24,7 +24,7 @@ param(
 
 dynamicparam {
   $Command = $PSBoundParameters['Command']
-  return Get-DynCmdParam $PSScriptRoot\_Command $Command
+  return Get-DynCmdParam "$PSScriptRoot\Command" $Command
 }
 
 end {
@@ -34,11 +34,11 @@ end {
   }
 
   if (!$Command) {
-    Write-AllSubCommands $PSScriptRoot\_Command
+    Write-AllSubCommands "$PSScriptRoot\Command"
     return
   }
 
-  $file = Get-AllPwshFiles $PSScriptRoot\_Command | ? { $_.BaseName -eq $Command }
+  $file = Get-AllPwshFiles "$PSScriptRoot\Command" | ? { $_.BaseName -eq $Command }
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
     return
@@ -51,7 +51,7 @@ end {
 
   $null = $PSBoundParameters.Remove('Command')
   # cmd folder and lib folder could be used inside subcommand
-  $__CmdFolder = "$PSScriptRoot\_Command"
+  $__CmdFolder = "$PSScriptRoot\Command"
   $__LibFolder = "$PSScriptRoot\_Lib"
   $__PWSHFolder = Resolve-Path "$PSScriptRoot\..\..\"
   & $file @PSBoundParameters

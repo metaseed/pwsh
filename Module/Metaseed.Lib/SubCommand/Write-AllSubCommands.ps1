@@ -117,6 +117,12 @@ function Write-AllSubCommands {
 
   $t = buildTree( @{location = (gi $commandFolder); children = @(); } )
   showTree($t)
-  Write-Host "`nto get help: dd <command> -h"
+  $p = Split-Path $commandFolder
+  $cmd = Split-Path $p -Leaf
+  $c = gci $p -Filter "*.cmd"
+  if($c) {
+    $cmd = $c[0].BaseName
+  }
+  Write-Host "`nto get help: $cmd <subcommand> -h"
 }
 # Write-AllSubCommands 'M:\Work\SLB\Presto\drilldev'

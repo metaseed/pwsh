@@ -176,3 +176,7 @@ saps (find-fromParent *.sln)
 ## ANSI escape sequence
 https://duffney.io/usingansiescapesequencespowershell/#:~:text=ANSI%20escape%20sequences%20are%20often,character%20representing%20an%20escape%20character.
 https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
+
+## clear screen
+ctrl-l just scroll the screen
+cls clear the buffer
