@@ -22,7 +22,7 @@ $content = $content -replace "CmdletsToExport\s*=\s*@\(.*\)`n", ''
 $content | Out-File $path
 $mo = ipmo $module -Force -PassThru -DisableNameChecking
 
-$func = $mo.ExportedFunctions.Keys -join "','"
+$func = $mo.ExportedFunctions.Keys -join "', '"
 Write-Verbose "exported functions: $func"
 if ($content -notlike '*FunctionsToExport*') {
   $content = $content -replace "ModuleVersion.+`n", "`$0  FunctionsToExport = @('$func')`n" 
@@ -30,7 +30,7 @@ if ($content -notlike '*FunctionsToExport*') {
 else {
   $content = $content -replace "(FunctionsToExport\s*=\s*@\().+\)", "`$1'$func')" 
 }
-$cmd = $mo.ExportedCmdlets.Keys -join "','"
+$cmd = $mo.ExportedCmdlets.Keys -join "', '"
 Write-Verbose "exported commands:$cmd"
 
 if ($content -notlike '*CmdletsToExport*') {
