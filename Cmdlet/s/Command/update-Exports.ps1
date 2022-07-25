@@ -2,7 +2,7 @@
 param (
   [Parameter()]
   [string]
-  $module = 'metaseed.terminal'
+  $module = 'metaseed.vm'
 )
 
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
@@ -32,5 +32,10 @@ if ($content -notlike '*CmdletsToExport*') {
 else {
   $content = $content -replace "(CmdletsToExport\s*=\s*@\().+\)", "`$1'$cmd')" 
 }
+$content = $content.TrimEnd("`r","`n")
+
+# $content += "`r`n"
 # $content = $content -replace "CmdletsToExport\s*=\s*@\(.*\)", ''
 $content | out-file $path
+
+# gci M:\Script\Pwsh\Module\ -Directory|% {update-exports $_.BaseName}
