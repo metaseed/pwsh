@@ -40,3 +40,5 @@ Invoke-RestMethod $url
   $_
   write-error $invoke
 }
+
+# (iwr https://wttr.in/).content > $env:TEMP\weather.txt

@@ -8,11 +8,11 @@
   write-animated "Hello World" -position start
   write-animated "Hello World" -position end
 #>
-function Write-Animate { 
+function Write-Animated { 
   param(
     [string]$Line,
     [ValidateSet('start', 'center', 'end')]
-    [string]$position = 'center',
+    [string]$position = 'start',
     [int]$Speed = 30,
     # forely set a small width, if your terminal is too wide.
     [int]$TerminalWidth = $Host.UI.RawUI.WindowSize.Width,
