@@ -24,11 +24,16 @@ function Write-Marquee {
 
 	# clear-host
 	Write-Output ""
-	write-host "-$('-' * $Width)--"
+	# wt cursor position has problem
+	if (!($env:WT_SESSION)) {
+		write-host "-$('-' * $Width)-"
+	}
 	$StartPosition = $HOST.UI.RawUI.CursorPosition
-	$StartPosition.X = 1
-	write-host "|$(' ' * ($Width + 1))|"
-	write-host "-$('-' * $Width)--"
+	# $StartPosition.X = 1
+	if (!($env:WT_SESSION)) {
+		write-host "$(' ' * ($Width))"
+		write-host "-$('-' * $Width)-"
+	}
 
 	while ($Repeat) {
 		if ($Repeat -eq 1) {
@@ -44,7 +49,7 @@ function Write-Marquee {
 			$HOST.UI.RawUI.CursorPosition = $StartPosition
 			start-sleep -milliseconds $speed
 			$textToDisplay = $textDisplay.Substring($Pos, $Width)
-			write-host -nonewline $textToDisplay -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
+			write-host -nonewline "|$textToDisplay|" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
 		}
 		if ($Repeat -gt 0) {
 			$Repeat--
