@@ -1,11 +1,17 @@
 [CmdletBinding()]
 param (
+  # i.e. metaseed.console
+  # if empty all modules are updated
   [Parameter()]
   [string]
-  $module = 'metaseed.vm'
+  $module
 )
-Get-Module -ListAvailable -Refresh > $null
-
+if(!($module)) {
+  # too slow so only do when all modules
+  Get-Module -ListAvailable -Refresh > $null
+  gci M:\Script\Pwsh\Module\ -Directory|% {update-exports $_.BaseName}
+  return
+}
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
 $mo = ipmo $module -Force -PassThru -DisableNameChecking
 $path = (split-path $mo.Path) + "\$module.psd1"
@@ -39,7 +45,7 @@ if ($content -notlike '*CmdletsToExport*') {
 else {
   $content = $content -replace "(CmdletsToExport\s*=\s*@\().+\)", "`$1'$cmd')" 
 }
-$content = $content.TrimEnd("`r","`n")
+$content = $content.TrimEnd("`r", "`n")
 
 # $content += "`r`n"
 $content | out-file $path
