@@ -60,5 +60,5 @@ function Write-AnsiText {
   if($Blink) {$blk = ';5'}
   if($Bold) {$bld = ';1'}
   if($Inverted) {$inv = ";7"}
-  Write-Output "`e[5${fgc}${bgc}${bld}${inv}${und}${blk}m$text`e[0m";
+  Write-Output "`e[${fgc}${bgc}${bld}${inv}${und}${blk}m$text`e[0m";
 }
