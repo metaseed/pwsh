@@ -35,6 +35,7 @@ enum BackgroundColorAnsi {
   LightCyan = 106
   White = 107
 }
+
 function Write-AnsiText {
   [CmdletBinding()]
   param (

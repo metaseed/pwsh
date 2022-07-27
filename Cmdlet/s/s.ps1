@@ -26,6 +26,9 @@ dynamicparam {
   $Command = $PSBoundParameters['Command']
   return Get-DynCmdParam "$PSScriptRoot\Command" $Command
 }
+begin {
+  $error.Clear()
+}
 
 end {
   if ($code) {
@@ -49,10 +52,11 @@ end {
     return
   }
 
-  $null = $PSBoundParameters.Remove('Command')
   # cmd folder and lib folder could be used inside subcommand
   $__CmdFolder = "$PSScriptRoot\Command"
   $__LibFolder = "$PSScriptRoot\_Lib"
   $__PWSHFolder = Resolve-Path "$PSScriptRoot\..\..\"
+  $null = $PSBoundParameters.Remove('Command')
   & $file @PSBoundParameters
+  $error
 }

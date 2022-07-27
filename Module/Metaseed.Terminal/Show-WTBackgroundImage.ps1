@@ -50,9 +50,9 @@ function Show-WTBackgroundImage {
 
     $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image } 
     if ($it.PSIsContainer) {
-      $it = Get-ChildItem $it -Recurse | ? PSIsContainer | get-Random
+      $it = Get-ChildItem $it -Recurse | ? {!($_.PSIsContainer)} | get-Random
+      Write-Verbose $it
     }
-    Write-Verbose $it
   }
   $str = '{"backgroundImage": ' + (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "' + $stretchMode + '","backgroundImageAlignment": "' + $alignment + '","backgroundImageOpacity":0.8}'
   Set-WTBgImg $prof $durationInseconds $str

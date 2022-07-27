@@ -39,12 +39,13 @@ if (!($web)) {
 }
 
 # note: directly use $Verbose not work
-if ($PsBoundParameters.Verbose) {
-  $webs | format-table
-}
-if ($webs[$web]) { Write-Verbose $webs[$web] }
+# if ($PsBoundParameters.Verbose) {
+#   $webs | format-table
+# }
+$web = $webs[$web] ?? $web
+Write-Verbose $web
 # edge://flags/#allow-insecure-localhost
-saps msedge -ArgumentList @( '--ignore-certificate-errors', '--ignore-urlfetcher-cert-requests', "--profile-directory=`"$prof`"", $webs[$web])
+saps msedge -ArgumentList @( '--ignore-certificate-errors', '--ignore-urlfetcher-cert-requests', "--profile-directory=`"$prof`"", $web)
 
 # note: it's linked
 # ni -Type HardLink M:\Work\Slb-Presto\drilldev\command\Web\Web.ps1 -Value M:\Script\Pwsh\Cmdlet\s\Command\Web\Web.ps1

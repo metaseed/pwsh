@@ -5,6 +5,7 @@ param (
   [Parameter()]
   [string]$PWSHFolder
 )
+
 if (Test-Path $PWSHFolder -PathType leaf) {
   write-error "a file $PWSHFolder already exists, please remove it first or try a different folder"
   return

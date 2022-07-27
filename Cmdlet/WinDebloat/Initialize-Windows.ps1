@@ -87,18 +87,27 @@ if ($vm) {
 
 
   # remove xbox
-  <#
-  Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.XboxIdentityProvider" | Remove-AppxPackage -ErrorAction SilentlyContinue
-	Get-AppxPackage "Microsoft.XboxSpeechToTextOverlay" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.XboxGameOverlay" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.XboxGamingOverlay" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Xbox.TCUI" | Remove-AppxPackage
-  #>
-  Get-ProvisionedAppxPackage -Online |
-  Where-Object { $_.PackageName -match "xbox" } |
-  ForEach-Object { Remove-ProvisionedAppxPackage -Online -AllUsers -PackageName $_.PackageName }
-  Get-ScheduledTask  XblGameSaveTask | Disable-ScheduledTask
+  $XboxApps = @(
+    "Microsoft.GamingServices"          # Gaming Services
+    "Microsoft.XboxApp"                 # Xbox Console Companion (Replaced by new App)
+    "Microsoft.XboxGameCallableUI"
+    "Microsoft.XboxGameOverlay"
+    "Microsoft.XboxSpeechToTextOverlay"
+    "Microsoft.XboxGamingOverlay"       # Xbox Game Bar
+    "Microsoft.XboxIdentityProvider"    # Xbox Identity Provider (Xbox Dependency)
+    "Microsoft.Xbox.TCUI"               # Xbox Live API communication (Xbox Dependency)
+)
+  $XboxApps |
+  # ? { $_.PackageName -match "Microsoft.Xbox" } |
+  % {Remove-AppxPackage  $_.PackageName }
+
+  $XboxServices = @(
+    "XblAuthManager"                    # Xbox Live Auth Manager
+    "XblGameSave"                       # Xbox Live Game Save
+    "XboxGipSvc"                        # Xbox Accessory Management Service
+    "XboxNetApiSvc"
+  )
+  $XboxServices | % { Get-ScheduledTask $_ } | Disable-ScheduledTask
 
   # to install local appx package, the firewall need to be turned on
   # turn off firewall
@@ -136,7 +145,7 @@ if ($vm) {
     'Microsoft.Getstarted',
     'Microsoft.People',
     'Microsoft.BingWeather',
-    'microsoft.windowscommunicationsapps',# mails and calendar
+    'microsoft.windowscommunicationsapps', # mails and calendar
     'Microsoft.MicrosoftSolitaireCollection',
     'Microsoft.GamingApp',
     'Microsoft.BingNews',
@@ -254,9 +263,9 @@ ty -Path $path -Name 'FilterAdministratorToken' -Value 0 -PropertyType DWORD -Fo
 # Write-ItemProperty -Path "$win\Settings" -Name 'AllowConfigureTaskbarCalendar' -Value 2 -PropertyType DWORD -Force | Out-Null
 
 # disable Tasks
-Get-ScheduledTask *google*|Disable-ScheduledTask
-Get-ScheduledTask *MicrosoftEdge*|Disable-ScheduledTask
-Get-ScheduledTask *OneDrive*|Disable-ScheduledTask
+Get-ScheduledTask *google* | Disable-ScheduledTask
+Get-ScheduledTask *MicrosoftEdge* | Disable-ScheduledTask
+Get-ScheduledTask *OneDrive* | Disable-ScheduledTask
 
 # dark theme
 Write-ItemProperty HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize "AppsUseLightTheme" 0
