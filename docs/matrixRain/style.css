@@ -13,12 +13,13 @@ canvas {
 .record-button {
   z-index: 1;
   background-color: transparent;
+  font-size: larger;
   position: absolute;
   display: none;
 }
 body:hover .record-button {
   display: block;
-  background: #ffffff;
+  /* background: #ffffff; */
 }
 
 /* .btn {
