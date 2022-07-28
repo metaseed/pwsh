@@ -1,4 +1,4 @@
-$localFile = "$__PWSHFolder/.local"
+$localFile = "$__RootFolder/.local"
 if (Test-Path $localFile) {
   Write-Host "find .local file in root dir, stop update!" -ForegroundColor red 
   return

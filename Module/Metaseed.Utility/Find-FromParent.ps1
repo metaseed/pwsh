@@ -15,6 +15,9 @@ function Find-FromParent {
   )
 
   $path = $pathFrom
+  if(!$path) {
+    return $null
+  }
   do {
     # force to show hidden file/folder like .git
     $info = Get-ChildItem $path -force| ? name -like $FileOrFolder

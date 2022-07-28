@@ -55,8 +55,14 @@ end {
   # cmd folder and lib folder could be used inside subcommand
   $__CmdFolder = "$PSScriptRoot\Command"
   $__LibFolder = "$PSScriptRoot\_Lib"
-  $__PWSHFolder = Resolve-Path "$PSScriptRoot\..\..\"
+  $__RootFolder = Resolve-Path "$PSScriptRoot\..\..\"
   $null = $PSBoundParameters.Remove('Command')
   & $file @PSBoundParameters
-  $error
+  $err = $error | ? {
+    $_.InvocationInfo.Line -notmatch '-ErrorAction\s+SilentlyContinue'
+  }
+  if ($err) {
+    Write-AnsiText "Errors:" -Blink -ForegroundColor Red -Inverted
+    $err
+  }
 }

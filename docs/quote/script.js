@@ -65,6 +65,7 @@ let tail = {};
     ]).then(result => {
         webgl.texturesArray = result;
         document.getElementById("wrapper").addEventListener("click", changeTexture, false);
+        setInterval(()=>changeTexture(),10000)
     });
 
     async function loadAsync(url) {
@@ -287,7 +288,7 @@ function changeTexture(e) {
     if (webgl.texturaAnimation5) webgl.texturaAnimation5.kill();
     webgl.particlesMesh.rotation.z = 0.0;
 
-    if (e.target.classList.contains("btn")) return;
+    if (e?.target.classList.contains("btn")) return;
 
     let opt = webgl.texturesOptions[webgl.textureIndex];
     let t = webgl.texturesArray[webgl.textureIndex];

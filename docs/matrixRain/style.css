@@ -20,3 +20,23 @@ body:hover .record-button {
   display: block;
   background: #ffffff;
 }
+
+/* .btn {
+  transform: translateX(-50%);
+  border: 1px solid white;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.7em;
+  background: transparent;
+  color: #F9B31C;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .3s;
+  z-index: 11;
+}
+
+.btn:hover {
+  background: #ffffff;
+  color: #2a2b2f;
+} */

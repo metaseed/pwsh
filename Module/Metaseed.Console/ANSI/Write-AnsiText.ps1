@@ -41,7 +41,14 @@ function Write-AnsiText {
   param (
     [Parameter()]
     [string]
-    $text,
+    $text = @"
+    __________               .__          _____          __                                      
+    \______   \__  _  _______|  |__      /     \   _____/  |______    __________   ____    ____  
+     |     ___/\ \/ \/ /  ___/  |  \    /  \ /  \_/ __ \   __\__  \  /  ___/  _ \ /    \  / ___\ 
+     |    |     \     /\___ \|   Y  \  /    Y    \  ___/|  |  / __ \_\___ (  <_> )   |  \/ /_/  >
+     |____|      \/\_//____  >___|  /  \____|__  /\___  >__| (____  /____  >____/|___|  /\___  / 
+                           \/     \/           \/     \/          \/     \/           \//_____/  
+"@,
     [ForegroundColorAnsi]
     $ForegroundColor,
     [BackgroundColorAnsi]
@@ -53,7 +60,8 @@ function Write-AnsiText {
     [switch]
     $Blink,
     [switch]
-    $Bold
+    $Bold,
+    [switch]$NoNewLine
   )
   if($ForegroundColor) {$fgc = ";$($ForegroundColor.value__)"}
   if($BackgroundColor) {$bgc = ";$($BackgroundColor.value__)"}
@@ -61,5 +69,5 @@ function Write-AnsiText {
   if($Blink) {$blk = ';5'}
   if($Bold) {$bld = ';1'}
   if($Inverted) {$inv = ";7"}
-  Write-Output "`e[${fgc}${bgc}${bld}${inv}${und}${blk}m$text`e[0m";
+  Write-Host "`e[${fgc}${bgc}${bld}${inv}${und}${blk}m$text`e[0m" -NoNewline:$NoNewLine
 }
