@@ -57,7 +57,7 @@ function draw() {
   // Black BG for the canvas
   // translucent BG to show trail, increase the alpha value to short the tail
   // cover the canvas with the half transient black rectangle
-  ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.16)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   let rn = Math.floor(Math.random() * 255);
