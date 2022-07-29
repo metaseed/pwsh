@@ -110,13 +110,13 @@ function Set-KnownFolderPath {
     }
 
     # Define SHSetKnownFolderPath if it hasn't been defined already
-    $Type = ([System.Management.Automation.PSTypeName]'KnownFolders').Type
+    $Type = ([Management.Automation.PSTypeName]'KnownFolders').Type
     if (-not $Type) {
-        $Signature = @'
+        $SHSetKnownFolderPath = @'
 [DllImport("shell32.dll")]
 public extern static int SHSetKnownFolderPath(ref Guid folderId, uint flags, IntPtr token, [MarshalAs(UnmanagedType.LPWStr)] string path);
 '@
-        $Type = Add-Type -MemberDefinition $Signature -Name 'KnownFolders' -Namespace 'Win32Functions' -PassThru
+        $Type = Add-Type -MemberDefinition $SHSetKnownFolderPath -Name 'KnownFolders' -Namespace 'Win32Functions' -PassThru
     }
 
     # Validate the path
@@ -124,6 +124,6 @@ public extern static int SHSetKnownFolderPath(ref Guid folderId, uint flags, Int
         # Call SHSetKnownFolderPath
         return $Type::SHSetKnownFolderPath([ref]$KnownFolders[$KnownFolder], 0, 0, $Path)
     } else {
-        throw New-Object System.IO.DirectoryNotFoundException "Could not find part of the path $Path."
+        throw New-Object IO.DirectoryNotFoundException "Could not find part of the path $Path."
     }
 }

@@ -10,7 +10,7 @@ function Invoke-SubCommand {
         $cmd = Find-FromParent 'Command' $MyInvocation.PSScriptRoot
         $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdFolder').Value
         $CommandFolder = $__CmdFolder ?? "$cmd"
-        if (!$CommandFolder) { write-error "can not get the 'Command' folder" }
+        if (!$CommandFolder) { return }
         $Command = $PSBoundParameters['Command']
         return Get-DynCmdParam $CommandFolder $Command
     }
