@@ -5,6 +5,7 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 # $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
 & { #prevent expose $appFolder into the profile variable: provider
     $appFolder = 'C:\App'
+
     if (Test-Path $appFolder) {
         $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Depth 2 -Name | ForEach-Object { join-path $appFolder $_ }) -join ';')"
         if (Test-Path "$appFolder\software") {

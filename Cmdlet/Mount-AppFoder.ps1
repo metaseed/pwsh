@@ -14,4 +14,8 @@ if(-not (Test-Path $App)) {
 if((gi c:\app ).LinkType -ne 'symboliclink') {
     Write-Attention "C:\app is there but it is not a symbolic link"
 }
+
+$env:MS_App = $App
+[System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
+
 Write-Host "'$App' already mapped!"
