@@ -180,3 +180,5 @@ https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 ## clear screen
 ctrl-l just scroll the screen
 cls clear the buffer
+## check windows version
+winver

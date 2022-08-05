@@ -1,6 +1,7 @@
 # https://duffney.io/usingansiescapesequencespowershell/#:~:text=ANSI%20escape%20sequences%20are%20often,character%20representing%20an%20escape%20character
 # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 # https://misc.flogisoft.com/bash/tip_colors_and_formatting
+# https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2
 
 # ANSI/VT100 escape sequences can be used in every programming languages.
 # `e: escape character 27(decimal),033(oct) 0x1B(hex)

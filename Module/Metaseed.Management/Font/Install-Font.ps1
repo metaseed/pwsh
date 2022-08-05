@@ -13,7 +13,7 @@ function Install-Font {
     )
 
     # Supported font extensions
-    $ValidExts = @('.otf', '.ttf')
+    $ValidExts = @('.otf', '.ttf', '.ttc')
 
     Function Install-FontManual {
         [CmdletBinding(SupportsShouldProcess)]

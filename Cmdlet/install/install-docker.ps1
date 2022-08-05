@@ -1,5 +1,5 @@
 # 1. on vm: `stop-computer`
-# 1. on host: Set-VMProcessor -VMName 'win11' -ExposeVirtualizationExtensions $true
+# 1. enable nested virtualization, on host: Set-VMProcessor -VMName 'win11' -ExposeVirtualizationExtensions $true
 if! (gcm docker -ErrorAction SilentlyContinue)) {
   iwr https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe -OutFile $env:temp/docker.exe 
   Start-Process "$env:temp/docker.exe" -Wait @('install', '--accept-license', '--backend=wsl-2')

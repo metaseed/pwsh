@@ -75,4 +75,7 @@ if (!(Test-Path $WOWAutoRunBackup)) {
 Move-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects\{F20487CC-FC04-4B1E-863F-D9801796130B}" "$autoRunBackup\{F20487CC-FC04-4B1E-863F-D9801796130B}" -Force
 Move-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects\{F56F6FDD-AA9D-4618-A949-C1B91AF43B1A}" "$WOWAutoRunBackup\{F20487CC-FC04-4B1E-863F-D9801796130B}" -Force
 
-
+# https://www.itechtics.com/add-language-using-powershell/
+if(gcm Install-Language -ErrorAction SilentlyContinue) {
+  Install-Language zh-CN
+}
