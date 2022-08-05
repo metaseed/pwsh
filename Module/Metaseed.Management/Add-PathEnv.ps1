@@ -1,5 +1,5 @@
 using namespace System.IO
-function Add-Path {
+function Add-PathEnv {
     param (
         # directory to add to path
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -54,4 +54,4 @@ function Test-PathInStr {
     }
 }   
 
-# Add-Path $env:ProgramFiles\Git\mingw64\bin
+# Add-PathEnv $env:ProgramFiles\Git\mingw64\bin

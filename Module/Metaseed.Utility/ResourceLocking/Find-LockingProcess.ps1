@@ -42,7 +42,7 @@ function findLocking {
     $HandleDir = "$env:MS_App\handle"
     $HandleApp = "$HandleDir\handle.exe"
     if (!(Test-Path -Path $HandleApp)) {
-        # Add-Path $HandleDir
+        # Add-PathEnv $HandleDir
         DownloadHandleApp -Path $HandleDir
     }
 
