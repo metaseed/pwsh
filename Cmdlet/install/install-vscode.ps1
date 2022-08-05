@@ -5,4 +5,4 @@ $Exe = Get-RemoteFile $file
 $installerArguments = '/silent /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders,associatewithfiles,addtopath"'
 Write-Host '>>>>>> Installing vscode, this would take a while, please wait...'
 Start-Process  $Exe -ArgumentList $installerArguments -NoNewWindow -Wait
-# no need, but need to repoen taskmanager(update path) then run powershell,
+#on none-ui-windows: need to repoen taskmanager(update path) then run powershell, to invoke `code` command

@@ -45,10 +45,8 @@ Breakable-Pipeline {
   } |
   Download-GithubRelease | 
   % {
-    $d = gci 'c:\app' -Directory -Filter 'ffmpg-*'
-    if($d) {
-      Remove-Item "$d" -Recurse -Force
-    }
+      gci 'c:\app' -Directory -Filter 'ffmpg-*' |
+      Remove-Item -Recurse -Force
 
     Expand-Archive "$_" -DestinationPath "c:\app"
     "done!"

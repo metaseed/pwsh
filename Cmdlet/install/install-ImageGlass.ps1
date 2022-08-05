@@ -3,13 +3,18 @@ param (
   # version
   [Parameter()]
   [string]
-  $version = 'stable'
+  $version = 'preview'
 )
 Assert-Admin
-$app = 'ScreenToGif'
-$dir = 'C:\app'
+$org = 'd2phap'
+$app = 'ImageGlass'
+$dir = $env:MS_App
+# ImageGlass_Kobe_8.6.7.13_x64.zip
+$filter = '_x64.zip$' # '(?<!\.Light).Portable.x64.zip$'
+$versionRegex = "_(\d+\.\d+\.?\d*\.*\d*)_x64"
+
 Breakable-Pipeline {
-  Get-GithubRelease -OrgName 'NickeManarin' -RepoName $app -Version $version -fileNamePattern '(?<!\.Light).Portable.x64.zip$' |
+  Get-GithubRelease -OrgName $org -RepoName $app -Version $version -fileNamePattern $filter |
   % {
     $assets = $_
     if ($assets.Count -ne 1 ) {
@@ -20,20 +25,19 @@ Breakable-Pipeline {
       break;
     }
     
-    $versionRegex = "\.(\d+\.\d+\.?\d*\.*\d*)\."
     $_.name -match $versionRegex >$null
     $ver_online = [Version]::new($matches[1])
 
-    # $d = gci $dir -Directory -Filter "$app*"
-    # if ($d) {
-    #   $d.Name -match $versionRegex >$null
-    #   $version = [Version]::new($matches[1])
-    # }
-
-    $exe = gi "$dir\$app.exe" -ErrorAction SilentlyContinue
-    if ($exe) {
-      $version = [Version]::new($exe.VersionInfo.ProductVersion)
+    $d = gci $dir -Directory -Filter "$app*"
+    if ($d) {
+      $d.Name -match $versionRegex >$null
+      $version = [Version]::new($matches[1])
     }
+
+    # $exe = gi "$dir\$app.exe" -ErrorAction SilentlyContinue
+    # if ($exe) {
+    #   $version = [Version]::new($exe.VersionInfo.ProductVersion)
+    # }
     
     if (!($d)) {
       Write-Host "install the latest ${app}: $ver_online"
