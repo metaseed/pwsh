@@ -80,28 +80,28 @@ AliasesToExport = @(
 # FileList = @()
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-PrivateData = @{
+# PrivateData = @{
 
-    PSData = @{
+#     PSData = @{
 
-        # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+#         # Tags applied to this module. These help with module discovery in online galleries.
+#         # Tags = @()
 
-        # A URL to the license for this module.
-        LicenseUri = 'https://github.com/vors/ZLocation/blob/master/LICENSE'
+#         # A URL to the license for this module.
+#         LicenseUri = 'https://github.com/vors/ZLocation/blob/master/LICENSE'
 
-        # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/vors/ZLocation'
+#         # A URL to the main website for this project.
+#         ProjectUri = 'https://github.com/vors/ZLocation'
 
-        # A URL to an icon representing this module.
-        # IconUri = ''
+#         # A URL to an icon representing this module.
+#         # IconUri = ''
 
-        # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/vors/ZLocation/blob/master/CHANGELOG.md'
+#         # ReleaseNotes of this module
+#         ReleaseNotes = 'https://github.com/vors/ZLocation/blob/master/CHANGELOG.md'
 
-    } # End of PSData hashtable
+#     } # End of PSData hashtable
 
-} # End of PrivateData hashtable
+# } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
 # HelpInfoURI = ''

@@ -38,9 +38,9 @@ function Get-GithubRelease {
     $response = $response.SyncRoot[0]
   }
 
-  Write-Verbose $response.body
-  $assets = $response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', 'browser_download_url', @{label = 'releaseNote'; expression = {$response.body} }
-  return @(,$assets) # use , (unary array operator) to pass a array inside a array, so the pipeline will process the $assets together
+  Write-Verbose $response
+  $assets = $response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', @{label = 'tag_name'; expression = { $response.tag_name } }, 'browser_download_url', @{label = 'releaseNote'; expression = { $response.body } }
+  return @(, $assets) # use , (unary array operator) to pass a array inside a array, so the pipeline will process the $assets together
 
 }
 
