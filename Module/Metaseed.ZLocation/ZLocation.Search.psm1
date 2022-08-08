@@ -4,14 +4,12 @@ if ($null -eq (Get-Variable IsWindows -ErrorAction Ignore)) { $IsWindows = $true
 
 function Find-Matches {
     param (
-        [Parameter(Mandatory=$true)] [hashtable]$hash, 
+        [Parameter(Mandatory = $true)] [hashtable]$hash, 
         [string[]]$query
     )
     $hash = $hash.Clone()
-    foreach ($key in ($hash.GetEnumerator() | %{$_.Name}))
-    {
-        if (-not (Test-FuzzyMatch $key $query))
-        {
+    foreach ($key in ($hash.GetEnumerator() | % { $_.Name })) {
+        if (-not (Test-FuzzyMatch $key $query)) {
             $hash.Remove($key)
         }
     }
@@ -27,25 +25,26 @@ function Find-Matches {
         # Similarly, with the same query `fo`, the full match `/fo` should win over `/fo2`
         $res = $hash.GetEnumerator() | % {
             New-Object -TypeName PSCustomObject -Property @{
-                Name=$_.Name
-                Value=$_.Value
-                Starts=[int](Start-WithPrefix -Path $_.Name -lowerPrefix $lowerPrefix)
-                IsExactMatch=[int](IsExactMatch -Path $_.Name -lowerPrefix $lowerPrefix)
+                Name         = $_.Name
+                Value        = $_.Value
+                Starts       = [int](Start-WithPrefix -Path $_.Name -lowerPrefix $lowerPrefix)
+                IsExactMatch = [int](IsExactMatch -Path $_.Name -lowerPrefix $lowerPrefix)
             }
         } | Sort-Object -Property IsExactMatch, Starts, Value -Descending
-    } else {
+    }
+    else {
         $res = $hash.GetEnumerator() | Sort-Object -Property Value -Descending
     }
 
     if ($res) {
-        $res | %{$_.Name}
+        $res | % { $_.Name }
     }
 }
 
 function Start-WithPrefix {
     param (
-        [Parameter(Mandatory=$true)] [string]$Path, 
-        [Parameter(Mandatory=$true)] [string]$lowerPrefix
+        [Parameter(Mandatory = $true)] [string]$Path, 
+        [Parameter(Mandatory = $true)] [string]$lowerPrefix
     )
     $lowerLeaf = (Split-Path -Leaf $Path).ToLower()
     return $lowerLeaf.StartsWith($lowerPrefix)
@@ -53,8 +52,8 @@ function Start-WithPrefix {
 
 function IsExactMatch {
     param (
-        [Parameter(Mandatory=$true)] [string]$Path, 
-        [Parameter(Mandatory=$true)] [string]$lowerPrefix
+        [Parameter(Mandatory = $true)] [string]$Path, 
+        [Parameter(Mandatory = $true)] [string]$lowerPrefix
     )
     $lowerLeaf = (Split-Path -Leaf $Path).ToLower()
     return $lowerLeaf -eq $lowerPrefix
@@ -62,7 +61,7 @@ function IsExactMatch {
 
 function Test-FuzzyMatch {
     param (
-        [Parameter(Mandatory=$true)] [string]$path,
+        [Parameter(Mandatory = $true)] [string]$path,
         [string[]]$query
     )
     function contains([string]$left, [string]$right) {
@@ -72,17 +71,14 @@ function Test-FuzzyMatch {
     if ($null -eq $query) {
         return $true
     }
-    $n = $query.Length
-    if ($n -eq 0)
-    {
+    $len = $query.Length
+    if ($len -eq 0) {
         # empty query match to everything
         return $true
     }
 
-    for ($i=0; $i -lt $n-1; $i++)
-    {
-        if (-not (contains -left $path -right $query[$i]))
-        {
+    for ($i = 0; $i -lt $len - 1; $i++) {
+        if (-not (contains -left $path -right $query[$i])) {
             return $false
         }
     }
@@ -92,33 +88,30 @@ function Test-FuzzyMatch {
     # It also can come from the standard tab expansion (when our doesn't return anything), which is file system based.
     # It can produce relative paths.
 
-    $rootQuery = $query[$n-1]
+    $rootQuery = $query[$len - 1]
 
     if (-not [System.IO.Path]::IsPathRooted($rootQuery)) {
         # handle '..\foo' case
-        $rootQueryCandidate = Join-Path $pwd $query[$n-1]
+        $rootQueryCandidate = Join-Path $pwd $query[$len - 1]
         if (Test-Path $rootQueryCandidate) {
             $rootQuery = (Resolve-Path $rootQueryCandidate).Path
         }
     }
 
-    if ([System.IO.Path]::IsPathRooted($rootQuery))
-    {
+    if ([System.IO.Path]::IsPathRooted($rootQuery)) {
         # doing a tweak to handle 'C:' and 'C:\' cases correctly.
-        if ($IsWindows -and ($rootQuery.Length) -eq 2 -and ($rootQuery[-1] -eq ':'))
-        {
+        if ($IsWindows -and ($rootQuery.Length) -eq 2 -and ($rootQuery[-1] -eq ':')) {
             $rootQuery = $rootQuery + "\"
         }
         # doing a tweaks to handle 'C:\foo' and 'C:\foo\' cases correctly.
-        elseif ($rootQuery -ne '/' -and $rootQuery[-1] -eq [IO.Path]::DirectorySeparatorChar)
-        {
-            $rootQuery = $rootQuery.Substring(0, $rootQuery.Length-1)
+        elseif ($rootQuery -ne '/' -and $rootQuery[-1] -eq [IO.Path]::DirectorySeparatorChar) {
+            $rootQuery = $rootQuery.Substring(0, $rootQuery.Length - 1)
         }
         return $path -eq $rootQuery
     }
 
-    $leaf = Split-Path -Leaf $path
-    return (contains -left $leaf -right $query[$n-1])
+    # $path = Split-Path -Leaf $path
+    return (contains -left $path -right $query[$len - 1])
 }
 
 Export-ModuleMember -Function Find-Matches
