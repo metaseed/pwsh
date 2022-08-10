@@ -17,6 +17,7 @@ $false - alrady admin, no need to elevate, and orignal script continue
 #>
 Function Invoke-Admin {
     [CmdletBinding()]
+    [OutputType([boolean])]
     param(
         #  $MyInvocation.MyCommand.Path?
         $File = $script:PSCommandPath,
@@ -47,7 +48,7 @@ Function Invoke-Admin {
                 $AllParameters_String += "-$Parameter_Key $Parameter_Value";
             }
         }
-       
+
         $Arguments = "-NoExit","-ExecutionPolicy Bypass", "-File `"$File`"" + $AllParameters_String   # directly use  $MyInvocation.UnboundArguments instead of $AllParameters_String?
 
         # Detecting Powershell (powershell.exe) or Powershell Core (pwsh), will return true if Powershell Core (pwsh)

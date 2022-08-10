@@ -7,12 +7,18 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
     $appFolder = 'C:\App'
 
     if (Test-Path $appFolder) {
-        $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Depth 2 -Name | ForEach-Object { join-path $appFolder $_ }) -join ';')"
+        $depth = 1
+        # $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Depth $depth -Name | ForEach-Object { join-path $appFolder $_ } |? {!!(gci "$_/*.exe") }) -join ';')"
+        $exes =gci -path "$appFolder" -filter *.exe -depth $depth -Force
+        
         if (Test-Path "$appFolder\software") {
-            $env:path += ";$((Get-ChildItem -Attributes Directory -Depth 2 -Path ("$appFolder\software") -Name | ForEach-Object { join-path "$appFolder\software" $_ }) -join ';')"
+            $exes +=gci -path "$appFolder\software" -filter *.exe -depth $depth -Force
+            # $env:path += ";$((Get-ChildItem -Attributes Directory -Depth $depth -Path ("$appFolder\software") -Name | ForEach-Object { join-path "$appFolder\software" $_ }|? {!!(gci "$_/*.exe")}) -join ';')"
         }
+        $env:path += ";$(($exes.Directory.FullName | get-unique) -join ';' )"
     }
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path += ";$CmdLetFolder"
-    $env:path += ";$((Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Name -Recurse -Exclude _* | ForEach-Object { join-path $CmdLetFolder $_ }) -join ';')"
+    $folders = (Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*').FullName |? {$_ -notmatch '\\_|\\test'}
+    $env:path += ";$($folders -join ';')"
 }

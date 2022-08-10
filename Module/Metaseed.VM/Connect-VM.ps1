@@ -1,5 +1,5 @@
 # https://powershellmagazine.com/2012/10/11/connecting-to-hyper-v-virtual-machines-with-powershell/
-#  import-module Hyper-V
+ import-module Hyper-V
 function Connect-VM {
   [CmdletBinding(DefaultParameterSetName = 'name')]
   
