@@ -6,7 +6,9 @@ RootModule = 'Metaseed.ZLocation.psm1'
 
 # Version number of this module.
 ModuleVersion = '1.4.3'
+  AliasesToExport = @('z')
   CmdletsToExport = @()
+  FunctionsToExport = @('Clear-NonExistentZLocation', 'Get-ZLocation', 'Invoke-ZLocation', 'Pop-ZLocation', 'Remove-ZLocation', 'Set-ZLocation', 'Update-ZLocation')
 
 # ID used to uniquely identify this module
 # GUID = '18e8ca17-7f67-4f1c-85ff-159373bf69f5'
@@ -53,15 +55,6 @@ RequiredAssemblies = @("LiteDB\LiteDB.dll")
 # NestedModules = @("ZLocation.Storage.psm1", "ZLocation.Search.psm1")
 
 # Functions to export from this module
-FunctionsToExport = @(
-    'Get-ZLocation',
-    'Invoke-ZLocation',
-    'Pop-ZLocation',
-    'Remove-ZLocation',
-    'Set-ZLocation',
-    'Update-ZLocation',
-    'Clear-NonExistentZLocation'
-)
 
 # Cmdlets to export from this module
 
@@ -69,9 +62,6 @@ FunctionsToExport = @(
 VariablesToExport = @()
 
 # Aliases to export from this module
-AliasesToExport = @(
-    'z'
-)
 
 # List of all modules packaged with this module
 # ModuleList = @()
