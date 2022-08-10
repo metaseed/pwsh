@@ -25,6 +25,7 @@ Write-Verbose "remove functionsToExport and CmdletsToExport from psd1, and reimp
 $content = gc $path -raw
 $content = $content -replace "`r?`n?\s*FunctionsToExport\s*=\s*@\(.*\)", ''
 $content = $content -replace "`r?`n?\s*CmdletsToExport\s*=\s*@\(.*\)", ''
+$content = $content -replace "`r?`n?\s*AliasesToExport\s*=\s*@\(.*\)", ''
 Write-Verbose $content
 Write-Verbose "$path"
 $content | Out-File $path
@@ -39,16 +40,29 @@ if ($content -notlike '*FunctionsToExport*') {
 else {
   $content = $content -replace "(FunctionsToExport\s*=\s*@\().+\)", "`$1$func)" 
 }
+
 $cmd = $mo.ExportedCmdlets.Keys -join "', '"
 $cmd = $cmd ? "'$cmd'": ""
 Write-Verbose "exported commands:$cmd"
 
 if ($content -notlike '*CmdletsToExport*') {
-  $content = $content -replace "ModuleVersion.+`n", "`$0  CmdletsToExport = @($cmd)`n" 
+  $content = $content -replace "ModuleVersion.+`n", "`$0  CmdletsToExport = @($cmd)`n"
 }
 else {
   $content = $content -replace "(CmdletsToExport\s*=\s*@\().+\)", "`$1$cmd)" 
 }
+
+$alias = $mo.ExportedAliases.Keys -join "', '"
+$alias = $alias ? "'$alias'": ""
+Write-Verbose "exported aliases:$alias"
+
+if ($content -notlike '*AliasesToExport*') {
+  $content = $content -replace "ModuleVersion.+`n", "`$0  AliasesToExport = @($alias)`n"
+}
+else {
+  $content = $content -replace "(CmdletsToExport\s*=\s*@\().+\)", "`$1$alias)"
+}
+
 $content = $content.TrimEnd("`r", "`n")
 
 $content | out-file $path
