@@ -8,7 +8,7 @@ function Select-FolderGUI() {
   )
 
   [Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
-  $FolderName = New-Object Windows.Forms.FolderBrowserDialog
+  $FolderName = [Windows.Forms.FolderBrowserDialog]::new()
   $FolderName.Description = $Description
   $FolderName.rootfolder = "MyComputer"
   $FolderName.SelectedPath = $InitialDirectory

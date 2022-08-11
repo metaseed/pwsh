@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-	Speaks text in 
+	Speaks text in configured language, English by default
 .DESCRIPTION
 	This PowerShell scripts speaks the given text with an text-to-speech (TTS) voice.
 .EXAMPLE
@@ -16,7 +16,7 @@ function Speak-Text {
 	param([string]$text = "", [string]$language = 'English', [switch]$sync)
 
 	try {
-		if ("$text" -eq "") { $text = "Enter the text to speak" }
+		if ($text -eq "") { $text = "Enter the text to speak" }
 
 		$TTSVoice = New-Object -ComObject SAPI.SPVoice
 		foreach ($Voice in $TTSVoice.GetVoices()) {
@@ -32,7 +32,6 @@ function Speak-Text {
 				}
 				#Speak method: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ms723609(v=vs.85)
 				[void]$TTSVoice.Speak($text, $flag)
-
 				break
 			}
 		}
@@ -43,7 +42,6 @@ function Speak-Text {
 	}
 	catch {
 		"⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($Error[0])"
-		return
 	}
 }
 

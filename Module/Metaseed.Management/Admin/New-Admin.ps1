@@ -5,19 +5,29 @@ function New-Admin {
     $isAdmin = Test-Admin
 
     if ($isAdmin) {
-        write-host 'already admin' -foregroundcolor Green
-        pwsh
+        # write-host 'already admin' -foregroundcolor Green
+        # https://stackoverflow.com/questions/11546069/refreshing-restarting-powershell-session-w-out-exiting
+        # note this will keep the parent pwsh alive
+        Invoke-Command { & "pwsh.exe"       } -NoNewScope # PowerShell 7
         return
     }
 
-    if (($null -ne $env:WT_SESSION) ) {
+    if ($env:WT_SESSION) {
+        # in terminal
         # https://docs.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows
         # wt -w 0 nt
-        if($null -ne (gcm wt -ErrorAction SilentlyContinue)){
-            Start-Process wt.exe -verb runas -ArgumentList @( "-w", '0', "-d", "$((gl).path)", "-p", "pwsh")
+        if (gcm wt -ErrorAction Ignore) {
+            # installed terminal
+            Start-Process wt.exe -verb runas -ArgumentList @( '-w', '0', "-d", "$((gl).path)", "-p", "pwsh")
+        }
+        else {
+            Write-Verbose "new wt of pwsh profile"
+            Start-Process wt.exe -verb runas -ArgumentList @( "-d", "$((gl).path)", "-p", "pwsh")
         }
     }
-    Start-Process pwsh -verb runas -ArgumentList @("-WorkingDirectory", "$((gl).path)")
+    else {
+        Start-Process pwsh -verb runas -ArgumentList @("-WorkingDirectory", "$((gl).path)")
+    }
     # need to exit parent after start pwsh, not work
     exit 0
     # still not work, if run get-parentprocess -v -topmost, we will see the parent process still runs
