@@ -47,7 +47,14 @@ function test-word {
 function Complete-Command {
   param($commandFolder, $wordToComplete)
 
-  $cmds = Get-AllPwshFiles $commandFolder |
+  $commands = Get-AllPwshFiles $commandFolder
+
+  if(!$wordToComplete) {
+    # all commands
+    return $commands.BaseName
+  }
+
+  $cmds = $commands |
   % { return @{Name = $_.BaseName; Order = 0 } } | 
   ? {
     $dashIndex = $_.Name.IndexOf('-');

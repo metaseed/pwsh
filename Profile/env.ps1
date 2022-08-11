@@ -21,6 +21,7 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 
         $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
         $env:path += ";$CmdLetFolder"
+        # -exclude only explude the leaf name start with '_'
         # -Name will return the dir path after $CmdLetFolder, then we do filter to remove the name contains '\_', '\test', '\s\'
         $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name|? {$_ -notmatch '\\_|\\test|\\s\\'}|% {"$CmdLetFolder\$_"}
         $env:path += ";$($folders -join ';')"

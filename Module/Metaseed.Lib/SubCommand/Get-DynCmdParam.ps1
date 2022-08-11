@@ -3,6 +3,7 @@ function Get-DynCmdParam {
         [string]$CommandFolder,
         [string]$Command
     )
+
     if (-not $Command) {
         return
     }
@@ -26,7 +27,7 @@ function Get-DynCmdParam {
     foreach ($pv in $c.Parameters.Values) {
         # filter out common parameters
         if ($pn -notcontains $pv.Name) {
-            # shift the ParameterAttribute's Position value, because we have 'dd' at first position
+            # shift the ParameterAttribute's Position value, because we have 's' at first position
             for ($i = 0; $i -lt $pv.Attributes.Count; $i++) {
                 $attr = $pv.Attributes[$i]
                 if ($attr -is [System.Management.Automation.ParameterAttribute]) {
@@ -41,7 +42,7 @@ function Get-DynCmdParam {
                         # Write-Host "shift position of $pv.Name from $position to $($newAttr.Position)"
                         if ($attr.Mandatory) { $newAttr.Mandatory = $attr.Mandatory }
                         if ($attr.ValueFromPipeline) { $newAttr.ValueFromPipeline = $attr.ValueFromPipeline }
-                        if ( $attr.ValueFromPipelineByPropertyName) { $newAttr.ValueFromPipelineByPropertyName = $attr.ValueFromPipelineByPropertyName }
+                        if ($attr.ValueFromPipelineByPropertyName) { $newAttr.ValueFromPipelineByPropertyName = $attr.ValueFromPipelineByPropertyName }
                         if ($attr.ValueFromRemainingArguments) { $newAttr.ValueFromRemainingArguments = $attr.ValueFromRemainingArguments }
                         if ($attr.HelpMessage) { $newAttr.HelpMessage = $attr.HelpMessage }
                         if ($attr.HelpMessageBaseName) { $newAttr.HelpMessageBaseName = $attr.HelpMessageBaseName }
