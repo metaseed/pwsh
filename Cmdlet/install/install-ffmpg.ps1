@@ -22,7 +22,7 @@ Breakable-Pipeline {
       Write-Error "Expected one asset, but found $($assets.Count)"
       break;
     }
-    
+
     $_.name -match "-(\d+\.\d+\.\d+\.*\d*)-" >$null
     $ver_online = [Version]::new($matches[1])
 
@@ -31,10 +31,11 @@ Breakable-Pipeline {
       $d.Name -match "-(\d+\.\d+\.\d+\.*\d*)-" >$null
       $version = [Version]::new($matches[1])
     }
-    
-    if(!($d)) {
+
+    if (!($d)) {
       Write-Host "install the latest ffmpg: $ver_online"
-    } else {
+    }
+    else {
       if ($ver_online -le $version) {
         Write-Host "You are using the latest version of ffmpg.`n $version is the latest version available."
         break
@@ -45,8 +46,8 @@ Breakable-Pipeline {
   } |
   Download-GithubRelease | 
   % {
-      gci 'c:\app' -Directory -Filter 'ffmpg-*' |
-      Remove-Item -Recurse -Force
+    gci 'c:\app' -Directory -Filter 'ffmpg-*' |
+    Remove-Item -Recurse -Force
 
     Expand-Archive "$_" -DestinationPath "c:\app"
     "done!"

@@ -18,7 +18,7 @@ Breakable-Pipeline {
       Write-Error "Expected one asset, but found $($assets.Count)"
       break;
     }
-    
+
     $_.name -match "-(\d+\.\d+\.\d+\.*\d*)-" >$null
     $ver_online = [Version]::new($matches[1])
     $version = $PSVersionTable.PSVersion

@@ -1,6 +1,6 @@
 # with the empty CmdletBinding attribute, -Verbose parameter could be used to show more information.
 [CmdletBinding()]
-param (  
+param (
 )
 
 Import-Module posh-git -ErrorAction SilentlyContinue

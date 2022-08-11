@@ -18,6 +18,6 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
     }
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path += ";$CmdLetFolder"
-    $folders = (Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*').FullName |? {$_ -notmatch '\\_|\\test'}
+    $folders = (Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*').FullName |? {$_ -notmatch '\\_|\\test|\\s\\'}
     $env:path += ";$($folders -join ';')"
 }
