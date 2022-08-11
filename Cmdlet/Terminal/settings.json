@@ -3,12 +3,12 @@
   "$schema": "https://aka.ms/terminal-profiles-schema",
   "actions": [
     {
-      "name": "reopen pwsh",
-      "commands": [
-        { "command":{ "action": "splitPane"}}
-      ],
+      "command": 
+      {
+          "action": "globalSummon"
+      },
       "keys": "win+alt+z"
-    },
+   },
     {
       "command": {
         "action": "closeTab"
