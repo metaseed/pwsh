@@ -1,4 +1,3 @@
-# function Hide-Data {
 [CmdletBinding()]
 param (
     # image/mp3/video/exe file path
@@ -12,7 +11,7 @@ param (
     [string]
     $outPath
 )
-    
+
 process {
     $tempFolder = "$env:temp\compressData"
     $dataZip = "$tempFolder\data.zip"
@@ -20,18 +19,19 @@ process {
     $imageExt = Split-Path $ImagePath -Extension
 
     if (!$outPath) { $outPath = ".\$imageName.m$imageExt" } # name.m.jpg
+
     if (Test-Path $outPath) {
         $confirm = Read-Host "$outPath already exist! remove?[y/n]"
         if ($confirm -eq 'y') {
-            Remove-Item $outPath -Force -ErrorAction SilentlyContinue
+            Remove-Item $outPath -Force -ErrorAction Ignore
         }
         else {
             Write-Notice 'Nothing changed!'
             return
         }
-    }
+    }`
 
-    Remove-Item $tempFolder -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item $tempFolder -Recurse -Force -ErrorAction Ignore
     New-Item -ItemType Directory $tempFolder
 
     Compress-Archive $dataPath -DestinationPath $dataZip -Force
@@ -43,8 +43,8 @@ process {
     # cmd /c $cmd
 
     gc $ImagePath, $dataZip -AsByteStream -ReadCount 2000 | Set-Content -AsByteStream $outPath
-    "File output: $outPath"
-    "open it with 7zfm.exe"
+    Write-Host "File output: $outPath"
+    Write-Host "open it with 7zfm.exe"
 }
 # }
 # Hide-Data M:\keyboard.jpeg  $PSScriptRoot\assert-admin.ps1, $PSScriptRoot\Add-PathEnv.ps1

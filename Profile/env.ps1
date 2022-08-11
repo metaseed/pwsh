@@ -7,14 +7,13 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
     $appFolder = 'C:\App'
 
     if (Test-Path $appFolder) {
-        $depth = 1
+        $depth = 2
         # $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Depth $depth -Name | ForEach-Object { join-path $appFolder $_ } |? {!!(gci "$_/*.exe") }) -join ';')"
         $exes =gci -path "$appFolder" -filter *.exe -depth $depth -Force
-        
-        if (Test-Path "$appFolder\software") {
-            $exes +=gci -path "$appFolder\software" -filter *.exe -depth $depth -Force
-            # $env:path += ";$((Get-ChildItem -Attributes Directory -Depth $depth -Path ("$appFolder\software") -Name | ForEach-Object { join-path "$appFolder\software" $_ }|? {!!(gci "$_/*.exe")}) -join ';')"
-        }
+
+        # if (Test-Path "$appFolder\software") {
+        #     $exes +=gci -path "$appFolder\software" -filter *.exe -depth $depth -Force
+        # }
         $env:path += ";$(($exes.Directory.FullName | get-unique) -join ';' )"
     }
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)

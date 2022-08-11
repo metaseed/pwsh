@@ -19,7 +19,7 @@ Breakable-Pipeline {
       Write-Error "Expected one asset, but found $($assets.Count), please make the filer more specific!"
       break;
     }
-    
+
     $versionRegex = "\.(\d+\.\d+\.?\d*\.*\d*)\."
     $_.name -match $versionRegex >$null
     $ver_online = [Version]::new($matches[1])
@@ -34,7 +34,7 @@ Breakable-Pipeline {
     if ($exe) {
       $version = [Version]::new($exe.VersionInfo.ProductVersion)
     }
-    
+
     if (!($d)) {
       Write-Host "install the latest ${app}: $ver_online"
     }
@@ -53,7 +53,7 @@ Breakable-Pipeline {
     Remove-Item -Recurse -Force
 
     Expand-Archive "$_" -DestinationPath "$dir"
-    "done!"
+    Write-Host "done!"
   }
 }
   
