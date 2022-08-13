@@ -48,7 +48,7 @@ function Kill-Service {
     Stop-Process -Force -Id $_.ProcessId -ErrorAction Continue
   }
   if (-not $find) {
-    Write-Notice "no killing/stopping to $processes"
+    Write-Information "Good: no killing/stopping to $processes"
     return
   }
 

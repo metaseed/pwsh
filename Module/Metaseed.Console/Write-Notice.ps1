@@ -1,9 +1,11 @@
 function Write-Notice {
   param (
     [string]$message,
-    [switch]$replay = $fasle
+    [switch]$replay = $fasle,
+    [switch]$NoSpeak
   )
   if (! $replay) {
+    if (! $NoSpeak) { Speak-Text "Notice: $message" }
     WriteStepMsg @{type = 'Notice'; message = $message }
   }
   $icon = $env:WT_SESSION ? '🔔' : '#'

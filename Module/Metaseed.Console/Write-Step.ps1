@@ -2,14 +2,16 @@
 function Write-Step {
   param (
     [string]$message,
-    [switch]$replay = $fasle
+    [switch]$replay,
+    [switch]$NoSpeak
   )
-  $message = [Regex]::Replace($message , '\b.', {  $args[0].Value.ToUpper() })
+  $message = [Regex]::Replace($message , '\b.', { $args[0].Value.ToUpper() })
+  $step = ++$__Session.step
   if (! $replay) {
+    if (! $NoSpeak) { Speak-Text "Step ${step}: $message" }
     WriteStepMsg @{type = 'Step'; message = $message }
   }
   # Write-Progress -Activity  $message -status " " -Id 0
-  $step = ++$__Session.step
   $__Session.subStep = $null
   $__Session.execute = 0
   $__Session.indents = 0
@@ -22,15 +24,20 @@ function Write-Step {
 function Write-SubStep {
   param (
     [string]$message,
-    [switch]$replay = $fasle
+    [switch]$replay,
+    [switch]$NoSpeak,
+    [string]$SpeakMessage
   )
-  if (! $replay) {
+
+  $subStep = ++$__Session.subStep
+  $numberStr =$__Session.Step ? "$($__Session.Step).${subStep}" : "${subStep}"
+  if (!$replay) {
+    if (!$NoSpeak || $SpeakMessage ) { Speak-Text "Substep ${numberStr}: $($SpeakMessage ?? $message)" }
     WriteStepMsg @{type = 'SubStep'; message = $message }
   }
 
-  $subStep = ++$__Session.subStep
   # Write-Progress -Activity  $message -status " " -Id 0
-  $icon = "SubStep $($__Session.Step).${subStep}->>"
+  $icon = "SubStep ${numberStr}->>"
   $__Session.indents = 1
   $__Session.execute = 0
 

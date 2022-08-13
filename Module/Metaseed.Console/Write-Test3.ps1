@@ -1,3 +1,0 @@
-function Write-Test3 {
-  
-}

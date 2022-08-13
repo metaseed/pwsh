@@ -1,9 +1,12 @@
 function Write-Attention {
   param (
     [string]$message,
-    [switch]$replay = $fasle
+    [switch]$replay = $fasle,
+    [switch]$NoSpeak
   )
   if (! $replay) {
+    if (! $NoSpeak) { Speak-Text "Attention: $message" }
+
     WriteStepMsg @{type = 'Attention'; message = $message }
   }
   $icon = $env:WT_SESSION ? '🚩' : '!'
