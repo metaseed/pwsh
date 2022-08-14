@@ -27,21 +27,22 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     # cursor is the cursor position in the line, start from 0
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
-    $lastSession = $global:__Session
-    $global:__Session = @{}
-
-    New-Event -SourceIdentifier 'SessionScopeEvent' -EventArguments @{
-        scope     = $global:__Session;
-        lastScope = $lastSession;
+    $lastSessionScope = $global:__PSReadLineSessionScope
+    $global:__PSReadLineSessionScope = @{}
+    # create a scope for a psReadline session
+    New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
+        scope     = $global:__PSReadLineSessionScope;
+        lastScope = $lastSessionScope;
         line      = $line;
         cursor    = $cursor;
     }
+
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
-# https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/Completion.cs
-# https://github.dev/nightroman/PS-GuiCompletion
+    # https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/Completion.cs
+    # https://github.dev/nightroman/PS-GuiCompletion
 
     [Microsoft.PowerShell.PSConsoleReadLine]::TabCompleteNext()
 }

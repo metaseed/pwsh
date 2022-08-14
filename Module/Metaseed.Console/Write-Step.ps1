@@ -6,15 +6,15 @@ function Write-Step {
     [switch]$NoSpeak
   )
   $message = [Regex]::Replace($message , '\b.', { $args[0].Value.ToUpper() })
-  $step = ++$__Session.step
+  $step = ++$__PSReadLineSessionScope.step
   if (! $replay) {
     if (! $NoSpeak) { Speak-Text "Step ${step}: $message" }
     WriteStepMsg @{type = 'Step'; message = $message }
   }
   # Write-Progress -Activity  $message -status " " -Id 0
-  $__Session.subStep = $null
-  $__Session.execute = 0
-  $__Session.indents = 0
+  $__PSReadLineSessionScope.subStep = $null
+  $__PSReadLineSessionScope.execute = 0
+  $__PSReadLineSessionScope.indents = 0
   $icon = "Step ${step}==>"
   Write-Host "▐" -ForegroundColor Blue  -NoNewline
   Write-Host "$icon $message" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline
@@ -29,8 +29,8 @@ function Write-SubStep {
     [string]$SpeakMessage
   )
 
-  $subStep = ++$__Session.subStep
-  $numberStr =$__Session.Step ? "$($__Session.Step).${subStep}" : "${subStep}"
+  $subStep = ++$__PSReadLineSessionScope.subStep
+  $numberStr =$__PSReadLineSessionScope.Step ? "$($__PSReadLineSessionScope.Step).${subStep}" : "${subStep}"
   if (!$replay) {
     if (!$NoSpeak || $SpeakMessage ) { Speak-Text "Substep ${numberStr}: $($SpeakMessage ?? $message)" }
     WriteStepMsg @{type = 'SubStep'; message = $message }
@@ -38,8 +38,8 @@ function Write-SubStep {
 
   # Write-Progress -Activity  $message -status " " -Id 0
   $icon = "SubStep ${numberStr}->>"
-  $__Session.indents = 1
-  $__Session.execute = 0
+  $__PSReadLineSessionScope.indents = 1
+  $__PSReadLineSessionScope.execute = 0
 
   $indents = ' ' * $__IndentLength
   Write-host "$indents" -NoNewline

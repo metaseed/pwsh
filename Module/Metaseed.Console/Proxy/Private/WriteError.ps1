@@ -10,7 +10,7 @@ function WriteError {
     WriteStepMsg @{type = 'Error'; message = $err; }
   }
   else {
-    $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
+    $indents = ' ' * (($__PSReadLineSessionScope.indents + 1) * $__IndentLength)
     $errMsg = "${indents}ERROR`n"
     $err.GetEnumerator() | % {
       $errMsg += "$indents$($_.Key): $($_.Value)`n"

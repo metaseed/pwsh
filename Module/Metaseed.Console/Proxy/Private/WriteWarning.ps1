@@ -10,7 +10,7 @@ function WriteWarning {
     WriteStepMsg @{type = 'Warning'; message = $warning; }
   }
   else {
-    $indents = ' ' * (($__Session.indents + 1) * $__IndentLength)
+    $indents = ' ' * (($__PSReadLineSessionScope.indents + 1) * $__IndentLength)
     $msg = "${indents}Warning`n"
     $warning.GetEnumerator() | % {
       $msg += "$indents$($_.Key): $($_.Value)`n"

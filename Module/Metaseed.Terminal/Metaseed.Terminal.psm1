@@ -8,7 +8,8 @@ if($versions.Count -eq 0) {
     Write-Warning "Metaseed.Terminal module: please install dotnet runtime 6.0.0 or later"
     write-host "https://dotnet.microsoft.com/en-us/download/dotnet"
 }
-if(!($env:MS_WTBackground)) {
+if(!$env:MS_WTBackground) {
+    # used in windows terminal config to location images
     $env:MS_WTBackground = $PSScriptRoot
     [System.Environment]::SetEnvironmentVariable('MS_WTBackground', $PSScriptRoot, 'User')
     spps -Name TerminalBackground

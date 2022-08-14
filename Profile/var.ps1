@@ -5,4 +5,4 @@ $m = @{
   metatool = 'M:\Workspace\metatool'
 }
 # previent error when debuging
-$global:__Session = @{}
+$global:__PSReadLineSessionScope = @{}

@@ -3,13 +3,13 @@
 use get-error and $error to get more information about the errors
 #>
 function Show-Steps {
-  if ($__Session.Steps.Count -eq 0) {
+  if ($__PSReadLineSessionScope.Steps.Count -eq 0) {
     Write-Host "No executed steps"
     return
   }
   Write-host "`nPreious Command's Executed Steps:" -ForegroundColor DarkYellow
   $hasErr = $false
-  $__Session.Steps | % {
+  $__PSReadLineSessionScope.Steps | % {
     if ($_.type -eq 'Step') {
       Write-Step $_.message -replay
     }
