@@ -8,7 +8,7 @@ function Get-DynCmdParam {
         return
     }
 
-    $file = Get-AllPwshFiles $CommandFolder | ? { $_.BaseName -eq $Command }
+    $file = Get-AllCmdFiles $CommandFolder | ? { $_.BaseName -eq $Command }
     if (@($file).length -gt 1) {
         Write-Error "More than one command found for $Command, they are:"
         $file | % { Write-Host $_.FullName }

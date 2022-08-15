@@ -41,7 +41,7 @@ end {
     return
   }
 
-  $file = Get-AllPwshFiles "$PSScriptRoot\Command" | ? { $_.BaseName -eq $Command }
+  $file = Get-AllCmdFiles "$PSScriptRoot\Command" | ? { $_.BaseName -eq $Command }
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
     return

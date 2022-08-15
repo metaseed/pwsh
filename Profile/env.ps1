@@ -10,7 +10,6 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 
         if (Test-Path $appFolder) {
             $depth = 2
-            # $env:path += ";$appFolder;$((Get-ChildItem -Attributes Directory -Path $appFolder -Depth $depth -Name | ForEach-Object { join-path $appFolder $_ } |? {!!(gci "$_/*.exe") }) -join ';')"
             $exes =gci -path "$appFolder" -filter *.exe -depth $depth -Force
 
             # if (Test-Path "$appFolder\software") {
@@ -23,7 +22,7 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
         $env:path += ";$CmdLetFolder"
         # -exclude only explude the leaf name start with '_'
         # -Name will return the dir path after $CmdLetFolder, then we do filter to remove the name contains '\_', '\test', '\s\'
-        $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name|? {$_ -notmatch '\\_|\\test|\\s\\'}|% {"$CmdLetFolder\$_"}
+        $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name|? {!($_ -match '\\_|\\?test\\?|\\?s\\')}|% {"$CmdLetFolder\$_"}
         $env:path += ";$($folders -join ';')"
 
         $env:pathPatched = $true

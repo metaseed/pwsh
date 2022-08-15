@@ -29,7 +29,7 @@ function Invoke-SubCommand {
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { write-error "can not get the 'Command' folder" }
         Write-Verbose $CommandFolder
-        $file = Get-AllPwshFiles $CommandFolder | ? { $_.BaseName -eq $Command }
+        $file = Get-AllCmdFiles $CommandFolder | ? { $_.BaseName -eq $Command }
 
         Write-Verbose $file
         $null = $PSBoundParameters.Remove('Command')

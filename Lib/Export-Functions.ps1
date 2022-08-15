@@ -1,4 +1,4 @@
-. $PSScriptRoot/Get-AllPwshFiles.ps1
+. $PSScriptRoot/Get-AllCmdFiles.ps1
 
 <# 
 .DESCRIPTION
@@ -31,7 +31,7 @@ function Export-Functions {
         $path
     )
     write-verbose "Get all ps1 files except that start with '_' or in the subfolder that start with '_'."
-    $All = Get-AllPwshFiles $path
+    $All = Get-AllCmdFiles $path
     write-verbose "Dot source the files"
     foreach ($import in $All) {
         Try {

@@ -45,11 +45,15 @@ function test-word {
 
 
 function Complete-Command {
-  param($commandFolder, $wordToComplete)
+  param(
+    $commandFolder, 
+    $wordToComplete,
+    [string]$filter = '*.ps1'
+  )
 
-  $commands = Get-AllPwshFiles $commandFolder
+  $commands = Get-AllCmdFiles $commandFolder $filter
 
-  if(!$wordToComplete) {
+  if (!$wordToComplete) {
     # all commands
     return $commands.BaseName
   }
