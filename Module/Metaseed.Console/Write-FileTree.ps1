@@ -84,7 +84,7 @@ function showTree($item) {
 
   # draw grand parents' links that cross this line 
   # reverse parse the parent-chain: 0, 1, 2, 3
-  # (3,2) (2,1) (1,0k)
+  # (3,2) (2,1) (1,0)
   for ($i = $parents.count - 1; $i -gt 0; $i--) {
     $pp = $parents[$i]
     $p = $parents[$i - 1]

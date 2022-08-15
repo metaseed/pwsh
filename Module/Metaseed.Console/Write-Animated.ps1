@@ -21,16 +21,16 @@ function Write-Animated {
   )
 
   if($line -eq '') {
-    Write-Animate "Welcome to metaseed pwsh script world"
+    Write-Animated "Welcome to metaseed pwsh script world"
     Write-Host ''
-    Write-Animate "This repository contains useful and PowerShell scripts."
-    Write-Host ''
-    Write-Host ''
-    Write-Animate "please gave the text to animate" 'start' -ForegroundColor blue
+    Write-Animated "This repository contains useful and PowerShell scripts."
     Write-Host ''
     Write-Host ''
-    Write-Animate "regards," 'end'
-    Write-Animate "--metasong" 'end'
+    Write-Animated "please gave the text to animate" 'start' -ForegroundColor blue
+    Write-Host ''
+    Write-Host ''
+    Write-Animated "regards," 'end'
+    Write-Animated "--metasong" 'end'
     return
   }
 

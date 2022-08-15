@@ -14,7 +14,7 @@ function Write-Typewriter {
   param([string]$text = "Hello World!", [int]$speed = 250) # in milliseconds
 
   try {
-    $Random = New-Object System.Random
+    $Random = [Random]::new()
 
     $text -split '' | ForEach-Object {
       write-host -nonewline $_

@@ -1,4 +1,5 @@
 function Invoke-SubCommand {
+    # Use the CmdletBinding attribute to create an advanced function. This is a prerequisite to use the automatic $PSCmdlet variable, which we need in the body.
     [CmdletBinding()]
     param (
         [Parameter()]
@@ -17,6 +18,7 @@ function Invoke-SubCommand {
 
     end {
         # https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
+        # get or set a variable from the parent (module) scope.
         $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdFolder').Value
         $__LibFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__LibFolder').Value
         $__RootFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__RootFolder').Value
