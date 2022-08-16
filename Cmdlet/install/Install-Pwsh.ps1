@@ -6,6 +6,7 @@ param (
   [string]
   $version = 'stable'
 )
+
 Assert-Admin
 Breakable-Pipeline {
   Get-GithubRelease -OrgName 'Powershell' -RepoName 'PowerShell' -Version $version -fileNamePattern 'win-x64.msi$' |
@@ -37,4 +38,3 @@ Breakable-Pipeline {
     Get-Process -Name pwsh | Stop-Process -Force
   }
 }
-  

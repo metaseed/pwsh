@@ -10,15 +10,13 @@ param (
 "install ms_pwsh ver: $Version..."
 $zip = "$env:temp/pwsh.zip"
 if($Version -eq 'latest') {
-    $unzipped = 'pwsh-master'
     $url ='http://github.com/metasong/pwsh/archive/refs/heads/master.zip'
 } else {
-    $unzipped = "pwsh-$Version"
     $url = "https://github.com/metasong/pwsh/archive/refs/tags/$Version.zip" #1.0.2
 }
 iwr $url -OutFile $zip
 # 
-# ~ is better than $env:HomePath, it include the home drive
+# ~ is better than $env:HomePath, it include the home drive, just like $home
 Expand-Archive $zip ~/metaseed -Force
 
 # directly ri the pwsh folder may cause error if it is used.
@@ -28,7 +26,6 @@ Expand-Archive $zip ~/metaseed -Force
 ri ~/metaseed/.ms_pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
 mi ~/metaseed/ms_pwsh ~/metaseed/.ms_pwsh-del -Force -ErrorAction SilentlyContinue
 ri ~/metaseed/.ms_pwsh-del -Force -Recurse -ErrorAction SilentlyContinue
-
-mi "~/metaseed/$unzipped" ~/metaseed/ms_pwsh -Force
+ri $zip -Force
 
 . ~/metaseed/ms_pwsh/config.ps1

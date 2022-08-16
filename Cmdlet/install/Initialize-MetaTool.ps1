@@ -1,3 +1,3 @@
-$metatool = 'M:\Workspace\metatool\exe\publish\Metatool.exe'
+$metatool = "$env:Desktop\Metatool (Admin).lnk"
 Pin-TaskBar $metatool
 # saps $metatool

@@ -15,6 +15,6 @@ Clear-Host
 #   $env:MS_PWSH = [System.Environment]::GetEnvironmentVariable("MS_PWSH", "User")
 # }
 
-$InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
+# $InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
 . $PSScriptRoot\profile\main.ps1
 . $PSScriptRoot\upgrade.ps1 1

@@ -1,5 +1,7 @@
 # new veriables
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
+# [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
+$env:Desktop = [Environment]::GetFolderPath("Desktop")
 $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 # config
 # $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
