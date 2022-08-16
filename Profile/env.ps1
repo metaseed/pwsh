@@ -6,17 +6,17 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 & { #prevent expose $appFolder into the profile variable: provider
     # hack: when run 'pwsh' the parent 'pwsh' is not closed, and the new 'pwsh' inherits the env vars
     if(!$env:pathPatched) {
-        $appFolder = 'C:\App'
+        # no need to add app folder to path
+        # $appFolder = 'C:\App'
+        # if (Test-Path $appFolder) {
+        #     $depth = 2
+        #     $exes =gci -path "$appFolder" -filter *.exe -depth $depth -Force
 
-        if (Test-Path $appFolder) {
-            $depth = 2
-            $exes =gci -path "$appFolder" -filter *.exe -depth $depth -Force
-
-            # if (Test-Path "$appFolder\software") {
-            #     $exes +=gci -path "$appFolder\software" -filter *.exe -depth $depth -Force
-            # }
-            $env:path += ";$(($exes.Directory.FullName | get-unique) -join ';' )"
-        }
+        #     # if (Test-Path "$appFolder\software") {
+        #     #     $exes +=gci -path "$appFolder\software" -filter *.exe -depth $depth -Force
+        #     # }
+        #     $env:path += ";$(($exes.Directory.FullName | get-unique) -join ';' )"
+        # }
 
         $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
         $env:path += ";$CmdLetFolder"

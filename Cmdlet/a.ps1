@@ -12,7 +12,8 @@ param(
       return Complete-Command $env:MS_App $wordToComplete '*.exe'
     })]
   [Parameter(Position = 0)]
-  $Command
+  $Command,
+  [parameter(mandatory=$false, position=1, ValueFromRemainingArguments=$true)]$Remaining
 )
 
 end {
@@ -27,6 +28,5 @@ end {
     return
   }
 
-  $null = $PSBoundParameters.Remove('Command')
-  & $file @PSBoundParameters
+  & $file @Remaining
 }
