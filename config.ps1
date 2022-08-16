@@ -21,8 +21,11 @@ if (!$has) {
     write-host "replace $p1 with $p in $($profile.CurrentUserAllHosts)"
   } 
   else {
-    Add-Content -Path $profile.CurrentUserAllHosts -Value $p
-    Write-Host "append profile ($p) to $($profile.CurrentUserAllHosts)"
+    # Add-Content -Path $profile.CurrentUserAllHosts -Value $p
+    $content = Get-Content -Path $profile.CurrentUserAllHosts 
+    $content = @($p) + $content
+    Set-Content -path $profile.CurrentUserAllHosts -Value $content -Force
+    Write-Host "insert profile ($p) to $($profile.CurrentUserAllHosts)"
   }
 }
 else {

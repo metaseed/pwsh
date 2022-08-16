@@ -11,7 +11,7 @@ if (Test-Path $PWSHFolder -PathType leaf) {
   return
 }
 
-if (! (Test-Path $PWSHFolder -PathType Container)) {
+if (!(Test-Path $PWSHFolder -PathType Container)) {
   write-host "$PWSHFolder does not exist, create it..."
   New-Item -ItemType Directory -Path $PWSHFolder -Force | Out-Null
 }

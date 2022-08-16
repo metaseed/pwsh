@@ -51,7 +51,7 @@ function Update-Installation {
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {
         if ($Confirm) {
-            write-host -f Yellow "> New version($ver) found at $InstallUrl,`n press Enter to upgrade, other key to continue"
+            write-host -f Yellow "> New version($ver) found at $InstallUrl,`n press Enter to upgrade, other key to cancel and continue"
             $key = [Console]::ReadKey().Key
             if ($key -ne [ConsoleKey]::Enter) {
                 return
