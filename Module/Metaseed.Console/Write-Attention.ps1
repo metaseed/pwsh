@@ -2,12 +2,13 @@ function Write-Attention {
   param (
     [string]$message,
     [switch]$replay = $fasle,
-    [switch]$NoSpeak
+    [switch]$NoSpeak,
+    [string]$SpeakMessage
   )
   if (!$replay) {
-    if (!$NoSpeak) { Speak-Text "Attention: $message" }
+    if (!$NoSpea || $SpeakMessage) { Speak-Text "Attention: $($SpeakMessage ?? $message)" }
 
-    WriteStepMsg @{type = 'Attention'; message = $message }
+    WriteStepMsg @{type = 'Attention'; message = $message}
   }
   $icon = $env:WT_SESSION ? '🚩' : '!'
   $indents = ' ' * (($__PSReadLineSessionScope.indents + 1) * $__IndentLength)

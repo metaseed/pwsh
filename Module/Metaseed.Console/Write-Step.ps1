@@ -3,12 +3,13 @@ function Write-Step {
   param (
     [string]$message,
     [switch]$replay,
-    [switch]$NoSpeak
+    [switch]$NoSpeak,
+    [string]$SpeakMessage
   )
   $message = [Regex]::Replace($message , '\b.', { $args[0].Value.ToUpper() })
   $step = ++$__PSReadLineSessionScope.step
   if (! $replay) {
-    if (! $NoSpeak) { Speak-Text "Step ${step}: $message" }
+    if (!$NoSpeak || $SpeakMessage) { Speak-Text "Step ${step}: $($SpeakMessage ?? $message)" }
     WriteStepMsg @{type = 'Step'; message = $message }
   }
   # Write-Progress -Activity  $message -status " " -Id 0

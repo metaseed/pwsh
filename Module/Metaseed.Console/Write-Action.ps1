@@ -5,14 +5,15 @@ function Write-Action {
     [string]$message,
     [Parameter(Position = 1)]
     [switch]$replay = $false,
-    [switch]$NoSpeak
+    [switch]$NoSpeak,
+    [string]$SpeakMessage
   )
   $execute = ++$__PSReadLineSessionScope.execute
   $StepInfo = ""
   $StepInfo += ($null -ne $__PSReadLineSessionScope.Step) ? "$($__PSReadLineSessionScope.Step)." : ''
   $StepInfo += ($null -ne $__PSReadLineSessionScope.SubStep) ? "$($__PSReadLineSessionScope.SubStep).": ''
   if (!$replay) {
-    if (!$NoSpeak) { Speak-Text "Action $StepInfo${execute}: $message" }
+    if (!$NoSpeak || $SpeakMessage) { Speak-Text "Action $StepInfo${execute}: $($SpeakMessage ?? $message)" }
     WriteStepMsg @{type = 'Action'; message = $message; }
   }
 
