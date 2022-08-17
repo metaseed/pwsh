@@ -20,7 +20,7 @@
 
 function buildTree($item,
   [string[]]$ItemFilters,
-  [string[]] $Containerfilters,
+  [string[]]$Containerfilters,
   [switch]$KeepEmptyContainer
 ) {
   if ($item.location.PSIsContainer) {
@@ -147,10 +147,9 @@ function Write-FileTree {
   [CmdletBinding()]
   param (
     [Parameter()]
-    [string]
-    $ParentContainer,
+    [string]$ParentContainer,
     [string[]]$ItemFilters,
-    [string[]] $Containerfilters
+    [string[]]$Containerfilters
   )
 
   $t = buildTree @{location = (gi $ParentContainer); children = @(); } $ItemFilters $Containerfilters

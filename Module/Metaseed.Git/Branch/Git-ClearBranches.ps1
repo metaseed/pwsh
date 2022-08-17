@@ -1,12 +1,12 @@
-function Git-DeleteBranches {
+function Git-ClearBranches {
   [CmdletBinding()]
   param (
     [Parameter()]
-    [int] $KeepedRecentBranches = 8,
+    [int] $BranchesToKeep = 8,
     # branches to keep, current branch is always kept.
     [Parameter()]
     [string[]]
-    $branchesToKeep = @('master', 'main', 'development'),
+    $BranchesToFilterOut = @('master', 'main', 'development'),
 
     # only delete merged branch
     [Parameter()]
@@ -25,23 +25,23 @@ function Git-DeleteBranches {
 
   ## list branches
   ## not contains regex search: "^(?!.*(a|b|c)).*$"
-  $filter = "^(?!.*($($branchesToKeep -join '|')|\*)).*$"
+  $filter = "^(?!\s*\S*($($BranchesToFilterOut -join '|')|\*)\s+).*$"
   $branches = git-branch "$($merged ?'--merged': '')"  | 
   # ^(?!.*(master|main|\*)).*$
   # filter out branches contains 'master' or 'main' and the current branche (marked by *)
   # note: if just filter out current: '^[^\*].*'
   Select-String -Pattern $filter
 
-  $toRemove = $branches.Length -1 -$KeepedRecentBranches
+  $toRemove = $branches.Length - $BranchesToKeep
   if($toRemove -le 0) {
-    Write-Host "`nNo Enough Branch to Delete!`nbranches available: $($branches.Length -1)`nbranches to keep:$($KeepedRecentBranches) " -ForegroundColor yellow
+    Write-Host "`nNo Enough Branch to Delete! branches available: $($branches.Length -1)`n but branches to keep on parameter:$($BranchesToKeep) " -ForegroundColor yellow
     Write-Execute "git-branch"
     return
   }
 
   $branches = $branches[0..$toRemove]
 
-  Write-Warning "`n$($branches -join "`n")"
+  Write-Warning "Branches to Delete:`n$($branches -join "`n")"
   Write-Host "`nDelete these brancheds?"
   Confirm-Continue
 
@@ -59,5 +59,5 @@ function Git-DeleteBranches {
   }
   # Delete multiple obsolete remote-tracking branches locally
   git fetch origin --prune
-  Write-Execute "git-branch"
+  Write-Execute "git-branch" -message 'Available  branches:'
 }

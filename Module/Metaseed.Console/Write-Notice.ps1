@@ -3,7 +3,7 @@ function Write-Notice {
     [string]$message,
     [switch]$replay,
     [switch]$NoSpeak,
-    [string]$SpeakMessage
+    [Object]$SpeakMessage = $null
   )
   if (!$replay) {
     if (!$NoSpeak || $SpeakMessage) { Speak-Text "Notice: $($SpeakMessage ?? $message)" }
@@ -15,5 +15,4 @@ function Write-Notice {
   Write-Host "▐" -ForegroundColor Green  -NoNewline
   Write-Host -ForegroundColor DarkGreen  "${icon}Notice:" -BackgroundColor Yellow -NoNewline
   Write-Host " $message" -ForegroundColor Green
-  
 }

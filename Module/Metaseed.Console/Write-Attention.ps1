@@ -3,7 +3,7 @@ function Write-Attention {
     [string]$message,
     [switch]$replay = $fasle,
     [switch]$NoSpeak,
-    [string]$SpeakMessage
+    [Object]$SpeakMessage = $null
   )
   if (!$replay) {
     if (!$NoSpea || $SpeakMessage) { Speak-Text "Attention: $($SpeakMessage ?? $message)" }
