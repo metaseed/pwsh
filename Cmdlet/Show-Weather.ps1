@@ -13,8 +13,7 @@ param (
   # if not set: current location
   # we always add '~' berfore location to search
   # append '?m' to use metric unit
-  [string]
-  $Location,
+  [string]$Location,
   [switch]$v1,
   [switch]$metric,
   [switch]$OneLine,
@@ -43,3 +42,19 @@ catch {
 }
 
 # (iwr https://wttr.in/).content > $env:TEMP\weather.txt
+# weather
+# weather -v1
+# weather laizhou -v1
+# weather -o
+# weather -o -m
+# weather -m
+# code (gcm show-weather).source
+# // look at content
+# (iwr https://wttr.in/).content > $env:TEMP\weather.txt
+# code alt+.
+# weather -v1 > $env:temp/w.txt
+# code alt+.
+# "`e[5m⚡  `e[0m"
+# $PSStyle.Background.Blue
+# $PSStyle.Blink
+# "$($PSStyle.Italic)ddfd$($PSStyle.Reset)"

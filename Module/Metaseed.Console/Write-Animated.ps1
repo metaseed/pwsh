@@ -21,7 +21,7 @@ function Write-Animated {
   )
 
   if($line -eq '') {
-    Write-Animated "Welcome to metaseed pwsh script world"
+    Write-Animated "Welcome to the metaseed pwsh script world"
     Write-Host ''
     Write-Animated "This repository contains useful and PowerShell scripts."
     Write-Host ''
