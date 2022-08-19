@@ -11,10 +11,13 @@
 	PS> ./write-marquee "Hello World"
 #>
 function Write-Marquee {
- param([string]$text, [int]$speed = 80, [string] $ForegroundColor = $HOST.UI.RawUI.ForegroundColor,
-	 [string]$BackgroundColor = $HOST.UI.RawUI.BackgroundColor,
+ param([string]$text,
+		# ms
+		[int]$speed = 80, 
+		[string] $ForegroundColor = $HOST.UI.RawUI.ForegroundColor,
+		[string]$BackgroundColor = $HOST.UI.RawUI.BackgroundColor,
 	 # -1: loop
-	 [int] $Repeat = 1,
+	 [int] $repeatCount = 1,
 	 # width of the window
 	 [int]$Width = 80
 	)
@@ -35,8 +38,8 @@ function Write-Marquee {
 		write-host "-$('-' * $Width)-"
 	}
 
-	while ($Repeat) {
-		if ($Repeat -eq 1) {
+	while ($repeatCount) {
+		if ($repeatCount -eq 1) {
 			$textDisplay = $append + $text + $appendLast
 		}
 		else {
@@ -51,7 +54,7 @@ function Write-Marquee {
 			$textToDisplay = $textDisplay.Substring($Pos, $Width)
 			write-host -nonewline "|$textToDisplay|" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
 		}
-		if ($Repeat -gt 0) {
+		if ($repeatCount -gt 0) {
 			$Repeat--
 		}
 	}

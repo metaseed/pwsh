@@ -4,6 +4,8 @@
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2
 # https://4sysops.com/archives/using-powershell-with-psstyle/
 
+# https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+# ansi text good document: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 # ANSI/VT100 escape sequences can be used in every programming languages.
 # `e: escape character 27(decimal),033(oct) 0x1B(hex)
 # [: introducer
@@ -141,6 +143,8 @@ foreach ($step in 0..100) {
   Write-Output "$step%`e[1000D`e[1A"
   Start-Sleep 0.1
 }
+
+for ($i=1;$i -le 100;$i++){Write-Host -NoNewline "`r" $i;sleep 1}
 
 foreach ($step in 0..100) {
   $width = [Math]::Floor(($step +1) / 4)

@@ -1,5 +1,5 @@
 # https://powershellmagazine.com/2012/10/11/connecting-to-hyper-v-virtual-machines-with-powershell/
- import-module Hyper-V
+import-module Hyper-V
 function Connect-VM {
   [CmdletBinding(DefaultParameterSetName = 'name')]
   
@@ -22,10 +22,7 @@ function Connect-VM {
   
     [Parameter(Position = 0, Mandatory,
       ValueFromPipeline, ParameterSetName = 'inputObj')]
-    [Microsoft.HyperV.PowerShell.VirtualMachine]$inputObj,
-
-    [Alias('s')]
-    [switch]$Start
+    [Microsoft.HyperV.PowerShell.VirtualMachine]$inputObj
   )
   
   begin {
@@ -61,7 +58,6 @@ function Connect-VM {
           Write-Verbose "Executing 'vmconnect.exe $computer $($vm.Name) -G $($vm.Id) -C $InstanceCount'"
           vmconnect.exe $computer $vm.Name -G $vm.Id -C $InstanceCount
 
-          if ($Start) {
             if ($vm.State -eq 'off' -or $vm.State -eq 'saved') {
               Write-Verbose "Start switch was specified and VM state is '$($vm.State)'. Starting VM '$($vm.Name)'"
               Start-VM -VM $vm
@@ -69,7 +65,6 @@ function Connect-VM {
             else {
               Write-Verbose "Starting VM '$($vm.Name)'. Skipping, VM is not not in 'off' state."
             }
-          }
     
         }
         else {
