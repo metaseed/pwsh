@@ -14,11 +14,12 @@ param (
 
 )
 
-$Cores = (Get-CimInstance -class win32_processor -Property numberOfCores).numberOfCores;
-$LogicalProcessors = (Get-CimInstance –class Win32_processor -Property NumberOfLogicalProcessors).NumberOfLogicalProcessors;
+$processor = Get-CimInstance -class win32_processor -Property numberOfCores, NumberOfLogicalProcessors
+$Cores = $processor.numberOfCores
+$LogicalProcessors = $processor.NumberOfLogicalProcessors
+
 Write-Host "Cores: $Cores, LogicalProcessors: $LogicalProcessors"
 $TotalMemory = (get-ciminstance -class "cim_physicalmemory" | % { $_.Capacity })
-
 
 if ($SinceStart) {
   $DATA = get-process -IncludeUserName |

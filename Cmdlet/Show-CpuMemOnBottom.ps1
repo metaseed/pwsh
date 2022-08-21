@@ -23,14 +23,21 @@ Start-ThreadJob -ScriptBlock {
         )
         $x = [Console]::CursorLeft
         $y = [Console]::CursorTop
+        # last line
         [Console]::CursorTop = [Console]::WindowTop + [Console]::WindowHeight - 1
-        [Console]::CursorLeft = [Console]::WindowWidth - ($offset ? $offset : $text.Length)
+        # replace ansi color chars
+        $textWithoutAnsi = $text -Replace "`e\[\d+m",""
+        [Console]::CursorLeft = [Console]::WindowWidth - ($offset ? $offset : $textWithoutAnsi.Length)
         [Console]::Write($text)
+        # write-host and out, not work in thread-job
+        # Write-Host $text -NoNewline
+
         [Console]::SetCursorPosition($x, $y)
     }
+    $Global:__showCpuMem = $true
 
-    $totalRam = (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum
-    while ($true) {
+    $totalRam = (Get-CimInstance Win32_PhysicalMemory -Property capacity | Measure-Object -Property capacity -Sum).Sum
+    while ($Global:__showCpuMem) {
         $usedMem = (((Get-Ciminstance Win32_OperatingSystem).TotalVisibleMemorySize * 1kb) - ((Get-Counter -Counter "\Memory\Available Bytes").CounterSamples.CookedValue)) / 1Mb
         
         $cpuTime = (Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples.CookedValue
@@ -38,8 +45,8 @@ Start-ThreadJob -ScriptBlock {
         # $availMem = (Get-Counter '\Memory\Available MBytes').CounterSamples.CookedValue
         $memPer = (104857600 * $usedMem / $totalRam).ToString("#,0.0").PadLeft(3) + '%'
 
-        $cpu = "CPU: $cpuPer"
-        $mem = "Mem: $(($usedMem / 1KB).ToString("#,0.0"))GB($memPer)"
+        $cpu = "CPU: `e[94m$cpuPer`e[0m"
+        $mem = "Mem: `e[32m$memPer`e[0m($(($usedMem / 1KB).ToString("#,0.0"))GB)"
         $str = "$cpu | $mem"
         $maxLen = [Math]::Max($lastLen, $str.Length)
         $lastLen = $str.Length

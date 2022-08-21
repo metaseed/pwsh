@@ -8,13 +8,14 @@ param (
 # $HOST.UI.RawUI.ScrollBufferContents(
 [Console]::CursorVisible = $false
 # scroll to top to give more space for display
-[Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen()
+[Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen() #ctrl-l
 # in window terminal the position is only relative to the window, not to the whole buffer, 
 # so if the content can not be showed in a window, not work as expected: only override part of the last output
-$StartPosition = $HOST.UI.RawUI.CursorPosition 
+$StartPosition =  $HOST.UI.RawUI.CursorPosition 
 Write-Host ""
 # move cursor to the start of the command line
 $StartPosition.X = 0
+# $StartPosition.Y += $HOST.UI.RawUI.WindowPosition.Y
 # Write-Output "`e7" # save cursor host
 # $p = [Console]::GetCursorPosition()
 $i = 0
