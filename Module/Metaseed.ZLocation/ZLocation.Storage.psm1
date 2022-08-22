@@ -1,4 +1,4 @@
-Set-StrictMode -Version Latest
+# Set-StrictMode -Version Latest
 
 Import-Module (Join-Path $PSScriptRoot 'ZLocation.Service.psd1')
 Import-Module (Join-Path $PSScriptRoot 'ZLocation.Search.psm1')

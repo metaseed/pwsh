@@ -1,4 +1,4 @@
-Set-StrictMode -Version Latest
+# Set-StrictMode -Version Latest
 
 Import-Module -Prefix DB (Join-Path $PSScriptRoot 'ZLocation.LiteDB.psd1')
 

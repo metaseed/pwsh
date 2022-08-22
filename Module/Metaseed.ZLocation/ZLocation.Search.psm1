@@ -1,4 +1,4 @@
-Set-StrictMode -Version Latest
+# Set-StrictMode -Version Latest
 
 if ($null -eq (Get-Variable IsWindows -ErrorAction Ignore)) { $IsWindows = $true }
 
