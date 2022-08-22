@@ -13,45 +13,52 @@ param (
   $SinceStart
 
 )
-
+[Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen() 
 $processor = Get-CimInstance -class win32_processor -Property numberOfCores, NumberOfLogicalProcessors
 $Cores = $processor.numberOfCores
 $LogicalProcessors = $processor.NumberOfLogicalProcessors
 
 Write-Host "Cores: $Cores, LogicalProcessors: $LogicalProcessors"
 $TotalMemory = (get-ciminstance -class "cim_physicalmemory" | % { $_.Capacity })
+Write-Host ""
+$StartPosition = $HOST.UI.RawUI.CursorPosition 
+# move cursor to the start of the command line
+$StartPosition.X = 0
 
-if ($SinceStart) {
-  $DATA = get-process -IncludeUserName |
-  sort CPU -Descending |
-  select -First $Count ProcessName, ID, CPU,
-  @{Name       = 'CPU_Usage'; 
-    Expression = { 
-      $TotalSec = (New-TimeSpan -Start $_.StartTime).TotalSeconds
-      "$([Math]::Round( ($_.CPU * 100 / $TotalSec) / $LogicalProcessors, 4) * 100)%"
-    }
-  }, StartTime,
-  Handles, WorkingSet, VirtualMemorySize, PeakPagedMemorySize, PrivateMemorySize, UserName, Path
+while ($true) {
+  if ($SinceStart) {
+    $DATA = get-process -IncludeUserName |
+    sort CPU -Descending |
+    select -First $Count ProcessName, ID, CPU,
+    @{
+      Name       = 'CPU_Usage'; 
+      Expression = { 
+        $TotalSec = (New-TimeSpan -Start $_.StartTime).TotalSeconds
+        "$([Math]::Round( ($_.CPU * 100 / $TotalSec) / $LogicalProcessors, 4) * 100)%"
+      }
+    }, StartTime,
+    Handles, WorkingSet, VirtualMemorySize, PeakPagedMemorySize, PrivateMemorySize, UserName, Path
 
-  $DATA | Format-Table -AutoSize
-}
-else {
-  if ($ProcessId) {
-  
-    # This is to find the exact counter path, as you might have multiple processes with the same name
-    $proc_path = ((Get-Counter "\Process(*)\ID Process").CounterSamples | ? { $_.RawValue -eq $ProcessId }).Path
-    # We now get the CPU percentage
-    $prod_percentage_cpu = [Math]::Round(((Get-Counter ($proc_path -replace "\\id process$", "\% Processor Time")).CounterSamples.CookedValue) / $LogicalProcessors, 3)
-    "$prod_percentage_cpu%"
+    $DATA | Format-Table -AutoSize
   }
   else {
-    get-counter '\Process(*)\% Processor Time' |
-    select -ExpandProperty CounterSamples |
-    Sort-Object -Property CookedValue -Descending |
-    ? { $_.InstanceName -ne '_total' -and $_.InstanceName -ne 'idle' } |
-    select  InstanceName, @{Name = 'CPU'; Expression = { "$([Math]::Round($_.CookedValue / $LogicalProcessors, 3))%" } } -First $Count
-  }
+    if ($ProcessId) {
+      # This is to find the exact counter path, as you might have multiple processes with the same name
+      $proc_path = ((Get-Counter "\Process(*)\ID Process" ).CounterSamples | ? { $_.RawValue -eq $ProcessId }).Path
+      # We now get the CPU percentage
+      $prod_percentage_cpu = [Math]::Round(((Get-Counter ($proc_path -replace "\\id process$", "\% Processor Time")).CounterSamples.CookedValue) / $LogicalProcessors, 3)
+      "$prod_percentage_cpu%"
+    } else {
+    (get-counter '\Process(*)\% Processor Time' -ErrorAction Ignore) |
+      select -ExpandProperty CounterSamples |
+      Sort-Object -Property CookedValue -Descending |
+      ? { $_.InstanceName -ne '_total' -and $_.InstanceName -ne 'idle' } |
+      select  InstanceName, @{Name = 'CPU'; Expression = { "$([Math]::Round($_.CookedValue / $LogicalProcessors, 3))%" } } -First $Count
+    }
 
+  }
+  sleep 1
+  $HOST.UI.RawUI.CursorPosition = $StartPosition
 }
 
 # $totalRam = (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum
