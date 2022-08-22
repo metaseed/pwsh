@@ -12,32 +12,36 @@
 #     Middle
 #     Right
 # }
-
-
-Start-ThreadJob -ScriptBlock {
+Start-ThreadJob -StreamingHost $host  -ScriptBlock {
     function Write-OnBottom {
         param (
             [string]$text,
             # [StartPosition]$StartPosition = [StartPosition]::Right
             [int]$offset = 0
         )
-        $x = [Console]::CursorLeft
+        $x = [Console]::CursorLeft  
         $y = [Console]::CursorTop
         # last line
         [Console]::CursorTop = [Console]::WindowTop + [Console]::WindowHeight - 1
         # replace ansi color chars
-        $textWithoutAnsi = $text -Replace "`e\[\d+m",""
+        $textWithoutAnsi = $text -Replace "`e\[\d+m", ""
         [Console]::CursorLeft = [Console]::WindowWidth - ($offset ? $offset : $textWithoutAnsi.Length)
-        [Console]::Write($text)
+        # env var is string
+        if ($env:__ShowCpuMemOnBtm -eq 'True') {
+            [Console]::Write($text)
+        }
         # write-host and out, not work in thread-job
         # Write-Host $text -NoNewline
 
         [Console]::SetCursorPosition($x, $y)
     }
-    $Global:__showCpuMem = $true
+    # write-host $Global:__CpuMemOnBottomn
+
+    $env:__ShowCpuMemOnBtm = $true
 
     $totalRam = (Get-CimInstance Win32_PhysicalMemory -Property capacity | Measure-Object -Property capacity -Sum).Sum
-    while ($Global:__showCpuMem) {
+    # env var is string
+    while ($env:__ShowCpuMemOnBtm -eq 'True') {
         $usedMem = (((Get-Ciminstance Win32_OperatingSystem).TotalVisibleMemorySize * 1kb) - ((Get-Counter -Counter "\Memory\Available Bytes").CounterSamples.CookedValue)) / 1Mb
         
         $cpuTime = (Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples.CookedValue
@@ -51,7 +55,8 @@ Start-ThreadJob -ScriptBlock {
         $maxLen = [Math]::Max($lastLen, $str.Length)
         $lastLen = $str.Length
         Write-OnBottom  $str.PadLeft($maxLen)
-        sleep 1
+        sleep -Seconds 1
+        # write-host ($env:__ShowCpuMemOnBtm)
     }
 } > $null
 
