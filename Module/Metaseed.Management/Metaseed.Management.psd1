@@ -1,7 +1,7 @@
 @{
   RootModule        = 'Metaseed.Management.psm1'
-  ModuleVersion     = '1.0.6'
+  ModuleVersion     = '1.0.7'
   AliasesToExport = @('admin')
   CmdletsToExport = @()
-  FunctionsToExport = @('Add-PathEnv', 'Assert-Admin', 'Download-GithubRelease', 'Get-Appx', 'Get-Fonts', 'Get-GithubRelease', 'Get-PendingReboot', 'Install-Font', 'Invoke-Admin', 'New-Admin', 'New-ShortCut', 'Pin-TaskBar', 'Remove-DuplicationEnvVarValue', 'Set-KnownFolderPath', 'Set-ShortcutElevation', 'Set-StartTask', 'sudo', 'Test-Admin', 'Uninstall-Apps', 'Uninstall-Appx', 'Uninstall-Font', 'Update-EnvVar')
+  FunctionsToExport = @('Install-FromGithub','Add-PathEnv', 'Assert-Admin', 'Download-GithubRelease', 'Get-Appx', 'Get-Fonts', 'Get-GithubRelease', 'Get-PendingReboot', 'Install-Font', 'Invoke-Admin', 'New-Admin', 'New-ShortCut', 'Pin-TaskBar', 'Remove-DuplicationEnvVarValue', 'Set-KnownFolderPath', 'Set-ShortcutElevation', 'Set-StartTask', 'sudo', 'Test-Admin', 'Uninstall-Apps', 'Uninstall-Appx', 'Uninstall-Font', 'Update-EnvVar')
 }

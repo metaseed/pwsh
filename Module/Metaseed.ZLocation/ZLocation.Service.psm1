@@ -107,7 +107,7 @@ function dboperation {
 
 $dbExists = Test-Path (Get-ZLocationDatabaseFilePath)
 $legacyBackupPath = Get-ZLocationLegacyBackupFilePath
-$legacyBackupExists = ($legacyBackupPath -ne $null) -and (Test-Path $legacyBackupPath)
+$legacyBackupExists = ($null -ne $legacyBackupPath) -and (Test-Path $legacyBackupPath)
 
 # Create empty db, collection, and index if it doesn't exist
 dboperation {

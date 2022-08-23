@@ -1,5 +1,6 @@
-$mapper = [LiteDB.BSONMapper]::new()
+# https://github.com/mbdavid/litedb
 
+$mapper = [LiteDB.BSONMapper]::new()
 Function Open([string]$connectionString) {
     [LiteDB.LiteDatabase]::new($connectionString)
 }
