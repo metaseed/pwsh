@@ -6,21 +6,27 @@ function Install-FromGithub {
     $org,
     # repo name on github
     [Parameter(Mandatory = $true)]
-    $app,
+    $repo,
     # regex to filter out the file from resource names
     [Parameter(Mandatory = $true)]
     $filter, # = '-windows\.zip$', # '(?<!\.Light).Portable.x64.zip$'
-
-    # where to unzip/install the app
-    $toLocation = $env:MS_App,
     # version type: stable or preview
     [Parameter()]
     [string]
     [ValidateSet('preview', 'stable')]
-    $versionType = 'preview',
+    $versionType = 'stable',
 
+    # app name, if repo name is not the same as app name
+    [Parameter()]
+    [string]$application = '',
+    # where to unzip/install the app
+    [Parameter()]
+    $toLocation = $env:MS_App,
     # scriptblock to get the online app version
-    [scriptblock]$getOnlineVer = { param($name, $tag_name) 
+    [Parameter()]
+    [scriptblock]$getOnlineVer = {
+      [CmdletBinding()]
+      param($name, $tag_name) 
       # $versionRegex = "_(\d+\.\d+\.?\d*\.*\d*)_x64"
       # $_.name -match $versionRegex >$null
       # $ver_online = [Version]::new($matches[1])
@@ -29,54 +35,90 @@ function Install-FromGithub {
       $ver_online
     },
     # scriptblock to get local installed app version
+    [Parameter()]
     [scriptblock]$getLocalVer = {
-
-      # $it = gci $toLocation -Directory -Filter "$app*"
-      # if ($it) {
-      #   $it.Name -match $versionRegex >$null
-      #   $versionLocal = [Version]::new($matches[1])
-      # }
-      Write-Verbose  "query version: $toLocation\$app*\$app*.exe"
-      $it = gi "$toLocation\$app*\$app*.exe" -ErrorAction SilentlyContinue
+      [CmdletBinding()]
+      param()
+      $appName = $application -eq '' ? $repo : $application
+      $p = "$toLocation\$appName*\$appName*.exe"
+      if (!(test-path $p)) {
+        $p = "$toLocation\$appName*.exe"
+      }
+      Write-Verbose  "query version: $p"
+      $it = gi $p -ErrorAction SilentlyContinue
       if ($it) {
+        if ($it.count -gt 1) {
+          write-error "find more than one dir/file in $toLocation : $($it.name) "
+          break
+        }
         try {
-          $versionLocal = [Version]::new($it.VersionInfo.ProductVersion)
+          $cmd = gcm "$($it[0])"
+          $versionLocal = [Version]::new($cmd.version)
         }
         catch {
-          $versionLocal = [Version]::new($it.VersionInfo.FileVersion)
+          try {
+            $versionLocal = [Version]::new($it.VersionInfo.ProductVersion)
+          }
+          catch {
+            $versionLocal = [Version]::new($it.VersionInfo.FileVersion)
+          }
         }
       }
-      $versionLocal
+      if (!$versionLocal) {
+        $it = gci $toLocation -Filter "$appName*"
+        if ($it) {
+          if ($it.count -gt 1) {
+            write-error "find more than one dir/file in $toLocation : $($it.name) "
+            break
+          }
+
+          $dir = $it[0]
+          $versionRegex = "(\d+\.\d+\.?\d*\.*\d*)"
+          Write-host "dir/file name: $($dir.name)"
+          if ($dir.Name -match $versionRegex) {
+            $versionLocal = [Version]::new($matches[1])
+          }
+          else {
+            write-error "no version info in directory name: $($dir.name)"
+            break
+          }
+        }
+      }
+      # write-host $versionLocal.gettype()
+      return $versionLocal
     },
+    [Parameter()]
     [scriptblock]$install = {
+      [CmdletBinding()]
       param($downloadedFilePath)
 
       if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
         Write-Action "expand archive to $toLocation\temp..."
         Expand-Archive $downloadedFilePath -DestinationPath "$toLocation\temp"
-        $children = gci "$toLocation\temp" -Directory
+        $children = gci "$toLocation\temp"
         if ($children.count -eq 1) {
           $children | Move-Item -Destination $toLocation
           ri "$toLocation\temp" -Force
           return "$children"
         }
         else {
-          Move-Item "$toLocation\temp" -Destination "$toLocation\$app"
-          return "$toLocation\$app"
+          Move-Item "$toLocation\temp" -Destination "$toLocation\$repo"
+          return "$toLocation\$repo"
         }
       }
       else {
-        Move-Item "$_" -Destination $toLocation
+        Move-Item "$_" -Destination $toLocation -Force
         return $toLocation
       }
     },
     # force reinstall
-    [switch]$force
+    [Parameter()]
+    [switch]$Force
   )
   Assert-Admin
 
   Breakable-Pipeline {
-    Get-GithubRelease -OrgName $org -RepoName $app -Version $versionType -fileNamePattern $filter |
+    Get-GithubRelease -OrgName $org -RepoName $repo -Version $versionType -fileNamePattern $filter |
     % {
       $assets = $_
       if ($assets.Count -ne 1 ) {
@@ -91,24 +133,28 @@ function Install-FromGithub {
       $ver_online = Invoke-Command -ScriptBlock $getOnlineVer -ArgumentList $_.name, $_.tag_name
 
       $versionLocal = Invoke-Command -ScriptBlock $getLocalVer
+      # Write-Host "dd" + $versionLocal.gettype()
       if (!$versionLocal) {
         Write-Host "install the latest ${app}: $ver_online"
       }
       else {
         if ($ver_online -le $versionLocal) {
-          Write-Host "You are using the latest version of $app.`n $versionLocal is the latest version available."
-          if(!$force) {
+          Write-Host "You are using the latest version of $repo.`n $versionLocal is the latest version available."
+          if (!$force) {
             break
           }
           Write-Warning "Forcely install the latest version..."
         }
-        write-host "You are using $app $versionLocal.`n The latest version is $ver_online."
+        write-host "You are using $repo $versionLocal.`n The latest version is $ver_online."
       }
       return $_
     } |
     Download-GithubRelease | 
     % {
-      gci $toLocation -Directory -Filter "$app*" |
+      $appName = $application -eq '' ? $repo : $application
+
+      # write-host $appName
+      gci $toLocation -Filter "$appName*" |
       Remove-Item -Recurse -Force
 
       $des = Invoke-Command -ScriptBlock $install -ArgumentList "$_"

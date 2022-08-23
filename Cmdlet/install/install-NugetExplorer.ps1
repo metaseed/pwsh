@@ -1,1 +1,2 @@
-Install-FromGithub 'NuGetPackageExplorer' 'NuGetPackageExplorer' 'PackageExplorer\.[\.\d]+\.zip$' -force
+
+Install-FromGithub 'NuGetPackageExplorer' 'NuGetPackageExplorer' 'PackageExplorer\.[\.\d]+\.zip$' -versionType 'previews'
