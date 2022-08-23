@@ -31,7 +31,14 @@ function Install-FromGithub {
       # $_.name -match $versionRegex >$null
       # $ver_online = [Version]::new($matches[1])
       $ver_online = $tag_name.trim('v', 'e', 'r')
-      $ver_online = [Version]::new($ver_online)
+      try{
+        $ver_online = [Version]::new($ver_online)
+      }catch {
+        $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
+        Write-Verbose $name
+        $name -match $versionRegex >$null
+        $ver_online = [Version]::new($matches[1])
+      }
       $ver_online
     },
     # scriptblock to get local installed app version
@@ -57,10 +64,12 @@ function Install-FromGithub {
         }
         catch {
           try {
-            $versionLocal = [Version]::new($it.VersionInfo.ProductVersion)
+            $it.VersionInfo.FileVersion -match "^[\d\.]+" > $null
+            $versionLocal = [Version]::new($matches[0])
           }
           catch {
-            $versionLocal = [Version]::new($it.VersionInfo.FileVersion)
+            $it.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
+            $versionLocal = [Version]::new($matches[0])
           }
         }
       }
@@ -73,7 +82,7 @@ function Install-FromGithub {
           }
 
           $dir = $it[0]
-          $versionRegex = "(\d+\.\d+\.?\d*\.*\d*)"
+          $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
           Write-host "dir/file name: $($dir.name)"
           if ($dir.Name -match $versionRegex) {
             $versionLocal = [Version]::new($matches[1])
@@ -91,6 +100,13 @@ function Install-FromGithub {
     [scriptblock]$install = {
       [CmdletBinding()]
       param($downloadedFilePath)
+      
+      $appName = $application -eq '' ? $repo : $application
+      # ignore error, may not exist
+      ri "$toLocation\temp" -Force -Recurse -ErrorAction Ignore
+      # write-host $appName
+      gci $toLocation -Filter "$appName*" |
+      Remove-Item -Recurse -Force
 
       if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
         Write-Action "expand archive to $toLocation\temp..."
@@ -151,12 +167,6 @@ function Install-FromGithub {
     } |
     Download-GithubRelease | 
     % {
-      $appName = $application -eq '' ? $repo : $application
-
-      # write-host $appName
-      gci $toLocation -Filter "$appName*" |
-      Remove-Item -Recurse -Force
-
       $des = Invoke-Command -ScriptBlock $install -ArgumentList "$_"
       write-host "app installed to $des!"
 
