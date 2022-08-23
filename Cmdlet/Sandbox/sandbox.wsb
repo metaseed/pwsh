@@ -1,12 +1,14 @@
 <Configuration>
   <MappedFolders>
     <MappedFolder>
-      <HostFolder>C:\app</HostFolder>
-      <ReadOnly>true</ReadOnly>
+      <HostFolder>C:\temp</HostFolder>
+      <SandboxFolder>c:\temp</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
     </MappedFolder>
     <MappedFolder>
-      <HostFolder>C:\temp</HostFolder>
-      <ReadOnly>false</ReadOnly>
+      <HostFolder>c:\app</HostFolder>
+      <SandboxFolder>c:\app</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
     </MappedFolder>
   </MappedFolders>
 </Configuration>
