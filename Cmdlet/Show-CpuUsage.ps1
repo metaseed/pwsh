@@ -34,7 +34,7 @@ while ($true) {
       Name       = 'CPU_Usage'; 
       Expression = { 
         $TotalSec = (New-TimeSpan -Start $_.StartTime).TotalSeconds
-        "$([Math]::Round( ($_.CPU * 100 / $TotalSec) / $LogicalProcessors, 4) * 100)%"
+        "$([Math]::Round( $_.CPU * 100 / ($TotalSec* $LogicalProcessors), 4) *100)%"
       }
     }, StartTime,
     Handles, WorkingSet, VirtualMemorySize, PeakPagedMemorySize, PrivateMemorySize, UserName, Path

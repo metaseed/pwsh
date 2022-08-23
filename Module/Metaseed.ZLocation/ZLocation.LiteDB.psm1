@@ -37,9 +37,9 @@ Function Find([LiteDB.LiteCollection[LiteDB.BSONDocument]]$collection, [LiteDB.Q
     }
 }
 
-Function CreateMatchQuery($matches) {
+Function CreateMatchQuery($queries) {
     $query = [LiteDB.Query]::All()
-    ForEach($prop in (getEnum $matches)) {
+    ForEach($prop in (getEnum $queries)) {
         $query = [LiteDB.Query]::And([LiteDB.Query]::EQ($prop.Name, $prop.Value), $query)
     }
     ,$query

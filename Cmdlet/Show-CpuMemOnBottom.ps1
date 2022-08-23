@@ -23,7 +23,7 @@ Start-ThreadJob -StreamingHost $host  -ScriptBlock {
         $y = [Console]::CursorTop
         # last line
         [Console]::CursorTop = [Console]::WindowTop + [Console]::WindowHeight - 1
-        # replace ansi color chars
+        # replace ansi color chars `e[\d+m
         $textWithoutAnsi = $text -Replace "`e\[\d+m", ""
         [Console]::CursorLeft = [Console]::WindowWidth - ($offset ? $offset : $textWithoutAnsi.Length)
         # env var is string
@@ -35,7 +35,6 @@ Start-ThreadJob -StreamingHost $host  -ScriptBlock {
 
         [Console]::SetCursorPosition($x, $y)
     }
-    # write-host $Global:__CpuMemOnBottomn
 
     $env:__ShowCpuMemOnBtm = $true
 
