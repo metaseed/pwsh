@@ -35,6 +35,7 @@ end {
     Write-FileTree $env:MS_App @('\.exe$')
     return
   }
+
   $file = Get-AllCmdFiles $env:MS_App '*.exe' | ? { $_.BaseName -eq $Command }
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
