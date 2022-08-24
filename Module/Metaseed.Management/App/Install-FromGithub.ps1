@@ -3,13 +3,13 @@ function Install-FromGithub {
   param (
     [Parameter(Mandatory = $true)]
     # ornization name on github
-    $org,
+    [string]$org,
     # repo name on github
     [Parameter(Mandatory = $true)]
-    $repo,
+    [string]$repo,
     # regex to filter out the file from resource names
     [Parameter(Mandatory = $true)]
-    $filter, # = '-windows\.zip$', # '(?<!\.Light).Portable.x64.zip$'
+    [string]$filter, # = '-windows\.zip$', # '(?<!\.Light).Portable.x64.zip$'
     # version type: stable or preview
     [Parameter()]
     [string]
@@ -49,49 +49,55 @@ function Install-FromGithub {
       [CmdletBinding()]
       param()
       $appName = $application -eq '' ? $repo : $application
-      $p = "$toLocation\$appName*\$appName*.exe"
-      if (!(test-path $p)) {
-        $p = "$toLocation\$appName*.exe"
-      }
-      Write-Verbose  "query version: $p"
-      $it = gi $p -ErrorAction SilentlyContinue
+
+      $it = gci $toLocation -Filter "$appName*"
       if ($it) {
         if ($it.count -gt 1) {
           write-error "find more than one dir/file in $toLocation : $($it.name) "
           break
         }
-        try {
-          $cmd = gcm "$($it[0])"
-          $versionLocal = [Version]::new($cmd.version)
+
+        $dir = $it[0]
+        $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
+        Write-host "dir/file name: $($dir.name)"
+        if ($dir.Name -match $versionRegex) {
+          Write-Verbose "query local version via dir/file name: $($dir.name)"
+          $versionLocal = [Version]::new($matches[1])
         }
-        catch {
-          try {
-            $it.VersionInfo.FileVersion -match "^[\d\.]+" > $null
-            $versionLocal = [Version]::new($matches[0])
-          }
-          catch {
-            $it.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
-            $versionLocal = [Version]::new($matches[0])
-          }
+        else {
+          write-error "no version info in directory name: $($dir.name)"
+          break
         }
       }
+
       if (!$versionLocal) {
-        $it = gci $toLocation -Filter "$appName*"
+        $p = "$toLocation\$appName*\$appName*.exe"
+        if (!(test-path $p)) {
+          $p = "$toLocation\$appName*.exe"
+        }
+        Write-Verbose  "query version: $p"
+        $it = gi $p -ErrorAction SilentlyContinue
         if ($it) {
           if ($it.count -gt 1) {
             write-error "find more than one dir/file in $toLocation : $($it.name) "
             break
           }
-
-          $dir = $it[0]
-          $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
-          Write-host "dir/file name: $($dir.name)"
-          if ($dir.Name -match $versionRegex) {
-            $versionLocal = [Version]::new($matches[1])
+          try {
+            Write-Verbose "query local version via 'gcm' $($it[0])"
+            $cmd = gcm "$($it[0])"
+            $versionLocal = [Version]::new($cmd.version)
           }
-          else {
-            write-error "no version info in directory name: $($dir.name)"
-            break
+          catch {
+            try {
+              $it.VersionInfo.FileVersion -match "^[\d\.]+" > $null
+              Write-Verbose "query local version via FileVersion property"
+              $versionLocal = [Version]::new($matches[0])
+            }
+            catch {
+              Write-Verbose "query local version via ProductVersion property"
+              $it.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
+              $versionLocal = [Version]::new($matches[0])
+            }
           }
         }
       }
