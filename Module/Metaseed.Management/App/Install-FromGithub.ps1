@@ -16,6 +16,7 @@ function Install-FromGithub {
     [ValidateSet('preview', 'stable')]
     $versionType = 'stable',
 
+    [switch]$toFolder,
     # app name, if repo name is not the same as app name
     [Parameter()]
     [string]$application = '',
@@ -31,9 +32,10 @@ function Install-FromGithub {
       # $_.name -match $versionRegex >$null
       # $ver_online = [Version]::new($matches[1])
       $ver_online = $tag_name.trim('v', 'e', 'r')
-      try{
+      try {
         $ver_online = [Version]::new($ver_online)
-      }catch {
+      }
+      catch {
         $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
         Write-Verbose $name
         $name -match $versionRegex >$null
@@ -99,32 +101,45 @@ function Install-FromGithub {
     [Parameter()]
     [scriptblock]$install = {
       [CmdletBinding()]
-      param($downloadedFilePath)
+      param($downloadedFilePath, $ver_online)
       
       $appName = $application -eq '' ? $repo : $application
       # ignore error, may not exist
-      ri "$toLocation\temp" -Force -Recurse -ErrorAction Ignore
+      ri "$env:temp\temp" -Force -Recurse -ErrorAction Ignore
       # write-host $appName
       gci $toLocation -Filter "$appName*" |
       Remove-Item -Recurse -Force
 
-      if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
-        Write-Action "expand archive to $toLocation\temp..."
-        Expand-Archive $downloadedFilePath -DestinationPath "$toLocation\temp"
-        $children = gci "$toLocation\temp"
-        if ($children.count -eq 1) {
-          $children | Move-Item -Destination $toLocation
-          ri "$toLocation\temp" -Force
-          return "$children"
-        }
-        else {
-          Move-Item "$toLocation\temp" -Destination "$toLocation\$repo"
-          return "$toLocation\$repo"
-        }
-      }
-      else {
+      if ($downloadedFilePath -match '\.exe') {
         Move-Item "$_" -Destination $toLocation -Force
         return $toLocation
+      } 
+      else {
+        Write-Action "expand archive to $env:temp\temp..."
+        if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
+          Expand-Archive $downloadedFilePath -DestinationPath "$env:temp\temp"
+        }
+        elseif ($downloadedFilePath -match '\.tar\.gz') {
+          if (!(test-path $env:temp\temp)) {
+            ni $env:temp\temp -ItemType Directory
+          }
+          tar -xf $downloadedFilePath -C "$env:temp\temp"
+        }
+        else {
+          write-error "$downloadedFilePath is not a know copressed archive!"
+          break
+        }
+
+        $children = gci "$env:temp\temp"
+        if ($children.count -ne 1 -or $toFolder) {
+          Move-Item "$env:temp\temp" -Destination "$toLocation\${repo}_${ver_online}"
+          return "$toLocation\${repo}_${ver_online}"
+        }
+        else {
+          $children | Move-Item -Destination $toLocation -Force
+          ri "$env:temp\temp" -Force
+          return "$toLocation"
+        }
       }
     },
     # force reinstall
@@ -134,6 +149,7 @@ function Install-FromGithub {
   Assert-Admin
 
   Breakable-Pipeline {
+    $ver_online = [version]::new();
     Get-GithubRelease -OrgName $org -RepoName $repo -Version $versionType -fileNamePattern $filter |
     % {
       $assets = $_
@@ -167,7 +183,7 @@ function Install-FromGithub {
     } |
     Download-GithubRelease | 
     % {
-      $des = Invoke-Command -ScriptBlock $install -ArgumentList "$_"
+      $des = Invoke-Command -ScriptBlock $install -ArgumentList "$_", "$ver_online"
       write-host "app installed to $des!"
 
     }
