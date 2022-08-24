@@ -1,6 +1,7 @@
 <#
 a: Application
 #>
+[CmdletBinding()]
 param(
   [ArgumentCompleter( {
       param ( 
@@ -13,11 +14,14 @@ param(
     })]
   [Parameter(Position = 0)]
   $Command,
-  [parameter(mandatory=$false, position=1, ValueFromRemainingArguments=$true)]$Remaining
+  [Parameter(mandatory=$false, position=1,DontShow, ValueFromRemainingArguments=$true)]$Remaining,
+  # used when $remaining not work. i.e. a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png, not work, because of the -i, is ambiguous to -information and -InformationVariable
+  # we could do: a ffmpeg -arg "-y -i matrixRain.webm -vf palettegen palette.png"
+  [string][Parameter()]$arg
 )
 
 end {
-  if (!$Command) {
+  if (!$Command) { 
     Write-FileTree $env:MS_App @('\.exe$')
     return
   }
@@ -27,6 +31,10 @@ end {
     Write-Host "Command $Command not found"
     return
   }
-
+if($arg) {
+  $null = saps $file $arg -NoNewWindow -PassThru -Wait
+} else {
+  write-host 'b'
   & $file @Remaining
+}
 }
