@@ -1,6 +1,6 @@
 <#
-a: Application
-a <cmd> -- args_to_cmd
+a: Apps in $env:MS_App (c:\app)
+invoke: a <cmd> -- args_to_cmd
 #>
 [CmdletBinding()]
 param(
