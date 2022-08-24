@@ -33,7 +33,7 @@ function Get-DynCmdParam {
                 if ($attr -is [System.Management.Automation.ParameterAttribute]) {
                     $position = $attr.Position
                     if ($position -ge 0) {
-                        # only increase one time, otherwise the position will be increased at every command session, strange: the value is kept between command session
+                        # only increase one time, otherwise the position will be increased at every command session, strange: the value is kept between command-input session
                         # to test use: dd create-pullrequest 1810574
                         # so we creat a new attribute with the same value, and just modify the Position value
                         $newAttr = New-Object System.Management.Automation.ParameterAttribute

@@ -1,3 +1,4 @@
+// false: drop random characters
 const SENTENCE_DROPPING = true;
 const FONT_SIZE = 18;
 
@@ -21,7 +22,7 @@ function randomItem(array) {
 }
 
 
-//chinese characters - taken from the unicode charset
+//chinese characters
 const chinese =
   "道生一，一生二，二生三，三生万物。山穷水复疑无路，柳暗花明又一村。众里寻他千百度，蓦然回首，那人却在灯火阑珊处。千呼万唤始出来，犹抱琵琶半遮面。衣带渐宽终不悔，为伊消得人憔悴。金风玉露一相逢，便胜却人间无数。曾经沧海难为水，除却巫山不是云。忽如一夜春风来，千树万树梨花开。执子之手，与子偕老。采菊东篱下，悠然见南山。无丝竹之乱耳，无案牍之劳形。逝者如斯夫！不舍昼夜。博学之，审问之，慎思之，明辨之，笃行之。上善若水，水善利万物而不争。故不积跬步，无以至千里；不积小流，无以成江海。君子坦荡荡，小人长戚戚。己所不欲，勿施于人。落霞与孤鹜齐飞，秋水共长天一色。不以物喜，不以己悲。夫祸患常积于忽微，而智勇多困于所溺。星月皎洁，明河在天，四无人声，声在树间。野火烧不尽，春风吹又生。但愿人长久，千里共蝉娟。海阔凭鱼跃，天高任鸟飞。小荷才露尖尖角，早有蜻蜓立上头。";
 
@@ -48,8 +49,7 @@ const dropsSentences = new DropSentences(chinese)
 
 //an array of drops - one per column
 const currentRowOfColumns = [];
-//x: the x coordinate
-//drops[x]: y co-ordinate of the drop
+
 // initial value of y with random value, so not start from top
 for (let x = 0; x < COLUMNS; x++) currentRowOfColumns[x] = randomInt(ROWS);
 
