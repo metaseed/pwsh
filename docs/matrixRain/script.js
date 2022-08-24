@@ -130,5 +130,5 @@ recordBtn.addEventListener("click", (e) => {
 
 /// convert to gif
 // ffmpeg -y -i matrixRain.webm -vf palettegen palette.png
-// r: frame rage
+// r: frame rate
 // ffmpeg -y -i matrixRain.webm -i palette.png -filter_complex paletteuse -r 10 matrixRain.gif

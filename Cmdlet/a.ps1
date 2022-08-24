@@ -17,7 +17,7 @@ param(
   [Parameter(mandatory=$false, position=1,DontShow, ValueFromRemainingArguments=$true)]$Remaining,
   # used when $remaining not work. i.e. a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png, not work, because of the -i, is ambiguous to -information and -InformationVariable
   # we could do: a ffmpeg -arg "-y -i matrixRain.webm -vf palettegen palette.png"
-  [string][Parameter()]$arg
+  [string][Parameter(position=1)]$arg
 )
 
 end {
