@@ -45,7 +45,6 @@ end {
     & $file @Remaining
   }
   else {
-    # $null previent the show the newly created process to output
-    $null = saps $file $arg -NoNewWindow -PassThru -Wait
+    saps $file $arg -NoNewWindow -Wait
   }
 }
