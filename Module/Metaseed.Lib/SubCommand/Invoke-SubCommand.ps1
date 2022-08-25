@@ -4,7 +4,9 @@ function Invoke-SubCommand {
     param (
         [Parameter()]
         [string]
-        $Command
+        $Command,
+        [object]$cacheName,
+        [string]$filter = '*.ps1'
     )
 
     dynamicparam {
@@ -13,7 +15,8 @@ function Invoke-SubCommand {
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { return }
         $Command = $PSBoundParameters['Command']
-        return Get-DynCmdParam $CommandFolder $Command
+        $cacheName ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdCache').Value
+        return Get-DynCmdParam $cacheName $CommandFolder $Command $filter
     }
 
     end {
@@ -22,6 +25,7 @@ function Invoke-SubCommand {
         $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdFolder').Value
         $__LibFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__LibFolder').Value
         $__RootFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__RootFolder').Value
+        $cacheName ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdCache').Value
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"
@@ -29,7 +33,7 @@ function Invoke-SubCommand {
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { write-error "can not get the 'Command' folder" }
         Write-Verbose $CommandFolder
-        $file = Get-AllCmdFiles $CommandFolder | ? { $_.BaseName -eq $Command }
+        $file = Find-CmdItem $cacheName $CommandFolder $Command $filter
 
         Write-Verbose $file
         $null = $PSBoundParameters.Remove('Command')

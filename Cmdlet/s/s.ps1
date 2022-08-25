@@ -9,7 +9,7 @@ param(
         $wordToComplete,
         $commandAst,
         $fakeBoundParameters )
-      return Complete-Command "$PSScriptRoot\Command" $wordToComplete
+      return Complete-Command 'ShellCmd' "$PSScriptRoot\Command" $wordToComplete
     })]
   [Parameter(Position = 0)]
   $Command,
@@ -23,14 +23,17 @@ param(
 )
 
 dynamicparam {
+
   $Command = $PSBoundParameters['Command']
-  return Get-DynCmdParam "$PSScriptRoot\Command" $Command
+  return Get-DynCmdParam 'ShellCmd' "$PSScriptRoot\Command" $Command
 }
 begin {
   $error.Clear()
 }
 
 end {
+  $__CmdCache = 'ShellCmd'
+
   if ($code) {
     code $PSScriptRoot\..\..
     return
@@ -40,8 +43,7 @@ end {
     Write-AllSubCommands "$PSScriptRoot\Command"
     return
   }
-
-  $file = Get-AllCmdFiles "$PSScriptRoot\Command" | ? { $_.BaseName -eq $Command }
+  $file = Find-CmdItem $__CmdCache "$PSScriptRoot\Command" $Command '*.ps1'
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
     return

@@ -46,12 +46,16 @@ function test-word {
 
 function Complete-Command {
   param(
+    [Parameter()]
+    [string]
+    $cacheName,
     $commandFolder, 
     $wordToComplete,
     [string]$filter = '*.ps1'
   )
 
-  $commands = Get-AllCmdFiles $commandFolder $filter
+  # todo: not update every time, only when we can not find the cmd from cache
+  $commands = (Get-CmdsFromCache $cacheName $commandFolder $filter -update).Values
 
   if (!$wordToComplete) {
     # all commands

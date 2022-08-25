@@ -1,14 +1,17 @@
 function Get-DynCmdParam {
     param (
+        [string]$cacheName,
         [string]$CommandFolder,
-        [string]$Command
+        [string]$Command,
+        [string]$filter = '*.ps1'
     )
 
     if (-not $Command) {
         return
     }
 
-    $file = Get-AllCmdFiles $CommandFolder | ? { $_.BaseName -eq $Command }
+    $file = Find-CmdItem $cacheName $CommandFolder $Command $filter
+
     if (@($file).length -gt 1) {
         Write-Error "More than one command found for $Command, they are:"
         $file | % { Write-Host $_.FullName }

@@ -11,7 +11,7 @@ param(
         $wordToComplete,
         $commandAst,
         $fakeBoundParameters )
-      return Complete-Command $env:MS_App $wordToComplete '*.exe'
+      return Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
     })]
   [Parameter(Position = 0)]
   $Command,
@@ -36,11 +36,13 @@ end {
     return
   }
 
-  $file = Get-AllCmdFiles $env:MS_App '*.exe' | ? { $_.BaseName -eq $Command }
+  
+  $file = Find-CmdItem 'app' $env:MS_App  $Command '*.exe'
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
     return
   }
+
   if ($Remaining) {
     & $file @Remaining
   }
