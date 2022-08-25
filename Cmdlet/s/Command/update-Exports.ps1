@@ -9,7 +9,7 @@ param (
 if(!($module)) {
   # too slow so only do when all modules
   Get-Module -ListAvailable -Refresh > $null
-  gci M:\Script\Pwsh\Module\ -Directory|% {update-exports $_.BaseName}
+  gci M:\Script\Pwsh\Module\ -Directory|% {s update-exports $_.BaseName}
   return
 }
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
