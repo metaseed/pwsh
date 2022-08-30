@@ -1,6 +1,6 @@
 
 # pwsh: to reload directly without change admin rights
-function New-Admin {
+function New-AdminShell {
     # $wt = (Get-Command wt.exe -ErrorAction SilentlyContinue).Source -and ($null -ne $wt)
     $isAdmin = Test-Admin
 
@@ -34,9 +34,6 @@ function New-Admin {
     [System.Diagnostics.Process]::GetCurrentProcess().Kill()
 }
 
-function sudo {
-    Start-Process -Verb RunAs -FilePath "pwsh" -ArgumentList (@("-NoExit", "-Command") + $args)
-}
 
-New-Alias admin New-Admin
-Export-ModuleMember -Function sudo
+
+New-Alias admin New-AdminShell

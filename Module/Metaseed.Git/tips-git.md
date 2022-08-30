@@ -5,3 +5,7 @@ gitk --all
 
 ## accept conflict changes
 git checkout --theirs/ours <file>/.
+
+## reset to remote
+git fetch origin
+git reset --hard origin/master

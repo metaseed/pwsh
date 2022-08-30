@@ -17,7 +17,7 @@ rmo metaseed.git
 (pwd).path|scb
 note: (pwd).path|clip when gcb would return [path, '']
 clip is C:\WINDOWS\system32\clip.exe
-scb (gl).path 
+scb (gl).path
 # scb: set-clipboard; gcb: get-clipboard; gl: get-location
 scb (pwd).path
 pwd|scb
@@ -55,7 +55,7 @@ get-verb |foreach-object {$_.verb}|where-object{$_ -like '*start*'}
 get-verb |% verb|? {$_ -like '*start*'}
 get-verb|? verb -like *start*
 
-* hide command error 
+* hide command error
 // run below command in a none git dir
 // 0: success
 git status 2>$null; $LASTEXITCODE
@@ -69,7 +69,7 @@ gci env:planck*
 
 * get cmd path
 gcm code |% source|split-path
-gcm code|select -exp source|split-path 
+gcm code|select -exp source|split-path
 get-command code|select-object -expandProperty Source|Split-Path
 
 * copy file content to clipboard
@@ -84,15 +84,15 @@ gc file|scb
 * get time zone relevant to UTC
 get-date -f zz
 -05 (day time saver included)
-could also call: get-timezone 
+could also call: get-timezone
 (UTC-06:00) Central Time (US & Canada)
 
-* more page 
+* more page
 ga | oh -p
 get-command | out-host -paging
 * first 10
 gcm|select -first 10
-* clear screen 
+* clear screen
 cls (remove all content)
 ctrl+L (just scroll all content to top)
 
@@ -106,7 +106,7 @@ ctrl-space: MenuComplete
 ## peek function implementation
 gcm mkdir |% scriptblock
 (Get-Command mkdir).ScriptBlock
-gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1 
+gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 
 ## beep
 1. beep-DingDong: just the Ctrl+G: inclose the Ctrl+G in a string and output it. (type ctrl+g in console and copy it to file: )
@@ -182,3 +182,6 @@ ctrl-l just scroll the screen
 cls clear the buffer
 ## check windows version
 winver
+
+## create file from clipboard
+gcb > 1.txt

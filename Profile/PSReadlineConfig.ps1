@@ -3,7 +3,7 @@
 $PSReadLineOptions = @{
     # respond to errors or conditions that require user attention.
     # Prevent annoying beeping noises (e.g. when pressing backspace on empty line)
-    # BellStyle           = "None" 
+    # BellStyle           = "None"
     # HistorySearchCursorMovesToEnd = $true
     MaximumHistoryCount = 10000
 }
@@ -13,12 +13,12 @@ Set-PSReadLineOption @PSReadLineOptions
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 # not work in vscode
-Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine 
+Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine
 #not work in vscode
 Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -BriefDescription CopyPathToClipboard `
     -LongDescription "Copies the current path to the clipboard.(gl).path|scb" `
-    -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, ''] 
+    -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, '']
 
 Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     # session scale variables
@@ -28,7 +28,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
     $lastSessionScope = $global:__PSReadLineSessionScope
-    $global:__PSReadLineSessionScope = @{}
+    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now}
     # create a scope for a psReadline session
     New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
         scope     = $global:__PSReadLineSessionScope;
