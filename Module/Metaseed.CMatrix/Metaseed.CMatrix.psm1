@@ -1,15 +1,5 @@
 Set-StrictMode -off
  
-#
-# Module: PowerShell Console ScreenSaver Version 0.1
-# Author: Oisin Grehan ( http://www.nivot.org )
-#
-# A PowerShell CMatrix-style screen saver for true-console hosts.
-#
-# This will not work in Micrisoft's ISE, Quest's PowerGUI or other graphical hosts.
-# It should work fine in PowerShell+ from Idera which is a true console.
-#
- 
 if ($host.ui.rawui.windowsize -eq $null) {
     write-warning "Sorry, I only work in a true console host like powershell.exe."
     throw
@@ -18,7 +8,7 @@ if ($host.ui.rawui.windowsize -eq $null) {
 #
 # Console Utility Functions
 #
- 
+
 function New-Size {
     param([int]$width, [int]$height)
    
@@ -96,7 +86,7 @@ function log {
     param($message)
     [diagnostics.debug]::WriteLine($message, "PS ScreenSaver")
 }
- 
+
 #
 # Main entry point for starting the animation
 #
@@ -106,28 +96,26 @@ function Start-CMatrix {
         [int]$maxcolumns = 8,
         [int]$frameWait = 100
     )
- 
     $script:winsize = $host.ui.rawui.WindowSize
     $script:columns = @{} # key: xpos; value; column
     $script:framenum = 0
-       
+
     $prevbg = $host.ui.rawui.BackgroundColor
     $host.ui.rawui.BackgroundColor = "black"
     cls
-   
-    $done = $false        
+
+    $done = $false
    
     while (-not $done) {
- 
         Write-FrameBuffer -maxcolumns $maxcolumns
  
         Show-FrameBuffer
-       
+
         sleep -milli $frameWait
-       
+
         $done = $host.ui.rawui.KeyAvailable        
     }
-   
+
     $host.ui.rawui.BackgroundColor = $prevbg
     cls
 }
@@ -138,7 +126,6 @@ function Write-FrameBuffer {
  
     # do we need a new column?
     if ($columns.count -lt $maxcolumns) {
-       
         # incur staggering of columns with get-random
         # by only adding a new one 50% of the time
         if ((get-random -min 0 -max 10) -lt 5) {
@@ -176,12 +163,11 @@ function Show-FrameBuffer {
     # cannot remove from collection while enumerating, so do it here
     foreach ($key in $completed) {
         $columns.remove($key)
-    }    
+    }
 }
  
 function New-Column {
     param($x)
-   
     # return a new module that represents the column of letters and its state
     # we also pass in a reference to the main screensaver module to be able to
     # access our console framebuffer functions.
@@ -197,24 +183,22 @@ function New-Column {
  
         [int]$script:head = 1
         [int]$script:fade = 0
-		$randomLengthVariation = (1 + (get-random -min -30 -max 50)/100)
+        $randomLengthVariation = (1 + (get-random -min -30 -max 50)/100)
         [int]$script:fadelen = [math]::Abs($ylimit / 3 * $randomLengthVariation)
        
         $script:fadelen += (get-random -min 0 -max $fadelen)
        
         function Step {
-           
             # reached the bottom yet?
             if ($head -lt $ylimit) {
- 
                 & $parentModule Set-BufferCell $xpos $head (
                     & $parentModule New-BufferCell -Character `
                         ([char](get-random -min 65 -max 122)) -Fore white) > $null
-               
+
                 & $parentModule Set-BufferCell $xpos ($head - 1) (
                     & $parentModule New-BufferCell -Character `
                         ([char](get-random -min 65 -max 122)) -Fore green) > $null
-               
+
                 $script:head++
             }
 
@@ -248,12 +232,12 @@ function New-Column {
                     & $parentModule New-BufferCell -Character `
                     ([char]' ') -Fore black) > $null
             }
-                       
-            $false            
+
+            $false
         }
-               
+
         Export-ModuleMember -function Step
-       
+
     } -args $x, $executioncontext.sessionstate.module
 }
  
@@ -266,62 +250,54 @@ function Start-ScreenSaver {
 }
  
 function Register-Timer {
- 
     # prevent prompt from reregistering if explicit disable
-    if ($_ssdisabled) {
+    if ($_ScreenSaverDisabled) {
         return
     }
    
-    if (-not (Test-Path variable:global:_ssjob)) {
-       
+    if (-not (Test-Path variable:global:_ScreenSaverJob)) {
         # register our counter job
-        $global:_ssjob = Register-ObjectEvent $_sstimer elapsed -action {
-           
-            $global:_sscount++;
+        $global:_ScreenSaverJob = Register-ObjectEvent $_ScreenSaverTimer elapsed -action {
+            $global:_ScreenSaverCount++;
             $global:_sssrcid = $event.sourceidentifier
-               
+
             # hit timeout yet?
-            if ($_sscount -eq $_sstimeout) {
-               
+            if ($_ScreenSaverCount -eq $_ScreenSaverTimeout) {
                 # disable this event (prevent choppiness)
-                Unregister-Event -sourceidentifier $_sssrcid
-                Remove-Variable _ssjob -scope Global
-                           
+                Unregister-Event -sourceidentifier $_ScreenSaverEventId
+                Remove-Variable _ScreenSaverJob -scope Global
+
                 sleep -seconds 1
-                     
+
                 # start ss
                 Start-ScreenSaver
             }
- 
         }
     }
 }
  
 function Enable-ScreenSaver {
-   
-    if (-not $_ssdisabled) {
+    if (-not $_ScreenSaverDisabled) {
         write-warning "Screensaver is not disabled."
         return
     }
-   
-    $global:_ssdisabled = $false    
+
+    $global:_ScreenSaverDisabled = $false
 }
  
 function Disable-ScreenSaver {
  
-    if ((Test-Path variable:global:_ssjob)) {
- 
-        $global:_ssdisabled = $true
-        Unregister-Event -SourceIdentifier $_sssrcid        
-        Remove-Variable _ssjob -Scope global        
- 
+    if ((Test-Path variable:global:_ScreenSaverJob)) {
+        $global:_ScreenSaverDisabled = $true
+        Unregister-Event -SourceIdentifier $_ScreenSaverEventId
+        Remove-Variable _ScreenSaverJob -Scope global
     } else {
         write-warning "Screen saver is not enabled."
     }
 }
  
 function Get-ScreenSaverTimeout {
-    new-timespan -seconds $global:_sstimeout
+    new-timespan -seconds $global:_ScreenSaverTimeout
 }
  
 function Set-ScreenSaverTimeout {
@@ -342,7 +318,7 @@ function Set-ScreenSaverTimeout {
         throw "Timeout must be greater than 0 seconds."
     }
    
-    $global:_sstimeout = $timespan.totalseconds
+    $global:_ScreenSaverTimeout = $timespan.totalseconds
 }
  
 #
@@ -350,46 +326,43 @@ function Set-ScreenSaverTimeout {
 #
  
 # timeout
-[int]$global:_sstimeout = 180 # default 3 minutes
+[int]$global:_ScreenSaverTimeout = 180 # default 3 minutes
  
 # tick count
-[int]$global:_sscount = 0
+[int]$global:_ScreenSaverCount = 0
  
 # modify current prompt function to reset ticks counter to 0 and
 # to reregister timer, while saving for later on module onload
  
 $self = $ExecutionContext.SessionState.Module
 $function:global:prompt = $self.NewBoundScriptBlock(
-    [scriptblock]::create(
-        ("{0}`n`$global:_sscount = 0`nRegister-Timer" `
-            -f ($global:_ssprompt = gc function:prompt))))
+    [scriptblock]::create(("{0}`n`$global:_ScreenSaverCount = 0`nRegister-Timer" -f ($global:_ScreenSaverPromptScriptBlock = gc function:prompt))))
  
 # configure our timer
-$global:_sstimer = new-object system.timers.timer
-$_sstimer.Interval = 1000 # tick once a second
-$_sstimer.AutoReset = $true
-$_sstimer.start()
+$global:_ScreenSaverTimer = new-object system.timers.timer
+$_ScreenSaverTimer.Interval = 1000 # tick once a second
+$_ScreenSaverTimer.AutoReset = $true
+$_ScreenSaverTimer.start()
  
 # we start out disabled - use enable-screensaver
-$global:_ssdisabled = $true
+$global:_ScreenSaverDisabled = $true
  
 # arrange clean up on module remove
 $ExecutionContext.SessionState.Module.OnRemove = {
-   
     # restore prompt
-    $function:global:prompt = [scriptblock]::Create($_ssprompt)
-   
+    $function:global:prompt = [scriptblock]::Create($_ScreenSaverPromptScriptBlock)
+
     # kill off eventing subscriber, if one exists
-    if ($_sssrcid) {
-        Unregister-Event -SourceIdentifier $_sssrcid
+    if ($_ScreenSaverEventId) {
+        Unregister-Event -SourceIdentifier $_ScreenSaverEventId
     }
-   
+
     # clean up timer
-    $_sstimer.Dispose()
-   
+    $_ScreenSaverTimer.Dispose()
+
     # clear out globals
     remove-variable _ss* -scope global
+    remove-variable _ScreenSaver* -scope global
 }
  
-Export-ModuleMember -function Start-ScreenSaver, Get-ScreenSaverTimeout, `
-    Set-ScreenSaverTimeout, Enable-ScreenSaver, Disable-ScreenSaver
+Export-ModuleMember -function Start-ScreenSaver, Get-ScreenSaverTimeout, Set-ScreenSaverTimeout, Enable-ScreenSaver, Disable-ScreenSaver
