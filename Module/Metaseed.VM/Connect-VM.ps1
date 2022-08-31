@@ -2,42 +2,41 @@
 import-module Hyper-V
 function Connect-VM {
   [CmdletBinding(DefaultParameterSetName = 'name')]
-  
   param(
     [Parameter(ParameterSetName = 'name')]
     [Alias('cn')]
     [System.String[]]$ComputerName = $env:COMPUTERNAME,
-  
+
     [Parameter(Position = 0,
       Mandatory, ValueFromPipelineByPropertyName,
       ValueFromPipeline, ParameterSetName = 'name')]
     [Alias('n')]
     [System.String]$Name,
-  
+
     [Parameter(Position = 0,
       Mandatory, ValueFromPipelineByPropertyName,
       ValueFromPipeline, ParameterSetName = 'id')]
     [Alias('VMId', 'Guid')]
     [System.Guid]$Id,
-  
+
     [Parameter(Position = 0, Mandatory,
       ValueFromPipeline, ParameterSetName = 'inputObj')]
     [Microsoft.HyperV.PowerShell.VirtualMachine]$inputObj
   )
-  
+
   begin {
     # get-vm need admin
     Assert-Admin
     Write-Verbose "Initializing InstanceCount: 0"
     $InstanceCount = 0
   }
-  
+
   process {
     try {
       $pmsn = $PSCmdlet.ParameterSetName
       foreach ($computer in $ComputerName) {
         Write-Verbose "ParameterSetName is '$($pmsn)'"
-  
+
         if ($pmsn -eq 'name') {
           if ($Name -as [guid]) {
             Write-Verbose "Incoming value can cast to guid"
@@ -53,24 +52,24 @@ function Connect-VM {
         else {
           $vm = $inputObj
         }
-  
+
         if ($vm) {
           Write-Verbose "Executing 'vmconnect.exe $computer $($vm.Name) -G $($vm.Id) -C $InstanceCount'"
           vmconnect.exe $computer $vm.Name -G $vm.Id -C $InstanceCount
 
-            if ($vm.State -eq 'off' -or $vm.State -eq 'saved') {
-              Write-Verbose "Start switch was specified and VM state is '$($vm.State)'. Starting VM '$($vm.Name)'"
-              Start-VM -VM $vm
-            }
-            else {
-              Write-Verbose "Starting VM '$($vm.Name)'. Skipping, VM is not not in 'off' state."
-            }
-    
+          if ($vm.State -eq 'off' -or $vm.State -eq 'saved') {
+            Write-Verbose "Start switch was specified and VM state is '$($vm.State)'. Starting VM '$($vm.Name)'"
+            Start-VM -VM $vm
+          }
+          else {
+            Write-Verbose "Starting VM '$($vm.Name)'. Skipping, VM is not not in 'off' state."
+          }
+
         }
         else {
           Write-Information "Cannot find vm: '$Name'"
         }
-  
+
         $InstanceCount += 1
         Write-Verbose "InstanceCount = $InstanceCount"
       }
@@ -79,6 +78,6 @@ function Connect-VM {
       Write-Error $_
     }
   }
-  
+
 }
 # Connect-VM work -StartVM
