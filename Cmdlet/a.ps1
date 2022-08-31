@@ -5,7 +5,7 @@ invoke: a <cmd> -- args_to_cmd
 [CmdletBinding()]
 param(
   [ArgumentCompleter( {
-      param ( 
+      param (
         $commandName,
         $parameterName,
         $wordToComplete,
@@ -31,12 +31,12 @@ param(
 )
 
 end {
-  if (!$Command) { 
+  if (!$Command) {
     Write-FileTree $env:MS_App @('\.exe$')
     return
   }
 
-  
+
   $file = Find-CmdItem 'app' $env:MS_App  $Command '*.exe'
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
@@ -47,6 +47,6 @@ end {
     & $file @Remaining
   }
   else {
-    saps $file $arg -NoNewWindow -Wait
+    saps $file $arg -NoNewWindow # -Wait # remove wait to be faster
   }
 }
