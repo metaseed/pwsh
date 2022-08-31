@@ -19,10 +19,10 @@ if (!$has) {
     # means $MS_PWSH is not the current $PSScriptRoot
     (Get-Content $profile.CurrentUserAllHosts) | % { $_.Replace($p1, $p) }| set-content $profile.CurrentUserAllHosts -Force
     write-host "replace $p1 with $p in $($profile.CurrentUserAllHosts)"
-  } 
+  }
   else {
     # Add-Content -Path $profile.CurrentUserAllHosts -Value $p
-    $content = Get-Content -Path $profile.CurrentUserAllHosts 
+    $content = Get-Content -Path $profile.CurrentUserAllHosts
     $content = @($p) + $content
     Set-Content -path $profile.CurrentUserAllHosts -Value $content -Force
     Write-Host "insert profile ($p) to $($profile.CurrentUserAllHosts)"
@@ -33,7 +33,7 @@ else {
 }
 
 ## set $env:PSModulePath
-$m = resolve-path("$PSScriptRoot\Module")
+$m = resolve-path "$PSScriptRoot\Module"
 $env:PSModulePath += ";$m"
 
 $modPath = [Environment]::GetEnvironmentVariable("PSModulePath", 'User')

@@ -22,7 +22,7 @@ if($env:MS_PWSH) {. $env:MS_PWSH\upgrade.ps1} else {iwr https://pwsh.page.link/0
 ```powershell
 # $v = latest
 $v = 1.0.2
-if(!$env:MS_PWSH){"&{$(iwr https://pwsh.page.link/0)} $v"|iex
+"&{$(iwr https://pwsh.page.link/0)} $v"|iex
 ```
 
 
@@ -38,9 +38,14 @@ https://github.com/dahlbyk/posh-git
 ## Development
 
 ### Installation for developer
+if you want to contribute to the development, and always using the latest code from the master branch.
+
 ```powershell
-iwr https://pwsh.page.link/0 |iex
+"& {$(iwr https://pwsh.page.link/dev)} c:\" |iex
 ```
+> it will clone into `c:\pwsh` folder, replace `c:\` to your own folder that used to contain the source code
+
+> note: it will clone the repo to the folder, and setup the profile.
 
 ### release
 ```powershell
