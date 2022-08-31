@@ -10,7 +10,8 @@ powershell 7 or later
 iwr https://pwsh.page.link/0 |iex
 ```
 
-> for using it in your script, then you could use its cmd-lets and modules
+> then you could use its cmd-lets and modules
+
 
 ### install latest and auto update
 ```powershell
@@ -20,7 +21,7 @@ if($env:MS_PWSH) {. $env:MS_PWSH\upgrade.ps1} else {iwr https://pwsh.page.link/0
 ### install specific version
 ```powershell
 # $v = latest
-$v = 1.0.2 
+$v = 1.0.2
 if(!$env:MS_PWSH){"&{$(iwr https://pwsh.page.link/0)} $v"|iex
 ```
 
@@ -35,6 +36,12 @@ setup-poshGit
 https://github.com/dahlbyk/posh-git
 
 ## Development
+
+### Installation for developer
+```powershell
+iwr https://pwsh.page.link/0 |iex
+```
+
 ### release
 ```powershell
 ./release.ps1
