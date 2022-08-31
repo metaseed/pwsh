@@ -1,5 +1,5 @@
 function Get-CmdsFromCache([string]$cacheName, [string]$Directory,[string]$filter = '*.ps1', [switch]$update) {
-  
+
   $varName = "__${cacheName}_cmds__"
 
   if ($update) {
@@ -27,20 +27,12 @@ function Find-CmdItem {
   )
 
   # dynamic global variable
-  $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter 
-
-  $cacheQueried = $false
-  if (!$cacheValue) {
-    $cacheQueried = $true
+  $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter
+  if (!$cacheValue -or !$cacheValue[$Command]) {
     $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter -update
   }
 
   $file = $cacheValue[$Command]
-  if ($null -eq $file -and !$cacheQueried) {
-    # refresh
-    $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter -update
-    $file = $cacheValue[$Command]
-  }
   return $file
 }
 
