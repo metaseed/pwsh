@@ -1,5 +1,4 @@
 function Get-CmdsFromCache([string]$cacheName, [string]$Directory,[string]$filter = '*.ps1', [switch]$update) {
-
   $varName = "__${cacheName}_cmds__"
 
   if ($update) {
@@ -10,7 +9,8 @@ function Get-CmdsFromCache([string]$cacheName, [string]$Directory,[string]$filte
     Set-Variable -Scope Global -Name $varName -Value $cmds
     return $cmds
   }
-  return Get-Variable -Scope Global -Name $varName -ErrorAction Ignore
+  # -valueonly is used to return the variable value, otherwise return the variable entry
+  return Get-Variable -Scope Global -Name $varName -ValueOnly -ErrorAction Ignore
 }
 
 Export-ModuleMember Get-CmdsFromCache

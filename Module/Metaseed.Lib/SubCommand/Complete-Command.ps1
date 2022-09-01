@@ -18,7 +18,7 @@ function test-word {
   elseif ($obj.Name.StartsWith($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
     $obj.Order = $oderBase
     return $true
-  } 
+  }
   # $_ -like "*$wordToComplete*"
   # contains while word
   elseif ($obj.Name.Contains($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
@@ -49,13 +49,18 @@ function Complete-Command {
     [Parameter()]
     [string]
     $cacheName,
-    $commandFolder, 
+    $commandFolder,
     $wordToComplete,
     [string]$filter = '*.ps1'
   )
 
-  # todo: not update every time, only when we can not find the cmd from cache
-  $commands = (Get-CmdsFromCache $cacheName $commandFolder $filter -update).Values
+
+  $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter
+  if (!$cacheValue -or !$cacheValue.count -eq 0) {
+    $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter -update
+  }
+
+  $commands = $cacheValue.Values
 
   if (!$wordToComplete) {
     # all commands
@@ -63,7 +68,7 @@ function Complete-Command {
   }
 
   $cmds = $commands |
-  % { return @{Name = $_.BaseName; Order = 0 } } | 
+  % { return @{Name = $_.BaseName; Order = 0 } } |
   ? {
     $dashIndex = $_.Name.IndexOf('-');
     # command name do not has '-'
