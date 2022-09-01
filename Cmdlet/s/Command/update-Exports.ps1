@@ -6,14 +6,19 @@ param (
   [string]
   $module
 )
-if(!($module)) {
+if (!($module)) {
   # too slow so only do when all modules
   Get-Module -ListAvailable -Refresh > $null
-  gci M:\Script\Pwsh\Module\ -Directory|% {s update-exports $_.BaseName}
+  gci "$env:MS_PWSH\Module" -Directory | % { s update-exports $_.BaseName }
   return
 }
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
+
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
 $mo = ipmo $module -Force -PassThru -DisableNameChecking
+if(!$?) {
+  write-error "can not load module $module"
+  return
+}
 $path = (split-path $mo.Path) + "\$module.psd1"
 
 # $psd = (gc $path -raw | Invoke-Expression)
@@ -35,10 +40,10 @@ $func = $mo.ExportedFunctions.Keys -join "', '"
 $func = $func ? "'$func'" : ''
 Write-Verbose "exported functions: $func"
 if ($content -notlike '*FunctionsToExport*') {
-  $content = $content -replace "ModuleVersion.+`n", "`$0  FunctionsToExport = @($func)`n" 
+  $content = $content -replace "ModuleVersion.+`n", "`$0  FunctionsToExport = @($func)`n"
 }
 else {
-  $content = $content -replace "(FunctionsToExport\s*=\s*@\().+\)", "`$1$func)" 
+  $content = $content -replace "(FunctionsToExport\s*=\s*@\().+\)", "`$1$func)"
 }
 
 $cmd = $mo.ExportedCmdlets.Keys -join "', '"
@@ -49,7 +54,7 @@ if ($content -notlike '*CmdletsToExport*') {
   $content = $content -replace "ModuleVersion.+`n", "`$0  CmdletsToExport = @($cmd)`n"
 }
 else {
-  $content = $content -replace "(CmdletsToExport\s*=\s*@\().+\)", "`$1$cmd)" 
+  $content = $content -replace "(CmdletsToExport\s*=\s*@\().+\)", "`$1$cmd)"
 }
 
 $alias = $mo.ExportedAliases.Keys -join "', '"
