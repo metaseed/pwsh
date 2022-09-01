@@ -1,4 +1,6 @@
 # https://powershellmagazine.com/2012/10/11/connecting-to-hyper-v-virtual-machines-with-powershell/
+# Error: The specified module 'Hyper-V' was not loaded because no valid module file was found in any module directory.
+# The fix is to enable the "Hyper-V > Hyper-V Management Tools >Hyper-V Module for Windows PowerShell" feature.
 import-module Hyper-V
 function Connect-VM {
   [CmdletBinding(DefaultParameterSetName = 'name')]

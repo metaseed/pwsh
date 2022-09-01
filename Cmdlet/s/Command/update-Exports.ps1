@@ -13,6 +13,7 @@ if (!($module)) {
   return
 }
 
+# solved by remove downloaded remote file attribute on file
 # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
 $mo = ipmo $module -Force -PassThru -DisableNameChecking
 if(!$?) {
