@@ -53,67 +53,71 @@ function Complete-Command {
     $wordToComplete,
     [string]$filter = '*.ps1'
   )
-
-
   $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter
-  if (!$cacheValue -or !$cacheValue.count -eq 0) {
-    $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter -update
-  }
 
-  $commands = $cacheValue.Values
-
-  if (!$wordToComplete) {
-    # all commands
-    return $commands.BaseName
-  }
-
-  $cmds = $commands |
-  % { return @{Name = $_.BaseName; Order = 0 } } |
-  ? {
-    $dashIndex = $_.Name.IndexOf('-');
-    # command name do not has '-'
-    if ($dashIndex -eq -1) {
-      return test-word $_ $wordToComplete 1
+  # retry(update cache) when can not find any command
+  $retries = 1
+  do {
+    if (!$cacheValue -or !$cacheValue.count -eq 0) {
+      $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter -update
     }
 
-    # command name has '-'
-    if ($wordToComplete.length -eq 1) {
-      return test-word $_ $wordToComplete
+    $commands = $cacheValue.Values
+
+    if (!$wordToComplete) {
+      # all commands
+      return $commands.BaseName
     }
-    elseif ($wordToComplete.length -eq 2) {
-      $verb = $_.Name.Substring(0, $dashIndex);
-      $noun = $_.Name.Substring($dashIndex + 1);
-      $r = $verb.StartsWith($wordToComplete[0], [StringComparison]::InvariantCultureIgnoreCase) -and ($noun.StartsWith($wordToComplete[1], [StringComparison]::InvariantCultureIgnoreCase))
-      if ($r) {
-        return $r
-      }
-      else {
+
+    $cmds = $commands |
+    % { return @{Name = $_.BaseName; Order = 0 } } |
+    ? {
+      $dashIndex = $_.Name.IndexOf('-');
+      # command name do not has '-'
+      if ($dashIndex -eq -1) {
         return test-word $_ $wordToComplete 1
       }
-    }
-    else {
-      $verb = $_.Name.Substring(0, $dashIndex);
-      $noun = $_.Name.Substring($dashIndex + 1);
-      # one-many
-      $v = $wordToComplete[0];
-      $n = ($wordToComplete.Substring(1) -split '' -join '*').Substring(1);
-      if ($verb.startswith($v, [StringComparison]::InvariantCultureIgnoreCase) -and ($noun -like $n)) {
-        return $true
+
+      # command name has '-'
+      if ($wordToComplete.length -eq 1) {
+        return test-word $_ $wordToComplete
       }
-      # two-many
-      $v = ($wordToComplete.Substring(0, 2) -split '' -join '*').Substring(1);
-      $n = ($wordToComplete.Substring(2) -split '' -join '*').Substring(1);
-      if (($verb -like $v) -and ($noun -like $n)) {
-        $_.Order = 0.5
-        return $true
+      elseif ($wordToComplete.length -eq 2) {
+        $verb = $_.Name.Substring(0, $dashIndex);
+        $noun = $_.Name.Substring($dashIndex + 1);
+        $r = $verb.StartsWith($wordToComplete[0], [StringComparison]::InvariantCultureIgnoreCase) -and ($noun.StartsWith($wordToComplete[1], [StringComparison]::InvariantCultureIgnoreCase))
+        if ($r) {
+          return $r
+        }
+        else {
+          return test-word $_ $wordToComplete 1
+        }
       }
-      # we do not process verb letters great than 2
-      # so the verb part should be 1 or 2 letters
-      # but we still do further search consecutive letters, so if we input 'pullrequest' we could get all related commands
-      return test-word $_ $wordToComplete 1
-    }
-  } |
-  sort -Property Order |
-  select -ExpandProperty Name
+      else {
+        $verb = $_.Name.Substring(0, $dashIndex);
+        $noun = $_.Name.Substring($dashIndex + 1);
+        # one-many
+        $v = $wordToComplete[0];
+        $n = ($wordToComplete.Substring(1) -split '' -join '*').Substring(1);
+        if ($verb.startswith($v, [StringComparison]::InvariantCultureIgnoreCase) -and ($noun -like $n)) {
+          return $true
+        }
+        # two-many
+        $v = ($wordToComplete.Substring(0, 2) -split '' -join '*').Substring(1);
+        $n = ($wordToComplete.Substring(2) -split '' -join '*').Substring(1);
+        if (($verb -like $v) -and ($noun -like $n)) {
+          $_.Order = 0.5
+          return $true
+        }
+        # we do not process verb letters great than 2
+        # so the verb part should be 1 or 2 letters
+        # but we still do further search consecutive letters, so if we input 'pullrequest' we could get all related commands
+        return test-word $_ $wordToComplete 1
+      }
+    } |
+    sort -Property Order |
+    select -ExpandProperty Name
+  } while ($cmds.count -eq 0 -and $retries--)
+
   return $cmds
 }
