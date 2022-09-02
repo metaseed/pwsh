@@ -29,6 +29,11 @@ param(
   [Parameter(mandatory = $false, position = 1, DontShow, ValueFromRemainingArguments = $true)]$Remaining
   # [string][Parameter(position = 1)]$arg
 )
+# https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters
+dynamicparam {
+  return Get-AppDynamicArgument $Command "$PSScriptRoot\_args"
+}
+
 
 end {
   if (!$Command) {
@@ -38,6 +43,16 @@ end {
 
 
   $file = Find-CmdItem 'app' $env:MS_App  $Command '*.exe'
+
+  $cacheValue = Get-CmdsFromCacheAutoUpdate 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
+  if ($cacheValue) {
+    $handler = $cacheValue[$Command]
+    if ($handler) {
+      & $handler $file $Remaining
+      return
+    }
+  }
+
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
     return

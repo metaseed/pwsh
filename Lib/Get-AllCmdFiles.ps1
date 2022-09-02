@@ -8,7 +8,7 @@ function Get-AllCmdFiles {
   )
   # use @() to make sure return is an array, even 1 or no item
   $All = Get-ChildItem $Directory -include $filter -Recurse -Exclude _* -ErrorAction SilentlyContinue |
-   ? { $_.fullname -notmatch '\\_.*\\' }
+   ? { $_.fullname.TrimStart($Directory) -notmatch '\\_.*\\' }
   return @($All)
 }
 # Export-ModuleMember Get-AllCmdFiles

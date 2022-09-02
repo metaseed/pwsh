@@ -12,20 +12,14 @@ function Get-DynCmdParam {
 
     $file = Find-CmdItem $cacheName $CommandFolder $Command $filter
 
-    if (@($file).length -gt 1) {
-        Write-Error "More than one command found for $Command, they are:"
-        $file | % { Write-Host $_.FullName }
-        Exit
-    }
-
     if ($null -eq $file) {
         return
     }
-    
+
     $rp = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
     $c = Get-Command -Name $file  -CommandType ExternalScript
-    if (!($c.Parameters) -or (! $c.Parameters.Count)) { return $rp }
-        
+    if (!$c.Parameters -or !$c.Parameters.Count) { return $rp }
+
     $pn = 'Verbose', 'Debug', 'ErrorAction', 'InformationAction', 'InformationVariable', 'WarningAction', 'ErrorVariable', 'WarningVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable'
     foreach ($pv in $c.Parameters.Values) {
         # filter out common parameters

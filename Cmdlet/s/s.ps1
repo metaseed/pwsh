@@ -3,7 +3,7 @@ s: shell
 #>
 param(
   [ArgumentCompleter( {
-      param ( 
+      param (
         $commandName,
         $parameterName,
         $wordToComplete,
@@ -23,10 +23,10 @@ param(
 )
 
 dynamicparam {
-
   $Command = $PSBoundParameters['Command']
   return Get-DynCmdParam 'ShellCmd' "$PSScriptRoot\Command" $Command
 }
+
 begin {
   $error.Clear()
 }

@@ -1,10 +1,16 @@
-function Get-CmdsFromCache([string]$cacheName, [string]$Directory,[string]$filter = '*.ps1', [switch]$update) {
+function Get-CmdsFromCache([string]$cacheName, [string]$Directory, [string]$filter = '*.ps1', [switch]$update) {
   $varName = "__${cacheName}_cmds__"
 
   if ($update) {
     $cmds = @{}
     Get-AllCmdFiles $Directory $filter | % {
-      $cmds[$_.BaseName] = $_
+      if ($cmds[$_.BaseName]) {
+        Write-Verbose "More than one command found for '$($_.BaseName)': Omit the one in $($_.FullName)"
+        # Exit
+      }
+      else {
+        $cmds[$_.BaseName] = $_
+      }
     }
     Set-Variable -Scope Global -Name $varName -Value $cmds
     return $cmds
@@ -13,7 +19,16 @@ function Get-CmdsFromCache([string]$cacheName, [string]$Directory,[string]$filte
   return Get-Variable -Scope Global -Name $varName -ValueOnly -ErrorAction Ignore
 }
 
-Export-ModuleMember Get-CmdsFromCache
+function Get-CmdsFromCacheAutoUpdate([string]$cacheName, [string]$Directory, [string]$filter = '*.ps1') {
+  $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter
+  if (!$cacheValue) {
+    $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter -update
+    # Write-Host "sdddf"
+  }
+  return $cacheValue
+}
+
+Export-ModuleMember Get-CmdsFromCache, Get-CmdsFromCacheAutoUpdate
 function Find-CmdItem {
   [CmdletBinding()]
   param (
