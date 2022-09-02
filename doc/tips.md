@@ -185,3 +185,6 @@ winver
 
 ## create file from clipboard
 gcb > 1.txt
+
+## quickly open the 'optional features' dialog
+type `optionalfeatues` in terminal

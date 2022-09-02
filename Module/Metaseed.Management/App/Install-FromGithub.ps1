@@ -16,6 +16,7 @@ function Install-FromGithub {
     [ValidateSet('preview', 'stable')]
     $versionType = 'stable',
 
+    # put the app in the a folder(with version) even if it's a single exe file
     [switch]$toFolder,
     # app name, if repo name is not the same as app name
     [Parameter()]
@@ -27,13 +28,18 @@ function Install-FromGithub {
     [Parameter()]
     [scriptblock]$getOnlineVer = {
       [CmdletBinding()]
-      param($name, $tag_name) 
+      param($name, $tag_name)
       # $versionRegex = "_(\d+\.\d+\.?\d*\.*\d*)_x64"
       # $_.name -match $versionRegex >$null
       # $ver_online = [Version]::new($matches[1])
       $ver_online = $tag_name.trim('v', 'e', 'r')
       try {
-        $ver_online = [Version]::new($ver_online)
+        if( $ver_online -match '\d+$' ) {
+          $ver_online = [Version]::new($matches[0] + '.0')
+          Write-Verbose "online ver: $ver_online"
+        } else {
+          $ver_online = [Version]::new($ver_online)
+        }
       }
       catch {
         $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
@@ -49,9 +55,10 @@ function Install-FromGithub {
       [CmdletBinding()]
       param()
       $appName = $application -eq '' ? $repo : $application
-
-      $it = gci $toLocation -Filter "$appName*"
+      $versionLocal = $null
+      $it = @(gci $toLocation -Filter "$appName*")
       if ($it) {
+        # Write-Host $it
         if ($it.count -gt 1) {
           write-error "find more than one dir/file in $toLocation : $($it.name) "
           break
@@ -65,8 +72,7 @@ function Install-FromGithub {
           $versionLocal = [Version]::new($matches[1])
         }
         else {
-          write-error "no version info in directory name: $($dir.name)"
-          break
+          write-Host "no version info in directory name: $($dir.name)"
         }
       }
 
@@ -76,7 +82,7 @@ function Install-FromGithub {
           $p = "$toLocation\$appName*.exe"
         }
         Write-Verbose  "query version: $p"
-        $it = gi $p -ErrorAction SilentlyContinue
+        $it = @(gi $p -ErrorAction SilentlyContinue)
         if ($it) {
           if ($it.count -gt 1) {
             write-error "find more than one dir/file in $toLocation : $($it.name) "
@@ -101,6 +107,15 @@ function Install-FromGithub {
           }
         }
       }
+      if ($it) {
+      if(!$versionLocal) {
+        $dir = $it[0]
+        if ($dir.Name -match '__\d+\.\d+') {
+          Write-Verbose "query local version via dir/file name: $($dir.name)"
+          $versionLocal = [Version]::new($matches[0])
+        }
+      }
+    }
       # write-host $versionLocal.gettype()
       return $versionLocal
     },
@@ -108,7 +123,7 @@ function Install-FromGithub {
     [scriptblock]$install = {
       [CmdletBinding()]
       param($downloadedFilePath, $ver_online)
-      
+
       $appName = $application -eq '' ? $repo : $application
       # ignore error, may not exist
       ri "$env:temp\temp" -Force -Recurse -ErrorAction Ignore
@@ -119,7 +134,7 @@ function Install-FromGithub {
       if ($downloadedFilePath -match '\.exe') {
         Move-Item "$_" -Destination $toLocation -Force
         return $toLocation
-      } 
+      }
       else {
         Write-Action "expand archive to $env:temp\temp..."
         if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
@@ -136,9 +151,9 @@ function Install-FromGithub {
           break
         }
 
-        $children = gci "$env:temp\temp"
+        $children = @(gci "$env:temp\temp")
         if ($children.count -ne 1 -or $toFolder) {
-          Move-Item "$env:temp\temp" -Destination "$toLocation\${repo}_${ver_online}"
+          Move-Item "$env:temp\temp" -Destination "$toLocation\${repo}__${ver_online}"
           return "$toLocation\${repo}_${ver_online}"
         }
         else {
@@ -173,7 +188,7 @@ function Install-FromGithub {
       $versionLocal = Invoke-Command -ScriptBlock $getLocalVer
       # Write-Host "dd" + $versionLocal.gettype()
       if (!$versionLocal) {
-        Write-Host "install the latest ${app}: $ver_online"
+        Write-Host "install the latest ${repo}: $ver_online"
       }
       else {
         if ($ver_online -le $versionLocal) {
@@ -187,7 +202,7 @@ function Install-FromGithub {
       }
       return $_
     } |
-    Download-GithubRelease | 
+    Download-GithubRelease |
     % {
       $des = Invoke-Command -ScriptBlock $install -ArgumentList "$_", "$ver_online"
       write-host "app installed to $des!"
