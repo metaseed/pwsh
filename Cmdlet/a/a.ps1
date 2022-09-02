@@ -6,15 +6,15 @@ invoke: a <cmd> -- args_to_cmd
 param(
   [ArgumentCompleter( {
       param (
-        $commandName,
+        $appName,
         $parameterName,
         $wordToComplete,
-        $commandAst,
+        $appAst,
         $fakeBoundParameters )
       return Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
     })]
   [Parameter(Position = 0)]
-  $Command,
+  $app,
   # used when $remaining not work. i.e. a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png, not work, because of the -i, is ambiguous to -information and -InformationVariable
   # 1. the work around is use the below string parameter
   # we could do: a ffmpeg -arg "-y -i matrixRain.webm -vf palettegen palette.png"
@@ -31,22 +31,21 @@ param(
 )
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters
 dynamicparam {
-  return Get-AppDynamicArgument $Command "$PSScriptRoot\_args"
+  return Get-AppDynamicArgument $app "$PSScriptRoot\_args"
 }
 
-
 end {
-  if (!$Command) {
+  if (!$app) {
     Write-FileTree $env:MS_App @('\.exe$')
     return
   }
 
 
-  $file = Find-CmdItem 'app' $env:MS_App  $Command '*.exe'
+  $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe'
 
   $cacheValue = Get-CmdsFromCacheAutoUpdate 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
   if ($cacheValue) {
-    $handler = $cacheValue[$Command]
+    $handler = $cacheValue[$app]
     if ($handler) {
       & $handler $file $Remaining
       return
@@ -54,7 +53,7 @@ end {
   }
 
   if ($null -eq $file) {
-    Write-Host "Command $Command not found"
+    Write-Host "Command $app not found"
     return
   }
 

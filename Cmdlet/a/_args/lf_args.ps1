@@ -30,17 +30,17 @@
 # }
 
 $script:args = @(
-    @{Name = '-command'; Description = 'command to execute on client initialization'},
-    @{Name = '-config';Description = 'path to the config file (instead of the usual paths)'},
-    @{Name = '-cpuprofile';Description = 'path to the file to write the CPU profile'},
-    @{Name = '-doc';Description = 'show documentation'},
-    @{Name = '-last-dir-path';Description = 'path to the file to write the last dir on exit (to use for cd)'},
-    @{Name = '-log';Description = 'path to the log file to write messages'},
-    @{Name = '-memprofile';Description = 'path to the file to write the memory profile'},
-    @{Name = '-remote ';Description = 'send remote command to server'},
-    @{Name = '-selection-path';Description = 'path to the file to write selected files on open (to use as open file dialog)'},
-    @{Name = '-server';Description = 'start server (automatic)'},
-    @{Name = '-single';Description =  'start a client without server'},
-    @{Name = '-version';Description = 'show version'},
-    @{Name = '-help';Description = 'show help'}
+    @{Name = 'command'; Description = 'command to execute on client initialization'; Type=[string]},
+    @{Name = 'config';Description = 'path to the config file (instead of the usual paths)'},
+    @{Name = 'cpuprofile';Description = 'path to the file to write the CPU profile'},
+    @{Name = 'doc';Description = 'show documentation'},
+    @{Name = 'last-dir-path';Description = 'path to the file to write the last dir on exit (to use for cd)'},
+    @{Name = 'log';Description = 'path to the log file to write messages'},
+    @{Name = 'memprofile';Description = 'path to the file to write the memory profile'},
+    @{Name = 'remote ';Description = 'send remote command to server'},
+    @{Name = 'selection-path';Description = 'path to the file to write selected files on open (to use as open file dialog)'},
+    @{Name = 'server';Description = 'start server (automatic)'},
+    @{Name = 'single';Description =  'start a client without server'},
+    @{Name = 'version';Description = 'show version'},
+    @{Name = 'help';Description = 'show help'}
 )
