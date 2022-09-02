@@ -25,6 +25,7 @@ param (
 
 $tmp = [System.IO.Path]::GetTempFileName()
 # lf -last-dir-path="$tmp" $args
+
 & $file -last-dir-path="$tmp" @Remaining
 if (Test-Path -PathType Leaf "$tmp") {
     $dir = Get-Content "$tmp"
