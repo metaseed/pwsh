@@ -1,3 +1,5 @@
+# https://medium.com/@a.hr.mostafavi/using-lf-file-manager-on-windows-fc4f1e4e1442
+# https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
 set icons
 set colors
 # interpreter for shell commands

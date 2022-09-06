@@ -4,3 +4,9 @@ Set-Alias cpu Show-CpuUsage
 Set-Alias space Show-DiskSpace
 Set-Alias bumpVer Update-InfoVersion
 Set-Alias sandbox Open-Sandbox
+function __change_directory{
+  # so d --help work
+  a tere -- @args
+}
+# it is for ls+cd (gci+sl)
+Set-Alias d __change_directory
