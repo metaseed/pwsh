@@ -80,11 +80,9 @@ function Remove-ItemSafely {
             throw
         }
     }
-    <#
-
+<#
 .ForwardHelpTargetName Microsoft.PowerShell.Management\Remove-Item
 .ForwardHelpCategory Cmdlet
-
 #>
 
 }
@@ -331,3 +329,4 @@ function Get-RecycledItem {
 
 Export-ModuleMember -Function Get-RecycledItem
 Export-ModuleMember -Function Restore-RecycledItem
+# Clear-RecycleBin is defined in  Microsoft.PowerShell.Management

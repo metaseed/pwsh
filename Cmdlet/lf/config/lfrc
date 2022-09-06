@@ -1,7 +1,7 @@
 set icons
 set colors
 # interpreter for shell commands
-set shell pwsh
+# set shell pwsh
 
 # define a custom 'open' command
 # This command is called when current file is not a directory.
@@ -16,7 +16,7 @@ set shell pwsh
 # keybindings with explicit choices accordingly.
 
 # change the default open command to work in powerShell
-cmd open &start $Env:f
+# cmd open &start $Env:f
 
 # change the editor used in default editor keybinding
 # There is no builtin terminal editor installed in Windows. The default editor
@@ -47,7 +47,27 @@ set scrolloff 10
 # use enter for shell commands
 map <enter> shell
 # reload config file using f5
-map <f-5> push :source<space>C:/Users/jsong12/AppData/Local/lf/lfrc<enter>
-# execute current file (must be executable)
+map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
+## execute current file (must be executable)
+# execute with shell
 map x $$f
+# execute with shell_wait
 map X !$f
+# map P &a quicklook -- $env:f
+## delete
+# note: $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
+# todo:trash not work
+cmd trash &Remove-ItemSafely env:fx env:1
+map <delete> delete
+
+set filesep " "
+# use a and A to create files and directories
+cmd createfile !{{
+  new-item -path $0
+  write-host 'test'
+  write-host 'bbb'
+}}
+cmd createdir %new-item -Type Directory $1; redraw
+map a push :createfile<space>
+map A push :createdir<space>
+map Y %$env:fx | scb

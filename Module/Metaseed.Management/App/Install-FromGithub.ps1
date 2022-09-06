@@ -5,7 +5,7 @@ function Install-FromGithub {
     # ornization name on github
     [string]$org,
     # repo name on github
-    [Parameter(Mandatory = $true)]
+    [Parameter()]
     [string]$repo,
     # regex to filter out the file from resource names
     [Parameter(Mandatory = $true)]
@@ -34,7 +34,7 @@ function Install-FromGithub {
       # $ver_online = [Version]::new($matches[1])
       $ver_online = $tag_name.trim('v', 'e', 'r')
       try {
-        if( $ver_online -match '\d+$' ) {
+        if( $ver_online -match '^\d+$' ) {
           $ver_online = [Version]::new($matches[0] + '.0')
           Write-Verbose "online ver: $ver_online"
         } else {
@@ -168,6 +168,13 @@ function Install-FromGithub {
     [switch]$Force
   )
   Assert-Admin
+
+  if($org.Contains('/')) {
+    $v = $org.Split('/')
+    $org =$v[0]
+    $repo = $v[1]
+  }
+  Write-Host "$org $repo"
 
   Breakable-Pipeline {
     $ver_online = [version]::new();
