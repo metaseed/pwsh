@@ -189,12 +189,15 @@ gcb > 1.txt
 ## quickly open the 'optional features' dialog
 type `optionalfeatues` in terminal
 
-## new/delete/rename/copy/paste file/dir
+## new/delete/rename/copy/paste/view-property file/dir
 ni test
 ni test -ty d # type directory
 ri test
 mi test test1
 copy test test2
+get-itemProperty *
+
+view sizes in folder `a wizTree -- $pwd`
 
 ## get computer info
 Get-ComputerInfo -pro *processor*

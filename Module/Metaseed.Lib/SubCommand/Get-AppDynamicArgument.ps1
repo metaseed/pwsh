@@ -27,6 +27,14 @@ function  Get-AppDynamicArgument{
     }
     $attributeCollection.Add($parameterAttribute)
 
+    if($_.Aliases) {
+      $alias = [System.Management.Automation.AliasAttribute]@{
+        AliasNames = @($_.Aliases)
+      }
+      $attributeCollection.Add(($alias)
+    }
+
+
     $param = [System.Management.Automation.RuntimeDefinedParameter]::new(
       $_.Name, $_.Type ?? [string], $attributeCollection
     )
