@@ -28,10 +28,8 @@ function  Get-AppDynamicArgument{
     $attributeCollection.Add($parameterAttribute)
 
     if($_.Aliases) {
-      $alias = [System.Management.Automation.AliasAttribute]@{
-        AliasNames = @($_.Aliases)
-      }
-      $attributeCollection.Add(($alias)
+      $alias = [System.Management.Automation.AliasAttribute]::new($_.Aliases)
+      $attributeCollection.Add($alias)
     }
 
 
