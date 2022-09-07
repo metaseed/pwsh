@@ -20,6 +20,6 @@ function Git-PushAll {
   Git-Push
 }
 
-New-Alias gitp Git-PushAll
+Set-Alias gitp Git-PushAll
 
 # Export-ModuleMember -Alias  gip

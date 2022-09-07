@@ -327,6 +327,8 @@ function Get-RecycledItem {
 #>
 }
 
+Set-Alias ris Remove-ItemSafely
+Set-Alias trash Remove-ItemSafely
 Export-ModuleMember -Function Get-RecycledItem
-Export-ModuleMember -Function Restore-RecycledItem
+Export-ModuleMember -Function Restore-RecycledItem -Alias ris,trash
 # Clear-RecycleBin is defined in  Microsoft.PowerShell.Management

@@ -1,6 +1,6 @@
 . $PSScriptRoot/Get-AllCmdFiles.ps1
 
-<# 
+<#
 .DESCRIPTION
 auto include all .ps1 into .psm1 except the foler/file that start with "_";
 auto export a function of the file name, except the file in the private sub-folder;
@@ -30,7 +30,6 @@ function Export-Functions {
     param (
         $path
     )
-    write-verbose "Get all ps1 files except that start with '_' or in the subfolder that start with '_'."
     $All = Get-AllCmdFiles $path
     write-verbose "Dot source the files"
     foreach ($import in $All) {
