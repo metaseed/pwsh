@@ -58,7 +58,7 @@ function Complete-Command {
   # retry(update cache) when can not find any command
   $retries = 1
   do {
-    if (!$cacheValue -or !$cacheValue.count -eq 0) {
+    if (!$cacheValue -or $cacheValue.count -eq 0) {
       $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter -update
     }
 

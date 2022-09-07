@@ -13,6 +13,7 @@ function Get-CmdsFromCache([string]$cacheName, [string]$Directory, [string]$filt
       }
     }
     Set-Variable -Scope Global -Name $varName -Value $cmds
+    # write-host "`n update"
     return $cmds
   }
   # -valueonly is used to return the variable value, otherwise return the variable entry
