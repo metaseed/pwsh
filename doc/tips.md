@@ -204,3 +204,6 @@ Get-ComputerInfo -pro *processor*
 Get-ComputerInfo
 systemInfo.exe
 
+## pwsh webs
+https://ironscripter.us/
+https://jdhitsolutions.com/blog/

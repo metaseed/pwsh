@@ -80,7 +80,7 @@ function Remove-ItemSafely {
             throw
         }
     }
-<#
+    <#
 .ForwardHelpTargetName Microsoft.PowerShell.Management\Remove-Item
 .ForwardHelpCategory Cmdlet
 #>
@@ -125,6 +125,47 @@ function recycleItem {
     }
 }
 
+function get-PathFromComObj {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [object]
+        $ComObject
+    )
+
+    if ($ComObject.IsFolder -or ($ComObject.type -match 'Zip')) {
+        $OriginalPath = $ComObject.GetFolder.Title
+    }
+    else {
+        #sometimes the original location is stored in an extended property
+        $data = $ComObject.ExtendedProperty("infotip").split("`n") | Where-Object { $_ -match "Original location" }
+        if ($data) {
+            $origPath = $data.split(":", 2)[1].trim()
+            $OriginalPath = Join-Path -path $origPath -ChildPath $ComObject.name -ErrorAction stop
+            Remove-Variable -Name data
+        }
+        else {
+            #no extended property so use this code to attemp to rebuild the original location
+            if ($ComObject.parent.title -match "^[C-Zc-z]:\\") {
+                $origPath = $ComObject.parent.title
+            }
+            elseif ($fldpath) {
+                $origPath = $fldPath
+            }
+            else {
+                $test = $ComObject.parent
+                Write-Verbose "searching for parent on $($test.self.path)"
+                do { $test = $test.parentfolder; $save = $test.title } until ($test.title -match "^[C-Zc-z]:\\" -OR $test.title -eq $save)
+                $origPath = $test.title
+            }
+
+            $OriginalPath = Join-Path -path $origPath -ChildPath $ComObject.name -ErrorAction stop
+        }
+
+    }
+    return $OriginalPath
+}
+
 function Restore-RecycledItem {
     [CmdletBinding(DefaultParameterSetName = 'ManualSelection', SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     param(
@@ -165,7 +206,7 @@ function Restore-RecycledItem {
     process {
         if ($ComObject) {
             $FoundItem = $ComObject
-            $OriginalPath = $ComObject.GetFolder.Title
+            $OriginalPath = get-PathFromComObj $ComObject
         }
 
         if ((Test-Path $OriginalPath) -and -not $Overwrite) {
@@ -192,6 +233,7 @@ function Restore-RecycledItem {
                 if ($Overwrite -or $PSBoundParameters['Force']) {
                     Remove-ItemSafely $OriginalPath
                 }
+                Write-host "original path: $OriginalPath"
                 Move-Item $FoundItem.Path $OriginalPath
             }
             else {
@@ -270,14 +312,19 @@ function Get-RecycledItem {
     )
 
     process {
-        $SelectedItems = @() + (New-Object -com shell.application).Namespace(10).Items()
+        # The Windows Recycle Bin can be accessed as Namespace 10.
+        # The Items method will give me deleted items.
+        # $rb|get-membe
+        $rb = (New-Object -com shell.application).Namespace(10)
+        $SelectedItems = @() + $rb.Items()
 
         if ($OriginalPath) {
-            $SelectedItems = $SelectedItems | Where-Object { $_.GetFolder.Title -eq $OriginalPath }
+            $SelectedItems = $SelectedItems | Where-Object { $p = get-PathFromComObj $_; $p -eq $OriginalPath }
         }
 
         if ($OriginalPathRegex) {
-            $SelectedItems = $SelectedItems | Where-Object { $_.GetFolder.Title -match $OriginalPathRegex }
+
+            $SelectedItems = $SelectedItems | Where-Object {  $p = get-PathFromComObj $_; $p -match $OriginalPathRegex }
         }
 
         if ($SelectorScript) {
@@ -316,19 +363,121 @@ function Get-RecycledItem {
 .OUTPUTS
     System.__ComObject The recycle bin items
 .EXAMPLE
-    Get-RecycledItems -OriginalPath "C:\Users\Kevin\Testfile"
+    Get-RecycledItem -OriginalPath "C:\Testfile"
 .EXAMPLE
-    Get-RecycledItems -SortingCriteria "Size" -Descending -Top 5
+    Get-RecycledItem -SortingCriteria "Size" -Descending -Top 5
 .EXAMPLE
-    Get-RecycledItems -SelectorScript { $_.IsFolder -eq $true }
+    Get-RecycledItem -SelectorScript { $_.IsFolder -eq $true }
 .NOTES
-    Author: Kevin Holtkamp, kevinholtkamp26@gmail.com
-    LastEdit: 09.07.2022
+    https://jdhitsolutions.com/blog/powershell/7024/managing-the-recycle-bin-with-powershell/
 #>
+
+}
+
+
+$fldpath = $null
+# https://jdhitsolutions.com/blog/powershell/7024/managing-the-recycle-bin-with-powershell/
+Function ParseItem {
+    [cmdletbinding()]
+    Param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [object]$Item
+    )
+    #this function relies variables set in a parent scope
+    Process {
+        Write-Verbose "[$((Get-Date).TimeofDay) PROCESS] Processing $($item.path)"
+
+        # uncomment for troubleshooting
+        # $global:raw += $item
+        if ($item.IsFolder -AND ($item.type -notmatch "ZIP")) {
+            Write-Verbose "Enumerating $($item.name)"
+            Try {
+                #track the path name through each child object
+                if ($fldpath) {
+                    $fldpath = Join-Path -Path $fldPath -ChildPath $item.GetFolder.Title
+                }
+                else {
+                    $fldPath = $item.GetFolder.Title
+                }
+                #recurse through child items
+                $item.GetFolder().Items() | ParseItem
+                Remove-Variable -Name fldpath
+            }
+            Catch {
+                # Uncomment for troubleshooting
+                # $global:rbwarn += $item
+                Write-Warning ($item | Out-String)
+                Write-Warning $_.exception.message
+            }
+        }
+        else {
+            #sometimes the original location is stored in an extended property
+            $data = $item.ExtendedProperty("infotip").split("`n") | Where-Object { $_ -match "Original location" }
+            if ($data) {
+                $origPath = $data.split(":", 2)[1].trim()
+                $full = Join-Path -path $origPath -ChildPath $item.name -ErrorAction stop
+                Remove-Variable -Name data
+            }
+            else {
+                #no extended property so use this code to attemp to rebuild the original location
+                if ($item.parent.title -match "^[C-Zc-z]:\\") {
+                    $origPath = $item.parent.title
+                }
+                elseif ($fldpath) {
+                    $origPath = $fldPath
+                }
+                else {
+                    $test = $item.parent
+                    Write-Verbose "searching for parent on $($test.self.path)"
+                    do { $test = $test.parentfolder; $save = $test.title } until ($test.title -match "^[C-Zc-z]:\\" -OR $test.title -eq $save)
+                    $origPath = $test.title
+                }
+
+                $full = Join-Path -path $origPath -ChildPath $item.name -ErrorAction stop
+            }
+
+            [pscustomobject]@{
+                PSTypename       = "DeletedItem"
+                Name             = $item.name
+                Path             = $item.Path
+                Modified         = $item.ModifyDate
+                OriginalPath     = $origPath
+                OriginalFullName = $full
+                Size             = $item.Size
+                IsFolder         = $item.IsFolder
+                Type             = $item.Type
+            }
+        }
+    } #process
+}
+
+function Show-RecycleBinSize {
+    $shell = New-Object -com shell.application
+    $rb = $shell.Namespace(10)
+    $fldpath = $null
+    $bin = $rb.items() | ParseItem
+
+    $o = $bin | Measure-Object -Property size -sum | Select-Object Count, Sum
+    Write-Host "Tocal Count: $($o.Count) TotalSize: $([math]::Round($o.Sum/1GB, 3))G"
+
+    $all = $bin |
+    # disk symbol
+    group-object -Property { $_.path.substring(0, 2) } |
+    Select-Object -Property Name, Count, @{
+        Name = "SizeMB"; Expression = { [Math]::Round(($_.group | measure-object -Property size -sum).sum / 1MB, 3) }
+    }
+    $all
+
 }
 
 Set-Alias ris Remove-ItemSafely
 Set-Alias trash Remove-ItemSafely
+Set-Alias rri Restore-RecycledItem
+Set-Alias gri Get-RecycledItem
+Set-Alias crb Clear-RecycleBin
+Set-Alias shrs Show-RecycleBinSize
+
+Export-ModuleMember -Function Show-RecycleBinSize
 Export-ModuleMember -Function Get-RecycledItem
-Export-ModuleMember -Function Restore-RecycledItem -Alias ris,trash
+Export-ModuleMember -Function Restore-RecycledItem
 # Clear-RecycleBin is defined in  Microsoft.PowerShell.Management
