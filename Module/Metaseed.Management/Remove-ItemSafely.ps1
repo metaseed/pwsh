@@ -377,6 +377,8 @@ function Get-RecycledItem {
 
 $fldpath = $null
 # https://jdhitsolutions.com/blog/powershell/7024/managing-the-recycle-bin-with-powershell/
+
+# note when try to get size of larger file in recyclebin the size is not right. i.e. the vhdx file in a folder inside the bin
 Function ParseItem {
     [cmdletbinding()]
     Param(
@@ -414,6 +416,7 @@ Function ParseItem {
             #sometimes the original location is stored in an extended property
             $data = $item.ExtendedProperty("infotip").split("`n") | Where-Object { $_ -match "Original location" }
             if ($data) {
+                Write-Verbose "infotip: $data"
                 $origPath = $data.split(":", 2)[1].trim()
                 $full = Join-Path -path $origPath -ChildPath $item.name -ErrorAction stop
                 Remove-Variable -Name data
@@ -436,7 +439,8 @@ Function ParseItem {
                 $full = Join-Path -path $origPath -ChildPath $item.name -ErrorAction stop
             }
 
-            [pscustomobject]@{
+
+            $obj = [pscustomobject]@{
                 PSTypename       = "DeletedItem"
                 Name             = $item.name
                 Path             = $item.Path
@@ -447,11 +451,15 @@ Function ParseItem {
                 IsFolder         = $item.IsFolder
                 Type             = $item.Type
             }
+            Write-Verbose "item: $($obj)"
+            return $obj
         }
     } #process
 }
 
 function Show-RecycleBinSize {
+    [cmdletbinding()]
+    Param()
     $shell = New-Object -com shell.application
     $rb = $shell.Namespace(10)
     $fldpath = $null

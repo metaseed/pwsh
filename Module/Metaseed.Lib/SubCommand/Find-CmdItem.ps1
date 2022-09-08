@@ -39,12 +39,17 @@ function Find-CmdItem {
     [string]
     $Directory,
     [string]$Command,
-    [string]$filter = '*.ps1'
+    [string]$filter = '*.ps1',
+    [scriptblock]$updateScript
   )
 
   # dynamic global variable
   $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter
-  if (!$cacheValue -or !$cacheValue[$Command]) {
+
+  if($updateScript) {
+    $update = Invoke-Command -ScriptBlock $updateScript -ArgumentList $cacheValue, $Command
+  }
+  if (!$cacheValue -or !$cacheValue[$Command] -or !(test-path $cacheValue[$Command]) -or $update) {
     $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter -update
   }
 

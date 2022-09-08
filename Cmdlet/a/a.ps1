@@ -43,9 +43,9 @@ end {
 
   $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe'
 
-  $cacheValue = Get-CmdsFromCacheAutoUpdate 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
-  if ($cacheValue) {
-    $handler = $cacheValue[$app]
+  $HandlerCache = Get-CmdsFromCacheAutoUpdate 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
+  if ($HandlerCache) {
+    $handler = $HandlerCache[$app]
     if ($handler) {
       & $handler $file $Remaining
       return

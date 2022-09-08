@@ -54,6 +54,7 @@ function Install-FromGithub {
     [scriptblock]$getLocalVer = {
       [CmdletBinding()]
       param()
+
       $appName = $application -eq '' ? $repo : $application
       $versionLocal = $null
       $it = @(gci $toLocation -Filter "$appName*")
@@ -124,6 +125,7 @@ function Install-FromGithub {
       [CmdletBinding()]
       param($downloadedFilePath, $ver_online)
 
+      Write-Host $downloadedFilePath
       $appName = $application -eq '' ? $repo : $application
       # ignore error, may not exist
       ri "$env:temp\temp" -Force -Recurse -ErrorAction Ignore
@@ -131,7 +133,7 @@ function Install-FromGithub {
       gci $toLocation -Filter "$appName*" |
       Remove-Item -Recurse -Force
 
-      if ($downloadedFilePath -match '\.exe') {
+      if ($downloadedFilePath -match '\.exe$') {
         Move-Item "$_" -Destination $toLocation -Force
         return $toLocation
       }
