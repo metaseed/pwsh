@@ -9,4 +9,5 @@
 . $PSScriptRoot\PSReadlineConfig.ps1
 . $PSScriptRoot\last-output.ps1
 . $PSScriptRoot\terminal\terminal.ps1
+. $PSScriptRoot\PS-GuiCompletion.ps1
 # }

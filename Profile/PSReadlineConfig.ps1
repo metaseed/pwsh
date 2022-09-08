@@ -43,6 +43,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
     # https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/Completion.cs
     # https://github.dev/nightroman/PS-GuiCompletion
+    # https://powershellone.wordpress.com/2015/10/07/expanding-aliases-in-powershell-ise-or-any-powershell-file/
 
     [Microsoft.PowerShell.PSConsoleReadLine]::TabCompleteNext()
 }
