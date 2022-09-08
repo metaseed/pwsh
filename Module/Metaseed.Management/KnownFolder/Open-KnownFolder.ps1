@@ -1,6 +1,6 @@
 # https://www.winhelponline.com/blog/shell-commands-to-access-the-special-folders/
 # https://www.winhelponline.com/blog/windows-10-shell-folders-paths-defaults-restore/
-function Open-ShellFolder {
+function Open-KnownFolder {
   param (
     [Parameter(Position = 0)]
     $FolderName
@@ -38,7 +38,7 @@ function get-shellFolders($wordToComplete) {
 
   return $folders
 }
-Register-ArgumentCompleter -CommandName 'Open-ShellFolder' -ParameterName 'FolderName' -ScriptBlock {
+Register-ArgumentCompleter -CommandName 'Open-KnownFolder' -ParameterName 'FolderName' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
   $folders = get-shellFolders $wordToComplete
   return $folders
