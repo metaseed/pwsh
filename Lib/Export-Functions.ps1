@@ -30,6 +30,7 @@ function Export-Functions {
     param (
         $path
     )
+    # Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
     $All = Get-AllCmdFiles $path
     write-verbose "Dot source the files"
     foreach ($import in $All) {

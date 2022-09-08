@@ -7,7 +7,7 @@ Assert-Admin
 # https://github.com/Bromeego/Clean-Temp-Files/blob/master/Clear-TempFiles.ps1
 # Set Date for Log
 $LogDate = Get-Date -Format "MM-d-yy-HHmm"
-    
+
 # Set Deletion Date for Downloads Folder
 $DelDownloadsDate = (Get-Date).AddDays(-20)
 $DelTempDate = (Get-Date).AddDays(-30)
@@ -52,7 +52,7 @@ Start-Transcript -Path "$CleanupLog"
 Write-Action "Getting the list of Users"
 $UsersPath = split-path $env:USERPROFILE
 $Users = Get-ChildItem "$UsersPath" | Select-Object Name
-$users = $Users.Name 
+$users = $Users.Name
 
 # Begin!
 Write-Step "Clear Browsers Cache..."
@@ -69,7 +69,7 @@ Foreach ($user in $Users) {
     Remove-Item -Path "$UsersPath\$user\AppData\Local\Mozilla\Firefox\Profiles\*\chromeappsstore.sqlite" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     Remove-Item -Path "$UsersPath\$user\AppData\Local\Mozilla\Firefox\Profiles\*\OfflineCache\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
   }
-     
+
 }
 # Clear Google Chrome
 Foreach ($user in $Users) {
@@ -87,16 +87,16 @@ Foreach ($user in $Users) {
     # Check Chrome Profiles. It looks as though when creating profiles, it just numbers them Profile 1, Profile 2 etc.
     $Profiles = Get-ChildItem -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data" | Select-Object Name | Where-Object Name -Like "Profile*"
     foreach ($Account in $Profiles) {
-      $Account = $Account.Name 
+      $Account = $Account.Name
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\Cache\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-      Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\Cache2\entries\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose 
+      Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\Cache2\entries\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\Cookies" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\Media Cache" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\Cookies-Journal" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Google\Chrome\User Data\$Account\JumpListIconsOld" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     }
   }
-     
+
 }
 
 # Clear Internet Explorer & Edge
@@ -106,7 +106,7 @@ Foreach ($user in $Users) {
   Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Windows\INetCache\* " -Recurse -Force -ErrorAction SilentlyContinue -Verbose
   Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Windows\WebCache\* " -Recurse -Force -ErrorAction SilentlyContinue -Verbose
 }
-   
+
 
 # Clear Edge Chromium
 taskkill /F /IM msedge.exe
@@ -121,13 +121,13 @@ Foreach ($user in $Users) {
     #Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\Default\JumpListIconsOld" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     # Comment out the following line to remove the Edge Write Font Cache too.
     # Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\Default\EdgeDWriteFontCache" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-        
+
     # Check Edge Profiles. It looks as though when creating profiles, it just numbers them Profile 1, Profile 2 etc.
     $Profiles = Get-ChildItem -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data" | Select-Object Name | Where-Object Name -Like "Profile*"
     foreach ($Account in $Profiles) {
-      $Account = $Account.Name 
+      $Account = $Account.Name
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\$Account\Cache\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-      #Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\$Account\Cache2\entries\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose 
+      #Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\$Account\Cache2\entries\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\$Account\Cookies" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       #Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\$Account\Media Cache" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Edge\User Data\$Account\Cookies-Journal" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
@@ -146,13 +146,13 @@ Foreach ($user in $Users) {
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Chromium\User Data\Default\Application Cache" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     }
   }
-    
+
   # Clear Opera
   Foreach ($user in $Users) {
     if (Test-Path "$UsersPath\$user\AppData\Local\Opera Software") {
       Write-SubStep "Clearing Opera Cache for user $user"
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Opera Software\Opera Stable\Cache\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-    } 
+    }
   }
 
   # Clear Yandex
@@ -165,7 +165,7 @@ Foreach ($user in $Users) {
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Yandex\YandexBrowser\User Data\Default\Pepper Data\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Yandex\YandexBrowser\User Data\Default\Application Cache\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
       Remove-Item -Path "$UsersPath\$user\AppData\Local\Yandex\YandexBrowser\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-    } 
+    }
   }
 
   # Clear User Temp Folders
@@ -195,10 +195,10 @@ Foreach ($user in $Users) {
 # the default folder for Microsoft Internet Information Services (IIS)
 if (Test-Path "C:\inetpub\logs\LogFiles\") {
   Write-Step "Clearing Inetpub Logs Folder that older than $(((get-date) - $DelInetLogDate).Days)"
-  Get-ChildItem -Path "C:\inetpub\logs\LogFiles\" | 
+  Get-ChildItem -Path "C:\inetpub\logs\LogFiles\" |
   Where-Object LastWriteTime -LT $DelInetLogDate |
   % {
-    Remove-Item $_ -Recurse -Force -ErrorAction SilentlyContinue -Verbose 
+    Remove-Item $_ -Recurse -Force -ErrorAction SilentlyContinue -Verbose
   }
 }
 
@@ -206,11 +206,11 @@ $Users | % {
   $user = $_
   $UserDownloads = "$UsersPath\$user\Downloads"
   if (test-path $UserDownloads) {
-    $d = Get-ChildItem -Path "$UserDownloads" -Force 
+    $d = Get-ChildItem -Path "$UserDownloads" -Force
     if ($d.Count -gt 0) {
       Write-Step "Deleting files older than $(((get-date) - $DelDownloadsDate).Days) days from User($user) Downloads folder"
       $d |
-      Where-Object LastWriteTime -LT $DelDownloadsDate | 
+      Where-Object LastWriteTime -LT $DelDownloadsDate |
       % {
         Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
       }
@@ -219,7 +219,7 @@ $Users | % {
 }
 
 # Delete Windows Updates Folder (SoftwareDistribution) and reset the Windows Update Service
-if ($CleanWU -eq 'Y') { 
+if ($CleanWU -eq 'Y') {
   Write-Step "Restarting Windows Update Service and Deleting SoftwareDistribution Folder"
   # Stop the Windows Update service
   try {
@@ -227,7 +227,7 @@ if ($CleanWU -eq 'Y') {
   }
   catch {
     $ErrorMessage = $_.Exception.Message
-    Write-Warning "$ErrorMessage" 
+    Write-Warning "$ErrorMessage"
   }
   # Delete the folder
   Remove-Item "$env:windir\SoftwareDistribution" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
@@ -239,18 +239,18 @@ if ($CleanWU -eq 'Y') {
   }
   catch {
     $ErrorMessage = $_.Exception.Message
-    Write-Warning "$ErrorMessage" 
+    Write-Warning "$ErrorMessage"
   }
 }
 
 # Empty Recycle Bin
 Write-Step "Cleaning Recycle Bin"
-$objShell = New-Object -ComObject Shell.Application   
-$objFolder = $objShell.Namespace(0xA)   
+$objShell = New-Object -ComObject Shell.Application
+$objFolder = $objShell.Namespace(0xA)
 $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }
-    
+
 # $RecycleBin = "C:\`$Recycle.Bin"
-# $BinFolders = Get-ChildItem $RecycleBin -Directory -Force -ErrorAction SilentlyContinue 
+# $BinFolders = Get-ChildItem $RecycleBin -Directory -Force -ErrorAction SilentlyContinue
 
 # Foreach ($Folder in $BinFolders) {
 #   # Translate the SID to a User Account
@@ -284,14 +284,14 @@ Write-Step "Cleaning C:\temp and c:\tmp folders"
 Write-SubStep "clearing C:\temp"
 # Listing all files in C:\Temp\* recursively, using Force parameter displays hidden files.
 Get-ChildItem -Path "C:\Temp\*"  -Force |
-? LastWriteTime -LT $DelTempDate | 
+? LastWriteTime -LT $DelTempDate |
 % {
   Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
 }
 
 Write-SubStep "clearing C:\tmp"
 Get-ChildItem -Path "C:\tmp\*" -Recurse -Force |
-? LastWriteTime -LT $DelTempDate | 
+? LastWriteTime -LT $DelTempDate |
 % {
   Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
 }
@@ -301,14 +301,14 @@ Write-Step "Clearing Application temp Folders..."
 Foreach ($user in $Users) {
   $officecache = "$UsersPath\$user\AppData\Local\Microsoft\Office\16.0\GrooveFileCache"
   if (Test-Path $officecache) {
-    $OldFiles = Get-ChildItem -Path "$officecache\" -ErrorAction SilentlyContinue 
+    $OldFiles = Get-ChildItem -Path "$officecache\" -ErrorAction SilentlyContinue
     if ($oldFiles.Count -gt 0) {
       Write-SubStep "Cleaning $officecache"
       $OldFiles |
       Where-Object LastWriteTime -LT $DelOfficeCacheDate |
       Remove-Item -Path "$officecache\$_" -Force -Recurse -ErrorAction SilentlyContinue -Verbose
     }
-  } 
+  }
 }
 # Delete Microsoft Teams Previous Version files
 Foreach ($user in $Users) {
@@ -316,7 +316,7 @@ Foreach ($user in $Users) {
     Write-SubStep "Clearing Teams Previous version for user $user"
     Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Teams\previous\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
     Remove-Item -Path "$UsersPath\$user\AppData\Local\Microsoft\Teams\stage\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-  } 
+  }
 }
 
 # Delete SnagIt Crash Dump files
@@ -324,7 +324,7 @@ Foreach ($user in $Users) {
   if (Test-Path "$UsersPath\$user\AppData\Local\TechSmith\SnagIt") {
     Write-SubStep "Clearing SnagIt Crash Dumps for user $user"
     Remove-Item -Path "$UsersPath\$user\AppData\Local\TechSmith\SnagIt\CrashDumps\*" -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-  } 
+  }
 }
 
 # Clear Dropbox
@@ -344,7 +344,7 @@ if (Test-Path "C:\WindowsAzure\Logs") {
   % {
     Remove-Item -Path $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
   }
-} 
+}
 # Delete files older than 30 days from LFSAgent Log folder https://www.lepide.com/
 if (Test-Path "$env:windir\LFSAgent\Logs") {
   Write-SubStep "Deleting files older than 30 days from LFSAgent Log folder"
@@ -353,7 +353,7 @@ if (Test-Path "$env:windir\LFSAgent\Logs") {
   % {
     Remove-Item -Path $_ -Recurse -Force -ErrorAction SilentlyContinue -Verbose
   }
-}         
+}
 
 # Delete SOTI MobiController Log files older than 1 year
 if (Test-Path "C:\Program Files (x86)\SOTI\MobiControl") {
@@ -384,7 +384,7 @@ Write-Notice "Before: $Before"
 Write-Notice "After: $After"
 
 # Another reminder about running Windows update if needed as it would get lost in all the scrolling text.
-if ($CleanWU -eq 'Y') { 
+if ($CleanWU -eq 'Y') {
   Write-Notic "You can rerun Windows Update to pull down the latest updates "
 }
 
@@ -395,8 +395,10 @@ Invoke-Item $Cleanuplog
 @(
   # dmp files
   "$env:windir\LiveKernelReports",
+  # win upgrade
   "$env:windir.old",
-  "$env:windir\Downloaded Program Files" # activex of ie
+  # activex of ie
+  "$env:windir\Downloaded Program Files"
 )|% {
 Remove-Item -Path "$_\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
 }

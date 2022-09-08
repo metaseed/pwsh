@@ -207,3 +207,6 @@ systemInfo.exe
 ## pwsh webs
 https://ironscripter.us/
 https://jdhitsolutions.com/blog/
+
+## open recycle bin
+start shell:RecycleBinFolder

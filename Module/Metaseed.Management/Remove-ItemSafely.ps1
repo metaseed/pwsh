@@ -478,14 +478,19 @@ function Show-RecycleBinSize {
 
 }
 
+function open-recycleBin {
+    start shell:RecycleBinFolder
+}
+
 Set-Alias ris Remove-ItemSafely
 Set-Alias trash Remove-ItemSafely
 Set-Alias rri Restore-RecycledItem
 Set-Alias gri Get-RecycledItem
 Set-Alias crb Clear-RecycleBin
+Set-Alias oprb open-recycleBin
 Set-Alias shrs Show-RecycleBinSize
 
-Export-ModuleMember -Function Show-RecycleBinSize
-Export-ModuleMember -Function Get-RecycledItem
-Export-ModuleMember -Function Restore-RecycledItem
+Export-ModuleMember -Function Show-RecycleBinSize, Get-RecycledItem, Restore-RecycledItem, open-recycleBin
+
 # Clear-RecycleBin is defined in  Microsoft.PowerShell.Management
+# open recycleBin: start shell:RecycleBinFolder
