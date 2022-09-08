@@ -1,4 +1,4 @@
-function test-word {
+function Test-WordToComplete {
   [CmdletBinding()]
   param (
     [Parameter()]
@@ -11,8 +11,8 @@ function test-word {
     [float]
     $oderBase = 0
   )
-  if ($null -eq $wordToComplete -or $wordToComplete -eq "") {
-    return $false
+  if ($null -eq $wordToComplete -or $wordToComplete.length -le 1) {
+    return $true
   }
   # start with
   elseif ($obj.Name.StartsWith($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
@@ -24,9 +24,6 @@ function test-word {
   elseif ($obj.Name.Contains($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
     $obj.Order = ($oderbase + 1)
     return $true
-  }
-  elseif ($wordToComplete.length -le 1) {
-    return $false
   }
   # start with the first char and has the remaining chars of the word
   elseif ($obj.Name -like (($wordToComplete -split '' -join '*').Substring(1))) {
@@ -75,12 +72,12 @@ function Complete-Command {
       $dashIndex = $_.Name.IndexOf('-');
       # command name do not has '-'
       if ($dashIndex -eq -1) {
-        return test-word $_ $wordToComplete 1
+        return Test-WordToComplete $_ $wordToComplete 1
       }
 
       # command name has '-'
       if ($wordToComplete.length -eq 1) {
-        return test-word $_ $wordToComplete
+        return Test-WordToComplete $_ $wordToComplete
       }
       elseif ($wordToComplete.length -eq 2) {
         $verb = $_.Name.Substring(0, $dashIndex);
@@ -90,7 +87,7 @@ function Complete-Command {
           return $r
         }
         else {
-          return test-word $_ $wordToComplete 1
+          return Test-WordToComplete $_ $wordToComplete 1
         }
       }
       else {
@@ -112,7 +109,7 @@ function Complete-Command {
         # we do not process verb letters great than 2
         # so the verb part should be 1 or 2 letters
         # but we still do further search consecutive letters, so if we input 'pullrequest' we could get all related commands
-        return test-word $_ $wordToComplete 1
+        return Test-WordToComplete $_ $wordToComplete 1
       }
     } |
     sort -Property Order |
@@ -121,3 +118,5 @@ function Complete-Command {
 
   return $cmds
 }
+
+Export-ModuleMember Test-WordToComplete
