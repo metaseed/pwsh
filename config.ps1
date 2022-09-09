@@ -58,6 +58,12 @@ if(-not $modPath) {
 [System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
 $env:MS_PWSH = $PSScriptRoot
 write-host "set env:MS_PWSH to $($env:MS_PWSH)"
+
+# use latest feature of new version
+Install-Module PSReadline -force
+$options = Get-PSReadLineOption
+$options.ListPredictionColor = "`e[90m" # original value "`e[33m"
+
 # rebuilds the command cache and re-examines all modules in all PowerShell default locations
 # so the dynamic module-command would work
 Get-Module -ListAvailable -Refresh > $null

@@ -38,6 +38,8 @@ function get-shellFolders($wordToComplete) {
 
   return $folders
 }
+
+Set-Alias okf Open-KnownFolder
 Register-ArgumentCompleter -CommandName 'Open-KnownFolder' -ParameterName 'FolderName' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
   $folders = get-shellFolders $wordToComplete

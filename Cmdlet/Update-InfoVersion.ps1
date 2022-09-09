@@ -13,7 +13,7 @@ param (
 )
 Write-SubStep 'try to find info.json...'
 $info = Find-FromParent 'info.json'
-Write-Notice "find info.json at: $($info.FullName)"
+Write-Host "find info.json at: $($info.FullName)"
 
 Write-SubStep 'bump version...'
 Write-Action 'get version info from info.json...'
@@ -49,7 +49,7 @@ Write-Notice "new $newVer"
 
 Write-SubStep 'commit changes...'
 Write-Execute "git status"
-# code $info # it will bring code as active 
+# code $info # it will bring code as active
 # Confirm-Continue
 Write-Execute "git add $info"
 Write-Execute "git commit -m 'bump $newVer'"

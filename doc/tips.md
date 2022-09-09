@@ -210,3 +210,6 @@ https://jdhitsolutions.com/blog/
 
 ## open recycle bin
 start shell:RecycleBinFolder
+
+## show psreadline helper
+Get-PSReadlineKeyHandler
