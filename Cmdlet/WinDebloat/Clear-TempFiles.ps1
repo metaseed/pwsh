@@ -399,11 +399,20 @@ Invoke-Item $Cleanuplog
   "$env:windir.old",
   # activex of ie
   "$env:windir\Downloaded Program Files"
-)|% {
-Remove-Item -Path "$_\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
+) | % {
+  Remove-Item -Path "$_\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
+}
+# yarn cache clean
+if (gcm yarn -ErrorAction Ignore) {
+  yarn cache clean
 }
 
 
 # Stop Script
 Stop-Transcript
 # }
+
+# config sysmon
+# https://fwhibbit.es/en/sysmon-the-big-brother-of-windows-and-the-super-sysmonview
+# log size: 2M
+# wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2097152

@@ -17,4 +17,4 @@ Clear-Host
 
 # $InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
 . $PSScriptRoot\profile\main.ps1
-. $PSScriptRoot\update.ps1 -days 2
+. $PSScriptRoot\update.ps1 -days 3

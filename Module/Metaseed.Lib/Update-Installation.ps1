@@ -10,7 +10,7 @@ function Test-Installation {
         [switch]
         $Confirm
     )
-    
+
     $infoLocal = Get-Content $LocalInfoPath | ConvertFrom-Json
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $infoRemote = iwr $RemoteInfoUrl -TimeoutSec 10 | ConvertFrom-Json
@@ -18,6 +18,19 @@ function Test-Installation {
     $lv = New-Object Version($infoLocal.version)
     return $rv -gt $lv ? $infoLocal.version : $false
 }
+
+function Test-Update([int]$days, [string]$file) {
+    if ($days -gt 0) {
+        $_days = ((Get-Date) - (gi $file).LastWriteTime).Days
+        if ($_days -lt $days) {
+            return $false
+        }
+        # update last write time so we do update $day later
+        (gi $file).LastWriteTime = Get-Date
+    }
+    return $true
+}
+
 function Update-Installation {
     param (
         # local info.json path
@@ -30,23 +43,19 @@ function Update-Installation {
         # install.ps1 path
         [string]
         $InstallUrl,
-        [int]$days = 0, 
+        [int]$days = 0,
         [switch]
         $Confirm
     )
     # .local file only exist local and igored in .gitignore file; used to prevent upgrade
     $localFolder = Split-Path $localInfoPath
     $localFile = "$localFolder/.local"
-    if (Test-Path $localFile) { 
-        return 
+    if (Test-Update $days $localFile) {
+        return
     }
 
-    if ($days -gt 0) { 
-        $_days = ((Get-Date) - (gi $localInfo).LastWriteTime).Days
-        if ($_days -lt $days) {
-            return
-        }
-    }
+    $update = Test-Update $days $LocalInfoPath
+    if (!$update) { return }
 
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {
@@ -60,7 +69,8 @@ function Update-Installation {
         write-host -f Green "> Upgrading ($ver) from '$RemoteInfoUrl'..."
         # -UseBasicParsing for pwsh 5
         iwr -UseBasicParsing $InstallUrl | iex
-        (gi $localInfo).LastWriteTime = Get-Date
     }
 }
+
+Export-ModuleMember Test-Update
 
