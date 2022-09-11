@@ -1,6 +1,7 @@
 # make and change directory
 function Set-NewLocation {
   [CmdletBinding()]
+  [alias("snl")]
   param(
       [Parameter(Mandatory = $true)]
       [string]
@@ -21,4 +22,4 @@ function Set-NewLocation {
   Set-Location -Path $Path
 }
 
-Set-Alias snl Set-NewLocation
+# Set-Alias snl Set-NewLocation

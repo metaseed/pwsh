@@ -1,6 +1,11 @@
 <#
+.description
 return a FileInfo object for the given file name.
 then you can use .FullName to get the string path or "$path" to get fullpath
+
+.example
+Find-FromParent .git 'M:\script\pwsh'
+
 #>
 function Find-FromParent {
     [CmdletBinding()]
@@ -30,5 +35,3 @@ function Find-FromParent {
     return;
   }
 }
-
-# Find-FromParent .git 'M:\script\pwsh'

@@ -22,16 +22,18 @@ function Set-Constant {
       About_Functions_Advanced_Parameters
   #>
   [CmdletBinding()]
+  [alias('const')]
   param(
     [Parameter(Mandatory = $true, Position = 0)] [string] $Name,
     [Parameter(Mandatory = $true, Position = 1)] [char] [ValidateSet("=")] $Link,
     [Parameter(Mandatory = $true, Position = 2)] [object] $Value
   )
+
   if ((Get-PSCallStack)[1].Command -eq 'Metaseed.Utility.psm1') {
     # called from the Utility module
     Set-Variable -n $Name -val $Value -option Constant
   }
-  else { 
+  else {
     $var = New-Object System.Management.Automation.PSVariable -ArgumentList @(
       $Name, $Value, [System.Management.Automation.ScopedItemOptions]::Constant
     )
@@ -42,18 +44,4 @@ function Set-Constant {
 
 }
 
-function Get-CallerVariable {
-  param([Parameter(Position=1)][string]$Name)
-  $PSCmdlet.SessionState.PSVariable.GetValue($Name)
-}
-function Set-CallerVariable {
-  param(
-      [Parameter(ValueFromPipeline)][string]$Value,
-      [Parameter(Position=1)]$Name
-  )
-  process { $PSCmdlet.SessionState.PSVariable.Set($Name,$Value)}
-}
-
-Export-ModuleMember Get-CallerVariable, Set-CallerVariable
-
-Set-Alias const Set-Constant
+# Set-Alias const Set-Constant

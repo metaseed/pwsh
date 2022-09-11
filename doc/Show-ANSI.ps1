@@ -7,6 +7,7 @@
 # https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
 # ansi text good document: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 # ANSI/VT100 escape sequences can be used in every programming languages.
+
 # `e: escape character 27(decimal),033(oct) 0x1B(hex)
 # [: introducer
 # ;: argument seperator
@@ -86,12 +87,12 @@ foreach ($bright in 0, 1) {
 
 $asciiArt = @"
 Blink
-     __ __  ____ ___________   __             
+     __ __  ____ ___________   __
   __/ // /_/ __ \ ___/__  / | / /___ _      __
  /_  _  __/ /_/ \__ \  / /  |/ / __ \ | /| / /
-/_  _  __/ ____/__/ / / / /|  / /_/ / |/ |/ / 
- /_//_/ /_/   /____/ /_/_/ |_/\____/|__/|__/  
-                                              
+/_  _  __/ ____/__/ / / / /|  / /_/ / |/ |/ /
+ /_//_/ /_/   /____/ /_/_/ |_/\____/|__/|__/
+
 "@
 
 Write-Output "`e[5;36m$asciiArt`e[0m";
@@ -118,7 +119,7 @@ foreach ($clbg in 40..47 + 100..107) {
 
 write-host "cursor movement"
 <#
-{n}A: UP 
+{n}A: UP
 {n}B: Down
 {n}C: Right
 {n}D: Left
