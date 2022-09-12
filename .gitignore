@@ -5,7 +5,6 @@ obj
 bin
 Metaseed.Terminal/bin/*
 ModuleProj/song.accdb
-.local
 Module/Metaseed.Utility/Pack/resource_hacker/ResourceHacker.ini
 Module/Metaseed.Utility/Pack/resource_hacker/samples/
 Module/Metaseed.Utility/handle

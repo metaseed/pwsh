@@ -47,15 +47,20 @@ function Update-Installation {
         [switch]
         $Confirm
     )
-    # .local file only exist local and igored in .gitignore file; used to prevent upgrade
+    # if in a git foler, we are developers, pull the latest code
     $localFolder = Split-Path $localInfoPath
-    $localFile = "$localFolder/.git"
-    if (Test-Update $days $localFile) {
-        return
-    }
 
     $update = Test-Update $days $LocalInfoPath
     if (!$update) { return }
+
+    $localFile = "$localFolder/.git"
+    if (Test-Path $localFile) {
+        push-location $localFolder
+        git pull --rebase
+        if(!$?) {write-warning "error when pull latest code to $localFolder, do you have changes to merge?"}
+        Pop-Location
+        return
+    }
 
     $ver = Test-Installation $LocalInfoPath $RemoteInfoUrl
     if ($ver) {

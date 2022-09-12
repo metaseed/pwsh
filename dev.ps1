@@ -3,7 +3,7 @@
 param (
   # clone the source code into the pwsh sub-folder of the folder
   [Parameter()]
-  [string]$PWSHFolder
+  [string]$PWSHParentFolder
 )
 
 # install pwsh 7
@@ -13,28 +13,42 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
   return
 }
 
-if (Test-Path $PWSHFolder -PathType leaf) {
-  write-error "a file $PWSHFolder already exists, please remove it first or try a different folder"
+if (Test-Path $PWSHParentFolder -PathType leaf) {
+  write-error "a file $PWSHParentFolder already exists, please remove it first or try a different folder"
   return
 }
 
 
-if (!(Test-Path $PWSHFolder -PathType Container)) {
-  write-host "$PWSHFolder does not exist, create it..."
-  New-Item -ItemType Directory -Path $PWSHFolder -Force | Out-Null
+if (!(Test-Path $PWSHParentFolder -PathType Container)) {
+  write-host "$PWSHParentFolder does not exist, create it..."
+  New-Item -ItemType Directory -Path $PWSHParentFolder -Force | Out-Null
 }
 
-try {
-  $root = "$PWSHFolder\pwsh"
+$root = "$PWSHParentFolder\pwsh"
+if (Test-Path $root -type Container) {
+  try {
+    Push-Location $root
+    $status = git status
+    $dirtyMsg = $status -match 'modified:|Untracked files:|Your branch is ahead of'
+    if ($dirtyMsg.length -gt 0) {
+      $decision = $Host.UI.PromptForChoice('Override Local Changes?', "You have local changes in $root?,`ndo you want to continue to forcely override these changes?", @('&Yes', '&No'), 0)
+      if ($decision -eq 0) {
+        Remove-Item -force -Recurse "$root"
+      }
+    }
+  }
+  finally {
+    Pop-Location
+  }
+}
 
-  Push-Location $PWSHFolder
+
+try {
+  Push-Location $PWSHParentFolder
   git clone http://github.com/metasong/pwsh.git --depth 1
 
   . "$root/config.ps1"
-  # if (! (test-path "$root/.local")) {
-  #   write-host "creating .local file"
-  #   New-Item -itemtype file -Force -Path "$root/.local" | Out-Null
-  # }
+
   code $root
   code $PROFILE.CurrentUserAllHosts
 }
