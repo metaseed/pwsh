@@ -49,7 +49,7 @@ function Update-Installation {
     )
     # .local file only exist local and igored in .gitignore file; used to prevent upgrade
     $localFolder = Split-Path $localInfoPath
-    $localFile = "$localFolder/.local"
+    $localFile = "$localFolder/.git"
     if (Test-Update $days $localFile) {
         return
     }

@@ -31,10 +31,10 @@ try {
   git clone http://github.com/metasong/pwsh.git --depth 1
 
   . "$root/config.ps1"
-  if (! (test-path "$root/.local")) {
-    write-host "creating .local file"
-    New-Item -itemtype file -Force -Path "$root/.local" | Out-Null
-  }
+  # if (! (test-path "$root/.local")) {
+  #   write-host "creating .local file"
+  #   New-Item -itemtype file -Force -Path "$root/.local" | Out-Null
+  # }
   code $root
   code $PROFILE.CurrentUserAllHosts
 }

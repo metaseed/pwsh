@@ -4,8 +4,8 @@ function Get-CallerVariable {
   $PSCmdlet.SessionState.PSVariable.GetValue($Name)
 }
 
-[cmdletbinding()]
 function Set-CallerVariable {
+  [Cmdletbinding()]
   param(
       [Parameter(ValueFromPipeline)][string]$Value,
       [Parameter(Position=1)]$Name

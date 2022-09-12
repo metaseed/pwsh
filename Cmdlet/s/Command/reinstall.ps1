@@ -1,6 +1,9 @@
-$localFile = "$__RootFolder/.local"
-if (Test-Path $localFile) {
-  Write-Host "find .local file in root dir, stop update!" -ForegroundColor red
+$localFile = "$__RootFolder/.git"
+if (Test-Path $localFile -type Container) {
+  Write-Host "find we are in the cloned git, will pull the latest code!" -ForegroundColor Yellow
+  Push-Location $__RootFolder
+  git pull
+  Pop-Location
   return
 }
 
