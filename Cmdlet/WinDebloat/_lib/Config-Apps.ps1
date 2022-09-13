@@ -22,10 +22,10 @@ if ($vm) {
     "Microsoft.Xbox.TCUI"               # Xbox Live API communication (Xbox Dependency)
   )
   # ? { $_.PackageName -match "Microsoft.Xbox" } |
-  Uninstall-Appx $XboxApps 
+  Uninstall-Appx $XboxApps
 
   # remove your phone
-  Uninstall-Appx @('*FeedbackHub*', '*YourPhone*') 
+  Uninstall-Appx @('*FeedbackHub*', '*YourPhone*')
 
   @(
     'Microsoft.WindowsCamera',
@@ -48,7 +48,6 @@ if ($vm) {
     'Microsoft.MicrosoftStickyNotes',
     'Microsoft.GetHelp'
   ) | Uninstall-Appx
-
 
 }
 else {

@@ -7,6 +7,7 @@ param (
 
 . $PSScriptRoot\..\_lib\Utils.ps1
 
+& $PSScriptRoot\_lib\Config-PowerOptions.ps1 $vm
 & $PSScriptRoot\_lib\Config-Apps.ps1 $vm
 & $PSScriptRoot\_lib\Config-Services.ps1 $vm
 & $PSScriptRoot\_lib\Config-Shell.ps1 $vm
