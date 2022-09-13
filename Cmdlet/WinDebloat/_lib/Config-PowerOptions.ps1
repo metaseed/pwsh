@@ -28,8 +28,8 @@ else {
   powercfg /change  hibernate-timeout-dc 60
   powercfg /change  hibernate-timeout-ac 0
   # disk
-  # disk-timeout-ac default is 20
-  # disk-timeout-dc default is 10
+  # powercfg /change disk-timeout-ac default is 20
+  # powercfg /change disk-timeout-dc default is 10
 
   ## power buttons actions
   ## 0: do nothing; 1: sleep; 2: hibernate; 3: shutdown
