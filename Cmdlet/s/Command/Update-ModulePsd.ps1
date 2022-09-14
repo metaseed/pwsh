@@ -9,7 +9,7 @@ param (
 if (!($module)) {
   # too slow so only do when all modules
   Get-Module -ListAvailable -Refresh > $null
-  gci "$env:MS_PWSH\Module" -Directory | % { s update-exports $_.BaseName }
+  gci "$env:MS_PWSH\Module" -Directory | % { s update-ModulePsd $_.BaseName }
   return
 }
 

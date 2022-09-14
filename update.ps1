@@ -14,7 +14,7 @@ if (@(1, 20) -contains (Get-Date).day) {
             Write-Host "Updating help via a background job" -ForegroundColor yellow
             Update-Help -force
 
-            'PSReadline', 'PowershellGet', 'Pester' | % {
+            'PSReadline', 'PowershellGet', 'Pester', 'Microsoft.PowerShell.ConsoleGuiTools' | % {
                 $module = $_
                 # write-host "try update module $module" -ForegroundColor Yellow
                 $error.Clear()
