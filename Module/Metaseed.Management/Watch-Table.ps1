@@ -1,8 +1,8 @@
 using namespace Terminal.Gui
-function Show-Table {
+function Watch-Table {
   # https://blog.ironmansoftware.com/tui-powershell/
   [CmdletBinding()]
-  [alias('sht')]
+  [alias('wct')]
   param (
     [Parameter()]
     [ScriptBlock]
@@ -16,7 +16,7 @@ function Show-Table {
     # Title
     [Parameter()]
     [string]
-    $Title = $MyInvocation.InvocationName
+    $Title = 'Monitoring'
   )
 
   [void][System.Reflection.Assembly]::LoadWithPartialName('System.Data.Common')
@@ -113,10 +113,18 @@ function Show-Table {
   . $update
 
   [Application]::Top.Add($win)
+  # https://github.dev/gui-cs/Terminal.Gui/blob/28718e9c3ce0793b95be6846dc5f491644875baa/Terminal.Gui/Core/Event.cs#L61
   $statusBar = [StatusBar]@{
     Visible = $true
     Items = @(
-      [StatusItem]::new(
+      #[StatusItem]::new(
+      #   [Key]99 -bor [Key]::CtrlMask, # ctrl-c c:99
+      #    "~CTRL-C~ Close",
+      #   {
+      #     [Application]::RequestStop();
+      #   }
+      #  ),
+       [StatusItem]::new(
         [Key]::Esc,
          "~ESC~ Close",
         {
@@ -125,7 +133,7 @@ function Show-Table {
        ),
       [StatusItem]::new(
         # we have [Key]::F and [Key]::f defined in the enum, and pwsh is case insensitive, so error
-        ( [key]70 -bor [Key]::CtrlMask), #not work if [Key]::F have to use 70
+        ( [key]102 -bor [Key]::CtrlMask), #not work if [Key]::F have to use 102
         "~CTRL-F~ Filter",
         {
           $edt.SetFocus()
