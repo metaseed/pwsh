@@ -2,6 +2,7 @@
 
 function Remove-ItemSafely {
 
+    [alias('ris','trash')]
     [CmdletBinding(DefaultParameterSetName = 'Path', SupportsShouldProcess = $true, ConfirmImpact = 'Medium', SupportsTransactions = $true, HelpUri = 'http://go.microsoft.com/fwlink/?LinkID=113373')]
     param(
         [Parameter(ParameterSetName = 'Path', Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
@@ -167,6 +168,7 @@ function get-PathFromComObj {
 }
 
 function Restore-RecycledItem {
+    [alias('rri')]
     [CmdletBinding(DefaultParameterSetName = 'ManualSelection', SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
     param(
         [Parameter(Position = 0, ParameterSetName = 'ComObject', Mandatory, ValueFromPipeline)]
@@ -279,6 +281,7 @@ function Restore-RecycledItem {
 
 function Get-RecycledItem {
     [CmdletBinding(DefaultParameterSetName = 'OriginalPath')]
+    [Alias('gri')]
     param(
         [Parameter(Position = 0, ValueFromPipeline, ParameterSetName = 'OriginalPath')]
         [String]
@@ -459,6 +462,7 @@ Function ParseItem {
 
 function Show-RecycleBinSize {
     [cmdletbinding()]
+    [alias('shrs')]
     Param()
     $shell = New-Object -com shell.application
     $rb = $shell.Namespace(10)
@@ -479,16 +483,14 @@ function Show-RecycleBinSize {
 }
 
 function open-recycleBin {
+    [CmdletBinding()]
+    [alias('orb')]
+    param (
+    )
     start shell:RecycleBinFolder
 }
 
-Set-Alias ris Remove-ItemSafely
-Set-Alias trash Remove-ItemSafely
-Set-Alias rri Restore-RecycledItem
-Set-Alias gri Get-RecycledItem
 Set-Alias crb Clear-RecycleBin
-Set-Alias oprb open-recycleBin
-Set-Alias shrs Show-RecycleBinSize
 
 Export-ModuleMember -Function Show-RecycleBinSize, Get-RecycledItem, Restore-RecycledItem, open-recycleBin
 
