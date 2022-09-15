@@ -9,14 +9,18 @@ param (
 if (!($module)) {
   # too slow so only do when all modules
   Get-Module -ListAvailable -Refresh > $null
-  gci "$env:MS_PWSH\Module" -Directory | % { s update-ModulePsd $_.BaseName }
+  gci "$env:MS_PWSH\Module" -Directory | % {
+    if (gi "$_\$($_.BaseName).psd1" -ErrorAction Ignore) {
+      s update-ModulePsd $_.BaseName
+    }
+  }
   return
 }
 
 # solved by remove downloaded remote file attribute on file
 # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass # can not load zlocatin.psm1
 $mo = ipmo $module -Force -PassThru -DisableNameChecking
-if(!$?) {
+if (!$?) {
   write-error "can not load module $module"
   return
 }

@@ -1,6 +1,8 @@
 # https://www.winhelponline.com/blog/shell-commands-to-access-the-special-folders/
 # https://www.winhelponline.com/blog/windows-10-shell-folders-paths-defaults-restore/
 function Open-KnownFolder {
+  [cmdletBinding()]
+  [alias('okf')]
   param (
     [Parameter(Position = 0)]
     $FolderName
@@ -39,7 +41,6 @@ function get-shellFolders($wordToComplete) {
   return $folders
 }
 
-Set-Alias okf Open-KnownFolder
 Register-ArgumentCompleter -CommandName 'Open-KnownFolder' -ParameterName 'FolderName' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
   $folders = get-shellFolders $wordToComplete

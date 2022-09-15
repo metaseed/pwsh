@@ -13,6 +13,8 @@ https://github.com/fleschutz/PowerShell/
 #>
 
 function Speak-Text {
+	[cmdletBinding()]
+	[alias('speak')]
 	param([string]$text = "", [string]$language = 'English', [switch]$sync)
 
 	try {
@@ -44,6 +46,3 @@ function Speak-Text {
 		"⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($Error[0])"
 	}
 }
-
-Set-Alias speak Speak-Text
-Export-ModuleMember -Alias speak

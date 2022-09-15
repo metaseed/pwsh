@@ -1,5 +1,6 @@
 function Git-PushAll {
   [CmdletBinding()]
+  [alias('gitp')]
   param (
     # commit message
     [Parameter()]
@@ -19,7 +20,3 @@ function Git-PushAll {
 
   Git-Push
 }
-
-Set-Alias gitp Git-PushAll
-
-# Export-ModuleMember -Alias  gip

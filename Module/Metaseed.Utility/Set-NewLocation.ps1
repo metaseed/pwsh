@@ -21,5 +21,3 @@ function Set-NewLocation {
   # cd path
   Set-Location -Path $Path
 }
-
-# Set-Alias snl Set-NewLocation

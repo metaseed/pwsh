@@ -18,7 +18,7 @@ if (@(1, 20) -contains (Get-Date).day) {
                 $module = $_
                 # write-host "try update module $module" -ForegroundColor Yellow
                 $error.Clear()
-                Update-Module $module
+                Update-Module $module -ErrorAction SilentlyContinue
                 if ($error) {
                     Install-Module $module -force
                 }

@@ -3,6 +3,11 @@
 use get-error and $error to get more information about the errors
 #>
 function Show-Steps {
+  [Alias('ss')]
+  [CmdletBinding()]
+  param (
+
+  )
   if ($__PSReadLineSessionScope.Steps.Count -eq 0) {
     Write-Host "No executed steps"
     return
@@ -35,7 +40,4 @@ function Show-Steps {
     Write-Host "`n use `$error or get-error to get more information about the errors" -ForegroundColor DarkYellow
   }
 }
-
-Set-Alias ss Show-Steps
-Export-ModuleMember -Alias ss
 

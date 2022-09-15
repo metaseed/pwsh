@@ -1,4 +1,6 @@
 function Git-BranchFromLatestMaster {
+  [CmdletBinding()]
+  [alias('gitb')]
   param (
     # new branch name
     [Parameter(Mandatory = $true)]
@@ -23,7 +25,7 @@ function Git-BranchFromLatestMaster {
     Write-Execute 'git remote prune origin'
     ## rebase master onto remote
     # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore), use Git-StashApply to do it
-    Write-Execute 'git pull --rebase' 
+    Write-Execute 'git pull --rebase'
 
     Write-Execute "git checkout -b $BranchName"
   }
@@ -42,6 +44,3 @@ function Git-BranchFromLatestMaster {
   }
 
 }
-
-Set-Alias gitb Git-BranchFromLatestMaster
-

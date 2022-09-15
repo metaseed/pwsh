@@ -212,6 +212,8 @@ function Set-ZLocation([Parameter(ValueFromRemainingArguments)][string[]]$match)
 #>
 function Invoke-ZLocation
 {
+    [cmdletBinding()]
+    [alias('z')]
     param(
         [Parameter(ValueFromRemainingArguments)][string[]]$match
     )
@@ -241,7 +243,7 @@ function Invoke-ZLocation
 }
 
 function Get-FrequentFolders {
-    If (((Get-Variable IsWindows -ErrorAction Ignore | Select-Object -ExpandProperty Value) -or 
+    If (((Get-Variable IsWindows -ErrorAction Ignore | Select-Object -ExpandProperty Value) -or
     $PSVersionTable.PSVersion.Major -lt 6) -and ([environment]::OSVersion.Version.Major -ge 10)) {
         if (-not $ExecutionContext.SessionState.LanguageMode -eq 'ConstrainedLanguage') {
             $QuickAccess = New-Object -ComObject shell.application
@@ -270,8 +272,6 @@ Get-FrequentFolders | ForEach-Object {
 }
 
 Register-PromptHook
-
-Set-Alias -Name z -Value Invoke-ZLocation
 
 Export-ModuleMember -Function @('Invoke-ZLocation', 'Set-ZLocation', 'Get-ZLocation', 'Pop-ZLocation', 'Remove-ZLocation', 'Clear-NonexistentZLocation') -Alias z
 # export this function to make it accessible from prompt
