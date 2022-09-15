@@ -23,6 +23,8 @@ $typeGetter = [OutGridView.Cmdlet.TypeGetter]::new($PSCmdlet)
 # Initialize the "GUI".
 # Note: This must come before creating windows and controls.
 [Application]::Init()
+# change color: https://github.com/gui-cs/Terminal.Gui/issues/148
+[Colors]::Base.Normal = [Application]::Driver.MakeAttribute([Color]::Green, [Color]::Black);
 
 $win = [Window] @{
   Title = 'Monitor Processes'
