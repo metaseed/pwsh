@@ -124,7 +124,8 @@ function Show-Table {
         }
        ),
       [StatusItem]::new(
-        [Key]::Esc,#([Key]::F -bor [Key]::CtrlMask), not work
+        # we have [Key]::F and [Key]::f defined in the enum, and pwsh is case insensitive, so error
+        ( [key]70 -bor [Key]::CtrlMask), #not work if [Key]::F have to use 70
         "~CTRL-F~ Filter",
         {
           $edt.SetFocus()
