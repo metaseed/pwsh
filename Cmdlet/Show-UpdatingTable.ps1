@@ -6,10 +6,10 @@ param (
   [ScriptBlock]
   $Script = { Get-Process },
 
-  # period in miliseconds
+  # period in seconds
   [Parameter()]
   [double]
-  $period = 1000
+  $period = 1
 )
 
 [void][System.Reflection.Assembly]::LoadWithPartialName('System.Data.Common')
@@ -27,14 +27,21 @@ $typeGetter = [OutGridView.Cmdlet.TypeGetter]::new($PSCmdlet)
 $win = [Window] @{
   Title = 'Monitor Processes'
 }
+$FilterLablel = [Label]@{
+  Text = 'Filter: '
+}
+$win.Add($FilterLablel)
 
-# $edt = [TextField] @{
-#     X = [Pos]::Center()
-#     Y = [Pos]::Center()
-#     Width = 20
-#     Text = 'This text will be returned'
-# }
-# $win.Add($edt)
+$edt = [TextField] @{
+  X     = [Pos]::Right($FilterLablel)
+  Width = [Dim]::Fill()
+  # Text = 'This text will be returned'
+}
+# $edt.Add_TextChanged({
+#   param($text)
+#   [Console]::WriteLine($text)
+# })
+$win.Add($edt)
 
 # $btn = [Button] @{
 #   X = [Pos]::Center()
@@ -44,7 +51,7 @@ $win = [Window] @{
 # $win.Add($btn)
 $tableView = [TableView] @{
   X      = 0
-  Y      = 0
+  Y      = 2
   Width  = [Dim]::Fill()#100
   Height = [Dim]::Fill()#10
   Style  = @{
@@ -56,31 +63,42 @@ $tableView = [TableView] @{
 }
 $win.Add($tableView)
 
-$dataTable = [Data.DataTable]::new()
-$tableView.Table = $dataTable
-$objs = & $Script
-$table = $typeGetter.CastObjectsToTableView($objs)
-$table.DataColumns | % {
-  [void]$dataTable.Columns.Add($_.Label)
-}
+# $objs = & $Script
+# $table = $typeGetter.CastObjectsToTableView($objs)
 
-function update {
+$update = {
   $objs = & $Script
+  $dataTable = [Data.DataTable]::new()
   $table = $typeGetter.CastObjectsToTableView($objs)
+  $table.DataColumns | % {
+    [void]$dataTable.Columns.Add($_.Label)
+  }
   $table.Data | % {
     $values = $_.Values.Values | select -ExpandProperty DisplayValue
-    [void]$dataTable.Rows.Add($values)
+    $filter = '.*'
+    $txt = $edt.Text.ToString()
+    if ($txt) {
+      $filter = $txt
+    }
+    $match = $false
+    $values | % {
+      if ($_ -match $filter) {
+        # write-host $_
+        $match = $true
+      }
+    }
+    if ($match) {
+      [void]$dataTable.Rows.Add($values)
+    }
   }
+
+  $tableView.Table = $dataTable
+  $tableView.update() # otherwise no data shown, until got focus
+  [void][Application]::MainLoop.AddTimeout([TimeSpan]::FromSeconds($period),
+    $update
+  )
 }
-update
-
-[void][Application]::MainLoop.AddTimeout([TimeSpan]::FromSeconds(1),
-  {
-    $dataTable.Clear()
-    update
-    $tableView.update() # otherwise no data shown, until got focus
-  });
-
+. $update
 
 [Application]::Top.Add($win)
 
@@ -96,7 +114,7 @@ update
 
 # Show the window (takes over the whole screen).
 # Note: This is a blocking call.
-$tableView.SetFocus()
+$edt.SetFocus()
 
 [Application]::Run()
 
