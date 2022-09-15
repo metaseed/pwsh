@@ -122,12 +122,12 @@ function Show-Table {
         {
           [Application]::RequestStop();
         }
-      ),
+       ),
       [StatusItem]::new(
-        [Key]::Esc,
-         "~CTRL-F~ Filter",
+        [Key]::Esc,#([Key]::F -bor [Key]::CtrlMask),
+        "~CTRL-F~ Filter",
         {
-          $edt.SetFocus();
+          $edt.SetFocus()
         }
       )
     )
