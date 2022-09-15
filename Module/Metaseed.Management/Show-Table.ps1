@@ -124,7 +124,7 @@ function Show-Table {
         }
        ),
       [StatusItem]::new(
-        [Key]::Esc,#([Key]::F -bor [Key]::CtrlMask),
+        [Key]::Esc,#([Key]::F -bor [Key]::CtrlMask), not work
         "~CTRL-F~ Filter",
         {
           $edt.SetFocus()
