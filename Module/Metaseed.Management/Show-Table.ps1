@@ -113,7 +113,26 @@ function Show-Table {
   . $update
 
   [Application]::Top.Add($win)
-
+  $statusBar = [StatusBar]@{
+    Visible = $true
+    Items = @(
+      [StatusItem]::new(
+        [Key]::Esc,
+         "~ESC~ Close",
+        {
+          [Application]::RequestStop();
+        }
+      ),
+      [StatusItem]::new(
+        [Key]::Esc,
+         "~CTRL-F~ Filter",
+        {
+          $edt.SetFocus();
+        }
+      )
+    )
+  }
+  [Application]::Top.Add($statusBar)
   # Attach an event handler to the button.
   # Note: Register-ObjectEvent -Action is NOT an option, because
   # the [Application]::Run() method used to display the window is blocking.
