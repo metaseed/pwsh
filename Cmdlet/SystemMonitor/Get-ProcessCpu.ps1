@@ -6,7 +6,7 @@ $LogicalProcessors = $processor.NumberOfLogicalProcessors
 select -ExpandProperty CounterSamples |
 Sort-Object -Property CookedValue -Descending |
 ? {
-  $_.InstanceName -ne '_total' -and $_.CookedValue -gt 0 -and $_.InstanceName -ne 'idle'
+  $_.InstanceName -ne '_total'  -and $_.InstanceName -ne 'idle' # -and $_.CookedValue -gt 0
 } |
 select   @{Name = 'CPU(%)'; Expression = { "$([Math]::Round($_.CookedValue / $LogicalProcessors, 3))" } }, InstanceName
 
