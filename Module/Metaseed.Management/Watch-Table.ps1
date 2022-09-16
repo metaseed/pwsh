@@ -117,7 +117,7 @@ function Watch-Table {
   $statusBar = [StatusBar]@{
     Visible = $true
     Items = @(
-
+# to get  the value use ILSpy open the Terminal.Gui.dll and view the Key type
     # not work
       # [StatusItem]::new(
       #   [Key]99 -bor  [Key]0x40000000,#[Key]::CtrlMask, # ctrl-c c:99
@@ -157,7 +157,7 @@ function Watch-Table {
   # Show the window (takes over the whole screen).
   # Note: This is a blocking call.
   $edt.SetFocus()
-
+  [MessageBox]::Query("Question", "Do you like console apps?",0, @('yes'))
   [Application]::Run()
 
   # As of 1.0.0-pre.4, at least on macOS, the following two statements
