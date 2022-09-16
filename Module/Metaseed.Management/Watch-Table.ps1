@@ -117,15 +117,17 @@ function Watch-Table {
   $statusBar = [StatusBar]@{
     Visible = $true
     Items = @(
-      #[StatusItem]::new(
-      #   [Key]99 -bor [Key]::CtrlMask, # ctrl-c c:99
+
+    # not work
+      # [StatusItem]::new(
+      #   [Key]99 -bor  [Key]0x40000000,#[Key]::CtrlMask, # ctrl-c c:99
       #    "~CTRL-C~ Close",
       #   {
       #     [Application]::RequestStop();
       #   }
       #  ),
        [StatusItem]::new(
-        [Key]::Esc,
+        [Key]27,# can not use [Key]::Esc too on my vm, so have to use value
          "~ESC~ Close",
         {
           [Application]::RequestStop();
@@ -133,7 +135,7 @@ function Watch-Table {
        ),
       [StatusItem]::new(
         # we have [Key]::F and [Key]::f defined in the enum, and pwsh is case insensitive, so error
-        ( [key]102 -bor [Key]::CtrlMask), #not work if [Key]::F have to use 102
+        [Key]102 -bor [Key]0x40000000, #[Key]::CtrlMask, #not work if [Key]::f have to use 102
         "~CTRL-F~ Filter",
         {
           $edt.SetFocus()

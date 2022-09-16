@@ -7,7 +7,7 @@ param (
   [Parameter()]
   $remaining
 )
-$result = & $appPath --gap-search-anywhere  --autocd-timeout off @Remaining
+$result = & $appPath --no-gap-search --autocd-timeout off @Remaining # --gap-search-anywhere
 # Write-Host $result
 if ($result) {
   $result |scb

@@ -3,10 +3,15 @@
 $cores = (get-CimInstance Win32_Processor).NumberOfLogicalProcessors
 
 get-CimInstance -class Win32_PerfFormattedData_PerfProc_Process |
-Where-Object {$_.Name -notmatch "^(idle|_total|system)$" } | # -and $_.PercentProcessorTime -gt 0
-select-object -property @{Name = "CPU(%)"; Expression = {([Math]::Round($_.PercentProcessorTime/$cores, 3))}}, @{Name = "PID"; Expression = {$_.IDProcess}}, @{"Name" = "Memory(MB)"; Expression = {[int]($_.WorkingSetPrivate/1mb)}}, Name |
+Where-Object { $_.Name -notmatch "^(_total|system)$" } | #idle -and $_.PercentProcessorTime -gt 0
+select-object -property @{Name = 'ParentId'; Expression = { $_.CreatingProcessID } },
+@{Name = 'Threads'; Expression = { $_.ThreadCount } },
+@{Name = "PID"; Expression = { $_.IDProcess } },
+@{Name= "Memory(MB)"; Expression = { [int]($_.WorkingSetPrivate / 1mb) } },
+@{Name = "CPU(%)"; Expression = { ([Math]::Round($_.PercentProcessorTime / $cores, 3)) } }, 
+Name |
 Sort-Object -Property 'CPU(%)' -Descending
-    # Select-Object -First 15
+# Select-Object -First 15
 
 # show-updatingTable.ps1 {Get-ProcessCpuMem.ps1}
 # could modify this file and continue running above command
