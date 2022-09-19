@@ -1,4 +1,4 @@
-#set global EULA acceptance for SysInternals tools
+#set global EULA acceptance for all SysInternals tools
 
 [CmdletBinding(SupportsShouldProcess)]
 Param([switch]$Passthru)

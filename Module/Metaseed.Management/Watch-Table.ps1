@@ -157,7 +157,7 @@ function Watch-Table {
   # Show the window (takes over the whole screen).
   # Note: This is a blocking call.
   $edt.SetFocus()
-  [MessageBox]::Query("Question", "Do you like console apps?",0, @('yes'))
+  # [MessageBox]::Query("Question", "Do you like console apps?",0, @('yes'))
   [Application]::Run()
 
   # As of 1.0.0-pre.4, at least on macOS, the following two statements

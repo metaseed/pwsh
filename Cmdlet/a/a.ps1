@@ -34,6 +34,10 @@ param(
 )
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters
 dynamicparam {
+  if(!$app) {
+    return
+  }
+
   $a = Get-AppDynamicArgument $app "$PSScriptRoot\_args"
   if ($a.Count -ne 0) {
     return $a
