@@ -5,7 +5,7 @@ $LogicalProcessors = $processor.NumberOfLogicalProcessors
 (get-counter '\Process(*)\% Processor Time' -ErrorAction Ignore) |
 select -ExpandProperty CounterSamples |
 Sort-Object -Property CookedValue -Descending |
-Where-Object {$_.InstanceName -notmatch "^(_tota)$" } # |idle-and $_.CookedValue -gt 0
+Where-Object {$_.InstanceName -notmatch "^(_total)$" }| # |idle-and $_.CookedValue -gt 0
 select   @{Name = 'CPU(%)'; Expression = { "$([Math]::Round($_.CookedValue / $LogicalProcessors, 3))" } }, InstanceName
 
 # show-updatingTable.ps1 {Get-ProcessCpu.ps1}
