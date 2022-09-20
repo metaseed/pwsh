@@ -19,6 +19,7 @@ function Test-Installation {
     return $rv -gt $lv ? $infoLocal.version : $false
 }
 
+# days=0, always update
 function Test-Update([int]$days, [string]$file) {
     if ($days -gt 0) {
         $_days = ((Get-Date) - (gi $file).LastWriteTime).Days

@@ -8,7 +8,7 @@ param (
 )
 Import-Module Metaseed.Lib -DisableNameChecking
 
-if (@(1, 20) -contains (Get-Date).day) {
+if (Test-Update 20 $MyInvocation.MyCommand.Path) { # @(1, 20) -contains (Get-Date).day # problem: always update on that day
     [void](
         Start-ThreadJob -StreamingHost $host {
             Write-Host "Updating help via a background job" -ForegroundColor yellow
@@ -31,9 +31,6 @@ if (@(1, 20) -contains (Get-Date).day) {
 }
 
 $localInfo = "$PSScriptRoot\info.json"
-
-$update = Test-Update $Days $localInfo
-if (!$update) { return }
 
 [void](Start-ThreadJob -StreamingHost $host {
         Import-Module Metaseed.Lib -DisableNameChecking

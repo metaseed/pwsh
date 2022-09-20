@@ -13,5 +13,5 @@ Name |
 Sort-Object -Property 'CPU(%)' -Descending
 # Select-Object -First 15
 
-# show-updatingTable.ps1 {Get-ProcessCpuMem.ps1}
+# wct {Get-ProcessCpuMem.ps1}
 # could modify this file and continue running above command
