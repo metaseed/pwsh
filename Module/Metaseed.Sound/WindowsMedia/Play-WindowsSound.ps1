@@ -5,7 +5,7 @@ function GetWindowsSounds {
     $wordToComplete
   )
   $Sounds = @(Get-ChildItem "$env:windir\Media\Windows *.wav" | 
-  % { $_.BaseName.TrimStart('Windows ') }) | 
+  % { $_.BaseName -replace '^Windows ', '' }) | 
   ? { 
     if($wordToComplete) {
       return $_ -like ($wordToComplete -split '' -join '*').TrimStart('*') 
@@ -47,6 +47,7 @@ function Play-WindowsSound {
     Write-error "sound $path does not exist"
     return
   }
+
   Play-Sound $path -sync:$sync
 }
 #Note: directly use ArgumentCompleter and call GetWindowsSounds in it's script block not works!

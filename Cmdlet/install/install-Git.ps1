@@ -1,58 +1,29 @@
-# $path = Install-FromGithub 'git-for-windows' 'git' '64-bit.exe$'
-
-# if(Test-Path $path) {
-
-# }
-
-[CmdletBinding()]
-param (
-  # version
-  [Parameter()]
-  [string]
-  $version = 'stable'
-)
-Assert-Admin
-$app = 'git'
-Breakable-Pipeline {
-  Get-GithubRelease -OrgName 'git-for-windows' -RepoName $app -Version $version -fileNamePattern '64-bit.exe$' |
-  % {
-    $assets = $_
-    if ($assets.Count -ne 1 ) {
-      foreach ($asset in $assets) {
-        $asset.name
-      }
-      Write-Error "Expected one asset, but found $($assets.Count)"
-      break;
-    }
-
-    $_.name -match "-(\d+\.\d+\.\d+\.*\d*)-" >$null
-    $ver_online = [Version]::new($matches[1])
-    if (gcm $app -ErrorAction Ignore) {
-      $version = $git.version
-      if ($ver_online -le $version) {
-        Write-Host "You are using the latest version of $app.`n $version is the latest version available."
-        break
-      }
-      nWrite-Host "You are using $app $version.`n The latest version is $ver_online."
-    }
-    else {
-      Write-Host  "$app is not installed, the online version is $ver_online"
-    }
-    return $_
-  } |
-  Download-GithubRelease | 
-  % {
-    Write-Notice "installation started in background..."
-    Start-Process $_ -ArgumentList '/SILENT /NORESTART' -NoNewWindow -Wait
-    "add git utilities to user path"
-    $PathOld = [Environment]::GetEnvironmentVariable('Path', 'User')
-    [Environment]::SetEnvironmentVariable("Path", "$PathOld;$env:ProgramFiles\Git\cmd;$env:ProgramFiles\Git\mingw64\bin", "User")
-   
+Install-FromGithub 'git-for-windows' 'git' '64-bit.exe$' -getLocalVerScript {
+  $version = $null
+  $git = gcm 'git' -ErrorAction Ignore
+  if ($git) {
+    $version = $git.version
   }
-}
+  return $version
+} -installScript {
+  [CmdletBinding()]
+  param($downloadedFilePath, $ver_online)
 
-Write-Step "config git"
-$gitConfig = @"
+  Write-Notice "installation started in background, please wait..."
+  Start-Process $downloadedFilePath -ArgumentList '/SILENT /NORESTART' -NoNewWindow -Wait
+
+  Write-Step "config git"
+
+  "add git utilities to user path"
+  # use append to lower cmd finding pority. i.e. dd command will not be the dd.exe in 'C:\Program Files\Git\usr\bin'
+  # cmd /c where dd
+  # note: 'gcm dd' just return the first found one
+  Add-PathEnv "$env:ProgramFiles\Git\cmd" User -append
+  # Add-PathEnv "$env:ProgramFiles\Git\usr\bin" User -append # is added by installation, git.exe,bash.exe,sh.exe is here
+  Add-PathEnv "$env:ProgramFiles\Git\mingw64\bin" User -append
+  Update-EnvVar
+
+  $gitConfig = @"
 # included config
 [include]
 	path = M:\\tools\\git\\.gitconfig
@@ -62,12 +33,14 @@ $gitConfig = @"
 	path = M:\\tool\\git\\.slb.gitconfig
 
 "@
-$conf = gc $home/.gitconfig -raw
-if (! $conf.contains($gitConfig)) {
-  $gitConfig >> $home/.gitconfig
+  $conf = gc $home/.gitconfig -raw
+  if (! $conf.contains($gitConfig)) {
+    $gitConfig >> $home/.gitconfig
+  }
+  else {
+    write-host 'no action, git already configured'
+  }
 }
-else {
-  write-host 'no action, git already configured'
-}
-Write-Host 'done!'
-  
+
+
+

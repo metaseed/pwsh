@@ -8,20 +8,24 @@ function Add-PathEnv {
         # Machine or User, default based on current Admin right
         [object]
         [ValidateSet('Machine', 'User')]
-        $Scope = $null
+        $Scope = $null,
+
+        [switch]
+        $append
     )
-    
+
     # resolve-path return a PathInfo object
     $Dir = [Path]::GetFullPath($Dir)
+    $PathToUse = $append ? "$env:path;$dir" : "$dir;$env:Path"
 
     if (-not (Test-PathInStr $env:Path $dir)) {
-        $env:Path = "$dir;$env:Path"
+        $env:Path = $PathToUse
         Write-Verbose "'$dir' was added to current `$env:Path"
     }
     else {
         Write-Verbose "current `$env:Path already contains $dir"
     }
-    
+
     $isAdmin = Test-Admin
     $scope = $Scope ?? ($isAdmin ? "Machine": "User")
     $envPath = [Environment]::GetEnvironmentVariable("Path", $scope)
@@ -30,7 +34,7 @@ function Add-PathEnv {
         "$envPath"
 
     if (-not (Test-PathInStr $pathes $dir)) {
-        [Environment]::SetEnvironmentVariable("Path", "$dir;$envPath", $scope)
+        [Environment]::SetEnvironmentVariable("Path", $PathToUse, $scope)
         Write-Verbose "'$dir' was added to Environment $scope scope variable: Path"
     }
     else {
@@ -50,8 +54,8 @@ function Test-PathInStr {
         if ([String]::IsNullOrEmpty($_)) { return $false }
 
         $path = [Path]::GetFullPath($_);
-        $path.Equals([Path]::GetFullPath($dir), [StringComparison]::OrdinalIgnoreCase) 
+        $path.Equals([Path]::GetFullPath($dir), [StringComparison]::OrdinalIgnoreCase)
     }
-}   
+}
 
 # Add-PathEnv $env:ProgramFiles\Git\mingw64\bin

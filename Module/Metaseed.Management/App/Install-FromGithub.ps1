@@ -50,8 +50,9 @@ function Install-FromGithub {
       $ver_online
     },
     # scriptblock to get local installed app version
+    # output: [Version] or $null if not installed
     [Parameter()]
-    [scriptblock]$getLocalVer = {
+    [scriptblock]$getLocalVerScript = {
       [CmdletBinding()]
       param()
 
@@ -121,7 +122,7 @@ function Install-FromGithub {
       return $versionLocal
     },
     [Parameter()]
-    [scriptblock]$install = {
+    [scriptblock]$installScript = {
       [CmdletBinding()]
       param($downloadedFilePath, $ver_online)
 
@@ -195,12 +196,13 @@ function Install-FromGithub {
 
       $ver_online = Invoke-Command -ScriptBlock $getOnlineVer -ArgumentList $_.name, $_.tag_name
 
-      $versionLocal = Invoke-Command -ScriptBlock $getLocalVer
+      $versionLocal = Invoke-Command -ScriptBlock $getLocalVerScript
       # Write-Host "dd" + $versionLocal.gettype()
       if (!$versionLocal) {
-        Write-Host "install the latest ${repo}: $ver_online"
+        Write-Host "$repo is not installed, try to install the latest ${repo}: $ver_online"
       }
       else {
+
         if ($ver_online -le $versionLocal) {
           Write-Host "You are using the latest version of $repo.`n $versionLocal is the latest version available."
           if (!$force) {
@@ -215,8 +217,8 @@ function Install-FromGithub {
     Download-GithubRelease |
     % {
       $path = $_
-      $des = Invoke-Command -ScriptBlock $install -ArgumentList "$path", "$ver_online"
-      write-host "app installed to $path!"
+      $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online"
+      write-host "app installed to $path"
       $appPath = $path
     }
   }
