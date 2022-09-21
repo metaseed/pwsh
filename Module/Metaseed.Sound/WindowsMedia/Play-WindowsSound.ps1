@@ -28,6 +28,11 @@ function Play-WindowsSound {
   param (
     [Parameter(Position = 0)]
     $name = 'Print complete',
+
+    [Parameter()]
+    [switch]
+    $sync,
+
     # list all the sounds
     [Parameter()]
     [switch]$list
@@ -42,7 +47,7 @@ function Play-WindowsSound {
     Write-error "sound $path does not exist"
     return
   }
-  Play-Sound $path
+  Play-Sound $path -sync:$sync
 }
 #Note: directly use ArgumentCompleter and call GetWindowsSounds in it's script block not works!
 Register-ArgumentCompleter -CommandName 'Play-WindowsSound' -ParameterName 'name' -ScriptBlock {

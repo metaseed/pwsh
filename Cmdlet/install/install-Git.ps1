@@ -1,3 +1,8 @@
+# $path = Install-FromGithub 'git-for-windows' 'git' '64-bit.exe$'
+
+# if(Test-Path $path) {
+
+# }
 
 [CmdletBinding()]
 param (
@@ -28,7 +33,7 @@ Breakable-Pipeline {
         Write-Host "You are using the latest version of $app.`n $version is the latest version available."
         break
       }
-      Write-Host "You are using $app $version.`n The latest version is $ver_online."
+      nWrite-Host "You are using $app $version.`n The latest version is $ver_online."
     }
     else {
       Write-Host  "$app is not installed, the online version is $ver_online"

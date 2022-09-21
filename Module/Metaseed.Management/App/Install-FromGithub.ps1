@@ -177,6 +177,7 @@ function Install-FromGithub {
     $repo = $v[1]
   }
   Write-Host "$org $repo"
+  $appPath = $null
 
   Breakable-Pipeline {
     $ver_online = [version]::new();
@@ -213,9 +214,11 @@ function Install-FromGithub {
     } |
     Download-GithubRelease |
     % {
-      $des = Invoke-Command -ScriptBlock $install -ArgumentList "$_", "$ver_online"
-      write-host "app installed to $des!"
-
+      $path = $_
+      $des = Invoke-Command -ScriptBlock $install -ArgumentList "$path", "$ver_online"
+      write-host "app installed to $path!"
+      $appPath = $path
     }
   }
+  return $appPath
 }

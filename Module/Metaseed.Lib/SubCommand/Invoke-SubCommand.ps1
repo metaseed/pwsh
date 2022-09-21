@@ -29,7 +29,7 @@ function Invoke-SubCommand {
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"
-        $cmd = Find-FromParent 'Command'
+        $cmd = Find-FromParent 'Command' $path
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { write-error "can not get the 'Command' folder" }
         Write-Verbose $CommandFolder
@@ -37,6 +37,9 @@ function Invoke-SubCommand {
 
         Write-Verbose $file
         $null = $PSBoundParameters.Remove('Command')
+        $null = $PSBoundParameters.Remove('cacheName')
+        $null = $PSBoundParameters.Remove('filter')
+
         Write-Verbose $PSBoundParameters
         & $file @PSBoundParameters
     }
