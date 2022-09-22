@@ -56,7 +56,7 @@ enum BackgroundColorAnsi {
 function Write-AnsiText {
   [CmdletBinding(DefaultParameterSetName = "8bit")]
   param (
-    [Parameter()]
+    [Parameter(Position = 0)]
     [string]
     $text = @"
     __________               .__          _____          __
@@ -67,35 +67,35 @@ function Write-AnsiText {
                            \/     \/           \/     \/          \/     \/           \//_____/
 "@,
 
-    [Parameter(position = 0, ParameterSetName = '8bit')]
+    [Parameter(position = 1, ParameterSetName = '8bit')]
     [ForegroundColorAnsi]
     $ForegroundColor,
-    [Parameter(position = 1, ParameterSetName = '8bit')]
+    [Parameter(position = 2, ParameterSetName = '8bit')]
     [BackgroundColorAnsi]
     $BackgroundColor,
 
-    [Parameter(position = 0, ParameterSetName = '256bit')]
+    [Parameter(position = 1, ParameterSetName = '256bit')]
     [int]
     [ValidateRange(0, 255)]
     $Foreground256Bits,
-    [Parameter(position = 1, ParameterSetName = '256bit')]
+    [Parameter(position = 2, ParameterSetName = '256bit')]
     [int]
     [ValidateRange(0, 255)]
     $Background256Bits,
 
-    [Parameter(position = 0, ParameterSetName = 'rgb')]
+    [Parameter(position = 1, ParameterSetName = 'rgb')]
     [int[]]
     [ValidateScript({
         if ($_ -lt 0 -or $_ -gt 255) { throw "$_ is out or range[0,255]" }
         return $true
       })]
     $ForegroundRGB,
-    [Parameter(position = 1, ParameterSetName = 'rgb')]
+    [Parameter(position = 2, ParameterSetName = 'rgb')]
     [int[]]
     [ValidateScript({
-      if ($_ -lt 0 -or $_ -gt 255) { throw "$_ is out or range[0,255]" }
-      return $true
-    })]
+        if ($_ -lt 0 -or $_ -gt 255) { throw "$_ is out or range[0,255]" }
+        return $true
+      })]
     $BackgroundRGB,
 
     [switch]
@@ -118,8 +118,8 @@ function Write-AnsiText {
     $bgc = $Background256Bits
   }
   elseif ($pscmdlet.ParameterSetName -eq 'rgb') {
-    if($ForegroundRGB.Count -ne 3) {throw "ForgroundRGB should have 3 elements(RGB)"}
-    if($BackgroundRGB.Count -ne 3) {throw "BackgroundRGB should have 3 elements(RGB)"}
+    if ($ForegroundRGB.Count -ne 3) { throw "ForgroundRGB should have 3 elements(RGB)" }
+    if ($BackgroundRGB.Count -ne 3) { throw "BackgroundRGB should have 3 elements(RGB)" }
     $fgc = $ForegroundRGB -join ';'
     $bgc = $BackgroundRGB -join ';'
   }

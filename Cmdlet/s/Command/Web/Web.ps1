@@ -5,7 +5,7 @@
 [CmdletBinding()]
 param (
   [ArgumentCompleter( {
-      param ( 
+      param (
         $commandName,
         $parameterName,
         $wordToComplete,
@@ -17,12 +17,13 @@ param (
     })]
   [Parameter(Position = 0)]
   [string]$web,
-  
+
   [Parameter()]
   [Hashtable]
   $urls,
 
   # browser profile to use
+  # "$env:LOCALAPPDATA\Google\Chrome\User Data"
   [Parameter()]
   [string]
   $prof = "Profile 1"

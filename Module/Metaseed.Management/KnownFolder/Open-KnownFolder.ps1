@@ -2,7 +2,7 @@
 # https://www.winhelponline.com/blog/windows-10-shell-folders-paths-defaults-restore/
 function Open-KnownFolder {
   [cmdletBinding()]
-  [alias('okf')]
+  [alias('opkf')]
   param (
     [Parameter(Position = 0)]
     $FolderName

@@ -73,7 +73,7 @@ Start-ThreadJob -StreamingHost $host  -ScriptBlock {
     # env var is string
     while ($env:__ShowCpuMemOnBtm -eq 'True') {
         $cpuTime = (Get-Counter '\Processor(_Total)\% Processor Time' -SampleInterval 1).CounterSamples.CookedValue
-        $cpuPer = "$($cpuTime.ToString("#,0.0"))".PadLeft(3) + '%'
+        $cpuPer = "$($cpuTime.ToString("#,0.0"))".PadLeft(4) + '%'
 
         # $availMem = (Get-Counter '\Memory\Available MBytes').CounterSamples.CookedValue
         $usedMem = (((Get-Ciminstance Win32_OperatingSystem).TotalVisibleMemorySize * 1kb) - ((Get-Counter -Counter "\Memory\Available Bytes").CounterSamples.CookedValue)) / 1Mb
