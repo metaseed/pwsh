@@ -45,7 +45,12 @@ if (Test-Path $root -type Container) {
 
 try {
   Push-Location $PWSHParentFolder
-  git clone http://github.com/metasong/pwsh.git --depth 1
+  if (gci 'pwsh') {
+    git pull
+  }
+  else {
+    git clone http://github.com/metasong/pwsh.git --depth 1
+  }
 
   . "$root/config.ps1"
 

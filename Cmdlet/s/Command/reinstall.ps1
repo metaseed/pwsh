@@ -2,6 +2,7 @@ $localFile = "$__RootFolder/.git"
 
 if (Test-Path $localFile -type Container) {
   $repoParentFolder = Split-Path $__RootFolder
+  Write-Host "repo's parent folder: $repoParentFolder"
   "& {$(iwr https://pwsh.page.link/dev)} $repoParentFolder" |iex
   return
 }
