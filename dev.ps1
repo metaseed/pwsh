@@ -31,9 +31,13 @@ if (Test-Path $root -type Container) {
     $status = git status
     $dirtyMsg = $status -match 'modified:|Untracked files:|Your branch is ahead of'
     if ($dirtyMsg.length -gt 0) {
-      $decision = $Host.UI.PromptForChoice('Override Local Changes?', "You have local changes in $root?,`ndo you want to continue to forcely override these changes?", @('&Yes', '&No'), 0)
+      $decision = $Host.UI.PromptForChoice('Override Local Changes?', "You have local changes in $root?,`ndo you want to continue to hard reset local changes?", @('&Yes', '&No'), 0)
       if ($decision -eq 0) {
-        Remove-Item -force -Recurse "$root"
+        git reset --hard
+        # Remove-Item -force -Recurse "$root"
+      } else {
+        'please check local changes and rerun the command'
+        return
       }
     }
   }
@@ -46,7 +50,9 @@ if (Test-Path $root -type Container) {
 try {
   Push-Location $PWSHParentFolder
   if (gci 'pwsh') {
+    Push-Location 'pwsh'
     git pull
+    Pop-Location
   }
   else {
     git clone http://github.com/metasong/pwsh.git --depth 1
