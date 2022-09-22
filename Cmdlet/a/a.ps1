@@ -13,7 +13,7 @@ param(
         $fakeBoundParameters )
       $apps = Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
       $handlers = Complete-Command 'app_handlers' "$PSScriptRoot\_handlers" $wordToComplete '*.ps1'
-      $cmds = ($apps + $handlers) | get-unique
+      $cmds = ($handlers + $apps) | get-unique
       return $cmds
     })]
   [Parameter(Position = 0)]

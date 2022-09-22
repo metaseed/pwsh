@@ -5,7 +5,10 @@ function Open-SystemSetting {
   [alias('opss')]
   param (
     [Parameter()]
-    [ValidateSet('EnvVar', 'Profiles','DateTime','DeviceManager','OptionalFeatures','NetworkConnections','PowerOptions')]
+    [ValidateSet('EnvVar', 'Profiles','DateTime','DeviceManager',
+    'OptionalFeatures','NetworkConnections','PowerOptions',
+    'DesktopIcons','ScreenSaver','DefaultApp',
+    'SystemProperties', 'Region')]
     $setting
   )
 
@@ -17,6 +20,11 @@ function Open-SystemSetting {
     'OptionalFeatures'{optionalFeatures}
     'NetworkConnections' {Rundll32.exe shell32.dll,Control_RunDLL ncpa.cpl}
     'PowerOptions' {Rundll32.exe shell32.dll,Control_RunDLL powercfg.cpl}
+    'DesktopIcons' {Rundll32.exe shell32.dll,Control_RunDLL desk.cpl,0,0}
+    'ScreenSaver'{Rundll32.exe shell32.dll,Control_RunDLL desk.cpl,0,1}
+    'DefaultApp'{Rundll32.exe shell32.dll,Control_RunDLL appwiz.cpl,0,3}
+    'SystemProperties' {Rundll32.exe shell32.dll,Control_RunDLL Sysdm.cpl,0,3}
+    'Region'{Rundll32.exe shell32.dll,Control_RunDLL Intl.cpl,0,0}
     Default {}
   }
 

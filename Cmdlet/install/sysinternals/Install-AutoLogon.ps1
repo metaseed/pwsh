@@ -1,0 +1,1 @@
+iwr https://live.sysinternals.com/Autologon.exe -OutFile $env:MS_App\AutoLogon.exe
