@@ -50,8 +50,8 @@ if (Test-Path $root -type Container) {
 try {
   Push-Location $PWSHParentFolder
   if (gci 'pwsh') {
-    "pull changes into $pwd"
     Push-Location 'pwsh'
+    "pull changes into $pwd"
     git pull
     Pop-Location
   }
