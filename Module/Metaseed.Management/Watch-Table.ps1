@@ -21,7 +21,7 @@ function Watch-Table {
 
   [void][System.Reflection.Assembly]::LoadWithPartialName('System.Data.Common')
 
-  Import-Module Microsoft.PowerShell.ConsoleGuiTools
+  Import-Module Microsoft.PowerShell.ConsoleGuiTools -ErrorAction Ignore
   if (!$?) {
     Install-Module Microsoft.PowerShell.ConsoleGuiTools -force
   }
