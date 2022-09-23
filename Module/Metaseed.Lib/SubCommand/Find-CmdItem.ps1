@@ -5,7 +5,8 @@ function Get-CmdsFromCache([string]$cacheName, [string]$Directory, [string]$filt
     $cmds = @{}
     Get-AllCmdFiles $Directory $filter | % {
       if ($cmds[$_.BaseName]) {
-        Write-Verbose "More than one command found for '$($_.BaseName)': Omit the one in $($_.FullName)"
+        Write-Host "param: cacheName: $cacheName , dir: $Directory, filter: $filter ; update: $update"
+        Write-Warning "More than one command found for '$($_.BaseName)': Omit the one in $($_.FullName), use the one in $($cmds[$_.BaseName])"
         # Exit
       }
       else {
@@ -50,9 +51,12 @@ function Find-CmdItem {
     $update = Invoke-Command -ScriptBlock $updateScript -ArgumentList $cacheValue, $Command
   }
   if (!$cacheValue -or !$cacheValue[$Command] -or !(test-path $cacheValue[$Command]) -or $update) {
+    Write-Verbose "Get-CmdsFromCache $cacheName $Directory $filter -update"
     $cacheValue = Get-CmdsFromCache $cacheName $Directory $filter -update
+    # $d = "$env:temp/$((Get-Date).Millisecond).json"
+    # ConvertTo-Json $cacheValue > $d
+    # code $d
   }
-
   $file = $cacheValue[$Command]
   return $file
 }

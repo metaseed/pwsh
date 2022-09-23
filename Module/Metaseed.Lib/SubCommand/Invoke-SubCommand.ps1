@@ -9,23 +9,32 @@ function Invoke-SubCommand {
         [string]$filter = '*.ps1'
     )
 
+    # used to pass in addtional parameter for subcommand, otherwise error: can not find paramter for the subcmd
     dynamicparam {
+        # no way to access the $filter and other parameter, that is not set explictly in dynamicparam, we can accept $PSBoundParameters['Command']
+        # - not work: Get-VariableOutModule 'filter' -valueonly #Get-Variable -Name 'filter' -ValueOnly #$PSBoundParameters['filter']
+        # not work: $cacheName ??= Get-VariableOutModule '__CmdCache' -ValueOnly
+        # can not use: Get-DynCmdParam $cacheName $CommandFolder $Command $filter
+        # so we use $env here to get cachename and cmdfolder
+
         $cmd = Find-FromParent 'Command' $MyInvocation.PSScriptRoot
-        $__CmdFolder ??= Get-VariableOutModule '__CmdFolder'
+        $__CmdFolder ??= $env:__CmdFolder # Get-VariableOutModule '__CmdFolder' -ValueOnly
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { return }
         $Command = $PSBoundParameters['Command']
-        $cacheName ??= Get-VariableOutModule '__CmdCache'
+        $cacheName ??=  $env:__CmdCache# Get-VariableOutModule '__CmdCache' -ValueOnly
+        $filter = $PSBoundParameters['filter'] ?? '*.ps1'
+        # write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder"
         return Get-DynCmdParam $cacheName $CommandFolder $Command $filter
     }
 
     end {
         # https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
         # get or set a variable from the parent (module) scope.
-        $__CmdFolder ??= Get-VariableOutModule '__CmdFolder'
-        $__LibFolder ??= Get-VariableOutModule '__LibFolder'
-        $__RootFolder ??= Get-VariableOutModule '__RootFolder'
-        $cacheName ??= Get-VariableOutModule '__CmdCache'
+        $__CmdFolder ??= Get-VariableOutModule '__CmdFolder' -ValueOnly
+        # $__LibFolder ??= Get-VariableOutModule '__LibFolder' -ValueOnly
+        # $__RootFolder ??= Get-VariableOutModule '__RootFolder' -ValueOnly
+        $cacheName ??= Get-VariableOutModule '__CmdCache' -ValueOnly
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"

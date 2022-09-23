@@ -1,8 +1,12 @@
 # https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
 # https://stackoverflow.com/questions/46528262/is-there-any-way-for-a-powershell-module-to-get-at-its-callers-scope
 function Get-VariableOutModule {
-  param([Parameter(Position=1)][string]$Name)
-  $PSCmdlet.SessionState.PSVariable.GetValue($Name)
+  param([Parameter(Position=1)][string]$Name, [switch]$ValueOnly)
+  $va = $PSCmdlet.SessionState.PSVariable.GetValue($Name)
+  if($ValueOnly) {
+    $va = $va.Value
+  }
+  return $va
 }
 
 function Set-VariableOutModule {
