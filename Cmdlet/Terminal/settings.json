@@ -3,7 +3,7 @@
   "$schema": "https://aka.ms/terminal-profiles-schema",
   "actions": [
     {
-      "command": 
+      "command":
       {
           "action": "globalSummon"
       },
@@ -140,6 +140,7 @@
         "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
         "hidden": false,
         "name": "pwsh",
+        // "commandline": "%programfiles%\\powershell\\7\\pwsh.exe -nologo",
         "source": "Windows.Terminal.PowershellCore"
       },
       {

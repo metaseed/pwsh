@@ -6,7 +6,7 @@
 
 # note: reload profile if modified codes in this repo
 # & $profile.CurrentUserAllHosts
-# Clear-Host
+Clear-Host
 "`e[5mpwsh`e[0m v$($Host.Version)" #; profile: $PSCommandPath"
 
 # not needed if we run pwsh with -noexit, so even we install ms_pwsh from v5 powershell, we still in pwsh.

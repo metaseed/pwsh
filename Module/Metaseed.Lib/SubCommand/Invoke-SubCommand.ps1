@@ -11,21 +11,21 @@ function Invoke-SubCommand {
 
     dynamicparam {
         $cmd = Find-FromParent 'Command' $MyInvocation.PSScriptRoot
-        $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdFolder').Value
+        $__CmdFolder ??= Get-VariableOutModule '__CmdFolder'
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { return }
         $Command = $PSBoundParameters['Command']
-        $cacheName ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdCache').Value
+        $cacheName ??= Get-VariableOutModule '__CmdCache'
         return Get-DynCmdParam $cacheName $CommandFolder $Command $filter
     }
 
     end {
         # https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
         # get or set a variable from the parent (module) scope.
-        $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdFolder').Value
-        $__LibFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__LibFolder').Value
-        $__RootFolder ??= $PSCmdlet.SessionState.PSVariable.Get('__RootFolder').Value
-        $cacheName ??= $PSCmdlet.SessionState.PSVariable.Get('__CmdCache').Value
+        $__CmdFolder ??= Get-VariableOutModule '__CmdFolder'
+        $__LibFolder ??= Get-VariableOutModule '__LibFolder'
+        $__RootFolder ??= Get-VariableOutModule '__RootFolder'
+        $cacheName ??= Get-VariableOutModule '__CmdCache'
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"
