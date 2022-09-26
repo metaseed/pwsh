@@ -1,0 +1,32 @@
+# https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
+# https://stackoverflow.com/questions/46528262/is-there-any-way-for-a-powershell-module-to-get-at-its-callers-scope
+# note:
+# should not put in to a module and use it from a another module, need to inline the source code into the module that use the function
+# inline the script is also NOT work:
+# . $env:MS_PWSH\Lib\VariableOutsideModule.ps1
+# so just use the $PSCmdlet.SessionState.PSVariable.GetValue explicitly, it works!
+
+# function Get-VariableOutsideModule {
+#   [Cmdletbinding()]
+#   param([Parameter()][string]$Name, [switch]$ValueOnly)
+#   $va = $PSCmdlet.SessionState.PSVariable.Get($Name)
+#   if($ValueOnly) {
+#     $va = $va.Value
+#   }
+#   return $va
+# }
+
+# function Get-VariableValueOutsideModule {
+#   [Cmdletbinding()]
+#   param([Parameter()][string]$Name)
+#   return $PSCmdlet.SessionState.PSVariable.GetValue($Name)
+# }
+
+# function Set-VariableOutOutsideModule {
+#   [Cmdletbinding()]
+#   param(
+#       [Parameter(ValueFromPipeline)][string]$Value,
+#       [Parameter()]$Name
+#   )
+#   process { $PSCmdlet.SessionState.PSVariable.Set($Name,$Value)}
+# }

@@ -12,17 +12,16 @@ function Invoke-SubCommand {
     # used to pass in addtional parameter for subcommand, otherwise error: can not find paramter for the subcmd
     dynamicparam {
         # no way to access the $filter and other parameter, that is not set explictly in dynamicparam, we can accept $PSBoundParameters['Command']
-        # - not work: Get-VariableOutModule 'filter' -valueonly #Get-Variable -Name 'filter' -ValueOnly #$PSBoundParameters['filter']
-        # not work: $cacheName ??= Get-VariableOutModule '__CmdCache' -ValueOnly
-        # can not use: Get-DynCmdParam $cacheName $CommandFolder $Command $filter
-        # so we use $env here to get cachename and cmdfolder
+        # - not work: #$PSBoundParameters['filter']
+        # so also can use $env here to share cachename and cmdfolder in the process
 
         $cmd = Find-FromParent 'Command' $MyInvocation.PSScriptRoot
-        $__CmdFolder ??= $env:__CmdFolder # Get-VariableOutModule '__CmdFolder' -ValueOnly
+        $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdFolder') # $env:__CmdFolder
         $CommandFolder = $__CmdFolder ?? "$cmd"
         if (!$CommandFolder) { return }
         $Command = $PSBoundParameters['Command']
-        $cacheName ??=  $env:__CmdCache# Get-VariableOutModule '__CmdCache' -ValueOnly
+        $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdCache')
+
         $filter = $PSBoundParameters['filter'] ?? '*.ps1'
         # write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder"
         return Get-DynCmdParam $cacheName $CommandFolder $Command $filter
@@ -31,10 +30,12 @@ function Invoke-SubCommand {
     end {
         # https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
         # get or set a variable from the parent (module) scope.
-        $__CmdFolder ??= Get-VariableOutModule '__CmdFolder' -ValueOnly
-        # $__LibFolder ??= Get-VariableOutModule '__LibFolder' -ValueOnly
-        # $__RootFolder ??= Get-VariableOutModule '__RootFolder' -ValueOnly
-        $cacheName ??= Get-VariableOutModule '__CmdCache' -ValueOnly
+        $__CmdFolder ??=  $PSCmdlet.SessionState.PSVariable.GetValue('__CmdFolder')
+        # __LibFolder is not used here but maybe used in the subcommand
+        $__LibFolder ??=  $PSCmdlet.SessionState.PSVariable.GetValue( '__LibFolder')
+        $__RootFolder ??=   $PSCmdlet.SessionState.PSVariable.GetValue( '__RootFolder')
+        $cacheName ??=   $PSCmdlet.SessionState.PSVariable.GetValue( '__CmdCache')
+        # write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder, libfolder: $__LibFolder"
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"
