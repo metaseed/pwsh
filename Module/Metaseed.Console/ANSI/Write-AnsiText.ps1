@@ -53,6 +53,92 @@ enum BackgroundColorAnsi {
 # 232-255: grayscale
 #>
 
+function Get-AnsiText {
+  [CmdletBinding(DefaultParameterSetName = "8bit")]
+  param (
+    [Parameter(Position = 0)]
+    [string]
+    $text = @"
+    __________               .__          _____          __
+    \______   \__  _  _______|  |__      /     \   _____/  |______    __________   ____    ____
+     |     ___/\ \/ \/ /  ___/  |  \    /  \ /  \_/ __ \   __\__  \  /  ___/  _ \ /    \  / ___\
+     |    |     \     /\___ \|   Y  \  /    Y    \  ___/|  |  / __ \_\___ (  <_> )   |  \/ /_/  >
+     |____|      \/\_//____  >___|  /  \____|__  /\___  >__| (____  /____  >____/|___|  /\___  /
+                           \/     \/           \/     \/          \/     \/           \//_____/
+"@,
+
+    [Parameter(position = 1, ParameterSetName = '8bit')]
+    [ForegroundColorAnsi]
+    $ForegroundColor,
+    [Parameter(position = 2, ParameterSetName = '8bit')]
+    [BackgroundColorAnsi]
+    $BackgroundColor,
+
+    [Parameter(position = 1, ParameterSetName = '256bit')]
+    [int]
+    [ValidateRange(0, 255)]
+    $Foreground256Bits,
+    [Parameter(position = 2, ParameterSetName = '256bit')]
+    [int]
+    [ValidateRange(0, 255)]
+    $Background256Bits,
+
+    [Parameter(position = 1, ParameterSetName = 'rgb')]
+    [int[]]
+    [ValidateScript({
+        if ($_ -lt 0 -or $_ -gt 255) { throw "$_ is out or range[0,255]" }
+        return $true
+      })]
+    $ForegroundRGB,
+    [Parameter(position = 2, ParameterSetName = 'rgb')]
+    [int[]]
+    [ValidateScript({
+        if ($_ -lt 0 -or $_ -gt 255) { throw "$_ is out or range[0,255]" }
+        return $true
+      })]
+    $BackgroundRGB,
+
+    [switch]
+    $Inverted,
+    [switch]
+    $Underlined,
+    [switch]
+    $Blink,
+    [switch]
+    $Bold)
+
+
+  if ($pscmdlet.ParameterSetName -eq '8bit') {
+    if ($ForegroundColor) { $fgc = ";$($ForegroundColor.value__)" }
+    if ($BackgroundColor) { $bgc = ";$($BackgroundColor.value__)" }
+  }
+  elseif ($pscmdlet.ParameterSetName -eq '256bit') {
+    $fgc = $Foreground256Bits
+    $bgc = $Background256Bits
+  }
+  elseif ($pscmdlet.ParameterSetName -eq 'rgb') {
+    if ($ForegroundRGB.Count -ne 3) { throw "ForgroundRGB should have 3 elements(RGB)" }
+    if ($BackgroundRGB.Count -ne 3) { throw "BackgroundRGB should have 3 elements(RGB)" }
+    $fgc = $ForegroundRGB -join ';'
+    $bgc = $BackgroundRGB -join ';'
+  }
+
+  if ($Underlined) { $und = ';4' }
+  if ($Blink) { $blk = ';5' }
+  if ($Bold) { $bld = ';1' }
+  if ($Inverted) { $inv = ";7" }
+
+  if ($pscmdlet.ParameterSetName -eq '8bit') {
+    return "`e[${fgc}${bgc}${bld}${inv}${und}${blk}m$text`e[0m"
+  }
+  elseif ($pscmdlet.ParameterSetName -eq '256bit') {
+    return "`e[38;5;${fgc}${bld}${inv}${und}${blk}m`e[48;5;${bgc}m$text`e[0m"
+  }
+  elseif ($pscmdlet.ParameterSetName -eq 'rgb') {
+    return "`e[38;2;${fgc}${bld}${inv}${und}${blk}m`e[48;2;${bgc}m$text`e[0m"
+  }
+  throw "wrong paramterSetName of Get-AnsiText"
+}
 function Write-AnsiText {
   [CmdletBinding(DefaultParameterSetName = "8bit")]
   param (
@@ -109,33 +195,16 @@ function Write-AnsiText {
     [switch]$NoNewLine
   )
 
+  [void]$PSBoundParameters.remove('NoNewline')
+  $t = Get-AnsiText @PSBoundParameters
   if ($pscmdlet.ParameterSetName -eq '8bit') {
-    if ($ForegroundColor) { $fgc = ";$($ForegroundColor.value__)" }
-    if ($BackgroundColor) { $bgc = ";$($BackgroundColor.value__)" }
+    Write-Host $t -NoNewline:$NoNewLine
   }
   elseif ($pscmdlet.ParameterSetName -eq '256bit') {
-    $fgc = $Foreground256Bits
-    $bgc = $Background256Bits
+    Write-Host $t  -NoNewline:$NoNewLine
   }
   elseif ($pscmdlet.ParameterSetName -eq 'rgb') {
-    if ($ForegroundRGB.Count -ne 3) { throw "ForgroundRGB should have 3 elements(RGB)" }
-    if ($BackgroundRGB.Count -ne 3) { throw "BackgroundRGB should have 3 elements(RGB)" }
-    $fgc = $ForegroundRGB -join ';'
-    $bgc = $BackgroundRGB -join ';'
-  }
-
-  if ($Underlined) { $und = ';4' }
-  if ($Blink) { $blk = ';5' }
-  if ($Bold) { $bld = ';1' }
-  if ($Inverted) { $inv = ";7" }
-  if ($pscmdlet.ParameterSetName -eq '8bit') {
-    Write-Host "`e[${fgc}${bgc}${bld}${inv}${und}${blk}m$text`e[0m" -NoNewline:$NoNewLine
-  }
-  elseif ($pscmdlet.ParameterSetName -eq '256bit') {
-    Write-Host "`e[38;5;${fgc}${bld}${inv}${und}${blk}m`e[48;5;${bgc}m$text`e[0m" -NoNewline:$NoNewLine
-  }
-  elseif ($pscmdlet.ParameterSetName -eq 'rgb') {
-    Write-Host "`e[38;2;${fgc}${bld}${inv}${und}${blk}m`e[48;2;${bgc}m$text`e[0m" -NoNewline:$NoNewLine
+    Write-Host $t -NoNewline:$NoNewLine
   }
 }
 
@@ -222,4 +291,4 @@ function Show-AnsiColors256Bits {
 
 }
 
-Export-ModuleMember Show-AnsiColors8Bits, Show-AnsiColors256Bits, Show-ConsoleColors
+Export-ModuleMember Show-AnsiColors8Bits, Show-AnsiColors256Bits, Show-ConsoleColors, Get-AnsiText

@@ -43,11 +43,11 @@ dynamicparam {
     return $a
   }
 
-  $HandlerCache = Get-CmdsFromCacheAutoUpdate 'app_commands' "$PSScriptRoot\_commands" '*.ps1'
+  $HandlerCache = Get-CmdsFromCacheAutoUpdate 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
   if ($HandlerCache) {
     $handler = $HandlerCache[$app]
     if ($handler) {
-      $p = Get-DynCmdParam 'app_commands_params' "$PSScriptRoot\_commands" $app
+      $p = Get-DynCmdParam 'app_commands_params' "$PSScriptRoot\_Commands" $app
       return $p
     }
   }
@@ -59,7 +59,7 @@ end {
     return
   }
 
-  $CmdCache = Get-CmdsFromCacheAutoUpdate 'app_commands' "$PSScriptRoot\_commands" '*.ps1'
+  $CmdCache = Get-CmdsFromCacheAutoUpdate 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
   if ($CmdCache) {
     $cmd = $CmdCache[$app]
     Write-Verbose "cmd: $cmd"
