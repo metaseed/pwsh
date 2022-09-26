@@ -1,12 +1,21 @@
 # https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/CascadiaCode
 Assert-Admin
-$CaskaydiaCoveNF = "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Regular%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible.otf"
-$path = "$env:temp/CaskaydiaCoveNF.otf"
-Write-Step 'Downloading CaskaydiaCoveNF...'
-iwr $CaskaydiaCoveNF -OutFile $path
-Write-Step 'Installing CaskaydiaCoveNF...'
 
-Install-Font -Path $path
+$CaskaydiaCoveNF = @(
+  # "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Italic.otf",
+  "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Regular.otf"
+)
+Write-Step 'Downloading CaskaydiaCoveNF...'
+$CaskaydiaCoveNF |
+%{
+  $fi = Split-Path -Leaf $_
+  $fi = $fi -replace '%20', ''
+  $path =  "$env:temp/$fi"
+  Write-Host "download to: $env:temp\$fi"
+  iwr $_ -OutFile $path
+  Write-Step 'Installing CaskaydiaCoveNF...'
+  Install-Font -Path $path
+}
 Restore-TerminalSetting -force
 
 Pin-TaskBar "$env:MS_PWSH\Cmdlet\Terminal\WindowsTerminal.lnk" | Out-Null
