@@ -19,8 +19,8 @@ if ($vm) {
 }
 else {
   # display
-  powercfg /change monitor-timeout-dc 10 # 5 dft
-  powercfg /change monitor-timeout-ac 20 # 10 dft
+  powercfg /change monitor-timeout-dc 10 # 5mins by default
+  powercfg /change monitor-timeout-ac 20 # 10mins by default
   # sleep
   powercfg /change standby-timeout-dc 20
   powercfg /change standby-timeout-ac 60
@@ -28,8 +28,8 @@ else {
   powercfg /change  hibernate-timeout-dc 60
   powercfg /change  hibernate-timeout-ac 0
   # disk
-  # powercfg /change disk-timeout-ac default is 20
-  # powercfg /change disk-timeout-dc default is 10
+  # powercfg /change disk-timeout-ac #default is 20
+  # powercfg /change disk-timeout-dc #default is 10
 
   ## power buttons actions
   ## 0: do nothing; 1: sleep; 2: hibernate; 3: shutdown

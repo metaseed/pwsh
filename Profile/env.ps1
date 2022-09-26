@@ -24,7 +24,7 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
         $env:path += ";$CmdLetFolder"
         # -exclude only explude the leaf name start with '_'
         # -Name will return the dir path after $CmdLetFolder, then we do filter to remove the name contains '\_', '\test', '\s\'
-        $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name|? {!($_ -match '\\_|\\?test\\?|\\?s\\')}|% {"$CmdLetFolder\$_"}
+        $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name|? {!($_ -match '\\_|\\?test\\?')}|% {"$CmdLetFolder\$_"} # |\\?s\\
         $env:path += ";$($folders -join ';')"
 
         $env:pathPatched = $true

@@ -1,4 +1,3 @@
-
 [CmdletBinding()]
 param (
   [Parameter()]
@@ -8,6 +7,7 @@ param (
 
 if ($vm) {
   # uninstall one drive
+  # C:\Users\jsong12\AppData\Local\Microsoft\OneDrive\22.181.0828.0002\OneDriveSetup.exe  /uninstall
   cmd /c (Get-ItemPropertyValue HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OneDriveSetup.exe UninstallString)
 
   # remove xbox

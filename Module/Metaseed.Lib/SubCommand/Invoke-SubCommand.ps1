@@ -15,9 +15,12 @@ function Invoke-SubCommand {
         # - not work: #$PSBoundParameters['filter']
         # so also can use $env here to share cachename and cmdfolder in the process
 
-        $cmd = Find-FromParent 'Command' $MyInvocation.PSScriptRoot
         $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdFolder') # $env:__CmdFolder
-        $CommandFolder = $__CmdFolder ?? "$cmd"
+        if (!$__CmdFolder) {
+            $cmd = Find-FromParent '_Commands' $MyInvocation.PSScriptRoot
+            $CommandFolder = $cmd
+        }
+
         if (!$CommandFolder) { return }
         $Command = $PSBoundParameters['Command']
         $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdCache')
@@ -30,18 +33,21 @@ function Invoke-SubCommand {
     end {
         # https://stackoverflow.com/questions/72378920/access-a-variable-from-parent-scope
         # get or set a variable from the parent (module) scope.
-        $__CmdFolder ??=  $PSCmdlet.SessionState.PSVariable.GetValue('__CmdFolder')
+        $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdFolder')
         # __LibFolder is not used here but maybe used in the subcommand
-        $__LibFolder ??=  $PSCmdlet.SessionState.PSVariable.GetValue( '__LibFolder')
-        $__RootFolder ??=   $PSCmdlet.SessionState.PSVariable.GetValue( '__RootFolder')
-        $cacheName ??=   $PSCmdlet.SessionState.PSVariable.GetValue( '__CmdCache')
+        $__LibFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__LibFolder')
+        $__RootFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__RootFolder')
+        $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__CmdCache')
         # write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder, libfolder: $__LibFolder"
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"
-        $cmd = Find-FromParent 'Command' $path
-        $CommandFolder = $__CmdFolder ?? "$cmd"
-        if (!$CommandFolder) { write-error "can not get the 'Command' folder" }
+        if (!$__CmdFolder) {
+            $cmd = Find-FromParent '_Commands' $path
+            $CommandFolder = $cmd
+        }
+
+        if (!$CommandFolder) { write-error "can not get the '_Commands' folder" }
         Write-Verbose $CommandFolder
         $file = Find-CmdItem $cacheName $CommandFolder $Command $filter
 

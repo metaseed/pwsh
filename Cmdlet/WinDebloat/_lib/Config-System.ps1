@@ -23,9 +23,9 @@ if ($vm) {
   Set-HKItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon' -name 'DefaultUserName' -value '0' -PropertyType string
   Set-HKItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon' -name 'DefaultPassword' -value '0' -PropertyType string
 
-  
+
   # not work, have to do it with group policy:c omputer Configuration > Administrative Templates > Windows Components > Microsoft Defender Antivirus;
-  # In Windows 11, before disabling Windows Defender through the registry or a GPO, you must manually disable the Tamper Protection feature. Tamper Protection prevents changes to Windows Defender security features via PowerShell, registry settings, and/or Group Policy options. 
+  # In Windows 11, before disabling Windows Defender through the registry or a GPO, you must manually disable the Tamper Protection feature. Tamper Protection prevents changes to Windows Defender security features via PowerShell, registry settings, and/or Group Policy options.
   # need to disable first: Tamper Protection
   # https://theitbros.com/managing-windows-defender-using-powershell/
   # disable realtime monitor
@@ -40,10 +40,10 @@ if ($vm) {
   # disable windows defineder firewall
   # note: can not disable the service with Set-Service, show user can not disalbe it
   # Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Services\mpssvc' -Name 'start' -Value 4 # 2 is default
-  
+
 }
 else {
-  
+
 }
 
 # Network Discovery:
@@ -58,7 +58,7 @@ netsh advfirewall firewall set rule group="File and Printer Sharing" new enable=
 # 0: disable; 1: enable
 Set-HKItemProperty 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable' -Value 0 -PropertyType Dword
 
-## 
+##
 ## Disable Autoruns
 ##
 $autoRunBackup = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects\AutorunsDisabled"
@@ -75,7 +75,14 @@ if (!(Test-Path $WOWAutoRunBackup)) {
 Move-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects\{F20487CC-FC04-4B1E-863F-D9801796130B}" "$autoRunBackup\{F20487CC-FC04-4B1E-863F-D9801796130B}" -Force
 Move-Item "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\ShellServiceObjects\{F56F6FDD-AA9D-4618-A949-C1B91AF43B1A}" "$WOWAutoRunBackup\{F20487CC-FC04-4B1E-863F-D9801796130B}" -Force
 
-# https://www.itechtics.com/add-language-using-powershell/
+##
+## install additional language
+## https://www.itechtics.com/add-language-using-powershell/
 if(gcm Install-Language -ErrorAction SilentlyContinue) {
+  if(!(Get-InstalledLanguage -Language zh-CN))
   Install-Language zh-CN
+  # Set-SystemPreferredUILanguage
+  # Get-SystemPreferredUILanguage
+  # enable double pinyin
+  sp "HKCU:\Software\Microsoft\InputMethod\Settings\CHS" "Enable Double Pinyin" 1
 }
