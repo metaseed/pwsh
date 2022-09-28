@@ -15,18 +15,24 @@ function Invoke-SubCommand {
         # - not work: #$PSBoundParameters['filter']
         # so also can use $env here to share cachename and cmdfolder in the process
 
+
         $__CmdFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdFolder') # $env:__CmdFolder
         if (!$__CmdFolder) {
-            $cmd = Find-FromParent '_Commands' $MyInvocation.PSScriptRoot
-            $CommandFolder = $cmd
+            $__CmdFolder = Find-FromParent '_Commands' $MyInvocation.PSScriptRoot
         }
 
-        if (!$CommandFolder) { return }
+        $CommandFolder = $__CmdFolder
+
+
+        if (!$CommandFolder) {
+            write-error "can not find command folder in dynamicparam block of invoke-subcommand"
+            return
+        }
         $Command = $PSBoundParameters['Command']
         $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdCache')
 
         $filter = $PSBoundParameters['filter'] ?? '*.ps1'
-        # write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder"
+        write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder"
         return Get-DynCmdParam $cacheName $CommandFolder $Command $filter
     }
 
@@ -38,14 +44,14 @@ function Invoke-SubCommand {
         $__LibFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__LibFolder')
         $__RootFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__RootFolder')
         $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__CmdCache')
-        # write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder, libfolder: $__LibFolder"
+        write-host "runtime: filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder, libfolder: $__LibFolder"
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"
         if (!$__CmdFolder) {
-            $cmd = Find-FromParent '_Commands' $path
-            $CommandFolder = $cmd
+            $__CmdFolder = Find-FromParent '_Commands' $path
         }
+        $CommandFolder = $__CmdFolder
 
         if (!$CommandFolder) { write-error "can not get the '_Commands' folder" }
         Write-Verbose $CommandFolder

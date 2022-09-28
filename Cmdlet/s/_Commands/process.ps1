@@ -1,0 +1,1 @@
+wct {param($cores)Get-ProcessCpuMem $cores} {(get-CimInstance Win32_Processor).NumberOfLogicalProcessors}

@@ -6,7 +6,12 @@ function Watch-Table {
   param (
     [Parameter()]
     [ScriptBlock]
-    $Script = { Get-Process },
+    $CyclicScript = { Get-Process },
+
+    # begin script
+    [Parameter()]
+    [ScriptBlock]
+    $BeginScript ={},
 
     # period in seconds
     [Parameter()]
@@ -77,9 +82,10 @@ function Watch-Table {
 
   # $objs = & $Script
   # $table = $typeGetter.CastObjectsToTableView($objs)
+  $result = & $BeginScript
 
   $update = {
-    $objs = & $Script
+    $objs = & $CyclicScript $result
     $dataTable = [Data.DataTable]::new()
     $table = $typeGetter.CastObjectsToTableView($objs)
     $table.DataColumns | % {
@@ -110,7 +116,7 @@ function Watch-Table {
       $update
     )
   }
-  . $update
+  & $update $result
 
   [Application]::Top.Add($win)
   # https://github.dev/gui-cs/Terminal.Gui/blob/28718e9c3ce0793b95be6846dc5f491644875baa/Terminal.Gui/Core/Event.cs#L61

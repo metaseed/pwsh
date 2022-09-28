@@ -1,10 +1,16 @@
 
+<#
+
+.EXAMPLE
+gsi $home |Format-Table -View Gb
+
+.NOTES
+#>
 Function Get-FolderSizeInfo {
 
   [cmdletbinding()]
   [alias("gsi")]
   [OutputType("FolderSizeInfo")]
-
   Param(
       [Parameter(Position = 0, Mandatory, HelpMessage = "Enter a file system path like C:\Scripts.", ValueFromPipeline, ValueFromPipelineByPropertyName)]
       [ValidateNotNullOrEmpty()]
