@@ -17,7 +17,7 @@ function Get-DynCmdParam {
 
     $rp = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
     $c = Get-Command -Name $file  -CommandType ExternalScript
-    if (!$c.Parameters?.Count) { return $rp }
+    if (!($($c.Parameters)?.Count)) { return $rp }
 
     $pn = 'Verbose', 'Debug', 'ErrorAction', 'InformationAction', 'InformationVariable', 'WarningAction', 'ErrorVariable', 'WarningVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable'
     foreach ($pv in $c.Parameters.Values) {
