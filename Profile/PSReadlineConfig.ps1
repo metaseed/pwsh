@@ -10,6 +10,12 @@ $PSReadLineOptions = @{
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption?view=powershell-7.2
 Set-PSReadLineOption @PSReadLineOptions
 
+# work
+# $options = Get-PSReadLineOption
+# $options.ListPredictionColor = "`e[90m" # original value "`e[33m"
+Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
+Set-PSReadLineOption -PredictionViewStyle ListView # default is InLineView,
+
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 # not work in vscode
@@ -28,7 +34,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
     $lastSessionScope = $global:__PSReadLineSessionScope
-    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now}
+    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now }
     # create a scope for a psReadline session
     New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
         scope     = $global:__PSReadLineSessionScope;

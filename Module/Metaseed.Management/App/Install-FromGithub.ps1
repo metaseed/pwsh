@@ -219,7 +219,7 @@ function Install-FromGithub {
       $path = $_
       $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online"
       write-host "app installed to $path"
-      $appPath = $path
+      $appPath = $des
     }
   }
   return $appPath

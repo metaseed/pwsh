@@ -32,7 +32,7 @@ function Invoke-SubCommand {
         $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue('__CmdCache')
 
         $filter = $PSBoundParameters['filter'] ?? '*.ps1'
-        write-host "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder"
+        Write-Verbose "filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder"
         return Get-DynCmdParam $cacheName $CommandFolder $Command $filter
     }
 
@@ -44,7 +44,7 @@ function Invoke-SubCommand {
         $__LibFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__LibFolder')
         $__RootFolder ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__RootFolder')
         $cacheName ??= $PSCmdlet.SessionState.PSVariable.GetValue( '__CmdCache')
-        write-host "runtime: filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder, libfolder: $__LibFolder"
+        Write-Verbose "runtime: filter:$filter , command: $Command , cacheName: $cacheName , CmdFolder: $__CmdFolder, libfolder: $__LibFolder"
 
         $path = $MyInvocation.PSScriptRoot
         Write-Verbose "path: $path"

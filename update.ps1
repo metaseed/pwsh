@@ -24,8 +24,6 @@ if (Test-Update 20 $MyInvocation.MyCommand.Path) { # @(1, 20) -contains (Get-Dat
                 }
             }
 
-            $options = Get-PSReadLineOption
-            $options.ListPredictionColor = "`e[90m" # original value "`e[33m"
         }
     )
 }
