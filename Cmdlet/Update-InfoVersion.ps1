@@ -24,7 +24,7 @@ if($null -eq $str.Matches) {
   Write-Warning "could not find the version information`n$(Get-Content $info)"
   return
 }
-Write-Notice "old $($str.Matches[0].Value)" -NoSpeak
+Write-Notice "old $($str.Matches[0].Value)"
 
 Write-Action "increase $Part version"
 if($str.Matches.Success) {
@@ -45,7 +45,7 @@ Write-Action 'modify version of info.json...'
 (Get-Content $info)|
 % {$_ -replace $regex, $newVer }|
 Set-Content $info -force
-Write-Notice "new $newVer" -NoSpeak
+Write-Notice "new $newVer"
 
 Write-SubStep 'commit changes...'
 Write-Execute "git status"

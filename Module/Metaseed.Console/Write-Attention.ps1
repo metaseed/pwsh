@@ -2,11 +2,11 @@ function Write-Attention {
   param (
     [string]$message,
     [switch]$replay = $fasle,
-    [switch]$NoSpeak,
+    [switch]$Speak,
     [Object]$SpeakMessage = $null
   )
   if (!$replay) {
-    if (!$NoSpea || $SpeakMessage) { Speak-Text "Attention: $($SpeakMessage ?? $message)" }
+    if ($Speak || $SpeakMessage) { Speak-Text "Attention: $($SpeakMessage ?? $message)" }
 
     WriteStepMsg @{type = 'Attention'; message = $message}
   }
@@ -16,5 +16,5 @@ function Write-Attention {
   Write-Host "▐" -ForegroundColor Blue  -NoNewline
   Write-Host -ForegroundColor DarkBlue  "${icon}Attention:" -BackgroundColor Yellow -NoNewline
   Write-Host " $message" -ForegroundColor Blue
-  
+
 }
