@@ -4,6 +4,6 @@
   # RootModule = 'Metaseed.Utility.psm1'
   ModuleVersion = '1.0.5'
   AliasesToExport = @('const', 'snl')
-  CmdletsToExport = @('Test-SampleCmdlet')
-  FunctionsToExport = @('Breakable-Pipeline', 'Find-FromParent', 'Find-LockingProcess', 'Get-DotnetVersions', 'Get-ParentProcess', 'Get-RedirectedUrl', 'Get-RemoteFile', 'Kill-Process', 'Kill-Service', 'New-ProxyCommand', 'Select-FolderGUI', 'Set-Constant', 'Set-NewLocation', 'Start-ServiceWithTimeout', 'Stop-LockingProcess')
+  CmdletsToExport = @('Get-ActiveComObject', 'Test-SampleCmdlet')
+  FunctionsToExport = @('Breakable-Pipeline', 'Find-FromParent', 'Find-LockingProcess', 'Get-DotnetVersions', 'Get-ParentProcess', 'Get-RedirectedUrl', 'Get-RemoteFile', 'Kill-Process', 'Kill-Service', 'New-ProxyCommand', 'Open-InVisualStudio', 'Select-FolderGUI', 'Set-Constant', 'Set-NewLocation', 'Start-ServiceWithTimeout', 'Stop-LockingProcess')
 }
