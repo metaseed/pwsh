@@ -3,7 +3,7 @@
 set icons
 set colors
 # interpreter for shell commands
-# set shell pwsh
+set shell pwsh
 
 # define a custom 'open' command
 # This command is called when current file is not a directory.
@@ -64,12 +64,20 @@ map <delete> delete
 
 set filesep " "
 # use a and A to create files and directories
-cmd createfile !{{
-  new-item -path $0
-  write-host 'test'
-  write-host 'bbb'
+# note $env:0 not work
+cmd createfile ${{
+  $file = Read-host 'New File Name'
+  new-item -path $file
 }}
-cmd createdir %new-item -Type Directory $1; redraw
-map a push :createfile<space>
-map A push :createdir<space>
+# cmd createfile !new-item
+cmd createdir ${{
+  $dir = Read-host 'New Directory Name'
+  new-item $dir -Type Directory; #redraw
+}}
+map a push :createfile<enter>;redraw
+map A push :createdir<enter>
 map Y %$env:fx | scb
+# cmd rename %mv -i $f $1
+# map R push :rename
+cmd rename %sh -c 'mv -i %f% $0'
+map r push :rename<space>
