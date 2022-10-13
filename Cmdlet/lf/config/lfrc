@@ -2,8 +2,73 @@
 # https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
 set icons
 set colors
+set drawbox
+set filesep " "
+# leave some space at the top and the bottom of the screen
+set scrolloff 10
 # interpreter for shell commands
-set shell pwsh
+# set shell pwsh
+
+# use a and A to create files and directories
+cmd createfile %sh -c 'touch $0'
+cmd createdir %sh -c 'mkdir $0'
+map a push :createfile<space>
+map A push :createdir<space>
+# open explorer in current directory
+map S push &start.<enter>
+# map T push &wt<enter>
+# copy file path
+map Y %echo %fx% | clip
+
+# open file in code
+map C &code %f%
+
+# archive management
+cmd zip %sh -c 'c:/app/7-zip/7z a $0 %fx%'
+cmd extract_here %sh -c 'c:/app/7-zip/7z e %f%'
+cmd extract_to %sh -c 'c:/app/7-zip/7z  e %f% -o%f%_extracted'
+cmd extract_auto %sh -c 'c:/app/7-zip/7z e %f% -o%f%'
+cmd extract_auto_and_remove %sh -c 'c:/app/7-zip/7z e %f% -o%f%_extracted && rm %f%'
+
+map x push :extract_auto<enter>
+map X push :extract_auto_and_remove<enter>
+
+# quick preview
+map P $C:\app\QuickLook\QuickLook.exe %f%
+
+# use c-f to fuzzy search
+cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
+map <c-f> :fzf_jump
+
+# must have at least a file in it
+cmd bookmark %sh -c 'python D:/lf_scripts/bookmark.py %f% $0'
+cmd goto_bookmark push $python<space>D:/lf_scripts/goto_bookmark.py<space>%id%<enter>
+map B push :bookmark<space>
+map b push :goto_bookmark<enter>
+
+# map F push :filter<enter>
+# map gF push :setfilter<enter>
+
+# # drag and drop
+cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
+cmd dragonce push &python<space>D:/lf_scripts/drag.py<space>once<space>%fx%<enter>
+map D push :dragonce<enter>
+
+# # use c-f to fuzzy search
+# cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
+# map <c-f> :fzf_jump
+
+# # quick preview
+# # map P $C:\Users\Lion\AppData\Local\Programs\QuickLook\QuickLook.exe %f%
+
+# # custom file preview
+# set previewer "D:\\lf_scripts\\preview.bat"
+
+# # cmd send_to_mobile %sh -c 'scp -P 2222 hex@192.168.1.151: %fx%'
+# cmd send_to_mobile push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.151:<enter>
+# cmd send_to_tablet push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.150:<enter>
+# map st push :send_to_tablet<enter>
+# map sm push :send_to_mobile<enter>
 
 # define a custom 'open' command
 # This command is called when current file is not a directory.
@@ -27,7 +92,7 @@ set shell pwsh
 # editor keybinding accordingly.
 
 # vim is there when we installed git
-map e $vim $Env:f
+# map e $vim $Env:f
 
 # change the pager used in default pager keybinding
 # The standard pager used in Windows is 'more' which is not a very capable
@@ -35,26 +100,23 @@ map e $vim $Env:f
 # pager keybinding accordingly.
 
 # less is there when we installed git
-map i $less $Env:f
+# map i $less $Env:f
 
 # change the shell used in default shell keybinding
-map w $pwsh
+# map w $pwsh
 
 # change 'doc' command to use a different pager
 cmd doc $a lf -doc | less
 
-# leave some space at the top and the bottom of the screen
-set scrolloff 10
-
 # use enter for shell commands
-map <enter> shell
+# map <enter> shell
 # reload config file using f5
 map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
 ## execute current file (must be executable)
-# execute with shell
-map x $$f
-# execute with shell_wait
-map X !$f
+# # execute with shell
+# map x $$f
+# # execute with shell_wait
+# map X !$f
 # map P &a quicklook -- $env:f
 ## delete
 # note: $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
@@ -62,21 +124,21 @@ map X !$f
 cmd trash &Remove-ItemSafely env:fx env:1
 map <delete> delete
 
-set filesep " "
 # use a and A to create files and directories
 # note $env:0 not work
-cmd createfile ${{
-  $file = Read-host 'New File Name'
-  new-item -path $file
-}}
-# cmd createfile !new-item
-cmd createdir ${{
-  $dir = Read-host 'New Directory Name'
-  new-item $dir -Type Directory; #redraw
-}}
-map a push :createfile<enter>;redraw
-map A push :createdir<enter>
-map Y %$env:fx | scb
+# cmd createfile ${{
+#   $file = Read-host 'New File Name'
+#   new-item -path $file
+# }}
+# # cmd createfile !new-item
+# cmd createdir ${{
+#   $dir = Read-host 'New Directory Name'
+#   new-item $dir -Type Directory; #redraw
+# }}
+# map a push :createfile<enter>;redraw
+# map A push :createdir<enter>
+
+# map Y %$env:fx | scb
 # cmd rename %mv -i $f $1
 # map R push :rename
 cmd rename %sh -c 'mv -i %f% $0'

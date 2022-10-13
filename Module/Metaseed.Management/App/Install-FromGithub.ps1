@@ -125,7 +125,7 @@ function Install-FromGithub {
     [scriptblock]$installScript = {
       [CmdletBinding()]
       param($downloadedFilePath, $ver_online)
-
+      Write-Host "Install..."
       Write-Host $downloadedFilePath
       $appName = $application -eq '' ? $repo : $application
       # ignore error, may not exist

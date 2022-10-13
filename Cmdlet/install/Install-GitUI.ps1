@@ -1,1 +1,1 @@
-Install-FromGithub 'extrawurst' 'gitui' '-win\.tar\.gz$' -versionType 'preview' -tofolder
+Install-FromGithub 'extrawurst' 'gitui' '-win\.tar\.gz$' -versionType 'preview' -tofolder -Verbose
