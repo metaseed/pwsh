@@ -13,17 +13,7 @@ if (Test-Update 20 $MyInvocation.MyCommand.Path) { # @(1, 20) -contains (Get-Dat
         Start-ThreadJob -StreamingHost $host {
             Write-Host "Updating help via a background job" -ForegroundColor yellow
             Update-Help -force
-
-            'PSReadline', 'PowershellGet', 'Pester', 'Microsoft.PowerShell.ConsoleGuiTools' | % {
-                $module = $_
-                # write-host "try update module $module" -ForegroundColor Yellow
-                $error.Clear()
-                Update-Module $module -ErrorAction SilentlyContinue
-                if ($error) {
-                    Install-Module $module -force
-                }
-            }
-
+            . $PSScriptRoot\Lib\update-modules.ps1
         }
     )
 }
