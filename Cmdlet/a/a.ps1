@@ -43,7 +43,7 @@ dynamicparam {
     return $a
   }
 
-  $HandlerCache = Get-CmdsFromCacheAutoUpdate 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
+  $HandlerCache = Get-CmdsFromCache 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
   if ($HandlerCache) {
     $handler = $HandlerCache[$app]
     if ($handler) {
@@ -59,7 +59,7 @@ end {
     return
   }
 
-  $CmdCache = Get-CmdsFromCacheAutoUpdate 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
+  $CmdCache = Get-CmdsFromCache 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
   if ($CmdCache) {
     $cmd = $CmdCache[$app]
     Write-Verbose "cmd: $cmd"
@@ -75,7 +75,7 @@ end {
   $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe'
   Write-Verbose "File: $file"
 
-  $HandlerCache = Get-CmdsFromCacheAutoUpdate 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
+  $HandlerCache = Get-CmdsFromCache 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
   if ($HandlerCache) {
     $handler = $HandlerCache[$app]
     Write-Verbose "handler: $handler"

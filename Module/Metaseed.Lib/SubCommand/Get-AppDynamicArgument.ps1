@@ -8,7 +8,7 @@ function  Get-AppDynamicArgument{
   # [Console]::WriteLine("`n eeeaaa $app  aaa")
   if (!$app) { return }
 
-  $cacheValue = Get-CmdsFromCacheAutoUpdate 'app_args' $argsDir '*_args.ps1'
+  $cacheValue = Get-CmdsFromCache 'app_args' $argsDir '*_args.ps1'
 
   $argFile = $cacheValue["${app}_args"]
   if (!$argFile ) {

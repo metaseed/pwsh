@@ -1,14 +1,19 @@
 # https://medium.com/@a.hr.mostafavi/using-lf-file-manager-on-windows-fc4f1e4e1442
 # https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
 set icons
-set colors
-set drawbox
+# set drawbox
 set filesep " "
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
-# interpreter for shell commands
+# interpreter for shell commands, on windows by default it is cmd
 # set shell pwsh
 
+# reload config file using f5
+map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
+
+cmd rename %sh -c 'mv -i %f% $0'
+map r push :rename<space>
+map <delete> delete
 # use a and A to create files and directories
 cmd createfile %sh -c 'touch $0'
 cmd createdir %sh -c 'mkdir $0'
@@ -36,23 +41,23 @@ map X push :extract_auto_and_remove<enter>
 # quick preview
 map P $C:\app\QuickLook\QuickLook.exe %f%
 
-# use c-f to fuzzy search
-cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
-map <c-f> :fzf_jump
+# # use c-f to fuzzy search
+# cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
+# map <c-f> :fzf_jump
 
-# must have at least a file in it
-cmd bookmark %sh -c 'python D:/lf_scripts/bookmark.py %f% $0'
-cmd goto_bookmark push $python<space>D:/lf_scripts/goto_bookmark.py<space>%id%<enter>
-map B push :bookmark<space>
-map b push :goto_bookmark<enter>
+# # must have at least a file in it
+# cmd bookmark %sh -c 'python D:/lf_scripts/bookmark.py %f% $0'
+# cmd goto_bookmark push $python<space>D:/lf_scripts/goto_bookmark.py<space>%id%<enter>
+# map B push :bookmark<space>
+# map b push :goto_bookmark<enter>
 
-# map F push :filter<enter>
-# map gF push :setfilter<enter>
+# # map F push :filter<enter>
+# # map gF push :setfilter<enter>
 
-# # drag and drop
-cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push &python<space>D:/lf_scripts/drag.py<space>once<space>%fx%<enter>
-map D push :dragonce<enter>
+# # # drag and drop
+# cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
+# cmd dragonce push &python<space>D:/lf_scripts/drag.py<space>once<space>%fx%<enter>
+# map D push :dragonce<enter>
 
 # # use c-f to fuzzy search
 # cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
@@ -110,8 +115,7 @@ cmd doc $a lf -doc | less
 
 # use enter for shell commands
 # map <enter> shell
-# reload config file using f5
-map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
+
 ## execute current file (must be executable)
 # # execute with shell
 # map x $$f
@@ -121,8 +125,7 @@ map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
 ## delete
 # note: $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
 # todo:trash not work
-cmd trash &Remove-ItemSafely env:fx env:1
-map <delete> delete
+# cmd trash &Remove-ItemSafely env:fx env:1
 
 # use a and A to create files and directories
 # note $env:0 not work
@@ -141,5 +144,3 @@ map <delete> delete
 # map Y %$env:fx | scb
 # cmd rename %mv -i $f $1
 # map R push :rename
-cmd rename %sh -c 'mv -i %f% $0'
-map r push :rename<space>

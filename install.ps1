@@ -6,12 +6,24 @@ param (
     $Version = 'latest'
 )
 
+# install pwsh 7
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    write-error "please install powershell version great than 7"
+    write-host "https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows"
+    Write-host 'please install it and run this script again in the new powershell' -ForegroundColor Blue
+
+    return
+}
+
+Set-ExecutionPolicy Bypass -Scope Process -Force
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 "install ms_pwsh ver: $Version..."
 $zip = "$env:temp/pwsh.zip"
-if($Version -eq 'latest') {
-    $url ='http://github.com/metasong/pwsh/archive/refs/heads/master.zip'
-} else {
+if ($Version -eq 'latest') {
+    $url = 'http://github.com/metasong/pwsh/archive/refs/heads/master.zip'
+}
+else {
     $url = "https://github.com/metasong/pwsh/archive/refs/tags/$Version.zip" #1.0.2
 }
 iwr $url -OutFile $zip

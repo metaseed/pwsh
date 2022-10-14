@@ -55,20 +55,21 @@ function Complete-Command {
   # retry(update cache) when can not find any command
   $retries = 1
   do {
-    if (!$cacheValue -or $cacheValue.count -eq 0) {
+    if ($cacheValue.count -eq 0) {
       $cacheValue = Get-CmdsFromCache $cacheName $commandFolder $filter -update
     }
 
-    $commands = $cacheValue.Values
+    $commands = $cacheValue.Values|%{[IO.Path]::GetFileNameWithoutExtension($_)}
 
     if (!$wordToComplete) {
       # all commands
-      return $commands.BaseName
+      return $commands
     }
 
     $cmds = $commands |
-    % { return @{Name = $_.BaseName; Order = 0 } } |
+    % { return @{Name = $_; Order = 0 } } |
     ? {
+      Write-Verbose "command name: $($_.Name)"
       $dashIndex = $_.Name.IndexOf('-');
       # command name do not has '-'
       if ($dashIndex -eq -1) {
