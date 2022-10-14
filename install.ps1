@@ -10,7 +10,7 @@ param (
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-"[Wait] install ms_pwsh ver: $Version..."
+"[Wait] download ms_pwsh ver: $Version..."
 $zip = "$env:temp/pwsh.zip"
 if ($Version -eq 'latest') {
     $url = 'http://github.com/metasong/pwsh/archive/refs/heads/master.zip'
@@ -24,6 +24,7 @@ iwr $url -OutFile $zip
 $ProgressPreference = $pro
 #
 # ~ is better than $env:HomePath, it include the home drive, just like $home
+"install ms_pwsh..."
 Expand-Archive $zip ~/metaseed -Force
 
 # directly ri the pwsh folder may cause error if it is used.
