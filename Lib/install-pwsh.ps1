@@ -22,7 +22,9 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
         )
         $File = Split-Path $address -Leaf
         $Exe = "$env:TEMP\$File"
+        $ProgressPreference = 'SilentlyContinue' # imporve iwr speed
         Invoke-WebRequest $Address -OutFile $Exe
+        $ProgressPreference = $pro
         return $Exe
       }
       Write-Host "Microsoft pwsh is not installed, download and install version $psv"
@@ -32,7 +34,8 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
       Start-Process msiexec.exe -Wait -ArgumentList "/package $exe /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1"
       # update path env
       $env:path = [Environment]::GetEnvironmentVariable('path', "machine");
-    } else {
+    }
+    else {
       "pwsh already exists"
     }
 
