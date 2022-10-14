@@ -18,6 +18,7 @@ if ($Version -eq 'latest') {
 else {
     $url = "https://github.com/metasong/pwsh/archive/refs/tags/$Version.zip" #1.0.2
 }
+$ProgressPreference = 'SilentlyContinue' # imporve iwr download speed
 iwr $url -OutFile $zip
 #
 # ~ is better than $env:HomePath, it include the home drive, just like $home
