@@ -1,3 +1,4 @@
+"config ms_pwsh ..."
 if ($PSVersionTable.PSVersion.Major -lt 7) {
   if (!(gcm pwsh -ErrorAction Ignore)) {
     . "$PSScriptRoot\Lib\install-pwsh.ps1"
