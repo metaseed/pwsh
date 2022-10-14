@@ -6,13 +6,18 @@ param (
   [string]$PWSHParentFolder
 )
 
-# install pwsh 7
-if ($PSVersionTable.PSVersion.Major -lt 7) {
-  write-error "need to install powershell version great than 7"
-  write-host "https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows"
-  Write-host 'please install it and run this script again in the new powershell' -ForegroundColor Blue
+if(!(gcm git -ErrorAction Ignore)) {
+  write-error "git is not installed, please install"
   return
 }
+
+# # install pwsh 7
+# if ($PSVersionTable.PSVersion.Major -lt 7) {
+#   write-error "need to install powershell version great than 7"
+#   write-host "https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows"
+#   Write-host 'please install it and run this script again in the new powershell' -ForegroundColor Blue
+#   return
+# }
 
 if (Test-Path $PWSHParentFolder -PathType leaf) {
   write-error "a file $PWSHParentFolder already exists, please remove it first or try a different folder"
@@ -36,7 +41,8 @@ if (Test-Path $root -type Container) {
       if ($decision -eq 0) {
         git reset --hard
         # Remove-Item -force -Recurse "$root"
-      } else {
+      }
+      else {
         'please check local changes and rerun the command'
         return
       }
@@ -50,7 +56,7 @@ if (Test-Path $root -type Container) {
 
 try {
   Push-Location $PWSHParentFolder
-  if (gci 'pwsh') {
+  if (gci 'pwsh' -ErrorAction Ignore) {
     Push-Location 'pwsh'
     "pull changes into $pwd"
     git pull
@@ -62,8 +68,10 @@ try {
 
   . "$root/config.ps1"
 
-  code $root
-  code $PROFILE.CurrentUserAllHosts
+  if (gcm code -ErrorAction Ignore) {
+    code $root
+    code $PROFILE.CurrentUserAllHosts
+  }
 }
 catch {
   write-error $_.Exception.Message

@@ -6,14 +6,6 @@ param (
     $Version = 'latest'
 )
 
-# install pwsh 7
-if ($PSVersionTable.PSVersion.Major -lt 7) {
-    write-error "please install powershell version great than 7"
-    write-host "https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows"
-    Write-host 'please install it and run this script again in the new powershell' -ForegroundColor Blue
-
-    return
-}
 
 Set-ExecutionPolicy Bypass -Scope Process -Force
 

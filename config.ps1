@@ -1,3 +1,11 @@
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+  if (!(gcm pwsh -ErrorAction Ignore)) {
+    . "$PSScriptRoot\Lib\install-pwsh.ps1"
+  }
+  pwsh -file "$($MyInvocation.MyCommand.Path)"
+  return
+}
+
 if (Test-Path $profile.CurrentUserAllHosts) {
   write-host "profile.CurrentUserAllHosts already exist: $($profile.CurrentUserAllHosts)"
 }
@@ -5,6 +13,7 @@ else {
   write-host "create new profile.CurrentUserAllHosts: $($profile.CurrentUserAllHosts)"
   New-Item -ItemType File -Path $profile.CurrentUserAllHosts -Force | Out-Null
 }
+
 ## set profile
 $p = ". $(Resolve-Path $PSScriptRoot\profile.ps1)"
 $has = gc $profile.CurrentUserAllHosts | ? { $_ -like $p }
@@ -17,7 +26,7 @@ if (!$has) {
   }
   if ($hasOld) {
     # means $MS_PWSH is not the current $PSScriptRoot
-    (Get-Content $profile.CurrentUserAllHosts) | % { $_.Replace($p1, $p) }| set-content $profile.CurrentUserAllHosts -Force
+    (Get-Content $profile.CurrentUserAllHosts) | % { $_.Replace($p1, $p) } | set-content $profile.CurrentUserAllHosts -Force
     write-host "replace $p1 with $p in $($profile.CurrentUserAllHosts)"
   }
   else {
@@ -37,18 +46,20 @@ $m = resolve-path "$PSScriptRoot\Module"
 $env:PSModulePath += ";$m"
 
 $modPath = [Environment]::GetEnvironmentVariable("PSModulePath", 'User')
-if(-not $modPath) {
+if (-not $modPath) {
   $modPath = $m
-} else {
-  if($MS_PWSH -and ("$MS_PWSH\Module" -ne $m)) {
-    if($modPath.Contains("$MS_PWSH\Module;")) {
+}
+else {
+  if ($MS_PWSH -and ("$MS_PWSH\Module" -ne $m)) {
+    if ($modPath.Contains("$MS_PWSH\Module;")) {
       $modPath = $modPath.Replace("$MS_PWSH\Module;", "")
-    } elseif($modPath.Contains("$MS_PWSH\Module")){
+    }
+    elseif ($modPath.Contains("$MS_PWSH\Module")) {
       $modPath = $modPath.Replace("$MS_PWSH\Module", "")
     }
   }
 
-  if(-not $modPath.Contains($m)) {
+  if (-not $modPath.Contains($m)) {
     $modPath += ";$m"
   }
 }
