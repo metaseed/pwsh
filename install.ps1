@@ -28,4 +28,4 @@ mi '~/metaseed/ms_pwsh' '~/metaseed/.ms_pwsh-del' -Force -ErrorAction SilentlyCo
 ri '~/metaseed/.ms_pwsh-del' -Force -Recurse -ErrorAction SilentlyContinue
 ri $zip -Force
 
-. '~/metaseed/ms_pwsh/config.ps1'
+. '~/metaseed/pwsh-master/config.ps1'
