@@ -5,7 +5,7 @@
   "update module $module ..."
   Update-Module $module -ErrorAction SilentlyContinue
   if ($error) {
-    "install module $module ..."
+    "   install module $module ..."
     Install-Module $module -force
   }
 }

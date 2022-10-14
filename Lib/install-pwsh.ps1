@@ -11,7 +11,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
     $url = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest"
     $response = Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing
     $v = $response.tag_name # 'v7.2.6'
-    "version: $v"
+    "available version: $v"
     $psv = $v.substring(1)
     ## install pwsh
     $ps = gcm pwsh -ErrorAction Ignore
@@ -27,7 +27,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
         $ProgressPreference = $pro
         return $Exe
       }
-      Write-Host "Microsoft pwsh is not installed, download and install version $psv"
+      Write-Host "Microsoft pwsh is not installed, download and install the version $psv"
       Write-host "Downloadling Microsoft pwsh(v$psv)..."
       $exe = Download "https://github.com/PowerShell/PowerShell/releases/download/v$psv/PowerShell-$psv-win-x64.msi"
       Write-host "Installing pwsh(v$psv)..."

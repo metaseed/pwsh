@@ -10,7 +10,7 @@ param (
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-"[Wait] download ms_pwsh ver: $Version..."
+"[Wait] download ms_pwsh version: $Version ..."
 $zip = "$env:temp/pwsh.zip"
 if ($Version -eq 'latest') {
     $url = 'http://github.com/metasong/pwsh/archive/refs/heads/master.zip'
