@@ -7,7 +7,8 @@ $env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
 # $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
 # & { #prevent expose $appFolder into the profile variable: provider
 # hack: when run 'pwsh' the parent 'pwsh' is not closed, and the new 'pwsh' inherits the env vars
-if ($env:ms_pwshPathPatched -ne 'true') { #env var is string
+if ($env:ms_pwshPathPatched -ne 'true') {
+    #env var is string
     # no need to add app folder to path
     # $appFolder = 'C:\App'
     # if (Test-Path $appFolder) {
@@ -27,6 +28,8 @@ if ($env:ms_pwshPathPatched -ne 'true') { #env var is string
     $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name | ? { !($_ -match '\\_|\\?test\\?') } | % { "$CmdLetFolder\$_" } # |\\?s\\
     $env:path += ";$($folders -join ';')"
 
-    $env:ms_pwshPathPatched = 'true'
+    if ($CmdLetFolder) {
+        $env:ms_pwshPathPatched = 'true'
+    }
 }
 # }
