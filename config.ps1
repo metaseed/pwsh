@@ -3,7 +3,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
   if (!(gcm pwsh -ErrorAction Ignore)) {
     . "$PSScriptRoot\Lib\install-pwsh.ps1"
   }
-  Start-Process pwsh "-file $($MyInvocation.MyCommand.Path)"
+  Start-Process pwsh "-NoExit -ExecutionPolicy Bypass -file `"$($MyInvocation.MyCommand.Path)`""
   return
 }
 
