@@ -28,8 +28,6 @@ if ($env:ms_pwshPathPatched -ne 'true') {
     $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name | ? { !($_ -match '\\_|\\?test\\?') } | % { "$CmdLetFolder\$_" } # |\\?s\\
     $env:path += ";$($folders -join ';')"
 
-    if ($CmdLetFolder) {
-        $env:ms_pwshPathPatched = 'true'
-    }
+    $env:ms_pwshPathPatched = 'true'
 }
 # }
