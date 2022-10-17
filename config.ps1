@@ -75,3 +75,4 @@ write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 # so the dynamic module-command would work
 Get-Module -ListAvailable -Refresh > $null
 . $PSScriptRoot\profile.ps1
+'finish ms_pwsh configuration!'
