@@ -23,9 +23,11 @@ function buildTree($item,
   [string[]]$Containerfilters,
   [switch]$KeepEmptyContainer
 ) {
+  Write-Verbose "container: $($item.location)"
   if ($item.location.PSIsContainer) {
     foreach ($filter in $Containerfilters) {
-      if ($item.location.NameString -notmatch $filter) {
+      if ($item.parent -and $item.location.NameString -notmatch $filter) {
+        Write-Verbose "container: $($item.location.NameString) -notmatch $filter"
         return
       }
     }
@@ -50,10 +52,10 @@ function buildTree($item,
       $child = @{location = $children[$i]; parent = $item; children = @(); }
       $c = buildTree $child $ItemFilters $Containerfilters
       # removed items are not added
-     
+
       if ($c) {
         Write-Verbose "add item $($c.location)"
-        $item.children += $c 
+        $item.children += $c
       }
     }
 
@@ -71,7 +73,7 @@ function buildTree($item,
 }
 
 function showTree($item) {
-  if($item.isRemoved) { return }
+  if ($item.isRemoved) { return }
   $parent = $item.parent
 
   # build parent-chain
@@ -82,7 +84,7 @@ function showTree($item) {
     $p = $p.parent
   }
 
-  # draw grand parents' links that cross this line 
+  # draw grand parents' links that cross this line
   # reverse parse the parent-chain: 0, 1, 2, 3
   # (3,2) (2,1) (1,0)
   for ($i = $parents.count - 1; $i -gt 0; $i--) {
