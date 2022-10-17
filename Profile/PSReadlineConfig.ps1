@@ -13,9 +13,12 @@ Set-PSReadLineOption @PSReadLineOptions
 # work
 # $options = Get-PSReadLineOption
 # $options.ListPredictionColor = "`e[90m" # original value "`e[33m"
+try{
 Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
-Set-PSReadLineOption -PredictionViewStyle ListView # default is InLineView,
+Set-PSReadLineOption -PredictionViewStyle ListView  # default is InLineView,
+} catch {
 
+}
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 # not work in vscode
