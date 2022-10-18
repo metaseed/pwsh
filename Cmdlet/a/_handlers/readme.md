@@ -1,0 +1,1 @@
+file name should be the same as the app name, if not the same put it in to _commands folder

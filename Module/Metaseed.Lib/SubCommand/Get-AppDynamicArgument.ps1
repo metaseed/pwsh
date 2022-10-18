@@ -1,17 +1,28 @@
-function  Get-AppDynamicArgument{
+<#
+.NOTES
+to trigger the list:
+a app -{tab}
+#>
+function  Get-AppDynamicArgument {
   [CmdletBinding()]
   param (
+    [string]$cacheName,
     [string]$app,
     [string]$argsDir
   )
 
-  # [Console]::WriteLine("`n eeeaaa $app  aaa")
+  # [Console]::WriteLine("$app $argsDir ")
   if (!$app) { return }
 
-  $cacheValue = Get-CmdsFromCache 'app_args' $argsDir '*_args.ps1'
-
+  # Show-MessageBox "$app $cachename $argsDir"
+  $cacheValue = Get-CmdsFromCache $cacheName $argsDir '*_args.ps1'
   $argFile = $cacheValue["${app}_args"]
   if (!$argFile ) {
+    $cacheValue = Get-CmdsFromCache $cacheName $argsDir '*_args.ps1' -update
+    $argFile = $cacheValue["${app}_args"]
+  }
+  if (!$argFile ) {
+    # Show-MessageBox "$app $cachename $argsDir"
     return
   }
 
@@ -27,11 +38,10 @@ function  Get-AppDynamicArgument{
     }
     $attributeCollection.Add($parameterAttribute)
 
-    if($_.Aliases) {
+    if ($_.Aliases) {
       $alias = [System.Management.Automation.AliasAttribute]::new($_.Aliases)
       $attributeCollection.Add($alias)
     }
-
 
     $param = [System.Management.Automation.RuntimeDefinedParameter]::new(
       $_.Name, $_.Type ?? [string], $attributeCollection
@@ -39,6 +49,7 @@ function  Get-AppDynamicArgument{
 
     $paramDictionary.Add($_.Name, $param)
   }
+  # Show-messsagebox $paramDictionary.Count
   return $paramDictionary
 
 }

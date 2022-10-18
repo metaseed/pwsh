@@ -1,6 +1,22 @@
+<#
+.SYNOPSIS
+get commands of a folder from the cache
+
+.DESCRIPTION
+GlobalVariable <= Cache <= Disk
+if GlobalVariable or Cache is null, update from disk
+.EXAMPLE
+An example
+
+.NOTES
+General notes
+#>
 function Get-CmdsFromCache {
   [CmdletBinding()]
-  param([string]$cacheName, [string]$Directory, [string]$filter = '*.ps1', [switch]$update)
+  param([string]$cacheName, [string]$Directory, [string]$filter = '*.ps1',
+  # to force update the cache and GlobalVarible from Disk
+   [switch]$update)
+
   $varName = "__${cacheName}_cmds__"
 
   $cacheFile = "$env:temp\_MsPwshCache\${cacheName}.json"
@@ -29,7 +45,7 @@ function Get-CmdsFromCache {
   if (!$v) {
     if (Test-Path $cacheFile) {
       Write-Verbose "$varName load from  $cacheFile"
-      $v = Get-Content -Raw $cacheFile | ConvertFrom-Json -AsHashtable
+      $v = Get-Content -Raw $cacheFile | ConvertFrom-Json -AsHashtable # otherwise return psobject
       Set-Variable -Scope Global -Name $varName -Value $v
     }
     else {
@@ -39,7 +55,7 @@ function Get-CmdsFromCache {
   return $v
 }
 
-Export-ModuleMember Get-CmdsFromCache, Get-CmdsFromCacheAutoUpdate
+Export-ModuleMember Get-CmdsFromCache
 function Find-CmdItem {
   [CmdletBinding()]
   param (

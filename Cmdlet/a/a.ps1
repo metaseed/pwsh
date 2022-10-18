@@ -1,6 +1,7 @@
 <#
 a: Apps in $env:MS_App (c:\app)
 invoke: a <cmd> -- args_to_cmd
+
 #>
 [CmdletBinding()]
 param(
@@ -11,9 +12,10 @@ param(
         $wordToComplete,
         $appAst,
         $fakeBoundParameters )
+      $commands =  Complete-Command 'app_commands' "$PSScriptRoot\_Commands" $wordToComplete '*.ps1'
       $apps = Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
       $handlers = Complete-Command 'app_handlers' "$PSScriptRoot\_handlers" $wordToComplete '*.ps1'
-      $cmds = ($handlers + $apps) | get-unique
+      $cmds = ($commands + $handlers + $apps) | get-unique
       return $cmds
     })]
   [Parameter(Position = 0)]
@@ -34,12 +36,14 @@ param(
 )
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters
 dynamicparam {
-  if(!$app) {
+  # Show-MessageBox "$PSScriptRoot\_args"
+  if (!$app) {
     return
   }
 
-  $a = Get-AppDynamicArgument $app "$PSScriptRoot\_args"
+  $a = Get-AppDynamicArgument 'app_args' $app "$PSScriptRoot\_args"
   if ($a.Count -ne 0) {
+    # Show-MessageBox "$($a)"
     return $a
   }
 
@@ -59,36 +63,42 @@ end {
     return
   }
 
-  $CmdCache = Get-CmdsFromCache 'app_commands' "$PSScriptRoot\_Commands" '*.ps1'
-  if ($CmdCache) {
-    $cmd = $CmdCache[$app]
-    Write-Verbose "cmd: $cmd"
-    if ($cmd) {
-      $null = $PSBoundParameters.Remove('app')
-      & $cmd @PSBoundParameters
-      return
-      # Write-Host "Remaining: $($Remaining -eq $null)" true
-      # & $handler @Remaining # a set-sysinternalEula error: A positional parameter cannot be found that accepts argument '-Passthru'
+  $update = $false
+
+  do {
+    $CmdCache = Get-CmdsFromCache 'app_commands' "$PSScriptRoot\_Commands" '*.ps1' -update:$update
+    if ($CmdCache) {
+      $cmd = $CmdCache[$app]
+      Write-Verbose "cmd: $cmd"
+      if ($cmd) {
+        $null = $PSBoundParameters.Remove('app')
+        & $cmd @PSBoundParameters
+        return
+        # Write-Host "Remaining: $($Remaining -eq $null)" true
+        # & $handler @Remaining # a set-sysinternalEula error: A positional parameter cannot be found that accepts argument '-Passthru'
+      }
     }
-  }
 
-  $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe'
-  Write-Verbose "File: $file"
+    $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe' -updateScript {param($cacheValue, $Command) return $update}
+    Write-Verbose "File: $file"
 
-  $HandlerCache = Get-CmdsFromCache 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1'
-  if ($HandlerCache) {
-    $handler = $HandlerCache[$app]
-    Write-Verbose "handler: $handler"
-    if ($handler) {
-      & $handler $file $Remaining
-      return
+    $HandlerCache = Get-CmdsFromCache 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1' -update:$update
+    if ($HandlerCache) {
+      $handler = $HandlerCache[$app]
+      Write-Verbose "handler: $handler"
+      if ($handler) {
+        & $handler $file $Remaining
+        return
+      }
     }
-  }
+    # retry if we are here
+    if ($null -eq $file) {
+      Write-Verbose "Command $app not found, retry..."
+      # only repeat one time if need to update
+      $update = !$update
+    }
+  } while ($update)
 
-  if ($null -eq $file) {
-    Write-Host "Command $app not found"
-    return
-  }
 
   & $file @Remaining
 

@@ -1,5 +1,6 @@
-#set global EULA acceptance for all SysInternals tools
-
+<#
+set global EULA acceptance for all SysInternals tools, so no EULA agreement dialog at first startup.
+#>
 [CmdletBinding(SupportsShouldProcess)]
 Param([switch]$Passthru)
 
