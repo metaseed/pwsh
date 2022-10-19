@@ -7,11 +7,11 @@ param (
     $timeoutSeconds)
   #  write-host "ddd$timeoutSeconds $service"
 
-  $timeSpan = New-Object Timespan 0, 0, $timeoutSeconds
+  $timeSpan = [Timespan]::FromSeconds($timeoutSeconds)
   if ($service -isnot [ServiceProcess.ServiceController]) {
     $service = gsv $service
   }
-  Write-Host "Starting Service: $($service.Name) (${timeoutSeconds}s)"
+  Write-Host "Starting Service: $($service.Name) (waiting at most ${timeoutSeconds}s)"
   if ($service.Status -like '*stop*') {
     $service.Start()
     try {
