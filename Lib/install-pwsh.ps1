@@ -1,8 +1,9 @@
 # install pwsh 7
+# file shared between ms_pwsh and drillDev
 if ($PSVersionTable.PSVersion.Major -lt 7) {
   write-warning "install powershell version great than 7"
   if (gcm winget -ErrorAction Ignore) {
-    winget install  Microsoft.PowerShell
+    winget install Microsoft.PowerShell
   }
   else {
     ## enable https

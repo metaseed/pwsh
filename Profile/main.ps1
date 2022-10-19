@@ -1,4 +1,4 @@
-# Import-Module PSProfiler
+Import-Module PSProfiler
 # Measure-Script {
 . $PSScriptRoot\var.ps1
 . $PSScriptRoot\env.ps1

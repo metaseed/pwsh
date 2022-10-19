@@ -1,8 +1,9 @@
 # new veriables
+# Measure-Script {
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
 # [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
 $env:Desktop = [Environment]::GetFolderPath("Desktop")
-$env:HostsFile = "$env:windir\System32\drivers\etc\hosts"
+$env:HostsFilePath = "$env:windir\System32\drivers\etc\hosts"
 # config
 # $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
 # & { #prevent expose $appFolder into the profile variable: provider
@@ -22,12 +23,13 @@ if ($env:ms_pwshPathPatched -ne 'true') {
     # }
 
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
-    $env:path += ";$CmdLetFolder"
+    $env:path += "$CmdLetFolder;"
     # -exclude only explude the leaf name start with '_'
     # -Name will return the dir path after $CmdLetFolder, then we do filter to remove the name contains '\_', '\test', '\s\'
     $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*' -Name | ? { !($_ -match '\\_|\\?test\\?') } | % { "$CmdLetFolder\$_" } # |\\?s\\
-    $env:path += ";$($folders -join ';')"
+    $env:path += "$($folders -join ';');"
 
     $env:ms_pwshPathPatched = 'true'
 }
+# }
 # }
