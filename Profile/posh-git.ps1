@@ -16,7 +16,7 @@
 Import-Module posh-git -ErrorAction SilentlyContinue
 # only config when posh-git is installed
 if ($?) {
-  $GitPromptSettings.DefaultPromptPrefix.Text = '┌─$(GetAdminIcon)$(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) '
+  $GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
   $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
