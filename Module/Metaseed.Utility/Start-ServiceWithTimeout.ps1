@@ -19,7 +19,7 @@ param (
       write-host "started: $($service.Name)!" -ForegroundColor Green
     }
     catch {
-      Write-Warning "service ($($service.Name) is not started within $timeoutSeconds"
+      Write-Error "service ($($service.Name) is not started within $timeoutSeconds"
     }
   }
 }
