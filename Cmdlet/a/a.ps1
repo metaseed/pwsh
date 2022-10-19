@@ -12,10 +12,10 @@ param(
         $wordToComplete,
         $appAst,
         $fakeBoundParameters )
-      $commands =  Complete-Command 'app_commands' "$PSScriptRoot\_Commands" $wordToComplete '*.ps1'
+      $commands = Complete-Command 'app_commands' "$PSScriptRoot\_Commands" $wordToComplete '*.ps1'
       $apps = Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
       $handlers = Complete-Command 'app_handlers' "$PSScriptRoot\_handlers" $wordToComplete '*.ps1'
-      $cmds = ($commands + $handlers + $apps) | get-unique
+      $cmds = ( $handlers + $apps + $commands) | get-unique
       return $cmds
     })]
   [Parameter(Position = 0)]
@@ -79,7 +79,7 @@ end {
       }
     }
 
-    $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe' -updateScript {param($cacheValue, $Command) return $update}
+    $file = Find-CmdItem 'app' $env:MS_App  $app '*.exe' -updateScript { param($cacheValue, $Command) return $update }
     Write-Verbose "File: $file"
 
     $HandlerCache = Get-CmdsFromCache 'app_handlers' "$PSScriptRoot\_handlers" '*.ps1' -update:$update
