@@ -256,8 +256,6 @@ function Show-AnsiColors8Bits {
 
 example:
 "`e[33;44;5;4;3mHello`e[0m"
-'@
-  "`e[33;44;5;4;3mHello`e[0m"
 
 }
 

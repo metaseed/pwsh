@@ -5,7 +5,7 @@ invoke: a <cmd> -- args_to_cmd
 #>
 [CmdletBinding()]
 param(
-  [ArgumentCompleter( {
+  [ArgumentCompleter({
       param (
         $appName,
         $parameterName,

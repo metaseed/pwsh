@@ -16,7 +16,7 @@
 Import-Module posh-git -ErrorAction SilentlyContinue
 # only config when posh-git is installed
 if ($?) {
-  $GitPromptSettings.DefaultPromptPrefix.Text = '┌─$(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) '
+  $GitPromptSettings.DefaultPromptPrefix.Text = '┌─$(GetAdminIcon)$(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) '
   $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
@@ -38,7 +38,7 @@ if ($?) {
 
   }
   # ─→
-  $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo)'
+  $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo) '
 
   $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = [ConsoleColor]::Magenta
   $GitPromptSettings.DefaultPromptSuffix = ''
@@ -50,6 +50,15 @@ if ($?) {
     $GitPromptSettings.LocalStagedStatusSymbol = '' # something on stage to commit
     $GitPromptSettings.BeforeStatus.Text = '[ '
     $GitPromptSettings.BeforePath.Text = ' '
+  }
+}
+
+function GetAdminIcon {
+  $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
+  if($IsAdmin) {
+    "`e[93m`e[0m"
+  } else {
+    ''
   }
 }
 
