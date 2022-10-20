@@ -1,4 +1,4 @@
-Import-Module PSProfiler
+# Import-Module PSProfiler
 # Measure-Script {
 . $PSScriptRoot\var.ps1
 . $PSScriptRoot\env.ps1
@@ -11,3 +11,5 @@ Import-Module PSProfiler
 . $PSScriptRoot\terminal\terminal.ps1
 . $PSScriptRoot\PS-GuiCompletion.ps1
 # }
+
+# $null = New-Event -SourceIdentifier 'PWSH_PROFILE_LOADED_EVENT'  #-EventArguments {}

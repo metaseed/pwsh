@@ -12,8 +12,10 @@
 # the result:
 # 05-11 14:31:50 [master ≡ +0 ~5 -0 !] M:\Script\Pwsh
 # >
-
-Import-Module posh-git -ErrorAction SilentlyContinue
+# Import-Module PSProfiler
+# Measure-Script {
+# module load time about 0.3s
+Import-Module posh-git -ErrorAction Ignore
 # only config when posh-git is installed
 if ($?) {
   $GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
@@ -55,9 +57,10 @@ if ($?) {
 
 function GetAdminIcon {
   $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
-  if($IsAdmin) {
+  if ($IsAdmin) {
     "`e[93m`e[0m"
-  } else {
+  }
+  else {
     ''
   }
 }
@@ -81,7 +84,6 @@ function GetPSReadLineSessionExeTime {
     }
   }
 }
-
 # below logic set the last readline session exectution time, but has problem, when adjust window size
 # so set it in prompt starting segments
 # function SetStatus {

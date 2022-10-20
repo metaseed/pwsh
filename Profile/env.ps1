@@ -21,7 +21,10 @@ if ($env:ms_pwshPathPatched -ne 'true') {
     #     # }
     #     $env:path += ";$(($exes.Directory.FullName | get-unique) -join ';' )"
     # }
-
+    # $timer = [Timers.Timer]::new(3000)
+    # $timer.AutoReset = $false
+    # $null = Register-ObjectEvent -InputObject $timer -EventName Elapsed -Action {
+    # write-host "ddd"
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path += "$CmdLetFolder;"
     # -exclude only explude the leaf name start with '_'
@@ -30,6 +33,9 @@ if ($env:ms_pwshPathPatched -ne 'true') {
     $env:path += "$($folders -join ';');"
 
     $env:ms_pwshPathPatched = 'true'
+    #     $timer.Dispose()
+    # }
+    # $timer.start()
 }
 # }
 # }
