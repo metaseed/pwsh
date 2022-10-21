@@ -58,8 +58,6 @@ cmd trash $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/l
 #;reload
 map <delete> trash
 
-## cut
-#d
 # map T push &wt<enter>
 
 ## open
@@ -74,18 +72,18 @@ cmd open-with &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdl
 map ow open-with
 # archive management
 cmd zip-to %sh -c 'c:/app/7-zip/7z a $0 %fx%'
-cmd extract-to %sh -c 'c:/app/7-zip/7z  e %f% -o$0'
-cmd extract-here %sh -c 'c:/app/7-zip/7z e %f%'
-cmd extract_auto %sh -c 'c:/app/7-zip/7z e %f% -o%f%'
-cmd extract_auto_and_remove %sh -c 'c:/app/7-zip/7z e %f% -o%f%_extracted && rm %f%'
+cmd extract-to %sh -c 'c:/app/7-zip/7z  x %f% -o$0'
+cmd extract-here %c:/app/7-zip/7z x %f%
+cmd extract_auto %sh -c 'c:/app/7-zip/7z x %f% -o%f%'
+cmd extract_auto_and_remove %sh -c 'c:/app/7-zip/7z x %f% -o%f%_extracted && rm %f%'
 
 cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
 # map zut push :extract-to<space>
 cmd extract-to-folder push :extract-to<space>
 map zut extract-to-folder
-cmd extract-here push :extract-here<enter>
-map zuh extract-here
+cmd extract-to-here push :extract-here<enter>
+map zuh extract-to-here
 # map X push :extract_auto_and_remove<enter>
 
 # quick preview

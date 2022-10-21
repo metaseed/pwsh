@@ -15,3 +15,12 @@ m  : save a key as a mark for the current dir
 '  : change dir to the key mark
 "  : remove the mark
 right : open the item
+
+### file management
+d : cut
+c : clear selection or cutting
+p : paste
+D : delete permanently
+<delete>: trash to recycle bin
+a : new file
+A : new directory
