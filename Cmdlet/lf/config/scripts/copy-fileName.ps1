@@ -1,3 +1,3 @@
 $file = ($env:f).trim('"')
-$file -split ';'|%{split-path $_ -leaf}|Set-Clipboard
+$file -split "`n"|%{split-path $_ -leaf}|Set-Clipboard
 

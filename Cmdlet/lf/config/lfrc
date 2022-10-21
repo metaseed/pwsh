@@ -5,7 +5,7 @@
 
 set icons
 # set drawbox
-set filesep ";"
+# set filesep ";" #default is '/n'
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
 set info size:time
@@ -27,8 +27,7 @@ map rr push :rename<space>
 cmd rename-with-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
 # a little slower
 map rn rename-with-name
-# delete
-map <delete> delete
+
 # create files and directories
 cmd createfile %sh -c 'touch $0'
 cmd createdir %sh -c 'mkdir $0'
@@ -53,16 +52,26 @@ map yd %echo %PWD%| clip
 cmd copy-file-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-fileName.ps1
 map yn copy-file-name
 
+# delete
+map D delete
+cmd trash $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
+#;reload
+map <delete> trash
+
+## cut
+#d
 # map T push &wt<enter>
 
 ## open
+# note: the right arrow triggers default open
 # open file in code
 map oc &code %f%
 # open explorer in current directory
 map oe push &start.<enter>
 #default is e
 map on & notepad %f%
-
+cmd open-with &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/openWith.ps1
+map ow open-with
 # archive management
 cmd zip-to %sh -c 'c:/app/7-zip/7z a $0 %fx%'
 cmd extract-to %sh -c 'c:/app/7-zip/7z  e %f% -o$0'
@@ -70,9 +79,13 @@ cmd extract-here %sh -c 'c:/app/7-zip/7z e %f%'
 cmd extract_auto %sh -c 'c:/app/7-zip/7z e %f% -o%f%'
 cmd extract_auto_and_remove %sh -c 'c:/app/7-zip/7z e %f% -o%f%_extracted && rm %f%'
 
-map zz push :zip-to<space>
-map zut push :extract-to<space>
-map zuh push :extract-here<enter>
+cmd zip-to-file push :zip-to<space>
+map zz zip-to-file
+# map zut push :extract-to<space>
+cmd extract-to-folder push :extract-to<space>
+map zut extract-to-folder
+cmd extract-here push :extract-here<enter>
+map zuh extract-here
 # map X push :extract_auto_and_remove<enter>
 
 # quick preview
@@ -81,6 +94,7 @@ map zuh push :extract-here<enter>
 map v &C:\app\QuickLook\QuickLook.exe %f%
 # # custom file preview
 # set previewer "D:\\lf_scripts\\preview.bat"
+
 
 # # use c-f to fuzzy search
 # cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
@@ -159,6 +173,7 @@ cmd doc $a lf -doc | less
 # # execute with shell_wait
 # map X !$f
 # map P &a quicklook -- $env:f
+
 ## delete
 # note: $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
 # todo:trash not work
