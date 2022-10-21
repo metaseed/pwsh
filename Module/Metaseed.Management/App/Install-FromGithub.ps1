@@ -34,10 +34,11 @@ function Install-FromGithub {
       # $ver_online = [Version]::new($matches[1])
       $ver_online = $tag_name.trim('v', 'e', 'r')
       try {
-        if( $ver_online -match '^\d+$' ) {
+        if ( $ver_online -match '^\d+$' ) {
           $ver_online = [Version]::new($matches[0] + '.0')
           Write-Verbose "online ver: $ver_online"
-        } else {
+        }
+        else {
           $ver_online = [Version]::new($ver_online)
         }
       }
@@ -76,6 +77,14 @@ function Install-FromGithub {
         else {
           write-Host "no version info in directory name: $($dir.name)"
         }
+        if (!$versionLocal) {
+          $jsonFile = "$dir\info.json"
+          if(Test-Path $jsonFile) {
+            Write-Verbose "query local version via the info.json in dir $($dir.name)"
+            $info = Get-Content -Raw $jsonFile|ConvertFrom-Json
+            $versionLocal = $info.version
+          }
+        }
       }
 
       if (!$versionLocal) {
@@ -87,8 +96,8 @@ function Install-FromGithub {
         $it = @(gi $p -ErrorAction SilentlyContinue)
         if ($it) {
           if ($it.count -gt 1) {
-            write-error "find more than one dir/file in $toLocation : $($it.name) "
-            break
+            Write-Warning "find more than one dir/file in $toLocation : $($it.FullName) "
+            # break
           }
           try {
             Write-Verbose "query local version via 'gcm' $($it[0])"
@@ -109,16 +118,7 @@ function Install-FromGithub {
           }
         }
       }
-      if ($it) {
-      if(!$versionLocal) {
-        $dir = $it[0]
-        if ($dir.Name -match '__\d+\.\d+') {
-          Write-Verbose "query local version via dir/file name: $($dir.name)"
-          $versionLocal = [Version]::new($matches[0])
-        }
-      }
-    }
-      # write-host $versionLocal.gettype()
+      Write-Verbose "local version: $versionLocal"
       return $versionLocal
     },
     [Parameter()]
@@ -156,8 +156,12 @@ function Install-FromGithub {
 
         $children = @(gci "$env:temp\temp")
         if ($children.count -ne 1 -or $toFolder) {
-          Move-Item "$env:temp\temp" -Destination "$toLocation\${repo}__${ver_online}"
-          return "$toLocation\${repo}_${ver_online}"
+          $to = "$toLocation\${repo}"
+          Move-Item "$env:temp\temp" -Destination $to
+          # _${ver_online}
+          $info = @{version = "$ver_online" }
+          $info | ConvertTo-Json | Set-Content -path "$to\info.json" -force
+          return $to
         }
         else {
           $children | Move-Item -Destination $toLocation -Force
@@ -172,9 +176,9 @@ function Install-FromGithub {
   )
   Assert-Admin
 
-  if($org.Contains('/')) {
+  if ($org.Contains('/')) {
     $v = $org.Split('/')
-    $org =$v[0]
+    $org = $v[0]
     $repo = $v[1]
   }
   Write-Host "$org $repo"

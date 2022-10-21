@@ -1,47 +1,86 @@
 # https://medium.com/@a.hr.mostafavi/using-lf-file-manager-on-windows-fc4f1e4e1442
 # https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
 # https://pkg.go.dev/github.com/gokcehan/lf
+# https://github.dev/gokcehan/lf
 
 set icons
 # set drawbox
-set filesep " "
+set filesep ";"
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
+set info size:time
+# set period 1
 # interpreter for shell commands, on windows by default it is cmd
 # set shell pwsh
-
 # reload config file using f5
 map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
 
+## file management
+# rename
+# todo: need to auto redraw
 cmd rename %sh -c 'mv -i %f% $0'
-map r push :rename<space>
+map r
+# faster
+map rr push :rename<space>
+# map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
+# https://github.com/gokcehan/lf/issues/329
+cmd rename-with-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
+# a little slower
+map rn rename-with-name
+# delete
 map <delete> delete
-# use a and A to create files and directories
+# create files and directories
 cmd createfile %sh -c 'touch $0'
 cmd createdir %sh -c 'mkdir $0'
-map a push :createfile<space>
-map A push :createdir<space>
-# open explorer in current directory
-map S push &start.<enter>
-# map T push &wt<enter>
-# copy file path
-map Y %echo %fx% | clip
+map af push :createfile<space>
+map ad push :createdir<space>
+# selection
+# map u
+map su unselect
+# map i
+map si invert
+# <space> toggle
 
+## copy
+# unmap y, it's yark by default
+map y
+map yy copy %fx%
+# copy file path; note: c is mapped to clear by default
+map yp %echo %fx% | clip
+# copy work directory
+map yd %echo %PWD%| clip
+# copy current file names
+cmd copy-file-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-fileName.ps1
+map yn copy-file-name
+
+# map T push &wt<enter>
+
+## open
 # open file in code
-map C &code %f%
+map oc &code %f%
+# open explorer in current directory
+map oe push &start.<enter>
+#default is e
+map on & notepad %f%
 
 # archive management
-cmd zip %sh -c 'c:/app/7-zip/7z a $0 %fx%'
-cmd extract_here %sh -c 'c:/app/7-zip/7z e %f%'
-cmd extract_to %sh -c 'c:/app/7-zip/7z  e %f% -o%f%_extracted'
+cmd zip-to %sh -c 'c:/app/7-zip/7z a $0 %fx%'
+cmd extract-to %sh -c 'c:/app/7-zip/7z  e %f% -o$0'
+cmd extract-here %sh -c 'c:/app/7-zip/7z e %f%'
 cmd extract_auto %sh -c 'c:/app/7-zip/7z e %f% -o%f%'
 cmd extract_auto_and_remove %sh -c 'c:/app/7-zip/7z e %f% -o%f%_extracted && rm %f%'
 
-map x push :extract_auto<enter>
-map X push :extract_auto_and_remove<enter>
+map zz push :zip-to<space>
+map zut push :extract-to<space>
+map zuh push :extract-here<enter>
+# map X push :extract_auto_and_remove<enter>
 
 # quick preview
-map P $C:\app\QuickLook\QuickLook.exe %f%
+# v: default is invert select
+# press v again to hide the preview window
+map v &C:\app\QuickLook\QuickLook.exe %f%
+# # custom file preview
+# set previewer "D:\\lf_scripts\\preview.bat"
 
 # # use c-f to fuzzy search
 # cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
@@ -65,11 +104,7 @@ map P $C:\app\QuickLook\QuickLook.exe %f%
 # cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
 # map <c-f> :fzf_jump
 
-# # quick preview
-# # map P $C:\Users\Lion\AppData\Local\Programs\QuickLook\QuickLook.exe %f%
 
-# # custom file preview
-# set previewer "D:\\lf_scripts\\preview.bat"
 
 # # cmd send_to_mobile %sh -c 'scp -P 2222 hex@192.168.1.151: %fx%'
 # cmd send_to_mobile push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.151:<enter>
@@ -146,3 +181,9 @@ cmd doc $a lf -doc | less
 # map Y %$env:fx | scb
 # cmd rename %mv -i $f $1
 # map R push :rename
+
+## command line commands
+# c-p
+cmap <up> cmd-history-prev
+# c-n
+cmap <down> cmd-history-next
