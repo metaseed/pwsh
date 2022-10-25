@@ -67,7 +67,7 @@ if __name__ == '__main__':
         print("File Size: {}".format(format_file_size(size)))
         print("Modify Time: {}".format(format_time_t(os.path.getmtime(file_path))))
 
-
+# problem it can not show json file content
         if mimetype == 'none':
             # if file size is less 100kb
             if size < 1024 * 100:

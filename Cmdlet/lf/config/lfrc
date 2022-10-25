@@ -9,9 +9,12 @@ set icons
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
 set info size:time
+# custom file preview
+# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
 # set period 1
 # interpreter for shell commands, on windows by default it is cmd
-# set shell pwsh
+# if use pwsh, it is slow, and has redraw problem
+# set shell pwsh -nologo -noninteractive -noprofile
 # reload config file using f5
 map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
 
@@ -19,6 +22,7 @@ map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
 # rename
 # todo: need to auto redraw
 cmd rename %sh -c 'mv -i %f% $0'
+# cmd rename %mv -i $f $1
 map r
 # faster
 map rr push :rename<space>
@@ -29,6 +33,18 @@ cmd rename-with-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pw
 map rn rename-with-name
 
 # create files and directories
+# note $env:0 not work
+# cmd createfile ${{
+#   $file = Read-host 'New File Name'
+#   new-item -path $file
+# }}
+# # cmd createfile !new-item
+# cmd createdir ${{
+#   $dir = Read-host 'New Directory Name'
+#   new-item $dir -Type Directory; #redraw
+# }}
+# map a push :createfile<enter>;redraw
+# map A push :createdir<enter>
 cmd createfile %sh -c 'touch $0'
 cmd createdir %sh -c 'mkdir $0'
 map af push :createfile<space>
@@ -44,15 +60,20 @@ map si invert
 # unmap y, it's yark by default
 map y
 map yy copy %fx%
+# map Y %$env:fx | scb
 # copy file path; note: c is mapped to clear by default
 map yp %echo %fx% | clip
 # copy work directory
-map yd %echo %PWD%| clip
+cmd copy-current-directory %echo %PWD%| clip
+map yd copy-current-directory
 # copy current file names
 cmd copy-file-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-fileName.ps1
 map yn copy-file-name
 
 # delete
+# note: $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
+# todo:trash not work
+# cmd trash &Remove-ItemSafely env:fx env:1
 map D delete
 cmd trash $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
 #;reload
@@ -61,21 +82,43 @@ map <delete> trash
 # map T push &wt<enter>
 
 ## open
+# define a custom 'open' command
+# This command is called when current file is not a directory.
+# change the default open command to work in powerShell
+# cmd open &start $Env:f
+
+# change the editor used in default editor keybinding
+# There is no builtin terminal editor installed in Windows. The default editor
+# mapping uses 'notepad' which launches in a separate GUI window. You may
+# instead install a terminal editor of your choice and replace the default
+# editor keybinding accordingly.
+
 # note: the right arrow triggers default open
 # open file in code
-map oc &code %f%
+cmd vsCode &code %f%
+map oc vsCode
 # open explorer in current directory
-map oe push &start.<enter>
+# cmd file-Explorer push &start.<enter>
+cmd file-Explorer &explorer /n, /select, %fx%
+map oe file-Explorer
 #default is e
-map on & notepad %f%
-cmd open-with &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/openWith.ps1
-map ow open-with
+cmd Notepad &Notepad %f%
+map on Notepad
+cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/openWith.ps1
+map ow open-With...
+# vim is there when we installed git
+cmd Vim $vim %f%
+map ov Vim
+
+# less is there when we installed git
+# map i $less $Env:f
+
 # archive management
 cmd zip-to %sh -c 'c:/app/7-zip/7z a $0 %fx%'
 cmd extract-to %sh -c 'c:/app/7-zip/7z  x %f% -o$0'
 cmd extract-here %c:/app/7-zip/7z x %f%
 cmd extract_auto %sh -c 'c:/app/7-zip/7z x %f% -o%f%'
-cmd extract_auto_and_remove %sh -c 'c:/app/7-zip/7z x %f% -o%f%_extracted && rm %f%'
+cmd extract_and_remove %sh -c 'c:/app/7-zip/7z x %f% -o%f%_ && rm %f%'
 
 cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
@@ -84,19 +127,13 @@ cmd extract-to-folder push :extract-to<space>
 map zut extract-to-folder
 cmd extract-to-here push :extract-here<enter>
 map zuh extract-to-here
-# map X push :extract_auto_and_remove<enter>
+map zur push :extract_and_remove<enter>
 
 # quick preview
 # v: default is invert select
 # press v again to hide the preview window
 map v &C:\app\QuickLook\QuickLook.exe %f%
-# # custom file preview
-# set previewer "D:\\lf_scripts\\preview.bat"
 
-
-# # use c-f to fuzzy search
-# cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
-# map <c-f> :fzf_jump
 
 # # must have at least a file in it
 # cmd bookmark %sh -c 'python D:/lf_scripts/bookmark.py %f% $0'
@@ -109,23 +146,18 @@ map v &C:\app\QuickLook\QuickLook.exe %f%
 
 # # # drag and drop
 # cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
-# cmd dragonce push &python<space>D:/lf_scripts/drag.py<space>once<space>%fx%<enter>
-# map D push :dragonce<enter>
+cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>once<space>%fx%<enter>
+map <c-d> push :dragonce<enter>
 
 # # use c-f to fuzzy search
-# cmd fzf_jump push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
-# map <c-f> :fzf_jump
-
-
+# cmd file-search push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
+# map <c-f> :file-search
 
 # # cmd send_to_mobile %sh -c 'scp -P 2222 hex@192.168.1.151: %fx%'
 # cmd send_to_mobile push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.151:<enter>
 # cmd send_to_tablet push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.150:<enter>
 # map st push :send_to_tablet<enter>
 # map sm push :send_to_mobile<enter>
-
-# define a custom 'open' command
-# This command is called when current file is not a directory.
 
 # Shell commands with multiline definitions and/or positional arguments and/or
 # quotes do not work in Windows. For anything but the simplest shell commands,
@@ -136,31 +168,17 @@ map v &C:\app\QuickLook\QuickLook.exe %f%
 # which does not work with powershell. Therefore, you need to override these
 # keybindings with explicit choices accordingly.
 
-# change the default open command to work in powerShell
-# cmd open &start $Env:f
-
-# change the editor used in default editor keybinding
-# There is no builtin terminal editor installed in Windows. The default editor
-# mapping uses 'notepad' which launches in a separate GUI window. You may
-# instead install a terminal editor of your choice and replace the default
-# editor keybinding accordingly.
-
-# vim is there when we installed git
-# map e $vim $Env:f
 
 # change the pager used in default pager keybinding
 # The standard pager used in Windows is 'more' which is not a very capable
 # pager. You may instead install a pager of your choice and replace the default
 # pager keybinding accordingly.
 
-# less is there when we installed git
-# map i $less $Env:f
-
 # change the shell used in default shell keybinding
 # map w $pwsh
 
 # change 'doc' command to use a different pager
-cmd doc $a lf -doc | less
+cmd doc $c:\app\lf\lf.exe -doc | less
 
 # use enter for shell commands
 # map <enter> shell
@@ -170,30 +188,7 @@ cmd doc $a lf -doc | less
 # map x $$f
 # # execute with shell_wait
 # map X !$f
-# map P &a quicklook -- $env:f
 
-## delete
-# note: $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
-# todo:trash not work
-# cmd trash &Remove-ItemSafely env:fx env:1
-
-# use a and A to create files and directories
-# note $env:0 not work
-# cmd createfile ${{
-#   $file = Read-host 'New File Name'
-#   new-item -path $file
-# }}
-# # cmd createfile !new-item
-# cmd createdir ${{
-#   $dir = Read-host 'New Directory Name'
-#   new-item $dir -Type Directory; #redraw
-# }}
-# map a push :createfile<enter>;redraw
-# map A push :createdir<enter>
-
-# map Y %$env:fx | scb
-# cmd rename %mv -i $f $1
-# map R push :rename
 
 ## command line commands
 # c-p
