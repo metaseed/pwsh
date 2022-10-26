@@ -109,6 +109,7 @@ map ow open-With...
 # vim is there when we installed git
 cmd Vim $vim %f%
 map ov Vim
+map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/properity.ps1
 
 # less is there when we installed git
 # map i $less $Env:f

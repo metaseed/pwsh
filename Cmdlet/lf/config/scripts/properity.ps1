@@ -1,0 +1,78 @@
+# https://stackoverflow.com/questions/1936682/how-do-i-display-a-files-properties-dialog-from-c
+$code = @"
+using System.Runtime.InteropServices;
+using System;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct SHELLEXECUTEINFO
+        {
+            public int cbSize;
+            public uint fMask;
+            public IntPtr hwnd;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpVerb;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpFile;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpParameters;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpDirectory;
+            public int nShow;
+            public IntPtr hInstApp;
+            public IntPtr lpIDList;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpClass;
+            public IntPtr hkeyClass;
+            public uint dwHotKey;
+            public IntPtr hIcon;
+            public IntPtr hProcess;
+        }
+
+        private const int SW_SHOW = 5;
+        private const uint SEE_MASK_INVOKEIDLIST = 12;
+        private const uint SEE_MASK_NOCLOSEPROCESS =0x40;
+
+        public static bool ShowFileProperties(string Filename, IntPtr handle)
+        {
+            SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
+            info.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(info);
+            info.lpVerb = "properties";
+            info.lpFile = Filename;
+            info.nShow = SW_SHOW;
+            info.hProcess = handle;
+            info.fMask = SEE_MASK_INVOKEIDLIST | SEE_MASK_NOCLOSEPROCESS;
+            var r = ShellExecuteEx(ref info);
+
+
+            //System.Threading.Thread.Sleep(5000);
+            return r;
+        }
+    }
+}
+"@
+$name = ($env:f).trim('"')
+if (-not $ShowFileProperties){
+    Add-Type -TypeDefinition $code -Language CSharp
+    $ShowFileProperties =$true
+}
+
+test-path $name
+$name = 'C:\Users\0\.astropy'
+$p = [System.Diagnostics.Process]::GetCurrentProcess().Parent.Parent.Parent;
+$p
+[HelloWorld.Program]::ShowFileProperties($name,$p.Handle)
+[Threading.Thread]::Sleep(500)
+
+            # IntPtr ptr = IntPtr.Zero;
+
+            # var title = IsDirectory(sourcePath) ? new DirectoryInfo(sourcePath).Name : new FileInfo(sourcePath).Name;
+            # title += " Properties";
+            # while (ptr == IntPtr.Zero)
+            #     ptr = Helpers.FindWindow("#32770", title);

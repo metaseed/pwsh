@@ -54,121 +54,16 @@ function Install-FromGithub {
     # output: [Version] or $null if not installed
     [Parameter()]
     [scriptblock]$getLocalVerScript = {
-      [CmdletBinding()]
-      param()
-
       $appName = $application -eq '' ? $repo : $application
-      $versionLocal = $null
-      $it = @(gci $toLocation -Filter "$appName*")
-      if ($it) {
-        # Write-Host $it
-        if ($it.count -gt 1) {
-          write-error "find more than one dir/file in $toLocation : $($it.name) "
-          break
-        }
-
-        $dir = $it[0]
-        $versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
-        Write-host "dir/file name: $($dir.name)"
-        if ($dir.Name -match $versionRegex) {
-          Write-Verbose "query local version via dir/file name: $($dir.name)"
-          $versionLocal = [Version]::new($matches[1])
-        }
-        else {
-          write-Host "no version info in directory name: $($dir.name)"
-        }
-        if (!$versionLocal) {
-          $jsonFile = "$dir\info.json"
-          if(Test-Path $jsonFile) {
-            Write-Verbose "query local version via the info.json in dir $($dir.name)"
-            $info = Get-Content -Raw $jsonFile|ConvertFrom-Json
-            $versionLocal = $info.version
-          }
-        }
-      }
-
-      if (!$versionLocal) {
-        $p = "$toLocation\$appName*\$appName*.exe"
-        if (!(test-path $p)) {
-          $p = "$toLocation\$appName*.exe"
-        }
-        Write-Verbose  "query version: $p"
-        $it = @(gi $p -ErrorAction SilentlyContinue)
-        if ($it) {
-          if ($it.count -gt 1) {
-            Write-Warning "find more than one dir/file in $toLocation : $($it.FullName) "
-            # break
-          }
-          try {
-            Write-Verbose "query local version via 'gcm' $($it[0])"
-            $cmd = gcm "$($it[0])"
-            $versionLocal = [Version]::new($cmd.version)
-          }
-          catch {
-            try {
-              $it.VersionInfo.FileVersion -match "^[\d\.]+" > $null
-              Write-Verbose "query local version via FileVersion property"
-              $versionLocal = [Version]::new($matches[0])
-            }
-            catch {
-              Write-Verbose "query local version via ProductVersion property"
-              $it.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
-              $versionLocal = [Version]::new($matches[0])
-            }
-          }
-        }
-      }
-      Write-Verbose "local version: $versionLocal"
-      return $versionLocal
+      $rt = Get-LocalAppInfo $appName $toLocation
+      # $folder = $rt.folder
+      return $rt
     },
     [Parameter()]
     [scriptblock]$installScript = {
-      [CmdletBinding()]
-      param($downloadedFilePath, $ver_online)
-      Write-Host "Install..."
-      Write-Host $downloadedFilePath
+      param($downloadedFilePath, $ver_online, $toFolder)
       $appName = $application -eq '' ? $repo : $application
-      # ignore error, may not exist
-      ri "$env:temp\temp" -Force -Recurse -ErrorAction Ignore
-      # write-host $appName
-      gci $toLocation -Filter "$appName*" |
-      Remove-Item -Recurse -Force
-
-      if ($downloadedFilePath -match '\.exe$') {
-        Move-Item "$_" -Destination $toLocation -Force
-        return $toLocation
-      }
-      else {
-        Write-Action "expand archive to $env:temp\temp..."
-        if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
-          Expand-Archive $downloadedFilePath -DestinationPath "$env:temp\temp"
-        }
-        elseif ($downloadedFilePath -match '\.tar\.gz') {
-          if (!(test-path $env:temp\temp)) {
-            ni $env:temp\temp -ItemType Directory
-          }
-          tar -xf $downloadedFilePath -C "$env:temp\temp"
-        }
-        else {
-          write-error "$downloadedFilePath is not a know copressed archive!"
-          break
-        }
-
-        $children = @(gci "$env:temp\temp")
-        if ($children.count -ne 1 -or $toFolder) {
-          $to = "$toLocation\${repo}"
-          Move-Item "$env:temp\temp" -Destination $to
-          # _${ver_online}
-          $info = @{version = "$ver_online" }
-          $info | ConvertTo-Json | Set-Content -path "$to\info.json" -force
-          return $to
-        }
-        else {
-          $children | Move-Item -Destination $toLocation -Force
-          ri "$env:temp\temp" -Force
-          return "$toLocation"
-        }
-      }
+      Install-App $downloadedFilePath $ver_online $appName $toFolder
     },
     # force reinstall
     [Parameter()]
@@ -184,6 +79,7 @@ function Install-FromGithub {
   Write-Host "$org $repo"
   $appPath = $null
 
+  $Folder = $null
   Breakable-Pipeline {
     $ver_online = [version]::new();
     Get-GithubRelease -OrgName $org -RepoName $repo -Version $versionType -fileNamePattern $filter |
@@ -200,28 +96,20 @@ function Install-FromGithub {
 
       $ver_online = Invoke-Command -ScriptBlock $getOnlineVer -ArgumentList $_.name, $_.tag_name
 
-      $versionLocal = Invoke-Command -ScriptBlock $getLocalVerScript
-      # Write-Host "dd" + $versionLocal.gettype()
-      if (!$versionLocal) {
-        Write-Host "$repo is not installed, try to install the latest ${repo}: $ver_online"
-      }
-      else {
-
-        if ($ver_online -le $versionLocal) {
-          Write-Host "You are using the latest version of $repo.`n $versionLocal is the latest version available."
-          if (!$force) {
-            break
-          }
-          Write-Warning "Forcely install the latest version..."
-        }
-        write-host "You are using $repo $versionLocal.`n The latest version is $ver_online."
+      $localInfo= Invoke-Command -ScriptBlock $getLocalVerScript
+      $versionLocal = $localInfo.ver
+      $Folder = $localInfo.folder
+      $r = Test-AppInstallation $repo $versionLocal $ver_online -force:$force
+      if(!$r) {
+        break
       }
       return $_
     } |
     Download-GithubRelease |
     % {
       $path = $_
-      $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online"
+      $Folder ??= $env:MS_App
+      $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $toFolder
       write-host "app installed to $path"
       $appPath = $des
     }
