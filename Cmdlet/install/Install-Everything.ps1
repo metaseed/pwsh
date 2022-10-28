@@ -4,7 +4,7 @@ param (
   [switch]
   $force
 )
-ipmo metaseed.management -fo;
+# ipmo metaseed.management -fo;
 $url = 'https://www.voidtools.com/downloads'
 $name = 'everything'
 spps -n $name -ErrorAction Ignore
@@ -21,7 +21,6 @@ if ($resp.Content -match '<a .*href="(.*)".*>\s*Download Portable Zip 64-bit') {
 
   $r = Test-AppInstallation $name $localVer $verOnline -force:$force
   if ($r) {
-
     $zipUrl = "https://www.voidtools.com$zip"
     $path = "$env:temp$($zip)"
     iwr $zipUrl -OutFile $path
@@ -31,6 +30,7 @@ if ($resp.Content -match '<a .*href="(.*)".*>\s*Download Portable Zip 64-bit') {
 } else {
 write-error 'can not parse the returned html to install everything.exe'
 }
+
 $name = 'everyting-cmd'
 if ($resp.Content -match '<a .*href="(.*)".*>\s*ES-\d+\.\d+\.?\d*\.?\d*\.zip') {
   $zip = $Matches[1]
@@ -40,7 +40,6 @@ if ($resp.Content -match '<a .*href="(.*)".*>\s*ES-\d+\.\d+\.?\d*\.?\d*\.zip') {
   $localVer = $localInfo.ver
 
   $localFolder = $localInfo.folder ?? "$env:MS_App"
-  # copy-item "$localFolder\$name\$name.ini" "\_$name.ini" -Force -ErrorAction Ignore
 
   $r = Test-AppInstallation $name $localVer $verOnline -force:$force
   if (!$r) { return }
@@ -49,7 +48,6 @@ if ($resp.Content -match '<a .*href="(.*)".*>\s*ES-\d+\.\d+\.?\d*\.?\d*\.zip') {
   $path = "$env:temp$($zip)"
   iwr $zipUrl -OutFile $path
   install-app $path $verOnline $name $localFolder
-  # move-item "\_$name.ini" "$localFolder\$name\$name.ini" -Force
   return
 }
 write-error 'can not parse the returned html, to install commandline version of everything'

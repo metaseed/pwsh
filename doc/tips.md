@@ -213,3 +213,6 @@ start shell:RecycleBinFolder
 
 ## show psreadline helper
 Get-PSReadlineKeyHandler
+
+## PSFzf
+c-t:

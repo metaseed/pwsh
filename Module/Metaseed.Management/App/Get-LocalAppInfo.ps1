@@ -10,7 +10,8 @@ function Get-LocalAppInfo {
 
   # folder has a info.json, test folder in $tolocaltion and it's direct subfolder
   if (!$versionLocal ) {
-    $it = @(gci $toLocation -Filter "$appName*" -Directory -Depth 1 -FollowSymlink -ErrorAction Ignore)
+    $apps = gci $toLocation -Filter "$appName*" -Directory -Depth 1 -FollowSymlink -ErrorAction Ignore|? {"$_" -match '\\_|/_'}
+    $it = @($apps)
     if ($it) {
       # Write-Host $it
       if ($it.Count -gt 1) {
