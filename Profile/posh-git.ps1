@@ -23,14 +23,14 @@
 #   return
 # }
 
-Import-Module posh-git -ErrorAction Ignore
+Import-Module posh-git -ErrorAction Ignore -Scope Global
 # only config when posh-git is installed
 if ($?) {
-  $GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
-  $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
+  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
+  $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
-  $GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
-  $GitPromptSettings.DefaultPromptWriteStatusFirst = $true
+  $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
+  $global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
   function global:PromptWriteErrorInfo() {
     # While $? also reflects (immediately afterwards) whether an external program reported an exit code of 0 (signaling success, making $? report $true) or a nonzero exit code (typically signaling failure, making $? $false), it is the automatic $LASTEXICODE variable that contains the specific exit code as an integer, and that value is retained until another external program, if any, is called in the same session.
     # $?: true: success, false: failure
@@ -48,18 +48,18 @@ if ($?) {
 
   }
   # ─→
-  $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo) '
+  $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo) '
 
-  $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = [ConsoleColor]::Magenta
-  $GitPromptSettings.DefaultPromptSuffix = ''
-  $GitPromptSettings.EnableStashStatus = $true
+  $global:GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = [ConsoleColor]::Magenta
+  $global:GitPromptSettings.DefaultPromptSuffix = ''
+  $global:GitPromptSettings.EnableStashStatus = $true
 
   if ($env:WT_SESSION) {
     # https://www.nerdfonts.com/cheat-sheet
-    $GitPromptSettings.LocalWorkingStatusSymbol = '' # something in the working dir to add to stage/index
-    $GitPromptSettings.LocalStagedStatusSymbol = '' # something on stage to commit
-    $GitPromptSettings.BeforeStatus.Text = '[ '
-    $GitPromptSettings.BeforePath.Text = ' '
+    $global:GitPromptSettings.LocalWorkingStatusSymbol = '' # something in the working dir to add to stage/index
+    $global:GitPromptSettings.LocalStagedStatusSymbol = '' # something on stage to commit
+    $global:GitPromptSettings.BeforeStatus.Text = '[ '
+    $global:GitPromptSettings.BeforePath.Text = ' '
   }
 }
 
