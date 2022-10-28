@@ -19,7 +19,7 @@ function Install-App {
     }
     elseif ($downloadedFilePath -match '\.tar\.gz') {
       if (!(test-path $env:temp\temp)) {
-        ni $env:temp\temp -ItemType Directory
+        $null = ni $env:temp\temp -ItemType Directory
       }
       tar -xf $downloadedFilePath -C "$env:temp\temp"
     }
@@ -33,13 +33,32 @@ function Install-App {
       $toLocation = "$toLocation\${appName}"
       Move-Item "$env:temp\temp" -Destination $toLocation
       # _${ver_online}
+      $info = @{version = "$ver_online" }
+      $info | ConvertTo-Json | Set-Content -path "$toLocation\info.json" -force
     }
     else {
-      $children | Move-Item -Destination $toLocation -Force
+      $app = $children[0]
+      $ver_online -match "^[\d\.]+" > $null
+      $ver_online = [Version]::new($Matches[0])
+
+      # $app.VersionInfo
+      $verLocal = $app.VersionInfo.ProductVersion ? $app.VersionInfo.ProductVersion : $app.VersionInfo.FileVersion
+
+      if ($verLocal) {
+        $app.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
+        $verLocal = [Version]::new($Matches[0])
+        write-host "local version: $verLocal"
+
+      }
+
+      if (!$verLocal -or $verLocal -ne $ver_online) {
+        write-host "modify app version from $verLocal to $ver_online"
+        c:\app\rcedit-x64 "$app" --set-file-version $ver_online --set-product-version $ver_online
+      }
+      Move-Item $app -Destination $toLocation -Force
       ri "$env:temp\temp" -Force
+
     }
-    $info = @{version = "$ver_online" }
-    $info | ConvertTo-Json | Set-Content -path "$toLocation\info.json" -force
     return "$toLocation"
   }
 }

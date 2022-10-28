@@ -1,4 +1,4 @@
-Install-FromGithub 'git-for-windows' 'git' '64-bit.exe$' -getLocalVerScript {
+Install-FromGithub 'git-for-windows\git' '64-bit.exe$' -getLocalVerScript {
   $version = $null
   $git = gcm 'git' -ErrorAction Ignore
   if ($git) {

@@ -1,2 +1,3 @@
 # https://github.com/junegunn/fzf
-Install-FromGithub 'junegunn' 'fzf' 'windows_amd64\.zip$' -versionType 'preview' -toFolder
+ipmo metaseed.management -fo;
+$info = Install-FromGithub 'junegunn/fzf' 'windows_amd64\.zip$' -versionType 'preview' -force # -toFolder

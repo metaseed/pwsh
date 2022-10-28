@@ -5,4 +5,4 @@ param(
   $Remaining
 )
 
-Install-FromGithub 'NickeManarin' 'ScreenToGif' '(?<!\.Light).Portable.x64.zip$' -versionType 'stable' @Remaining
+Install-FromGithub 'NickeManarin/ScreenToGif' '(?<!\.Light).Portable.x64.zip$' -versionType 'stable' @Remaining

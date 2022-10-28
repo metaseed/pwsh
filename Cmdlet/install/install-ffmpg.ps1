@@ -4,5 +4,5 @@
 [CmdletBinding()]
 param()
 
-Install-FromGithub 'GyanD' 'codexffmpeg' '-full_build.zip$' -app 'ffmpeg'
+Install-FromGithub 'GyanD/codexffmpeg' '-full_build.zip$' -app 'ffmpeg'
 

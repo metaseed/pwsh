@@ -2,11 +2,8 @@ function Install-FromGithub {
   [CmdletBinding()]
   param (
     [Parameter(Mandatory = $true)]
-    # ornization name on github
-    [string]$org,
-    # repo name on github
-    [Parameter()]
-    [string]$repo,
+    [string]$url,
+
     # regex to filter out the file from resource names
     [Parameter(Mandatory = $true)]
     [string]$filter, # = '-windows\.zip$', # '(?<!\.Light).Portable.x64.zip$'
@@ -63,7 +60,7 @@ function Install-FromGithub {
     [scriptblock]$installScript = {
       param($downloadedFilePath, $ver_online, $toFolder)
       $appName = $application -eq '' ? $repo : $application
-      Install-App $downloadedFilePath $ver_online $appName $toFolder
+      return Install-App $downloadedFilePath $ver_online $appName $toFolder
     },
     # force reinstall
     [Parameter()]
@@ -71,15 +68,16 @@ function Install-FromGithub {
   )
   Assert-Admin
 
-  if ($org.Contains('/')) {
-    $v = $org.Split('/')
-    $org = $v[0]
-    $repo = $v[1]
-  }
+
+    $v = $url.Split('/')
+    $org = $v[-2]
+    $repo = $v[-1]
+
   Write-Host "$org $repo"
   $appPath = $null
 
   $Folder = $null
+  $ver_online = $null
   Breakable-Pipeline {
     $ver_online = [version]::new();
     Get-GithubRelease -OrgName $org -RepoName $repo -Version $versionType -fileNamePattern $filter |
@@ -110,9 +108,9 @@ function Install-FromGithub {
       $path = $_
       $Folder ??= $env:MS_App
       $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $toFolder
-      write-host "app installed to $path"
+      write-host "app installed to $des"
       $appPath = $des
     }
   }
-  return $appPath
+  return @{dir = $appPath; ver = $ver_online}
 }

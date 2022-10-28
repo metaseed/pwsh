@@ -47,17 +47,18 @@ function Get-LocalAppInfo {
       try {
         Write-Verbose "query local version via 'gcm' $app"
         $cmd = gcm "$app"
-        $versionLocal = [Version]::new($cmd.version)
+        $versionLocal = [Version]::new($a.FileVersionInfo.ProductVersion)
       }
       catch {
         try {
-          $app.VersionInfo.FileVersion -match "^[\d\.]+" > $null
-          Write-Verbose "query local version via FileVersion property"
-          $versionLocal = [Version]::new($matches[0])
-        }
-        catch {
           Write-Verbose "query local version via ProductVersion property"
           $it.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
+          $versionLocal = [Version]::new($matches[0])
+
+        }
+        catch {
+          $app.VersionInfo.FileVersion -match "^[\d\.]+" > $null
+          Write-Verbose "query local version via FileVersion property"
           $versionLocal = [Version]::new($matches[0])
         }
       }

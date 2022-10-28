@@ -59,10 +59,14 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
 
 <#
 Get-PSReadLineKeyHandler -Bound -Unbound
+Ctrl+s    ForwardSearchHistory    Search history forward interactively
+Ctrl+r    ReverseSearchHistory    Search history backwards interactively
+
 tips:
 remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
 Ctrl+]: goto Brace
 ctrl-l: clear screen
 alt-.: last argument of previous command
 ctrl-space: MenuComplete
+
 #>

@@ -1,1 +1,1 @@
-Install-FromGithub 'torakiki' 'pdfsam' '-windows\.zip$'
+Install-FromGithub 'torakiki/pdfsam' '-windows\.zip$'
