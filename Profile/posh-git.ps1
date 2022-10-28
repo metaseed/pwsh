@@ -22,7 +22,35 @@
 # if(!(git rev-parse --is-inside-work-tree 2>$null)){
 #   return
 # }
+function global:GetAdminIcon {
+  $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
+  if ($IsAdmin) {
+    "`e[93m`e[0m"
+  }
+  else {
+    ''
+  }
+}
 
+function global:GetPSReadLineSessionExeTime {
+  if ($global:__PSReadLineSessionScope.SessionStartTime) {
+    # 19.3s
+    $s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds
+    if ($s -lt 1) {
+      $color = "`e[32m" #green
+    }
+    elseif ($s -lt 3) {
+      $color = "`e[33m" # yellow
+    }
+    else {
+      $color = "`e[31m" # red
+    }
+    if ($s -ge 0.01) {
+      # clock
+      return "${color}祥" + $s.ToString("#,0.00") + "s`e[0m"
+    }
+  }
+}
 Import-Module posh-git -ErrorAction Ignore -Scope Global
 # only config when posh-git is installed
 if ($?) {
@@ -63,35 +91,6 @@ if ($?) {
   }
 }
 
-function GetAdminIcon {
-  $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
-  if ($IsAdmin) {
-    "`e[93m`e[0m"
-  }
-  else {
-    ''
-  }
-}
-
-function GetPSReadLineSessionExeTime {
-  if ($global:__PSReadLineSessionScope.SessionStartTime) {
-    # 19.3s
-    $s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds
-    if ($s -lt 1) {
-      $color = "`e[32m" #green
-    }
-    elseif ($s -lt 3) {
-      $color = "`e[33m" # yellow
-    }
-    else {
-      $color = "`e[31m" # red
-    }
-    if ($s -ge 0.01) {
-      # clock
-      return "${color}祥" + $s.ToString("#,0.00") + "s`e[0m"
-    }
-  }
-}
 
 # below logic set the last readline session exectution time, but has problem, when adjust window size
 # so set it in prompt starting segments
