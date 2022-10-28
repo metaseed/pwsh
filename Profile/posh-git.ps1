@@ -2,6 +2,10 @@
 # compare with: https://ohmyposh.dev/docs/segments/git
 # all config variables are in:
 # https://github.com/dahlbyk/posh-git/tree/master/src/PoshGitTypes.ps1
+
+# https://www.commandline.ninja/customize-pscmdprompt/
+
+
 # to install posh-git
 # PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 # to update
@@ -15,6 +19,10 @@
 # Import-Module PSProfiler
 # Measure-Script {
 # module load time about 0.3s
+# if(!(git rev-parse --is-inside-work-tree 2>$null)){
+#   return
+# }
+
 Import-Module posh-git -ErrorAction Ignore
 # only config when posh-git is installed
 if ($?) {
@@ -84,6 +92,7 @@ function GetPSReadLineSessionExeTime {
     }
   }
 }
+
 # below logic set the last readline session exectution time, but has problem, when adjust window size
 # so set it in prompt starting segments
 # function SetStatus {
