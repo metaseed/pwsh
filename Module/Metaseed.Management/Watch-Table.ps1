@@ -34,7 +34,6 @@ function Watch-Table {
   $module = (Get-Module Microsoft.PowerShell.ConsoleGuiTools -List).ModuleBase
   Add-Type -Path (Join-path $module Terminal.Gui.dll)
 
-  $typeGetter = [OutGridView.Cmdlet.TypeGetter]::new($PSCmdlet)
   # Initialize the "GUI".
   # Note: This must come before creating windows and controls.
   [Application]::Init()
@@ -84,6 +83,8 @@ function Watch-Table {
   # $table = $typeGetter.CastObjectsToTableView($objs)
   $result = & $BeginScript
 
+  $typeGetter = [OutGridView.Cmdlet.TypeGetter]::new($PSCmdlet)
+
   $update = {
     $objs = & $CyclicScript $result
     $dataTable = [Data.DataTable]::new()
@@ -92,21 +93,21 @@ function Watch-Table {
       [void]$dataTable.Columns.Add($_.Label)
     }
     $table.Data | % {
-      $values = $_.Values.Values | select -ExpandProperty DisplayValue
+      $columnValues = $_.Values.Values | select -ExpandProperty DisplayValue
       $filter = '.*'
       $txt = $edt.Text.ToString()
       if ($txt) {
         $filter = $txt
       }
       $match = $false
-      $values | % {
+      $columnValues | % {
         if ($_ -match $filter) {
           # write-host $_
           $match = $true
         }
       }
       if ($match) {
-        [void]$dataTable.Rows.Add($values)
+        [void]$dataTable.Rows.Add($columnValues)
       }
     }
 
@@ -160,9 +161,9 @@ function Watch-Table {
   #   [Application]::RequestStop()
   # })
 
+  $edt.SetFocus()
   # Show the window (takes over the whole screen).
   # Note: This is a blocking call.
-  $edt.SetFocus()
   # [MessageBox]::Query("Question", "Do you like console apps?",0, @('yes'))
   [Application]::Run()
 
