@@ -6,7 +6,7 @@
 #
 #     Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
 #         [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-#         [Microsoft.PowerShell.PSConsoleReadLine]::Insert('lfcd.ps1')
+#         [Microsoft.PowerShell.PSConsoleReadLine]::Insert('a lf')
 #         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 #     }
 #
