@@ -290,6 +290,7 @@ function Get-RecycledItem {
         [String]
         $OriginalPath,
 
+        [Alias('r')]
         [Parameter(Position = 1, ParameterSetName = 'OriginalPathRegex')]
         [String]
         $OriginalPathRegex,

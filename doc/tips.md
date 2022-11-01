@@ -237,7 +237,7 @@ ri test
 mi test test1
 
 ni test_safe
-ris test_safe
+ris test_safe # remove item safely
 gri -OriginalPathRegex 'safe'
 gri -OriginalPathRegex 'test'|rri # restore-recycledItem; get-recycledItem
 gci '*safe'
