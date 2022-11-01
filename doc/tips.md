@@ -216,3 +216,33 @@ Get-PSReadlineKeyHandler
 
 ## PSFzf
 c-t:
+
+## file management
+cd sl
+ga cd
+ga -d set-location
+ga -d Get-ChildItem
+
+z location
+https://github.com/vors/ZLocation
+
+start c:\app
+https://github.com/mgunyho/tere
+
+shortcuts: search, home, end
+
+ni test
+ni test -ty d # type directory
+ri test
+mi test test1
+
+ni test_safe
+ris test_safe
+gri -OriginalPathRegex 'safe'
+gri -OriginalPathRegex 'test'|rri # restore-recycledItem; get-recycledItem
+gci '*safe'
+
+copy test test2
+ga gp
+gp *
+start .

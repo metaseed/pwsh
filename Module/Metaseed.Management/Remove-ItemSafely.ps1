@@ -2,7 +2,7 @@
 
 function Remove-ItemSafely {
 
-    [alias('ris','trash')]
+    [alias('ris', 'trash')]
     [CmdletBinding(DefaultParameterSetName = 'Path', SupportsShouldProcess = $true, ConfirmImpact = 'Medium', SupportsTransactions = $true, HelpUri = 'http://go.microsoft.com/fwlink/?LinkID=113373')]
     param(
         [Parameter(ParameterSetName = 'Path', Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
@@ -134,8 +134,11 @@ function get-PathFromComObj {
         $ComObject
     )
 
-    if ($ComObject.IsFolder -or ($ComObject.type -match 'Zip')) {
+    if ($ComObject.IsFolder -or (($ComObject.type -match 'Zip') -and ($ComObject.Path -notmatch '.7z$'))) {
         $OriginalPath = $ComObject.GetFolder.Title
+        if (!$OriginalPath) {
+            $global:t = $ComObject
+        }
     }
     else {
         #sometimes the original location is stored in an extended property
@@ -322,12 +325,28 @@ function Get-RecycledItem {
         $SelectedItems = @() + $rb.Items()
 
         if ($OriginalPath) {
-            $SelectedItems = $SelectedItems | Where-Object { $p = get-PathFromComObj $_; $p -eq $OriginalPath }
+            $SelectedItems = $SelectedItems |
+            Where-Object {
+                $p = get-PathFromComObj $_
+                $r = $p -eq $OriginalPath;
+                if ($r) {
+                    Add-Member -InputObject $_ -NotePropertyValue $p -NotePropertyName 'OriginalPath'
+                };
+                return $r
+            }
+
         }
 
         if ($OriginalPathRegex) {
-
-            $SelectedItems = $SelectedItems | Where-Object {  $p = get-PathFromComObj $_; $p -match $OriginalPathRegex }
+            $SelectedItems = $SelectedItems |
+            Where-Object {
+                $p = get-PathFromComObj $_
+                $r = $p -match $OriginalPathRegex
+                if ($r) {
+                    Add-Member -InputObject $_ -NotePropertyValue $p -NotePropertyName 'OriginalPath'
+                };
+                return $r
+            }
         }
 
         if ($SelectorScript) {
