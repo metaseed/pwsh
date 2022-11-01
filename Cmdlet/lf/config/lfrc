@@ -7,6 +7,15 @@
 
 # lf (list files)
 
+# custom file preview
+# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
+# set period 1
+# interpreter for shell commands, on windows by default it is cmd
+# if use pwsh, it is slow, and has redraw problem
+# set shell pwsh -nologo -noninteractive -noprofile
+# reload config file using f5
+map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
+
 set icons
 # set drawbox
 # set filesep ";" #default is '/n'
@@ -25,14 +34,6 @@ map <esc> quit # the same as q
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 # during search to open
 cmap <right> :cmd-enter; open
-# custom file preview
-# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
-# set period 1
-# interpreter for shell commands, on windows by default it is cmd
-# if use pwsh, it is slow, and has redraw problem
-# set shell pwsh -nologo -noninteractive -noprofile
-# reload config file using f5
-map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
 
 ## file management
 # rename
