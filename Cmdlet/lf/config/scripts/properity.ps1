@@ -1,5 +1,13 @@
-# https://stackoverflow.com/questions/1936682/how-do-i-display-a-files-properties-dialog-from-c
-$code = @"
+$s = Get-PSSession -ComputerName localhost -name ms_pwsh -ErrorAction Ignore
+if (!$s) {
+    $s = New-PSSession -Name ms_pwsh -ComputerName localhost | Disconnect-PSSession
+}
+if ($s.length -gt 1) { $s = $s[0] }
+
+$s = connect-pssession $s
+invoke-command -session $s -scriptblock {
+    # https://stackoverflow.com/questions/1936682/how-do-i-display-a-files-properties-dialog-from-c
+    $code = @"
 using System.Runtime.InteropServices;
 using System;
 
@@ -39,40 +47,46 @@ namespace HelloWorld
         private const uint SEE_MASK_INVOKEIDLIST = 12;
         private const uint SEE_MASK_NOCLOSEPROCESS =0x40;
 
-        public static bool ShowFileProperties(string Filename, IntPtr handle)
+        public static bool ShowFileProperties(string Filename)
         {
             SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
             info.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(info);
             info.lpVerb = "properties";
             info.lpFile = Filename;
             info.nShow = SW_SHOW;
-            info.hProcess = handle;
-            info.fMask = SEE_MASK_INVOKEIDLIST | SEE_MASK_NOCLOSEPROCESS;
+            info.fMask = SEE_MASK_INVOKEIDLIST;
             var r = ShellExecuteEx(ref info);
 
-
-            //System.Threading.Thread.Sleep(5000);
+            // System.Threading.Thread.Sleep(1000);
             return r;
         }
     }
 }
 "@
-$name = ($env:f).trim('"')
-if (-not $ShowFileProperties){
-    Add-Type -TypeDefinition $code -Language CSharp
-    $ShowFileProperties =$true
+    if ($env:f) {
+        $name = ($env:f).trim('"')
+    }
+    if (-not $ShowFileProperties) {
+        Add-Type -TypeDefinition $code -Language CSharp
+        $ShowFileProperties = $true
+    }
+
+    # $name = 'C:\Intel'
+    # $p = [System.Diagnostics.Process]::GetCurrentProcess().Parent.Parent.Parent;
+    # $p
+    [HelloWorld.Program]::ShowFileProperties($name)
+    [Threading.Thread]::Sleep(800)
 }
+# [Threading.Thread]::Sleep(5000)
 
-test-path $name
-$name = 'C:\Users\0\.astropy'
-$p = [System.Diagnostics.Process]::GetCurrentProcess().Parent.Parent.Parent;
-$p
-[HelloWorld.Program]::ShowFileProperties($name,$p.Handle)
-[Threading.Thread]::Sleep(500)
+Receive-PSSession -Name ps_pwsh -ComputerName localhost
+Disconnect-PSSession  -Name ms_pwsh
 
-            # IntPtr ptr = IntPtr.Zero;
+# IntPtr ptr = IntPtr.Zero;
 
-            # var title = IsDirectory(sourcePath) ? new DirectoryInfo(sourcePath).Name : new FileInfo(sourcePath).Name;
-            # title += " Properties";
-            # while (ptr == IntPtr.Zero)
-            #     ptr = Helpers.FindWindow("#32770", title);
+# var title = IsDirectory(sourcePath) ? new DirectoryInfo(sourcePath).Name : new FileInfo(sourcePath).Name;
+# title += " Properties";
+# while (ptr == IntPtr.Zero)
+#     ptr = Helpers.FindWindow("#32770", title);
+
+# Get-PSSession -ComputerName localhost -name ms_pwsh |Remove-PSSession

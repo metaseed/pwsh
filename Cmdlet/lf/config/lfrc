@@ -1,7 +1,11 @@
 # https://medium.com/@a.hr.mostafavi/using-lf-file-manager-on-windows-fc4f1e4e1442
 # https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
+
 # https://pkg.go.dev/github.com/gokcehan/lf
 # https://github.dev/gokcehan/lf
+# https://github.com/gokcehan/lf
+
+# lf (list files)
 
 set icons
 # set drawbox
@@ -9,6 +13,18 @@ set icons
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
 set info size:time
+# jump to the first match after each keystroke during searching.
+set incsearch
+# enable *?[][^] in search/back-search /?, n: next;N:previous
+# not work, test future version
+# set globsearch
+# show hidden files
+set hidden
+
+map <esc> quit # the same as q
+# cmd on-quit &{{cd %fx%;echo 'dddd'}}
+# during search to open
+cmap <right> :cmd-enter; open
 # custom file preview
 # set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
 # set period 1

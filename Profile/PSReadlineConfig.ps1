@@ -13,10 +13,11 @@ Set-PSReadLineOption @PSReadLineOptions
 # work
 # $options = Get-PSReadLineOption
 # $options.ListPredictionColor = "`e[90m" # original value "`e[33m"
-try{
-Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
-Set-PSReadLineOption -PredictionViewStyle ListView  # default is InLineView,
-} catch {
+try {
+    Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
+    Set-PSReadLineOption -PredictionViewStyle ListView  # default is InLineView,
+}
+catch {
 
 }
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
@@ -46,6 +47,12 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
         cursor    = $cursor;
     }
 
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('lfcd.ps1')
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
