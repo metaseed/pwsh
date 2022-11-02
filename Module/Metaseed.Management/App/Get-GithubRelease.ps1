@@ -40,6 +40,10 @@ function Get-GithubRelease {
 
   Write-Verbose $response
   $assets = $response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', @{label = 'tag_name'; expression = { $response.tag_name } }, 'browser_download_url', @{label = 'releaseNote'; expression = { $response.body } }
+  if(!$assets) {
+    write-error "can not find assets, please modify the file searching pattern"
+    return @()
+  }
   if ($assets.Count -ne 1 ) {
     foreach ($asset in $assets) {
       Write-Warning $asset.name
@@ -61,7 +65,7 @@ function Download-GithubRelease {
     [string]
     $outputDir = $env:TEMP
   )
-  if ($assets.count -eq 0) {
+  if (!$assets -or $assets.count -eq 0) {
     Write-Error "no file found"
   }
   elseif ($assets.count -gt 1) {
