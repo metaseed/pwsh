@@ -1,5 +1,6 @@
 # Import-Module metaseed.Utility  -DisableNameChecking
 $file = Get-RedirectedUrl "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64"
+# use this url also work: "https://update.code.visualstudio.com/latest/win32-x64-user/stable"
 $Exe = Get-RemoteFile $file
 # Install with the context menu, file association, and add to path options (and don't run code after install:
 $installerArguments = '/silent /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders,associatewithfiles,addtopath"'

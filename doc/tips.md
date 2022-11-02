@@ -214,8 +214,6 @@ start shell:RecycleBinFolder
 ## show psreadline helper
 Get-PSReadlineKeyHandler
 
-## PSFzf
-c-t:
 
 ## file management
 cd sl
@@ -246,3 +244,7 @@ copy test test2
 ga gp
 gp *
 start .
+
+## PSFzf
+https://github.com/kelleyma49/PSFzf
+c-t:

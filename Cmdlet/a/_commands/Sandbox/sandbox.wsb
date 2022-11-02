@@ -2,7 +2,6 @@
   <MappedFolders>
     <MappedFolder>
       <HostFolder>C:\temp</HostFolder>
-      <SandboxFolder>c:\temp</SandboxFolder>
       <ReadOnly>false</ReadOnly>
     </MappedFolder>
     <MappedFolder>
