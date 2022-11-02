@@ -52,19 +52,24 @@ function Install-FromGithub {
     [Parameter()]
     [scriptblock]$getLocalVerScript = {
       $appName = $application -eq '' ? $repo : $application
-      $rt = Get-LocalAppInfo $appName $toLocation
+      $rt = Get-LocalAppInfo $appName $toLocation $newName
       # $folder = $rt.folder
       return $rt
     },
     [Parameter()]
     [scriptblock]$installScript = {
-      param($downloadedFilePath, $ver_online, $toFolder)
+      param($downloadedFilePath, $ver_online, $toFolder, $newName)
       $appName = $application -eq '' ? $repo : $application
-      return Install-App $downloadedFilePath $ver_online $appName $toFolder
+      if($newName) {
+      Write-Host "new name: $newName"
+      }
+      return Install-App $downloadedFilePath $ver_online $appName $toFolder -newName $newName
     },
     # force reinstall
     [Parameter()]
-    [switch]$Force
+    [switch]$Force,
+    [Parameter()]
+    [string]$newName
   )
   Assert-Admin
 
@@ -73,7 +78,7 @@ function Install-FromGithub {
     $org = $v[-2]
     $repo = $v[-1]
 
-  Write-Host "$org $repo"
+  Write-Host "$org $repo $newName"
   $appPath = $null
 
   $Folder = $null
@@ -84,10 +89,6 @@ function Install-FromGithub {
     % {
       $assets = $_
       if ($assets.Count -ne 1 ) {
-        foreach ($asset in $assets) {
-          Write-Warning $asset.name
-        }
-        Write-Error "Expected one asset, but found $($assets.Count), please make the filer more specific!"
         break;
       }
       Write-Verbose "$_"
@@ -95,6 +96,7 @@ function Install-FromGithub {
       $ver_online = Invoke-Command -ScriptBlock $getOnlineVer -ArgumentList $_.name, $_.tag_name
 
       $localInfo= Invoke-Command -ScriptBlock $getLocalVerScript
+
       $versionLocal = $localInfo.ver
       $Folder = $localInfo.folder
       $r = Test-AppInstallation $repo $versionLocal $ver_online -force:$force
@@ -107,7 +109,7 @@ function Install-FromGithub {
     % {
       $path = $_
       $Folder ??= $env:MS_App
-      $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $toFolder
+      $des= Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $newName
       write-host "app installed to $des"
       $appPath = $des
     }

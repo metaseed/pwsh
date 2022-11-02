@@ -99,8 +99,11 @@ end {
     }
   } while ($update)
 
-
-  & $file @Remaining
+if(!$file){
+  write-error "can not find app: $app"
+  return
+}
+& $file @Remaining
 
   # if ($Remaining) {
   #   & $file @Remaining

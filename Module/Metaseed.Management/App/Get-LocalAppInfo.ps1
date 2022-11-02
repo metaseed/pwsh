@@ -2,34 +2,12 @@ function Get-LocalAppInfo {
   [CmdletBinding()]
   param(
     [string] $appName,
-    [string] $toLocation
+    [string] $toLocation,
+    [string] $newName
   )
 
   $versionLocal = $null
   $appFolder = $null
-
-  # folder has a info.json, test folder in $tolocaltion and it's direct subfolder
-  if (!$versionLocal ) {
-    $apps = gci $toLocation -Filter "$appName*" -Directory -Depth 1 -FollowSymlink -ErrorAction Ignore|? {"$_" -match '\\_|/_'}
-    $it = @($apps)
-    if ($it) {
-      # Write-Host $it
-      if ($it.Count -gt 1) {
-        write-error "find more than one $appName in dir in $toLocation : $($it.FullName) "
-        break
-      }
-
-      $dir = $it[0]
-      $jsonFile = gi "$dir\info.json" -ErrorAction Ignore
-      if ($jsonFile) {
-        Write-Verbose "query local version via the info.json in dir $($dir.FullName)"
-        $info = Get-Content -Raw "$jsonFile" | ConvertFrom-Json
-        $versionLocal = $info.version
-        $appFolder = $jsonFile.Directory.Parent.FullName
-      }
-
-    }
-  }
 
   # get version info from the app's property
   if (!$versionLocal) {
@@ -65,6 +43,29 @@ function Get-LocalAppInfo {
       }
     }
 
+    # folder has a info.json, test folder in $tolocaltion and it's direct subfolder
+    if (!$versionLocal ) {
+      $apps = gci $toLocation -Filter "$appName*" -Directory -Depth 1 -FollowSymlink -ErrorAction Ignore | ? { "$_" -match '\\_|/_' }
+      $it = @($apps)
+      if ($it) {
+        # Write-Host $it
+        if ($it.Count -gt 1) {
+          write-error "find more than one $appName in dir in $toLocation : $($it.FullName) "
+          break
+        }
+
+        $dir = $it[0]
+        $jsonFile = gi "$dir\info.json" -ErrorAction Ignore
+        if ($jsonFile) {
+          Write-Verbose "query local version via the info.json in dir $($dir.FullName)"
+          $info = Get-Content -Raw "$jsonFile" | ConvertFrom-Json
+          $versionLocal = $info.version
+          $appFolder = $jsonFile.Directory.Parent.FullName
+        }
+
+      }
+    }
+
     # file or dir directly in app folder and the name has version info
     if (!$versionLocal ) {
       $it = @(gci $toLocation -Filter "$appName*")
@@ -93,6 +94,13 @@ function Get-LocalAppInfo {
     }
   }
   Write-Verbose "local version: $versionLocal"
+
+  if(!$versionLocal -and $newName) {
+    Write-Verbose "try to get info with new name: $newName"
+    $PSBoundParameters.appName = $newName
+    $PSBoundParameters.newName = $null
+    return Get-LocalAppInfo $PSBoundParameters
+  }
   # the folder is where app.exe or app folder located
   return @{ver = $versionLocal; folder = $appFolder; }
 }

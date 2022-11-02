@@ -21,7 +21,7 @@ function Get-GithubRelease {
     [string]
     $fileNamePattern
   )
-  
+
   Write-Step "query version($version)..."
 
   if ($version -eq 'stable') {
@@ -31,7 +31,7 @@ function Get-GithubRelease {
     $url = "https://api.github.com/repos/$OrgName/$RepoName/releases"
   }
 
-  $response = Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing 
+  $response = Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing
 
   if ($version -eq 'preview') {
     # first one is the latest release
@@ -40,6 +40,12 @@ function Get-GithubRelease {
 
   Write-Verbose $response
   $assets = $response.assets | where { $_.name -match $fileNamePattern } | select -Property 'name', @{label = 'tag_name'; expression = { $response.tag_name } }, 'browser_download_url', @{label = 'releaseNote'; expression = { $response.body } }
+  if ($assets.Count -ne 1 ) {
+    foreach ($asset in $assets) {
+      Write-Warning $asset.name
+    }
+    Write-Warning "Expected one asset, but found $($assets.Count), please make the filer more specific!"
+  }
   return @(, $assets) # use , (unary array operator) to pass a array inside a array, so the pipeline will process the $assets together
 
 }
