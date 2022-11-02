@@ -50,7 +50,7 @@ function Install-FromGithub {
     # scriptblock to get local installed app version
     # output: [Version] or $null if not installed
     [Parameter()]
-    [scriptblock]$getLocalVerScript = {
+    [scriptblock]$getLocalInfoScript = {
       $appName = $application -eq '' ? $repo : $application
       $rt = Get-LocalAppInfo $appName $toLocation $newName
       # $folder = $rt.folder
@@ -60,8 +60,8 @@ function Install-FromGithub {
     [scriptblock]$installScript = {
       param($downloadedFilePath, $ver_online, $toFolder, $newName)
       $appName = $application -eq '' ? $repo : $application
-      if($newName) {
-      Write-Host "new name: $newName"
+      if ($newName) {
+        Write-Host "new name: $newName"
       }
       return Install-App $downloadedFilePath $ver_online $appName $toFolder -newName $newName
     },
@@ -72,11 +72,9 @@ function Install-FromGithub {
     [string]$newName
   )
   Assert-Admin
-
-
-    $v = $url.Split('/')
-    $org = $v[-2]
-    $repo = $v[-1]
+  $v = $url.Split('/')
+  $org = $v[-2]
+  $repo = $v[-1]
 
   Write-Host "$org $repo $newName"
   $appPath = $null
@@ -95,12 +93,12 @@ function Install-FromGithub {
 
       $ver_online = Invoke-Command -ScriptBlock $getOnlineVer -ArgumentList $_.name, $_.tag_name
 
-      $localInfo= Invoke-Command -ScriptBlock $getLocalVerScript
+      $localInfo = Invoke-Command -ScriptBlock $getLocalInfoScript
 
       $versionLocal = $localInfo.ver
       $Folder = $localInfo.folder
       $r = Test-AppInstallation $repo $versionLocal $ver_online -force:$force
-      if(!$r) {
+      if (!$r) {
         break
       }
       return $_
@@ -109,10 +107,10 @@ function Install-FromGithub {
     % {
       $path = $_
       $Folder ??= $env:MS_App
-      $des= Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $newName
+      $des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $newName
       write-host "app installed to $des"
       $appPath = $des
     }
   }
-  return @{dir = $appPath; ver = $ver_online}
+  return @{dir = $appPath; ver = $ver_online }
 }

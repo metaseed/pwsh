@@ -37,7 +37,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
       $env:path = [Environment]::GetEnvironmentVariable('path', "machine");
     }
     else {
-      "pwsh already exists"
+      "pwsh already exists: $($PSVersionTable.PSVersion)"
     }
 
   }
