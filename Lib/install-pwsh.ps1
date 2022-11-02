@@ -23,6 +23,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
         )
         $File = Split-Path $address -Leaf
         $Exe = "$env:TEMP\$File"
+        $pro = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue' # imporve iwr speed
         Invoke-WebRequest $Address -OutFile $Exe
         $ProgressPreference = $pro

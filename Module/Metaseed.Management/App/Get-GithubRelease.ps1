@@ -77,7 +77,14 @@ function Download-GithubRelease {
     $output = "$outputDir\$($asset.name)"
     Write-Step "downloading $($asset.name)... "
     Write-Host "from $url"
-    Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing -OutFile $output
+    $pro = $ProgressPreference
+    $ProgressPreference = 'SilentlyContinue' # imporve iwr speed
+    if ($PSVersionTable.PSVersion.Major -lt 7) {
+      iwr $url -UseB -OutFile $output
+    } else {
+      iwr $url -OutFile $output
+    }
+    $ProgressPreference = $pro
     Write-Debug "saved to $output"
     return $output
   }
