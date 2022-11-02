@@ -1,8 +1,6 @@
 [CmdletBinding()]
 param(
-  [parameter(Position=0,ValueFromRemainingArguments)]
-  [string[]]
-  $Remaining
+  [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
 )
 # https://github.com/dundee/gdu
 # Pretty fast disk usage analyzer written in Go.

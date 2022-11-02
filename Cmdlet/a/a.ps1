@@ -31,7 +31,7 @@ param(
   # --: end-of-parameters , and we can have pwsh variable after it
   # note: experiment feature in 7.2: https://docs.microsoft.com/en-us/powershell/scripting/learn/experimental-features?view=powershell-7.2#psnativecommandargumentpassing
   # do more exploration when it finally integrated. could we do it more naturely like?: a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png
-  [Parameter(mandatory = $false, position = 1, DontShow, ValueFromRemainingArguments = $true)]$Remaining
+  [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
   # [string][Parameter(position = 1)]$arg
 )
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters

@@ -4,8 +4,7 @@ param (
   [string]
   $appPath,
   # remaining parameters
-  [Parameter()]
-  $remaining
+  [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
 )
 $result = & $appPath --no-gap-search --autocd-timeout off @Remaining # --gap-search-anywhere
 # Write-Host $result

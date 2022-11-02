@@ -4,10 +4,12 @@
 #   winget install python
 #   return
 # }
-if(gcm winget -ErrorAction Ignore) {
-  winget install python
-  return
-}
+
+# the winget not update the latest version faster. i.e. ver3.11 is release on oct 24, 2022, but on nov 2, 2022 it's still 3.10
+# if(gcm winget -ErrorAction Ignore) {
+#   winget install python
+#   return
+# }
 
 $resp = iwr https://www.python.org/downloads/windows/
 $content = $resp.content
@@ -21,4 +23,8 @@ $url = $matches[1]
 iwr $url -OutFile $env:temp\python3.exe
 # & $env:temp\python3.exe /h
 # passive to prevent user customization
-& $env:temp\python3.exe /passive
+# https://docs.python.org/3.6/using/windows.html#installing-without-ui
+$path = "$env:temp\python3.exe"
+write-host "install python from $path , please wait..."
+Start-Process -Wait $path "/quiet InstallAllUsers=1 PrependPath=1"
+write-host "down!"

@@ -55,18 +55,18 @@ function Install-App {
     $info = @{version = "$ver_online" }
     $info | ConvertTo-Json | Set-Content -path "$toLocation\info.json" -force
   }
-  else {
+  else { # only one file: *.exe
     $app = $children[0]
     $ver_online -match "^[\d\.]+" > $null
     $ver_online = [Version]::new($Matches[0])
 
     # $app.VersionInfo
-    $verLocal = $app.VersionInfo.ProductVersion ? $app.VersionInfo.ProductVersion : $app.VersionInfo.FileVersion
+    $verLocal = if($app.VersionInfo) {$app.VersionInfo.ProductVersion ? $app.VersionInfo.ProductVersion : $app.VersionInfo.FileVersion}
 
     if ($verLocal) {
       $app.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
       $verLocal = [Version]::new($Matches[0])
-      write-host "local version: $verLocal"
+      write-host "new local version: $verLocal"
 
     }
 

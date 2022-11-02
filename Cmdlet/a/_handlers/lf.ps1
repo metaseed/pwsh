@@ -19,8 +19,7 @@ param (
     [string]
     $file,
     # remaining parameters
-    [Parameter()]
-    $remaining
+    [Parameter(mandatory = $false,  DontShow, ValueFromRemainingArguments = $true)]$Remaining
 )
 
 $tmp = [System.IO.Path]::GetTempFileName()

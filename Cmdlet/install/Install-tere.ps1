@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-  [Parameter(mandatory = $false,  DontShow, ValueFromRemainingArguments = $true)]$Remaining
+  [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
 )
 
 # ipmo Metaseed.Management -Force
