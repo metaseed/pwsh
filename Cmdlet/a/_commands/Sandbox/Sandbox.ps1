@@ -6,7 +6,7 @@ param (
     [switch]
     $config
 )
-
+# or run 'OptionalFeatures.exe' to enable the 'Sandbox' feature
 $OptionalFeature = "Containers-DisposableClientVM"
 if(!(Get-WindowsOptionalFeature -Online -FeatureName $OptionalFeature)) {
   Enable-WindowsOptionalFeature -FeatureName $OptionalFeature -All -Online

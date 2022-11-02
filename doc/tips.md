@@ -187,7 +187,7 @@ winver
 gcb > 1.txt
 
 ## quickly open the 'optional features' dialog
-type `optionalfeatues` in terminal
+type `OptionalFeatures` in terminal
 
 ## new/delete/rename/copy/paste/view-property file/dir
 ni test
