@@ -1,3 +1,8 @@
+[CmdletBinding()]
+param (
+  [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
+)
 
-Install-FromGithub 'NuGetPackageExplorer/NuGetPackageExplorer' 'PackageExplorer\.[\.\d]+\.zip$' -versionType 'previews'
+# ipmo Metaseed.Management -Force
+Install-FromGithub 'NuGetPackageExplorer/NuGetPackageExplorer' 'PackageExplorer\.[\.\d]+\.zip$' -versionType 'previews' @Remaining
 register-FTA "C:\App\NuGetPackageExplorer\NuGetPackageExplorer.exe" .nupkg
