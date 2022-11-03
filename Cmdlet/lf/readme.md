@@ -6,15 +6,17 @@ c-r : flush cache and reload modified files and directories
 c-u : half-page up
 c-d : half-page down
 ### commands
-cd : change working directory
+cd : change working directory, i.e. cd: 'c:\temp'. note: the path need to be a single quoted string
 /  : search
 ?  : search-back
 n  : next in search
 N  : previous in search
-m  : save a key as a mark for the current dir
-'  : change dir to the key mark
-"  : remove the mark
 right : open the item
+
+### bookmarks
+m  : save a key as a mark for the current dir. ma
+'  : change dir to the key mark. 'a
+"  : remove the mark "a
 
 ### file management
 d : cut
