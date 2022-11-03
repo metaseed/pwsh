@@ -27,6 +27,9 @@ if ($resp.Content -match '<a .*href="(.*)".*>\s*Download Portable Zip 64-bit') {
     install-app $path $verOnline $name $localFolder
     move-item "\_$name.ini" "$localFolder\$name\$name.ini" -Force
   }
+
+  New-Item -Type SymbolicLink "$env:LOCALAPPDATA\Microsoft\WindowsApps\$name.exe" -v "$localFolder\$name\$name.exe" -Force -ErrorAction SilentlyContinue
+
 }
 else {
   write-error 'can not parse the returned html to install everything.exe'

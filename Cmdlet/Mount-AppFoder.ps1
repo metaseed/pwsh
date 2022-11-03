@@ -22,3 +22,6 @@ Add-PathEnv "$env:MS_App\_shim" -Scope User # folder  to store app
 Add-PathEnv "$env:MS_App\software" -Scope User
 
 Write-Host "'$App' already mapped!"
+
+# shmake -i C:\App\7-Zip\7z.exe -o C:\app\_shim\7z.exe -a "%s"
+# shmake -i C:\App\ILSpy\ILSpy.exe -o C:\app\_shim\ILSpy.exe -a "%s"

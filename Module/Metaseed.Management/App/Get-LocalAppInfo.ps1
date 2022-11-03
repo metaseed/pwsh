@@ -2,7 +2,7 @@ function Get-LocalAppInfo {
   [CmdletBinding()]
   param(
     [string] $appName,
-    [string] $toLocation,
+    [string] $toLocation = $env:MS_App,
     [string] $newName
   )
 
