@@ -30,12 +30,13 @@ set incsearch
 # show hidden files
 set hidden
 
-map <esc> quit # the same as q
+# comment out because it easily triggered by the cancel : input
+# map <esc> quit # the same as q
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 # during search to open
 cmap <right> :cmd-enter; open
 
-## file management
+### file management
 # rename
 # todo: need to auto redraw
 cmd rename %sh -c 'mv -i %f% $0'
@@ -68,9 +69,12 @@ map af push :createfile<space>
 map ad push :createdir<space>
 # selection
 # map u
+# unselect all
 map su unselect
 # map i
 map si invert
+map sgg push :glob-select<space>
+map sgu push :glob-unselect<space>
 # <space> toggle
 
 ## copy
@@ -147,6 +151,9 @@ cmd extract-to-here push :extract-here<enter>
 map zuh extract-to-here
 map zur push :extract_and_remove<enter>
 
+# map H high
+# map M middle
+# map L low
 # quick preview
 # v: default is invert select
 # press v again to hide the preview window
