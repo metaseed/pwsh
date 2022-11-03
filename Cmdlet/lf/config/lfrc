@@ -83,7 +83,8 @@ map y
 map yy copy %fx%
 # map Y %$env:fx | scb
 # copy file path; note: c is mapped to clear by default
-map yp %echo %fx% | clip
+cmd copy-file-path %echo %fx% | clip
+map yp copy-file-path
 # copy work directory
 cmd copy-current-directory %echo %PWD%| clip
 map yd copy-current-directory
