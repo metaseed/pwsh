@@ -1,3 +1,10 @@
+# not work.
+# use GDProps instead
+
+# problems:
+# 1. if not use remote session, the dialog show and disposed when the pwsh exits, we can add a sleep but just that length. one idea is to check the close
+#     of the dialog and loops for sleep, but not tested
+# 1. use remote session to avoid the pwsh process exit, but the ui shown is black
 $s = Get-PSSession -ComputerName localhost -name ms_pwsh -ErrorAction Ignore
 if (!$s) {
     $s = New-PSSession -Name ms_pwsh -ComputerName localhost | Disconnect-PSSession

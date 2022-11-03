@@ -18,11 +18,12 @@ function Install-App {
     Remove-Item -Recurse -Force
   }
   ## is exe file
+  # Write-Host "to localtion: $toLocation"
   if ($downloadedFilePath -match '\.exe$') {
     Move-Item "$_" -Destination $toLocation -Force
     if ($newName) {
       $exe = Split-Path "$_" -Leaf
-      Rename-Item "$tolocaltion\$exe" -NewName "$newName.exe"
+      Rename-Item "$toLocation\$exe" -NewName "$newName.exe"
     }
     return $toLocation
   }

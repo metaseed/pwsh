@@ -8,7 +8,7 @@ function Get-LocalAppInfo {
 
   $versionLocal = $null
   $appFolder = $null
-
+ Write-Verbose "appName: $appName; toLocation: $toLocation; newName: $newName"
   # get version info from the app's property
   if (!$versionLocal) {
     $it = @(gci $toLocation -Filter "$appName*.exe" -File -FollowSymlink -Depth 2 -ErrorAction Ignore)
@@ -18,6 +18,7 @@ function Get-LocalAppInfo {
         # break
       }
 
+      Write-Verbose "find $appName in $toLocation : $($it.FullName)"
       $app = $it[0]
       $appFolder = $app.Directory.FullName
       if ($app.Directory.Name -like "$appName*") {
@@ -93,13 +94,14 @@ function Get-LocalAppInfo {
       }
     }
   }
+
   Write-Verbose "local version: $versionLocal"
 
   if(!$versionLocal -and $newName) {
     Write-Verbose "try to get info with new name: $newName"
     $PSBoundParameters.appName = $newName
     $PSBoundParameters.newName = $null
-    return Get-LocalAppInfo $PSBoundParameters
+    return Get-LocalAppInfo @PSBoundParameters
   }
   # the folder is where app.exe or app folder located
   return @{ver = $versionLocal; folder = $appFolder; }
