@@ -249,5 +249,5 @@ start .
 https://github.com/kelleyma49/PSFzf
 c-t:
 
-# to show verbose for all sub function calls
+# to show verbose for all sub function calls in module
  $VerbosePreference = 'Continue'
