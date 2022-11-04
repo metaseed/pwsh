@@ -172,7 +172,7 @@ map v &C:\app\QuickLook\QuickLook.exe %f%
 
 # # # drag and drop
 # cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push !python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
+cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
 # cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.bat
 map <c-d> push :dragonce<enter>
 
