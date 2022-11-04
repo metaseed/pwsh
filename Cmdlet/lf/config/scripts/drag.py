@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
-
 # modified version of https://github.com/pmgagne/tkinterdnd2/blob/master/demos/demo_files_and_text.py
 
 import os
 import platform
-from tkinterdnd2 import *
 import sys
+from tkinterdnd2 import *
 
-try:
-    from Tkinter import *
-    from ScrolledText import ScrolledText
-except ImportError:
-    from tkinter import *
-    from tkinter.scrolledtext import ScrolledText
+from tkinter import *
+from tkinter.scrolledtext import ScrolledText
 
 root = TkinterDnD.Tk()
 root.withdraw()
@@ -48,6 +43,7 @@ info += '    Tk    : %f\n' % TkVersion
 info += '    Tkdnd : %s\n' % TkinterDnD.TkdndVersion
 info += 'Use mouse button 3 to drag hightlighted text from the text box.\n'
 
+print(info)
 # Drop callbacks can be shared between the Listbox and Text;
 # according to the man page these callbacks must return an action type,
 # however they also seem to work without
