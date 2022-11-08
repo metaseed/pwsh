@@ -245,9 +245,4 @@ ga gp
 gp *
 start .
 
-## PSFzf
-https://github.com/kelleyma49/PSFzf
-c-t:
 
-# to show verbose for all sub function calls in module
- $VerbosePreference = 'Continue'

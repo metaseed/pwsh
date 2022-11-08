@@ -39,7 +39,11 @@ function Get-LocalAppInfo {
         catch {
           $app.VersionInfo.FileVersion -match "^[\d\.]+" > $null
           Write-Verbose "query local version via FileVersion property"
-          $versionLocal = [Version]::new($matches[0])
+          if($matches[0]) {
+            $versionLocal = [Version]::new($matches[0])
+          } else {
+            Write-Verbose "can not query version from exe file: $it"
+          }
         }
       }
     }

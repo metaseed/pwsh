@@ -6,7 +6,9 @@ if(!$?) {
 }
 $GuiCompletionConfig.DoubleBorder = $false
 # $GuiCompletionConfig.AutoExpandOnDot = $true
-Install-GuiCompletion -Key Tab
+# use  Invoke-FzfTabCompletion, because it support fuzzy search
+# Install-GuiCompletion -Key Tab
+
 
 # tips:
 # $GuiCompletionConfig to view all config

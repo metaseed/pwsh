@@ -1,4 +1,6 @@
-'PSReadline', 'PowershellGet', 'Pester', 'Microsoft.PowerShell.ConsoleGuiTools', 'PSFzf', 'posh-git' | % {
+'PSReadline', 'PowershellGet', 'Pester', 'Microsoft.PowerShell.ConsoleGuiTools',
+ 'PSEverything', # used by psfzf Set-LocationFuzzyEverything
+ 'PSFzf', 'posh-git' | % {
   $module = $_
   # write-host "try update module $module" -ForegroundColor Yellow
   $error.Clear()

@@ -1,6 +1,6 @@
 function Install-App {
   [CmdletBinding()]
-  param($downloadedFilePath, $ver_online, $appName, $toLocation, [switch]$CreateFolder, [string]$newName)
+  param($downloadedFilePath, $ver_online, $appName, $toLocation, [switch]$CreateFolder, [string]$newName, $verLocal)
 
   Write-Host "Install $appName ..."
   Write-Host "from $downloadedFilePath"
@@ -48,10 +48,15 @@ function Install-App {
 
   ## install
   $children = @(gci "$env:temp\temp")
+  while($children.Count -eq 1 -and $children[0].PSIsContainer) {
+    $children = @(gci $children[0])
+  }
+
   if ($children.count -ne 1 -or $CreateFolder) {
     $name = $newName ? $newName : $appName
     $toLocation = "$toLocation\${name}"
-    Move-Item "$env:temp\temp" -Destination $toLocation
+    Write-Verbose "to location: $toLocation"
+    Move-Item "$($children[0].parent)" -Destination $toLocation
     # _${ver_online}
     $info = @{version = "$ver_online" }
     $info | ConvertTo-Json | Set-Content -path "$toLocation\info.json" -force
@@ -62,7 +67,8 @@ function Install-App {
     $ver_online = [Version]::new($Matches[0])
 
     # $app.VersionInfo
-    $verLocal = if($app.VersionInfo) {$app.VersionInfo.ProductVersion ? $app.VersionInfo.ProductVersion : $app.VersionInfo.FileVersion}
+    Write-host "install app: $app"
+    # $verLocal = if($app.VersionInfo) {$app.VersionInfo.ProductVersion ? $app.VersionInfo.ProductVersion : $app.VersionInfo.FileVersion}
 
     if ($verLocal) {
       $app.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
@@ -73,7 +79,7 @@ function Install-App {
 
     if (!$verLocal -or $verLocal -ne $ver_online) {
       write-host "modify app version from $verLocal to $ver_online"
-      c:\app\rcedit-x64 "$app" --set-file-version $ver_online --set-product-version $ver_online
+      rcedit-x64 "$app" --set-file-version $ver_online --set-product-version $ver_online
     }
     Move-Item $app -Destination $toLocation -Force
     if($newName) {

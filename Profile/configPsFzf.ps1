@@ -1,2 +1,6 @@
 # https://github.dev/kelleyma49/PSFzf
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+Set-PsFzfOption -EnableAliasFuzzyZLocation `
+-EnableAliasFuzzySetEverything `
+-PSReadlineChordProvider 'Alt+t' -PSReadlineChordReverseHistory 'Alt+r' -PSReadlineChordSetLocation 'Alt+c' -PSReadlineChordReverseHistoryArgs 'Alt+a'
+Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
+
