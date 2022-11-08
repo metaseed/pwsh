@@ -20,7 +20,7 @@ function Install-FromGithub {
     [string]$application = '',
     # where to unzip/install the app
     [Parameter()]
-    $toLocation = $env:MS_App,
+    [string]$toLocation = $env:MS_App,
     # scriptblock to get the online app version
     [Parameter()]
     [scriptblock]$getOnlineVer = {
@@ -52,6 +52,8 @@ function Install-FromGithub {
     [Parameter()]
     [scriptblock]$getLocalInfoScript = {
       $appName = $application -eq '' ? $repo : $application
+      if(!$toLocation) {$toLocation = $env:MS_App} # default value on $toLocation not work
+      Write-Verbose "getLocalInfoScript tolocaltion: $toLocation"
       $rt = Get-LocalAppInfo $appName $toLocation $newName
       # $folder = $rt.folder
       return $rt

@@ -8,6 +8,7 @@ function Get-LocalAppInfo {
 
   $versionLocal = $null
   $appFolder = $null
+
  Write-Verbose "appName: $appName; toLocation: $toLocation; newName: $newName"
   # get version info from the app's property
   if (!$versionLocal) {
