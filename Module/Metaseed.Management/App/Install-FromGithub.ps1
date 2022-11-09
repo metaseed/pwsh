@@ -51,6 +51,7 @@ function Install-FromGithub {
     # output: [Version] or $null if not installed
     [Parameter()]
     [scriptblock]$getLocalInfoScript = {
+      param()
       $appName = $application -eq '' ? $repo : $application
       if(!$toLocation) {$toLocation = $env:MS_App} # default value on $toLocation not work
       Write-Verbose "getLocalInfoScript tolocaltion: $toLocation"

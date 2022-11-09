@@ -246,3 +246,5 @@ gp *
 start .
 
 
+# to show verbose for all sub function calls in module
+ $VerbosePreference = 'Continue'
