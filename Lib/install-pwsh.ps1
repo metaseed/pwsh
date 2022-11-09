@@ -12,7 +12,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
     $url = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest"
     $response = Invoke-RestMethod -Uri $url -Method Get -UseBasicParsing
     $v = $response.tag_name # 'v7.2.6'
-    "available version: $v"
+    write-host "available version: $v"
     $psv = $v.substring(1)
     ## install pwsh
     $ps = gcm pwsh -ErrorAction Ignore
@@ -30,7 +30,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
         return $Exe
       }
       Write-Host "Microsoft pwsh is not installed, download and install the version $psv"
-      Write-host "Downloadling Microsoft pwsh(v$psv)..."
+      Write-host "Downloadling Microsoft pwsh(v$psv), please wait..."
       $exe = Download "https://github.com/PowerShell/PowerShell/releases/download/v$psv/PowerShell-$psv-win-x64.msi"
       Write-host "Installing pwsh(v$psv)..."
       Start-Process msiexec.exe -Wait -ArgumentList "/package $exe /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1"
@@ -38,7 +38,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
       $env:path = [Environment]::GetEnvironmentVariable('path', "machine");
     }
     else {
-      "pwsh already exists: $($PSVersionTable.PSVersion)"
+      write-host "pwsh already exists: $($PSVersionTable.PSVersion)"
     }
 
   }
