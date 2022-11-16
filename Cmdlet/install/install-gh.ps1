@@ -5,4 +5,6 @@ param (
 
 # ipmo Metaseed.Management -Force
 
-Install-FromGithub 'https://github.com/extrawurst/gitui' '-win\.tar\.gz$' -versionType 'preview' @Remaining
+Install-FromGithub 'https://github.com/cli/cli' '_windows_amd64\.zip$' -versionType 'preview' -pickExes @Remaining
+
+

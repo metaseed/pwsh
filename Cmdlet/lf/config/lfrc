@@ -8,14 +8,15 @@
 # lf (list files)
 
 # custom file preview
-# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
+unset COLORTERM
+set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
 # set period 1
 # interpreter for shell commands, on windows by default it is cmd
 # if use pwsh, it is slow, and has redraw problem
 # set shell pwsh -nologo -noninteractive -noprofile
 # reload config file using f5
 map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
-
+map H $code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
 set icons
 # set drawbox
 # set filesep ";" #default is '/n'
@@ -200,12 +201,14 @@ map <c-d> push :dragonce<enter>
 # The standard pager used in Windows is 'more' which is not a very capable
 # pager. You may instead install a pager of your choice and replace the default
 # pager keybinding accordingly.
+# use bat as a pager
+map i $bat %f%
 
 # change the shell used in default shell keybinding
 # map w $pwsh
 
 # change 'doc' command to use a different pager
-cmd doc $c:\app\lf\lf.exe -doc | less
+cmd doc $lf -doc | less
 
 # use enter for shell commands
 # map <enter> shell

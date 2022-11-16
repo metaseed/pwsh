@@ -79,6 +79,12 @@ function Download-GithubRelease {
     $url = $asset.browser_download_url
     Write-Debug $url
     $output = "$outputDir\$($asset.name)"
+    if(Test-Path $output) {
+     if( ((get-date) - (gi $output).LastWriteTime).Hours -lt 8){
+      Write-Host "reuse last time download: $output"
+       return $output
+     }
+    }
     Write-Step "downloading $($asset.name)... "
     Write-Host "from $url"
     $pro = $ProgressPreference

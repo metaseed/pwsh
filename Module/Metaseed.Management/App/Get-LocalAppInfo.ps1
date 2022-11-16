@@ -8,6 +8,7 @@ function Get-LocalAppInfo {
 
 	$versionLocal = $null
 	$appFolder = $null
+	$installationTime = $null
 
 	Write-Verbose "appName: $appName; toLocation: $toLocation; newName: $newName"
 	# get version info from the app's property
@@ -21,6 +22,7 @@ function Get-LocalAppInfo {
 
 			Write-Verbose "find $appName in $toLocation : $($it.FullName)"
 			$app = $it[0]
+			$installationTime = $app.Lastwritetime
 			$appFolder = $app.Directory.FullName
 			if ($app.Directory.Name -like "$appName*") {
 				$appFolder = $app.Directory.Parent.FullName
@@ -67,6 +69,7 @@ function Get-LocalAppInfo {
 				$dir = $it[0]
 				$jsonFile = gi "$dir\info.json" -ErrorAction Ignore
 				if ($jsonFile) {
+					$installationTime = $jsonFile.Lastwritetime
 					Write-Verbose "query local version via the info.json in dir $($dir.FullName)"
 					$info = Get-Content -Raw "$jsonFile" | ConvertFrom-Json
 					$versionLocal = $info.version
@@ -88,6 +91,7 @@ function Get-LocalAppInfo {
 
 				$dir = $it[0]
 				$versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
+				$installationTime = $dir.Lastwritetime
 				Write-host "dir/file name: $($dir.name)"
 
 				if ($dir.Name -match $versionRegex) {
@@ -104,7 +108,7 @@ function Get-LocalAppInfo {
 		}
 	}
 
-	Write-Verbose "local version: $versionLocal"
+	Write-Host "local version: $versionLocal, installationTime: $installationTime"
 
 	if (!$versionLocal -and $newName) {
 		Write-Verbose "try to get info with new name: $newName"
