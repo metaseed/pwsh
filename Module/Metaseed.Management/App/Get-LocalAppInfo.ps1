@@ -108,7 +108,7 @@ function Get-LocalAppInfo {
 		}
 	}
 
-	Write-Host "local version: $versionLocal, installationTime: $installationTime"
+	Write-Host "local version: $versionLocal, installationTime: $installationTime, appFolder: $appFolder"
 
 	if (!$versionLocal -and $newName) {
 		Write-Verbose "try to get info with new name: $newName"

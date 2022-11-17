@@ -1,5 +1,5 @@
 Set-Alias ga Get-Alias
-Set-Alias gh Get-Help
+Set-Alias ghp Get-Help # gh collide with gh.exe github cli
 . $PSScriptRoot\..\Cmdlet\_alias.ps1
 
 & { # prevent $codePath leak in to profile variable: provider

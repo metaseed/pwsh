@@ -3,7 +3,7 @@ function Start-ExplorerInAdmin {
   param (
     [Parameter()]
     [string]
-    $path
+    $path = '.'
   )
   Assert-Admin
 
@@ -11,7 +11,8 @@ function Start-ExplorerInAdmin {
   ? { !$_ }
 | % {
     Write-Verbose 'restart and make the explorer run in admin mode'
-    spps -n explorer; explorer.exe "`"$path`"" /nouaccheck
+    spps -n explorer;
+    explorer.exe /nouaccheck "`"$path`""
     return
   }
 
