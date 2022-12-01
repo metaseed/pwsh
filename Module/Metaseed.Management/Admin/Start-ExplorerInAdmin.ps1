@@ -1,22 +1,27 @@
 function Start-ExplorerInAdmin {
-  [CmdletBinding()]
-  param (
-    [Parameter()]
-    [string]
-    $path = '.'
-  )
-  Assert-Admin
+	[CmdletBinding()]
+	param (
+		[Parameter()]
+		[string]
+		$path = '.'
+	)
 
-  @(Test-ProcessElevated (gps explorer)) |
-  ? { !$_ }
-| % {
-    Write-Verbose 'restart and make the explorer run in admin mode'
-    spps -n explorer;
-    explorer.exe /nouaccheck "`"$path`""
-    return
-  }
+	Assert-Admin
 
-  start $path
+	$inAdmin = $true
+	gps explorer -ErrorAction Ignore |
+	? { !(Test-ProcessElevated $_) }
+	| % {
+		Write-Verbose 'stop the explorer run in normal mode'
+		spps $_
+		$inAdmin = $false
+	}
+
+	if (!$inAdmin) {
+		Write-Verbose 'start the explorer in admin mode'
+		explorer.exe /nouaccheck #"`"$path`""
+	}
+	start $path
 }
 
 Set-Alias st Start-ExplorerInAdmin

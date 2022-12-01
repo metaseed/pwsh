@@ -16,3 +16,6 @@ https://stackoverflow.com/questions/1783405/how-do-i-check-out-a-remote-git-bran
 this works for me
 git fetch origin branch-name
 git checkout -b branch-name FETCH_HEAD
+
+## fix: another git process seems to be running in this repository
+rm -f .git/index.lock
