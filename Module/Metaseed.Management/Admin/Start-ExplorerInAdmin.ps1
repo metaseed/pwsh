@@ -24,4 +24,4 @@ function Start-ExplorerInAdmin {
 	start $path
 }
 
-Set-Alias st Start-ExplorerInAdmin
+Set-Alias stea Start-ExplorerInAdmin
