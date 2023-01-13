@@ -26,15 +26,15 @@ function buildTree($item,
   Write-Verbose "container: $($item.location)"
   if ($item.location.PSIsContainer) {
     foreach ($filter in $Containerfilters) {
-      if ($item.parent -and $item.location.NameString -notmatch $filter) {
-        Write-Verbose "container: $($item.location.NameString) -notmatch $filter"
+      if ($item.parent -and $item.location.Name -notmatch $filter) {
+        Write-Verbose "container: $($item.location.Name) -notmatch $filter"
         return
       }
     }
   }
   else {
     foreach ($filter in $ItemFilters) {
-      if ($item.location.NameString -notmatch $filter) {
+      if ($item.location.Name -notmatch $filter) {
         return
       }
     }

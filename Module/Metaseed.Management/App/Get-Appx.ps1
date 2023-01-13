@@ -96,9 +96,9 @@ function Get-Appx {
         $WebResponse.Links | foreach {
             Write-Verbose ($_ | select -ExpandProperty outerHTML | Select-String -Pattern '(?<=">).+(?=</a>)').Matches.Value
         }
-        
-        if ($all) { 
-            $Matches_ = $WebResponse.Links 
+
+        if ($all) {
+            $Matches_ = $WebResponse.Links
         }
         else {
             $Matches_ = $WebResponse.Links | where { $_ -match '\.appx|\.msixbundle|\.BlockMap' } | where { $_ -like '*_neutral_*' -or $_ -like "*_" + $env:PROCESSOR_ARCHITECTURE.Replace("AMD", "X").Replace("IA", "X") + "_*" } | where { $_ }
@@ -113,6 +113,7 @@ function Get-Appx {
         $Array = $Array | sort-object @{Expression = { $_[1] }; Descending = $True }
         $LastFile = "temp123"
         Write-Verbose "`n`nLinks To Download:"
+        $LastFileIndex = 0
         for ($i = 0; $i -lt $LinksMatch.Count; $i++) {
             $CurrentFile = $Array[$i][1]
             $CurrentUrl = $Array[$i][0]
