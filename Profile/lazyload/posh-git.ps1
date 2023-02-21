@@ -25,7 +25,12 @@
 function global:GetAdminIcon {
   $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
   if ($IsAdmin) {
+    if($env:WT_SESSION) {
     "`e[93m`e[0m"
+    }
+    else {
+      "`e[33;5;1m!`e[23;25;21m" # green, blink, bold
+    }
   }
   else {
     ''
@@ -45,9 +50,11 @@ function global:GetPSReadLineSessionExeTime {
     else {
       $color = "`e[31m" # red
     }
+
     if ($s -ge 0.01) {
       # clock
-      return "${color}祥" + $s.ToString("#,0.00") + "s`e[0m"
+      $icon = $env:WT_SESSION ? "祥" : " "
+      return "${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
     }
   }
 }

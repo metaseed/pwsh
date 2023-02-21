@@ -252,3 +252,7 @@ start .
 # how to monitor log file
 tail -f logfile| bat --paging=never -l log
 gc logfile -wait -tail 10
+
+# sl or cd
+`sl` or `sl ~` change to home directory
+`sl -` last location

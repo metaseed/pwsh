@@ -1,11 +1,24 @@
-function Start-ExplorerInAdmin {
+function Start-Explorer {
 	[CmdletBinding()]
 	param (
 		[Parameter()]
 		[string]
-		$path = '.'
+		$path = '.',
+		[Parameter()]
+		[switch]
+		$Admin
 	)
 
+	$isAdmin = Test-Admin
+	if($isAdmin -xor $Admin){write-host "Already in $($admin ? 'admin': 'user') state"; return}
+
+	if($isAdmin -and !$Admin) { # to user
+		gps explorer -ErrorAction Ignore |spps
+		start $path
+		return
+	}
+
+	# to admin
 	Assert-Admin
 	do {
 		$inAdmin = $true

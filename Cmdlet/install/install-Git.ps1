@@ -30,6 +30,7 @@ path = M:\\tools\\git\\.gitconfig
 ; https://git-scm.com/docs/git-config#_includes
 ; put slb repos in the 'SLB' folder
 ; git config --show-origin --get user.email
+;/i: case-insensitively
 [includeIf "gitdir/i:SLB/"]
 path = M:\\tools\\git\\.slb.gitconfig
 "@

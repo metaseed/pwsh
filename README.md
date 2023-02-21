@@ -47,6 +47,12 @@ if you want to contribute to the development, and always using the latest code f
 
 > note: it will clone the repo to the folder, and setup the profile.
 
+## local config
+```pwsh
+Set-ExecutionPolicy Bypass -Scope Process -Force;
+.\config.ps1
+```
+
 ### release
 ```powershell
 ./release.ps1

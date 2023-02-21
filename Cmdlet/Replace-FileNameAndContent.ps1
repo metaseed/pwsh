@@ -13,11 +13,11 @@ param (
     # extensions to filter
     [Parameter()]
     [string[]]
-    $exts = @('*.cs', '*.csproj', '*.sln', '*.resx', '*.targets', '*.xml', '*.config', '*.xaml', '*.json', '*.md', '*.ps1'),
+    $exts = @('*.cs', '*.csproj', '*.sln', '*.resx', '*.targets', '*.xml', '*.config', '*.xaml', '*.json','*.ts', '*.js', '*.md', '*.ps1'),
 
     [Parameter()]
     [string[]]
-    $excludeDirs = '\\bin\\|\\obj\\',
+    $excludeDirs = '\\bin\\|\\obj\\|\\node_modules\|\\dist\\',
 
     [switch]$noContent
 
@@ -32,17 +32,34 @@ $files |
 Sort-Object -Descending -Property FullName |
 # | select FullName
 Rename-Item -force -newname {
-    write-host "rename: $($_.FullName)";
-    return $_.name -replace $match, $replacement
+    $newName = $_.name -replace $match, $replacement
+    write-host "rename: $($_.FullName) to: $newName";
+    return $newName
 }
 
 if (!$noContent) {
     ## replace file contents
-    Get-ChildItem $dir -include $exts -Recurse |
+    Get-ChildItem $_ -File -include $exts -Recurse |
     ? { $_.FullName -notmatch $excludeDirs } |
     % {
-    (Get-Content $_.fullname -Encoding UTF8 -Raw) |
-        % { $_ -creplace $match, $replacement } |
+        $name = $_.FullName
+        (Get-Content $_.fullname -Encoding UTF8 -Raw) |
+        % {
+            if ($_ -match $match) {
+                Write-Host "replace file content: $name"
+                return $_ -creplace $match, $replacement
+            }
+            return $_
+        } |
         set-content $_.fullname -Encoding UTF8 -Force -NoNewline
     }
 }
+
+# do it with -no-content switch first and commit then do it without the switch
+# Replace-FileNameAndContent -match Todo -replace Modbus -noContent
+# git add .
+# git commit -am "rename file and directory"
+# note the a in the -am is all it just add modified and deleted files not include added
+# Replace-FileNameAndContent -match Todo -replace Modbus
+# git add .
+# git commit -am "rename file content"

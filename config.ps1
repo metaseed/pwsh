@@ -1,3 +1,4 @@
+
 "config ms_pwsh ..."
 if ($PSVersionTable.PSVersion.Major -lt 7) {
   if (!(gcm pwsh -ErrorAction Ignore)) {
@@ -75,4 +76,8 @@ write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 # so the dynamic module-command would work
 Get-Module -ListAvailable -Refresh > $null
 . $PSScriptRoot\profile.ps1
+
+$App = "C:\App"
+$env:MS_App = $App
+[System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
 'finish ms_pwsh configuration!'

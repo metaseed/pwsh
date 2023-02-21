@@ -9,7 +9,7 @@ function Add-PathEnv {
         [object]
         [ValidateSet('Machine', 'User')]
         $Scope = $null,
-
+        # prepend by default
         [switch]
         $append
     )

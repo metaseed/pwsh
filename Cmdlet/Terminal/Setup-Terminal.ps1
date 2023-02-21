@@ -5,7 +5,8 @@ $CaskaydiaCoveNF = @(
   # "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Italic.otf",
   "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Regular.otf"
 )
-Write-Step 'Downloading CaskaydiaCoveNF...'
+# Caskaydia Cove Nerd Font Complete Mono Windows
+Write-Step 'Downloading CaskaydiaCoveNFM...'
 $CaskaydiaCoveNF |
 %{
   $fi = Split-Path -Leaf $_
