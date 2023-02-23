@@ -19,6 +19,9 @@ attach vdisk
     if(!(test-path m:)) {
         $Letter = (Mount-VHD -Path $Path  -PassThru | Get-Disk | Get-Partition | Get-Volume).DriveLetter
         Set-Partition -DriveLetter $Letter -NewDriveLetter M
+        Write-Notice "please set the key file to unlock the disk partition"
+        $keyPath = Select-FileGUI
+        manage-bde -unlock M: -recoverykey $keyPath
         # https://pureinfotech.com/change-font-face-windows-terminal/
         manage-bde -autounlock -enable M:
     } else {
@@ -26,5 +29,5 @@ attach vdisk
     }
 }
 else {
-    Write-Warning "The path is invalid."
+    Write-Warning "The path($Path) is invalid."
 }

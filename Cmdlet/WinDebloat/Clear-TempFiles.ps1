@@ -40,7 +40,7 @@ if ($WUfoldersize -gt 1.5) {
 }
 
 # Get Disk Size
-$Before = Show-DiskSpace
+$Before = s DiskSpace
 
 # Define log file location
 $Cleanuplog = "$env:temp\Cleanup$LogDate.log"
@@ -377,11 +377,13 @@ Play-Ring
 Write-Notice "All Tasks Done!"
 
 # Get Drive size after clean
-$After = Show-DiskSpace
+$After = s DiskSpace
 
 # Sends some before and after info for ticketing purposes
-Write-Notice "Before: $Before"
-Write-Notice "After: $After"
+Write-Notice "Before: "
+$Before
+Write-Notice "After: "
+$After
 
 # Another reminder about running Windows update if needed as it would get lost in all the scrolling text.
 if ($CleanWU -eq 'Y') {

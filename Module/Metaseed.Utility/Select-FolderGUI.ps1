@@ -15,7 +15,7 @@ function Select-FolderGUI() {
   $Response = $FolderName.ShowDialog()
 
   If ($Response -eq "OK") {
-      $Folder += $FolderName.SelectedPath
+      $Folder = "$($FolderName.SelectedPath)"
       Write-Host "Folder Selected: $Folder"
   } ElseIf ($Response -eq "Cancel") {
       Write-Host "Aborting folder selection..."
@@ -23,3 +23,4 @@ function Select-FolderGUI() {
 
   return $Folder
 }
+
