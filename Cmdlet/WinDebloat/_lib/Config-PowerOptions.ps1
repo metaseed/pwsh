@@ -22,10 +22,10 @@ else {
   powercfg /change monitor-timeout-dc 10 # 5mins by default
   powercfg /change monitor-timeout-ac 20 # 10mins by default
   # sleep
-  powercfg /change standby-timeout-dc 20
+  powercfg /change standby-timeout-dc 10
   powercfg /change standby-timeout-ac 60
   # hibernate
-  powercfg /change  hibernate-timeout-dc 60
+  powercfg /change  hibernate-timeout-dc 30
   powercfg /change  hibernate-timeout-ac 0
   # disk
   # powercfg /change disk-timeout-ac #default is 20

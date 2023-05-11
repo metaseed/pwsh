@@ -11,24 +11,24 @@ function Set-HKItemProperty {
   param (
     [Parameter()]
     [string]
-    $path,
-    $name,
-    $value,
+    $Path,
+    $Name,
+    $Value,
     $PropertyType,
-    $descriptoin
+    $Descriptoin
   )
-  if ($descriptoin) {
-    Write-Host $descriptoin
+  if ($Descriptoin) {
+    Write-Host $Descriptoin
   }
 
-  if (!(Test-Path $path)) {
-    New-Item $path -Force # force: will create container in middle if not exist. i.e. a\b\c\d if b\c is not exist
+  if (!(Test-Path $Path)) {
+    New-Item $Path -Force # force: will create container in middle if not exist. i.e. a\b\c\d if b\c is not exist
   }
-  if ($type) {
-    Set-ItemProperty $path -Name $name -Value $value -Type $type
+  if ($Type) {
+    Set-ItemProperty $Path -Name $Name -Value $Value -Type $Type
   }
   else {
-    Set-ItemProperty $path -Name $name -Value $value
+    Set-ItemProperty $Path -Name $Name -Value $Value
   }
 
 }

@@ -1,4 +1,4 @@
-function Git-SyncMaster {
+function Git-SyncParent {
   [CmdletBinding()]
   param (
     [Parameter()]
@@ -9,15 +9,15 @@ function Git-SyncMaster {
     #('ours', 'theirs','')]
     $strategyOption = ''
   )
-  $guard = Git-SaftyGuard 'Git-SyncMaster'
-  
+  $guard = Git-SaftyGuard 'Git-SyncParent'
+
   try {
     Write-Step 'sync with remote'
     $hasRemote = Git-HasRemoteBranch
     if ($hasRemote) {
       # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
       # so we do saftyGuard first
-      Write-Execute 'git pull --rebase' 
+      Write-Execute 'git pull --rebase'
     }
 
     $branch = git branch --show-current
@@ -63,7 +63,7 @@ function Git-SyncMaster {
             # fix: merge parent before merge master
             Write-Execute "git merge $parent"
 
-          } 
+          }
         }
         ##
         # strategy or with option prefer
@@ -89,7 +89,7 @@ function Git-SyncMaster {
       # strange although we have pulled   at start, if not pull again: Error:
       #  Updates were rejected because the tip of your current branch is behind
       if ($hasRemote) {
-        Write-Execute 'git pull' 
+        Write-Execute 'git pull'
       }
 
       git-push
@@ -106,7 +106,7 @@ function Git-SyncMaster {
       }
     }
     # else {
-    # we have git status in git-push  
+    # we have git status in git-push
     #   Write-Execute 'git status'
     # }
   }

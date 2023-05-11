@@ -8,7 +8,7 @@ param (
 if($vm) {
 
 } else {
-  
+
 }
 
 # Set-HKItemProperty 'HKCU:\Control Panel\International' -name 'sShortDate' -value 'ddd, M/d/yyyy' # ddd is week, i.e. Mon, Tue, Thu. Turned off for [DateTime].Now.ToString() would be changed.
@@ -40,7 +40,7 @@ $sipParams = @{
   # 1: this pc; 2: quick access; 3: downloads
   Value = 1 # Set the LaunchTo value for "This PC", default is 2 (Quick Access)
 }
-Set-HKItemProperty $sipParams
+Set-HKItemProperty @sipParams
 
 
 # dark theme
@@ -53,7 +53,7 @@ Set-HKItemProperty HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Person
 $path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 $filter = "ConsentPromptBehaviorAdmin|ConsentPromptBehaviorUser|EnableInstallerDetection|EnableLUA|EnableVirtualization|PromptOnSecureDesktop|ValidateAdminCodeSignatures|FilterAdministratorToken"
 (Get-ItemProperty $path).psobject.properties | where { $_.name -match $filter } | select name, value
-# disable 
+# disable
 $path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 Set-HKItemProperty $path -Name 'ConsentPromptBehaviorAdmin' -Value 0 -PropertyType DWORD -Force | Out-Null #2
 Set-HKItemProperty $path -Name 'ConsentPromptBehaviorUser' -Value 3 -PropertyType DWORD -Force | Out-Null
@@ -66,7 +66,7 @@ Set-HKItemProperty $path -Name 'ValidateAdminCodeSignatures' -Value 0 -PropertyT
 # Hide file extensions for known file types"
 Set-HKItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" HideFileExt 0 # 1 to hide
 # show hidden files
-Set-HKItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" Hidden 1 
+Set-HKItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" Hidden 1
 # spps -n explorer # restart explorer to take effect
 
 # not work to config Lunar cander, have to do it manully
@@ -80,13 +80,13 @@ Set-HKItemProperty -Path $path -Name 'FilterAdministratorToken' -Value 0 -Proper
 
 # An application should use this function if it performs an action that may affect the Shell.
 $code = @'
-  [System.Runtime.InteropServices.DllImport("Shell32.dll")] 
+  [System.Runtime.InteropServices.DllImport("Shell32.dll")]
   private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
 
   public static void Refresh()  {
-      SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);    
+      SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
   }
 '@
 
-Add-Type -MemberDefinition $code -Namespace WinAPI -Name Explorer 
+Add-Type -MemberDefinition $code -Namespace WinAPI -Name Explorer
 [WinAPI.Explorer]::Refresh()

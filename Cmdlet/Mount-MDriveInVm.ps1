@@ -7,6 +7,11 @@ net use M: /delete /y
 # username: dir\jsong12
 # https://lazyadmin.nl/it/net-use-command/
 # above link fix: after restart the map connection is lost, have to manually map in explorer
-net use M: \\slb-fncl5y2\M /Persistent:yes /user:dir\jsong12 * /savecred # have to share M disk from host,
+# net use M: \\SLB-7X23TT3\M /Persistent:yes /user:dir\jsong12 * #/savecred # have to share M disk from host,
+net use M: \\SLB-7X23TT3\M /Persistent:yes /savecred
 # New-PSDrive -Persist -Name M -PSProvider FileSystem -Root "\\slb-fncl5y2\M"
 # maybe need to restart
+
+# run in common user
+# net use z: \\localhost\C$\VM\VMData /Persistent:yes
+# subst z: C:\VM\VMData
