@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <AssemblyName>Metaseed.PSManagement</AssemblyName>
+    <RootNamespace>Metaseed.PSManagement</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\Module\Metaseed.Management\_bin</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version=" 7.0.0-preview.1">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
