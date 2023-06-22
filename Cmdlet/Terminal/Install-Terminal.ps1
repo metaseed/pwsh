@@ -17,7 +17,13 @@ param (
 Assert-Admin
 
 Breakable-Pipeline {
-  Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern "_$($platform)_.*\.msixbundle$" |
+  if($platform -eq 'Win11') {
+    $download = Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern ".*\.msixbundle$"
+  } else {
+    $download = Get-GithubRelease -OrgName 'microsoft' -RepoName 'terminal' -version $version -fileNamePattern "_Windows10_.*\.zip$"
+  }
+
+  $download|
   % {
     $assets = $_
     if ($assets.Count -ne 1 ) {
@@ -54,16 +60,22 @@ Breakable-Pipeline {
   Download-GithubRelease |
   % {
     Write-Step 'check running WindowsTerminal...'
+    $output = $_
+    if($platform -eq 'Win10') {
+      $folder = "$env:temp\windows_terminal"
+      Expand-Archive $output $folder
+      $output = gci  "$folder\*.msixbundle"
+    }
 
     $wts = get-process -name "WindowsTerminal" -ErrorAction SilentlyContinue
     $install = @"
     & {
       start-sleep -s 2
       Write-Step 'install windows terminal...'
-      write-host `"Add-AppxPackage '$env:temp\$file'`"
+      write-host `"Add-AppxPackage '$output'`"
       Import-Module Appx -UseWindowsPowerShell *>`$null
       Add-AppxPackage `"$env:temp/$file`"
-      Write-host `"when err: please kill the 'Terninal' task in task manager and try again with:  Add-AppxPackage '$env:temp\$file'`"
+      Write-host `"when err: please kill the 'Terninal' task in task manager and try again with:  Add-AppxPackage '$output'`"
       Setup-Terminal
       start-sleep -s 1
       wt -w _quake
@@ -83,7 +95,7 @@ Breakable-Pipeline {
         pwsh -NoExit -Command $install
       }
       stop-process -name "WindowsTerminal", "OpenConsole", "ShellExperienceHost" -force
-     
+
     }
     else {
       pwsh -NoExit -Command $install

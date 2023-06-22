@@ -20,7 +20,7 @@ namespace Metaseed.PowerShell.Management
             ValueFromPipelineByPropertyName = true)]
         public string Arguments { get; set; } = "";
 
-                [Parameter(
+        [Parameter(
             Position = 2,
             ValueFromPipelineByPropertyName = true)]
         public string Directory { get; set; } = "";

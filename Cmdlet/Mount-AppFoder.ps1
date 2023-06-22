@@ -17,6 +17,7 @@ if((gi c:\app ).LinkType -ne 'symboliclink') {
 
 $env:MS_App = $App
 [System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
+
 Add-PathEnv "$env:MS_App" -Scope User
 Add-PathEnv "$env:MS_App\_shim" -Scope User # folder  to store app
 Add-PathEnv "$env:MS_App\software" -Scope User

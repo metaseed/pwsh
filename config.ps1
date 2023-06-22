@@ -77,7 +77,10 @@ write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 Get-Module -ListAvailable -Refresh > $null
 . $PSScriptRoot\profile.ps1
 
-$App = "C:\App"
-$env:MS_App = $App
-[System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
+## app
+# $App = "C:\App"
+# $env:MS_App = $App
+# [System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
+
+. $PSScriptRoot\Cmdlet\Mount-AppFoder.ps1
 'finish ms_pwsh configuration!'

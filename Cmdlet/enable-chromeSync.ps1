@@ -1,0 +1,1 @@
+Set-ItemProperty HKLM:\SOFTWARE\Policies\Google\Chrome -Name SyncDisabled -Value 0 -type DWord
