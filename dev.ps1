@@ -1,12 +1,17 @@
-
+# git clone PWSH to folder
 [CmdletBinding()]
 param (
   # clone the source code into the pwsh sub-folder of the folder
   [Parameter()]
-  [string]$PWSHParentFolder
+  [string]$PWSHParentFolder,
+
+  # clone depth
+  [Parameter()]
+  [int]
+  $CloneDepth = 1
 )
 
-if(!(gcm git -ErrorAction Ignore)) {
+if(!(Get-Command git -ErrorAction Ignore)) {
   write-error "git is not installed, please install"
   return
 }
@@ -63,7 +68,7 @@ try {
     Pop-Location
   }
   else {
-    git clone http://github.com/metasong/pwsh.git --depth 1
+    git clone http://github.com/metasong/pwsh.git --depth $CloneDepth
   }
 
   . "$root/config.ps1"

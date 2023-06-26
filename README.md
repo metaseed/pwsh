@@ -50,6 +50,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force;
 ```
 
 ### release
+> bump version and add a release tag for the repository
+
 ```powershell
 ./release.ps1
 ```
