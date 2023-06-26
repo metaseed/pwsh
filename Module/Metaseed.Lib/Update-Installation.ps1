@@ -22,12 +22,12 @@ function Test-Installation {
 # days=0, always update
 function Test-Update([int]$days, [string]$file) {
     if ($days -gt 0) {
-        $_days = ((Get-Date) - (gi $file).LastWriteTime).Days
+        $_days = ((Get-Date) - (Get-Item $file).LastWriteTime).Days
         if ($_days -lt $days) {
             return $false
         }
         # update last write time so we do update $day later
-        (gi $file).LastWriteTime = Get-Date
+        (Get-Item $file).LastWriteTime = Get-Date
     }
     return $true
 }
@@ -48,6 +48,7 @@ function Update-Installation {
         [switch]
         $Confirm
     )
+
     # if in a git foler, we are developers, pull the latest code
     $localFolder = Split-Path $localInfoPath
 

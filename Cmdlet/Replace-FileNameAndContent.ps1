@@ -1,26 +1,29 @@
 ﻿[CmdletBinding()]
 param (
+    # string to match
     [Parameter()]
     [string]
     [Alias('m')]
     $match = "MTemplate",
 
-    # string to replated
+    # string to be used for replacement
     [Parameter()]
     [string]
     [Alias('r')]
     $replacement,
-    # extensions to filter
+
+    # extensions for files to include in
     [Parameter()]
     [string[]]
     $exts = @('*.cs', '*.csproj', '*.sln', '*.resx', '*.targets', '*.xml', '*.config', '*.xaml', '*.json','*.ts', '*.js', '*.md', '*.ps1'),
 
+    # directories to exclude out
     [Parameter()]
     [string[]]
     $excludeDirs = '\\bin\\|\\obj\\|\\node_modules\|\\dist\\',
 
+    # only rename files and directories
     [switch]$noContent
-
 )
 # git reset --hard origin/master
 # git clean -f -d

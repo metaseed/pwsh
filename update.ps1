@@ -8,7 +8,7 @@ param (
 )
 Import-Module Metaseed.Lib -DisableNameChecking
 
-if (Test-Update 20 $MyInvocation.MyCommand.Path) {
+if (Test-Update $Days $MyInvocation.MyCommand.Path) {
     # @(1, 20) -contains (Get-Date).day # problem: always update on that day
     [void](
         Start-ThreadJob -StreamingHost $host {

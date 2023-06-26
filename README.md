@@ -10,20 +10,16 @@ powershell 7 or later
 iwr https://pwsh.page.link/0 |iex
 ```
 
-> then you could use its cmd-lets and modules
-
-
-### install latest and auto update
-```powershell
-if($env:MS_PWSH) {. $env:MS_PWSH\upgrade.ps1} else {iwr https://pwsh.page.link/0|iex}
-# \up.ps1 1: check update every 1 day, default is 0: immediately
-```
-### install specific version
-```powershell
-# $v = latest
-$v = 1.0.2
-"&{$(iwr https://pwsh.page.link/0)} $v"|iex
-```
+> Then you could use its cmd-lets and modules
+>>   **Install latest or update**
+>> ```powershell
+>> if($env:MS_PWSH) {. $env:MS_PWSH\update.ps1} else {iwr >> https://pwsh.page.link/0|iex}
+>> ```
+>>  **install specific version**
+>> ```powershell
+>> $v = 1.0.2 # default is latest
+>> "&{$(iwr https://pwsh.page.link/0)} $v"|iex
+>> ```
 
 
 
