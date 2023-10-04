@@ -26,6 +26,17 @@ git clean -fdx
 -f: force, If the Git configuration variable clean.requireForce is set to true, git clean will refuse to run unless given -f, -n or -i.
 -d: Remove untracked directories in addition to untracked files
 
+> # to ignore node_modules: not use -x
+> git reset --hard; git clean -fd
+
+
+## remove unstaged local changes
+https://stackoverflow.com/questions/52704/how-do-i-discard-unstaged-changes-in-git/12184274#12184274
+#Note: empty folder will be there
+git clean -df
+// For all unstaged files in current working directory
+git checkout -- .
+
 ## git discard local changes to sync with index
 `git checkout .` // working directory sync with index
 `git reset` // index sync with history

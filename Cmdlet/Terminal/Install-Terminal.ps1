@@ -62,7 +62,7 @@ Breakable-Pipeline {
     Write-Step 'check running WindowsTerminal...'
     $output = $_
     if($platform -eq 'Win10') {
-      $folder = "$env:temp\windows_terminal"
+      $folder = "$env:temp\windows_terminal$(get-date -format filedate)"
       Expand-Archive $output $folder
       $output = gci  "$folder\*.msixbundle"
     }
@@ -75,7 +75,7 @@ Breakable-Pipeline {
       write-host `"Add-AppxPackage '$output'`"
       Import-Module Appx -UseWindowsPowerShell *>`$null
       Add-AppxPackage `"$env:temp/$file`"
-      Write-host `"when err: please kill the 'Terninal' task in task manager and try again with:  Add-AppxPackage '$output'`"
+      Write-host `"when err: please kill the 'Terminal' task in task manager and try again with:  Add-AppxPackage '$output'`"
       Setup-Terminal
       start-sleep -s 1
       wt -w _quake

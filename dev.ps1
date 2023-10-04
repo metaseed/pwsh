@@ -1,4 +1,4 @@
-# git clone PWSH to folder
+# git clone PWSH to folder or pull latest changes
 [CmdletBinding()]
 param (
   # clone the source code into the pwsh sub-folder of the folder
@@ -61,9 +61,9 @@ if (Test-Path $root -type Container) {
 
 try {
   Push-Location $PWSHParentFolder
-  if (gci 'pwsh' -ErrorAction Ignore) {
+  if (Get-ChildItem 'pwsh' -ErrorAction Ignore) {
     Push-Location 'pwsh'
-    "pull changes into $pwd"
+    write-host "pull changes into $pwd"
     git pull
     Pop-Location
   }

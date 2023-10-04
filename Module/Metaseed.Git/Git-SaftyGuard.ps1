@@ -24,18 +24,18 @@ function Git-SaftyGuard {
 
   ## keep changes for safty
   $msg = "'Git-SaftyGuard$($message ? ":$message": '') - $(Get-date) - $branch'"
-  # --keep-index would keep staged (not stashed), the modifed is not kept in work directory and stashed.
+  # --keep-index would keep staged (All changes already added to the index are left intact.).
   # here we want to save all changes, so we don't use --keep-index.
   $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash: index&tree&untracked'
   $out = 'No local changes to save'
   if ($r -eq $out) {
     Write-Attention "Git: $out"
-    return [GitSaftyGuard]::NoNeedStash 
+    return [GitSaftyGuard]::NoNeedStash
   }
 
   if ($keep) {
     # with --index: the index is not merged to changes but kept in index (stage)
-    Write-Execute "git stash apply --index" > $null 
+    Write-Execute "git stash apply --index" > $null
   }
 
   return [GitSaftyGuard]::Stashed

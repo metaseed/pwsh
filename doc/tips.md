@@ -167,6 +167,9 @@ snl Utility
 dotnet new psmodule
 ```
 
+## get item is directory or file
+gci |%{ $_ is [IO.DirectoryInfo]} # [IO.FileInfo]
+
 ## show all properties of obj
 gi c:\app|format-list -p(roperty) *
 

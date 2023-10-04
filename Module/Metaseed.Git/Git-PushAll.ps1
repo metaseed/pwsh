@@ -15,6 +15,7 @@ function Git-PushAll {
   # gitp play-ring-when-finished works
   $message = $message -replace '-', ' '
   if ($confirm) { Confirm-Continue }
+
   Write-Execute 'git add -A' 'All: adds, modifies and removes index entries to match the working tree'
   Write-Execute "git commit -m '$message'" -ErrorAction SilentlyContinue
 

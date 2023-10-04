@@ -43,6 +43,7 @@ function Get-GithubRelease {
   if(!$assets) {
     write-error "can not find assets, please modify the file searching pattern: $fileNamePattern"
     Write-Host $response.assets
+    start "https://github.com/$OrgName/$RepoName/releases"
     return @()
   }
   if ($assets.Count -ne 1 ) {
@@ -87,7 +88,7 @@ function Download-GithubRelease {
      }
     }
     Write-Step "downloading $($asset.name)... "
-    Write-Host "from $url"
+    Write-Host "from $url, please wait..."
     $pro = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue' # imporve iwr speed
     if ($PSVersionTable.PSVersion.Major -lt 7) {
