@@ -259,3 +259,9 @@ gc logfile -wait -tail 10
 # sl or cd
 `sl` or `sl ~` change to home directory
 `sl -` last location
+
+## run vscode / code in admin
+https://code.visualstudio.com/docs/setup/windows#_unable-to-run-as-admin-when-applocker-is-enabled
+https://github.com/microsoft/vscode/issues/185057
+
+> `code --no-sandbox`

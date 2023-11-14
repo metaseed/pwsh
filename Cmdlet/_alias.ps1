@@ -7,4 +7,5 @@ function __change_directory{
   a tere -- @args
 }
 # it is for ls+cd (gci+sl)
+# `scb (tere)` will copy the directory to clipboard
 Set-Alias d __change_directory

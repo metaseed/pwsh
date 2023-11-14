@@ -31,8 +31,8 @@ si: invert all selection
 
 <delete>: trash to recycle bin
 D : delete permanently
-a : add new file
-A : add new directory
+af : add new file
+ad : add new directory
 
 
 ### Display

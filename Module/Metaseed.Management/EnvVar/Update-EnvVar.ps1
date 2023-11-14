@@ -6,12 +6,12 @@
    else => value override from Manchine and then from User(if has same key name)
 #>
 function Update-EnvVar {
-   @("Machine", "User")  | 
+   @("Machine", "User")  |
    % { [Environment]::GetEnvironmentVariables($_).GetEnumerator() } |
    % {
       # For Path variables, append the new values, if they're not already in there
-      $envValue = Get-Content "Env:$($_.Name)" -ErrorAction SilentlyContinue
-      if ($_.Name -match 'Path$|^PATHExt$' -and ($_.Value.Contains(';') -or $envValue.Contains(';'))) { 
+      $envValue = Get-Content "Env:$($_.Name)" -ErrorAction SilentlyContinue # current value
+      if ($_.Name -match 'Path$|^PATHExt$' -and ($_.Value.Contains(';') -or $envValue.Contains(';'))) {
          $_.Value = ("$envValue;$($_.Value)" -split ';' | Select-Object -unique) -join ';'
       }
       $_
@@ -33,6 +33,6 @@ function Update-EnvVar {
       return $true
    } |
    Set-Content -Path { "Env:$($_.Name)" }
-   
+
    Write-Verbose 'environment variables updated!'
 }
