@@ -1,7 +1,7 @@
 <# for choices:
 
-$decision = $Host.UI.PromptForChoice('title', 'Are you sure you want to proceed?', @('&Yes', '&No'), 1)
-if ($decision -eq 0) {
+$choiceIndex = $Host.UI.PromptForChoice('title', 'Are you sure you want to proceed?', @('&Yes', '&No'), 1)
+if ($choiceIndex -eq 0) {
     Write-Host 'confirmed'
 } else {
     Write-Host 'cancelled'
@@ -19,18 +19,18 @@ function Confirm-Continue {
   Write-Attention "$message"
   Write-Host "Press'$ConfirmKey' to continue, 'any other key' to break script excution..." -ForegroundColor Yellow
   $key = [Console]::ReadKey().Key
-  
+
   if ($key -ne $ConfirmKey ) {
     Write-Host "`nScript excution broken!"
-    if ($Result) { 
+    if ($Result) {
       return $false
     }
     else {
-      break SCRIPT 
+      break SCRIPT
     }
   }
   Write-Host "`nContinuing script excution..."
-  if ($Result) { 
-    return $true 
+  if ($Result) {
+    return $true
   }
 }

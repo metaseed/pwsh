@@ -25,7 +25,7 @@ function Write-Execute {
   process {
     $msgIcon = $env:WT_SESSION ?  "💬:": "@:"
     $exe = $command ? $command : $script.ToString().Trim()
-    $msg = "${exe} $('' -eq $message ? '': "$msgIcon $message")"
+    $msg = "$exe $($message ? "$msgIcon $message": '')"
     Write-Action $msg $replay
     # note: if put parenthesis around: return (iex $command), the output would be no color
     # i.e. Write-Execute 'git status', if there are modification, no red text for modification files
@@ -38,10 +38,10 @@ function Write-Execute {
   }
   end {
     if (0 -ne $LASTEXITCODE) {
-      $errorMsg = "Error execute command: $exe" 
+      $errorMsg = "Error execute command: $exe"
       if ($noThrow) {
         if ($noStop) {
-          Write-Error $errorMsg 
+          Write-Error $errorMsg
         }
         else {
           # note we can catch the error in the catch block if the -erroraction is set to stop

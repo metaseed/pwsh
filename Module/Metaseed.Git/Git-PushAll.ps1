@@ -10,7 +10,7 @@ function Git-PushAll {
     [alias('c')]
     $confirm
   )
-  if(!(Git-HasLocalChanges)) { return}
+  if(!(Git-HasLocalChanges)) { return }
 
   # gitp play-ring-when-finished works
   $message = $message -replace '-', ' '

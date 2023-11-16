@@ -14,7 +14,6 @@ Install-FromGithub 'git-for-windows/git' '64-bit.exe$' -getLocalInfoScript {
 
 }
 
-
 Write-Step "config git"
 
 write-host "add git utilities to user path"
