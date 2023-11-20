@@ -1,3 +1,7 @@
+<#
+.SYNOPSIS
+    by default remove duplicate keys in the Path environment variable
+#>
 function Remove-DuplicationEnvVarValue {
   [CmdletBinding()]
   param (
@@ -29,9 +33,9 @@ function Remove-DuplicationEnvVarValue {
       $null = $v.Split(';') |
       % {
           if (!$_) { return }
-          if (-not $keepDead -and -not (Test-Path $_)) { 
+          if (-not $keepDead -and -not (Test-Path $_)) {
               "remove dead path: $_"
-              return 
+              return
           }
 
           $dup = $false

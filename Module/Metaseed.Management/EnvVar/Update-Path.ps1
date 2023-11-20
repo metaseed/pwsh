@@ -8,14 +8,15 @@
 function Update-Path {
 	@("Machine", "User")  |
 	% {
-		$envsOfSystem = [Environment]::GetEnvironmentVariables($_)
-		$updatedPahtEnv = ("$($envsOfSystem["Path"]);${env:Path}" -split ';' | select -Unique) -join ';'
-		if($env:Path -ne $updatedPahtEnv) {
+		$pathEnv = [Environment]::GetEnvironmentVariable('Path', $_)
+		$updatedPahtEnv = ("${pathEnv};${env:Path}" -split ';' | select -Unique) -join ';'
+		if ($env:Path -ne $updatedPahtEnv) {
 			$env:Path = $updatedPahtEnv
 			Write-Verbose 'Path environment variables updated!'
-		} else {
+		}
+		else {
 			Write-Information 'no need to update the path environment variable!'
 		}
 	}
 
- }
+}

@@ -54,14 +54,17 @@ $path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 $filter = "ConsentPromptBehaviorAdmin|ConsentPromptBehaviorUser|EnableInstallerDetection|EnableLUA|EnableVirtualization|PromptOnSecureDesktop|ValidateAdminCodeSignatures|FilterAdministratorToken"
 (Get-ItemProperty $path).psobject.properties | where { $_.name -match $filter } | select name, value
 # disable
-$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+# suppress UAC consent prompt dialog
 Set-HKItemProperty $path -Name 'ConsentPromptBehaviorAdmin' -Value 0 -PropertyType DWORD -Force | Out-Null #2
 Set-HKItemProperty $path -Name 'ConsentPromptBehaviorUser' -Value 3 -PropertyType DWORD -Force | Out-Null
 Set-HKItemProperty $path -Name 'EnableInstallerDetection' -Value 1 -PropertyType DWORD -Force | Out-Null
-Set-HKItemProperty $path -Name 'EnableLUA' -Value 1 -PropertyType DWORD -Force | Out-Null
+# 1: to enable
+Set-HKItemProperty $path -Name 'EnableLUA' -Value 0 -PropertyType DWORD -Force | Out-Null
 Set-HKItemProperty $path -Name 'EnableVirtualization' -Value 1 -PropertyType DWORD -Force | Out-Null
 Set-HKItemProperty $path -Name 'PromptOnSecureDesktop' -Value 0 -PropertyType DWORD -Force | Out-Null #1
 Set-HKItemProperty $path -Name 'ValidateAdminCodeSignatures' -Value 0 -PropertyType DWORD -Force | Out-Null
+Write-Host "modified to:"
+(Get-ItemProperty $path).psobject.properties | where { $_.name -match $filter } | select name, value
 
 # Hide file extensions for known file types"
 Set-HKItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" HideFileExt 0 # 1 to hide

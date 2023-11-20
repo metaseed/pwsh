@@ -7,7 +7,7 @@ param (
   [Parameter()]
   [string]
   [ValidateSet('preview', 'stable')]
-  $version = 'preview',
+  $version = 'stable',
   [Parameter()]
   [switch]
   [alias('f')]

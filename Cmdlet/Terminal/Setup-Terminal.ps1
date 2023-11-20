@@ -3,7 +3,7 @@ Assert-Admin
 
 $CaskaydiaCoveNF = @(
   # "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Italic.otf",
-  "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Regular.otf"
+  "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/CaskaydiaCoveNerdFontMono-Regular.ttf"
 )
 # Caskaydia Cove Nerd Font Complete Mono Windows
 Write-Step 'Downloading CaskaydiaCoveNFM...'
@@ -15,7 +15,7 @@ $CaskaydiaCoveNF |
   Write-Host "download to: $env:temp\$fi"
   iwr $_ -OutFile $path
   Write-Step 'Installing CaskaydiaCoveNF...'
-  Install-Font -Path $path
+  Install-Font -Path $path -Scope User
 }
 Restore-TerminalSetting -force
 
