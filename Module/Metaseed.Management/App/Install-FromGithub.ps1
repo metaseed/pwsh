@@ -41,9 +41,14 @@ function Install-FromGithub {
 			}
 			catch {
 				$versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
+				# 1.77.3.
 				Write-Verbose $name
-				$name -match $versionRegex >$null
-				$ver_online = [Version]::new($matches[1])
+				$r = $name -match $versionRegex #>$null
+				if($r) {
+					$ver_online = [Version]::new($matches[1].TrimEnd('.'))
+				} else {
+					write-error "'$name' can not match '$versionRegex'"
+				}
 			}
 			$ver_online
 		},
@@ -63,11 +68,12 @@ function Install-FromGithub {
 		[Parameter()]
 		[scriptblock]$installScript = {
 			param($downloadedFilePath, $ver_online, $toFolder, $newName, $verLocal)
+
 			$appName = $application -eq '' ? $repo : $application
 			if ($newName) {
 				Write-Host "new name: $newName"
 			}
-			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder -newName $newName -verLocal $verLocal -pickExes: $pickExes
+			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder -newName $newName -verLocal $verLocal -pickExes: $pickExes -restoreList $restoreList
 			return $r
 		},
 		# force reinstall
@@ -75,7 +81,8 @@ function Install-FromGithub {
 		[switch]$Force,
 		[Parameter()]
 		[string]$newName,
-		[switch] $pickExes
+		[switch] $pickExes,
+		[string[]]$restoreList = @('_')
 	)
 	Assert-Admin
 	$v = $url.Split('/')

@@ -20,14 +20,16 @@ function Test-AppInstallation {
   }
   else {
     if ($versionOnline -le $versionLocal) {
-      Write-Host "You are using the latest version of $appName.`n$versionLocal is the latest version available."
+      Write-Notice "You are using the latest version of $appName.`n$versionLocal is the latest version available."
       if (!$force) {
         return $false
       }
       Write-Warning "As you wish, forcely install the latest version..."
     }
 
-    write-host "You are using $appName $versionLocal.`nThe latest version is $versionOnline."
+    Write-Host "You are using $appName $versionLocal"
+    Write-Notice "The latest version is $versionOnline."
+
   }
   return $true
 }

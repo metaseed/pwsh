@@ -1,6 +1,35 @@
+function backup($appLocation, $restoreList, $appName) {
+	gci $appLocation | % {
+		$childName = $_.Name
+		$any = $restoreList | ? { $childName -like $_ }
+		if ($any) {
+			Write-Verbose "restoreList $restoreList"
+
+			$toL = "$env:temp\${appName}_backup"
+			Write-Verbose "backukp $toL"
+			if (!(test-path $toL)) {
+				mkdir $toL >$null
+			}
+			Write-Action "backup: $($_.FullName) to $toL"
+			Write-Execute {Copy-Item "$($_.FullName)" $toL -Recurse}
+		}
+	}
+}
+
+function restoreFrom($backupLocation, $info, $toLocation) {
+	if (Test-Path $backupLocation) {
+		$info.restoreList = @(Get-ChildItem $backupLocation)
+		Write-Action "restore from $backupLocation to $toLocation"
+		gci $backupLocation | % { Move-Item $_ $toLocation -Force }
+		Write-Execute { Remove-Item $backupLocation }
+	}
+}
+
 function Install-App {
 	[CmdletBinding()]
-	param($downloadedFilePath, $ver_online, $appName, $toLocation, [switch]$CreateFolder, [string]$newName, $verLocal, [switch]$pickExes)
+	param($downloadedFilePath, $ver_online, $appName, $toLocation, [switch]$CreateFolder, [string]$newName, $verLocal, [switch]$pickExes,
+		# folders or files in toLocation to backup and restore
+		[string[]]$restoreList = @('_'))
 
 	Write-Host "Install $appName ..."
 	Write-Host "from $downloadedFilePath"
@@ -15,6 +44,9 @@ function Install-App {
 
 	if (!$newName -or !$app) {
 		gci $toLocation -Filter "$appName*" |
+		% {
+			backup $_  $restoreList ($newName ? $newName : $appName)
+		} |
 		Remove-Item -Recurse -Force
 	}
 	## is exe file
@@ -32,8 +64,15 @@ function Install-App {
 	## unzip
 	Remove-Item $env:temp\temp -Force -Recurse -ErrorAction Ignore
 	Write-Action "expand archive to $env:temp\temp..."
-	if ($downloadedFilePath -match '\.zip|\.zipx|\.7z|\.rar') {
+	if ($downloadedFilePath -match '\.zip|\.zipx') {
 		Expand-Archive $downloadedFilePath -DestinationPath "$env:temp\temp"
+	}
+	elseif ($downloadedFilePath -match '\.7z|\.rar') {
+		$7z = "c:\app\7-zip\7z.exe"
+		if ( test-path $7z) {
+			Invoke-Expression "$7z x '$downloadedFilePath' -o$env:temp\temp"
+		}
+		else { write-error "can not find: $7z" }
 	}
 	elseif ($downloadedFilePath -match '\.tar\.gz') {
 		if (!(test-path $env:temp\temp)) {
@@ -49,16 +88,19 @@ function Install-App {
 	## install
 	$children = @(gci "$env:temp\temp")
 	while ($children.Count -eq 1 -and $children[0].PSIsContainer) {
+		Write-Verbose "goto $($children[0].FullName)"
 		$children = @(gci $children[0])
 	}
 
 	if (($children.count -ne 1 -and !$pickExes) -or $CreateFolder) {
 		$name = $newName ? $newName : $appName
 		$toLocation = "$toLocation\${name}"
-		Write-Verbose "to location: $toLocation"
-		Move-Item "$($children[0].parent)" -Destination $toLocation
+		Write-Verbose "from location: $($children[0].Parent) to location: $toLocation"
+		$children | % {Move-Item $_ -Destination $toLocation -Force}
 		# _${ver_online}
 		$info = @{version = "$ver_online" }
+		# restore
+		restoreFrom "$env:temp\${name}_backup"  $info  $toLocation
 		$info | ConvertTo-Json | Set-Content -path "$toLocation\info.json" -force
 	}
 	else {
