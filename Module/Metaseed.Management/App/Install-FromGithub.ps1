@@ -113,7 +113,8 @@ function Install-FromGithub {
 			$Folder = $localInfo['folder']
 			$r = Test-AppInstallation $repo $versionLocal $ver_online -force:$force
 			if (!$r) {
-				break
+				Write-Verbose "Online and local version is the same, no need to install!"
+				break Script
 			}
 			return $_
 		} |

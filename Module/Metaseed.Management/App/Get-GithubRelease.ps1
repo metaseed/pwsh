@@ -38,10 +38,10 @@ function Get-GithubRelease {
   #   # first one is the latest release
   #   $response = $response.SyncRoot[0]
   # }
-write-host "$version"
+  write-host "$version"
   # Write-Verbose "$response"
   foreach ($release in $response) {
-    if($version -eq 'stable' -and $release.prerelease) {
+    if ($version -eq 'stable' -and $release.prerelease) {
       Write-Host "skip preview version: $($release.name)"
       continue;
     }
@@ -55,14 +55,15 @@ write-host "$version"
 
     if (!$assets) {
       write-warning "can not find assets with '$fileNamePattern', in release: $($release.name)"
-      $release.assets|select name|Format-Table|out-string|write-host
+      $release.assets | select name | Format-Table | out-string | write-host
       $yes = Confirm-Continue "Are you want to continue searching from old release?" -Result
-      if($yes) {
+      if ($yes) {
         continue;
       }
       start "https://github.com/$OrgName/$RepoName/releases"
       return @()
     }
+
     if ($assets.Count -ne 1 ) {
       foreach ($asset in $assets) {
         Write-Warning $asset.name
