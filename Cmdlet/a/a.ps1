@@ -20,6 +20,9 @@ param(
     })]
   [Parameter(Position = 0)]
   $app,
+  [switch]
+  [Alias('s')]
+  $showFolder,
   # used when $remaining not work. i.e. a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png, not work, because of the -i, is ambiguous to -information and -InformationVariable
   # 1. the work around is use the below string parameter
   # we could do: a ffmpeg -arg "-y -i matrixRain.webm -vf palettegen palette.png"
@@ -58,6 +61,11 @@ dynamicparam {
 }
 
 end {
+  if($showFolder){
+    start $env:MS_App
+    return
+  }
+
   if (!$app) {
     Write-FileTree $env:MS_App @('\.exe$')
     return
