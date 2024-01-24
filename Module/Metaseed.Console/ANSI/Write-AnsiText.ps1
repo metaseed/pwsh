@@ -1,5 +1,78 @@
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+$help = @'
+ANSI/VT100 escape sequences can be used in every programming languages.
+`e: escape character 27(decimal),033(oct) 0x1B(hex); `e=$([char]27)
+[: introducer
+;: argument seperator
+m: SGR(Select/Set Graphics Rendition) function
+
+
+first parameter:
+0: reset all last set attributes; `e[0m
+
+16 colors:
+Color           Foreground Code   Background Code
+
+Black           30                40
+Red             31                41
+Green           32                42
+Yellow          33                43
+Blue            34                44
+Magenta         35                45
+Cyan            36                46
+Light gray      37                47
+38: forground of 8bits or 256bits, then next paramert: 5 for 8bits and 2 for 24bits color
+48: background of 8bits or 256bits
+Dark gray       90                100
+Light red       91                101
+Light green     92                102
+Light yellow    93                103
+Light blue      94                104
+Light magenta   95                105
+Light cyan      96                106
+White           97                107
+
+Style         Sequence    Reset Sequence
+Bold 1:       `e[1m     `e[21m
+Dim 2:        `e[2m     `e[22m
+Italic 3:     `e[3m     `e[23m
+Underlined 4: `e[4m     `e[24m
+Blink 5:      `e[5m     `e[25m
+Inverted 7:   `e[7m     `e[27m
+Hidden 8:     `e[8m     `e[28m   for password
+
+16 Color-Values:
+0-7: standard colors, 3bits
+8-15: high intensity colors
+example:
+Foreground:Yellow 33; Background: Blue 44; Style: Blink 5, Underlined 4, Italic 3;
+"`e[33;44;5;4;3mHello`e[0m"
+forground: 93 lightYellow; background: 44 Blue
+"`e[93;44mHello`e[0m"
+----------------------------------------------------------------
+8bits Endording:
+# `e[<Foreground or Background Code>;5;(color)
+# 5: 8-bits 256 colors; 2: 24bits true color
+# 38: forground for 8bits or 24bits, folowwing parameters give details
+# 48: background for 8bits or 24bits
+
+8bits example:
+38: forground color; 5: 8bits; 33:fg; 5: blink; 4: underlined
+"`e[38;5;33;5;4mHello`e[0m"
+38: forground color; 5: 8bits; 33:fg; 48: background color; 5: 8bits; 77: bg; 5: blink; 4: underlined
+"`e[38;5;33;48;5;77;5;4mHello`e[0m"
+
+256 Color-Values:
+# 0-7: standard colors, 3bits
+# 8-15: high intensity colors
+# 16-231: 6 × 6 × 6 cube (216 colors)
+# 232-255: grayscale
+
+'@
+
+
 enum ForegroundColorAnsi {
-  Black = 30
+  Black = 30 # 0x1E 0b0001 1110
   Red = 31
   Green = 32
   Yellow = 33
@@ -7,8 +80,9 @@ enum ForegroundColorAnsi {
   Magenta = 35
   Cyan = 36
   LightGray = 37
+  #38: forground for 8 or 256bits
 
-  DarkGray = 90
+  DarkGray = 90 # 0x5A 0b0101 1010
   LightRed = 91
   LightGreen = 92
   LightYellow = 93
@@ -18,18 +92,20 @@ enum ForegroundColorAnsi {
   White = 97
 }
 
+# for 16colors
 enum BackgroundColorAnsi {
-  Black = 40
-  Red = 41
+  Black = 40 # 0x28 0b0010 1000
+  Red = 41 # 0x29 0b0010 1001
   Green = 42
   Yellow = 43
   Blue = 44
   Magenta = 45
   Cyan = 46
   LightGray = 47
+  #48: backround for 8 or 256bits;folowwing parameters give details; 2: 256bits; 5: 8bits;
 
-  DarkGray = 100
-  LightRed = 101
+  DarkGray = 100 # 0x64 0b0110 1000
+  LightRed = 101 # 0x65 0b0110 1001
   LightGreen = 102
   LightYellow = 103
   LightBlue = 104
@@ -38,20 +114,33 @@ enum BackgroundColorAnsi {
   White = 107
 }
 
-<#
-256 colors
-# `e=$([char]27)
-# `e[<Foreground or Background Code>;5;(color)
-# 5: 256 colors
-# 38: forground
-# 48: background
 
-# 256colors:
-# 0-7: standard colors
-# 8-15: high intensity colors
-# 16-231: 6 × 6 × 6 cube (216 colors)
-# 232-255: grayscale
-#>
+function Show-AnsiColors8Bits {
+  Write-Output "`n`e[1;4m256-Color Foreground & Background Charts`e[0m"
+  foreach ($bright in 0, 1) {
+    $brightColor = $bright ? ';1' : ''
+    foreach ($fgbg in 38, 48) {
+      if ($fgbg -eq 38) {
+        Write-Host "Foreground Colors$($bright ? '(Bright)' : ''):"
+      }
+      else {
+        Write-Host "Background Colors$($bright ? '(Bright)' : ''):"
+      }
+      # foreground 38/background 48 switch
+      foreach ($color in 0..255) {
+        # color range
+        #Display the colors
+        $field = "$color".PadLeft(4)  # pad the chart boxes with spaces
+        # 5: 256 colors, it's not blink style here
+        Write-Host -NoNewLine "`e[$fgbg;5;${color}${brightColor}m$field `e[0m"
+        #Display 6 colors per line
+        if ( (($color + 1) % 6) -eq 4 ) { Write-Output "`r" }
+      }
+      Write-Output `n
+    }
+  }
+  write-host $help
+}
 
 function Get-AnsiText {
   [CmdletBinding(DefaultParameterSetName = "8bit")]
@@ -208,85 +297,29 @@ function Write-AnsiText {
   }
 }
 
-function Show-AnsiColors8Bits {
+function Show-Ansi16Colors {
+  Write-Host "``e[fg;bgm Hello ``e[0m"
   $fgColors = [Enum]::GetValues([ForegroundColorAnsi])
   $bgColors = [Enum]::GetValues([BackgroundColorAnsi])
   foreach ($fgColor in $fgColors) {
     $fgText = "$fgColor"
     foreach ( $bgColor in $bgColors) {
       $bgText = "$bgColor"
-      Write-Output "$($fgColor.value__) `e[$($fgColor.value__)mfg:$($fgText.PadRight(12))    `e[0m`e[$($fgColor.value__);$($bgColor.value__)m $("fg:${fgText}; bg:$bgText".PadRight(32))`e[0m    `e[0m`e[$($bgColor.value__)mbg:$($bgText.PadRight(12))`e[0m"
+      Write-Output "$($fgColor.value__) `e[$($fgColor.value__)mfg:$($fgText.PadRight(12))    `e[0m`e[$($fgColor.value__);$($bgColor.value__)m $("fg:${fgText}; bg:$bgText".PadRight(32))`e[0m    $($bgColor.value__.ToString().PadRight(5)) `e[0m`e[$($bgColor.value__)mbg:$($bgText.PadRight(12))`e[0m"
     }
   }
-  @'
-  ANSI/VT100 escape sequences can be used in every programming languages.
-  `e: escape character 27(decimal),033(oct) 0x1B(hex); `e=$([char]27)
-  [: introducer
-  ;: argument seperator
-  m: SGR(Select/Set Graphics Rendition) function
+  Write-Host $help
 
-  0: reset all last set attributes; `e[0m
+  Write-Host "``e[fg;bgm Hello``e[0m"
+  Write-Host "i.e.:
+  Write-Host `"``e[94;103m Hello ``e[0m`""
 
-  Style         Sequence    Reset Sequence
-  Bold 1:       `e[1m     `e[21m
-  Dim 2:        `e[2m     `e[22m
-  Italic 3:     `e[3m     `e[23m
-  Underlined 4: `e[4m     `e[24m
-  blink 5:      `e[5m     `e[25m
-  Inverted 7:   `e[7m     `e[27m
-  Hidden 8:     `e[8m     `e[28m   for password
-
-  Color           Foreground Code   Background Code
-  Black           30                40
-  Red             31                41
-  Green           32                42
-  Yellow          33                43
-  Blue            34                44
-  Magenta         35                45
-  Cyan            36                46
-  Light gray      37                47
-  Dark gray       90                100
-  Light red       91                101
-  Light green     92                102
-  Light yellow    93                103
-  Light blue      94                104
-  Light magenta   95                105
-  Light cyan      96                106
-  White           97                107
-
-example:
-"`e[33;44;5;4;3mHello`e[0m"
-'@
 }
 
 function Show-ConsoleColors {
   Write-Host 'System.ConsoleColor colors that can be used in Write-Host:'
-  [Enum]::GetValues([System.ConsoleColor]) | Foreach-Object { Write-Host $_ -ForegroundColor $_ }
-}
-function Show-AnsiColors256Bits {
-  Write-Output "`n`e[1;4m256-Color Foreground & Background Charts`e[0m"
-  foreach ($bright in 0, 1) {
-    $brightColor = $bright ? ';1' : ''
-    foreach ($fgbg in 38, 48) {
-      if ($fgbg -eq 38) {
-        Write-Host "Foreground Colors$($bright ? '(Bright)' : ''):"
-      }
-      else {
-        Write-Host "Background Colors$($bright ? '(Bright)' : ''):"
-      }
-      # foreground 38/background 48 switch
-      foreach ($color in 0..255) {
-        # color range
-        #Display the colors
-        $field = "$color".PadLeft(4)  # pad the chart boxes with spaces
-        Write-Host -NoNewLine "`e[$fgbg;5;${color}${brightColor}m$field `e[0m"
-        #Display 6 colors per line
-        if ( (($color + 1) % 6) -eq 4 ) { Write-Output "`r" }
-      }
-      Write-Output `n
-    }
-  }
-
+  [Enum]::GetValues([System.ConsoleColor]) | Foreach-Object { Write-Host "$($_.value__) $_" -ForegroundColor $_ }
 }
 
-Export-ModuleMember Show-AnsiColors8Bits, Show-AnsiColors256Bits, Show-ConsoleColors, Get-AnsiText
+
+Export-ModuleMember @('Show-Ansi16Colors', 'Show-AnsiColors8Bits', 'Show-ConsoleColors', 'Get-AnsiText')

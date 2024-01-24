@@ -50,8 +50,11 @@ Set-ExecutionPolicy Bypass -Scope Process -Force;
 ```
 
 ### release
+> repo url: https://github.com/metaseed/pwsh/
+
 > bump version and add a release tag for the repository
 
 ```powershell
 ./release.ps1
 ```
+

@@ -19,7 +19,7 @@ function Get-DynCmdParam {
     $c = Get-Command -Name $file  -CommandType ExternalScript
     if (!($($c.Parameters)?.Count)) { return $rp }
 
-    $pn = 'Verbose', 'Debug', 'ErrorAction', 'InformationAction', 'InformationVariable', 'WarningAction', 'ErrorVariable', 'WarningVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable'
+    $pn = 'Verbose', 'Debug', 'ErrorAction', 'InformationAction', 'InformationVariable', 'WarningAction', 'ErrorVariable', 'WarningVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable', 'ProgressAction'
     foreach ($pv in $c.Parameters.Values) {
         # filter out common parameters
         if ($pn -notcontains $pv.Name) {
