@@ -15,7 +15,7 @@ param(
       $commands = Complete-Command 'app_commands' "$PSScriptRoot\_Commands" $wordToComplete '*.ps1'
       $apps = Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
       $handlers = Complete-Command 'app_handlers' "$PSScriptRoot\_handlers" $wordToComplete '*.ps1'
-      $cmds = ( $handlers + $apps + $commands) | get-unique
+      $cmds = (@()+ $handlers + $apps + $commands) | get-unique
       return $cmds
     })]
   [Parameter(Position = 0)]

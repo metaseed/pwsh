@@ -51,10 +51,10 @@ forground: 93 lightYellow; background: 44 Blue
 "`e[93;44mHello`e[0m"
 ----------------------------------------------------------------
 8bits Endording:
-# `e[<Foreground or Background Code>;5;(color)
-# 5: 8-bits 256 colors; 2: 24bits true color
-# 38: forground for 8bits or 24bits, folowwing parameters give details
-# 48: background for 8bits or 24bits
+ `e[<Foreground or Background Code>;5;(color)
+ 5: 8-bits 256 colors; 2: 24bits true color
+ 38: forground for 8bits or 24bits, folowwing parameters give details
+ 48: background for 8bits or 24bits
 
 8bits example:
 38: forground color; 5: 8bits; 33:fg; 5: blink; 4: underlined
@@ -63,10 +63,13 @@ forground: 93 lightYellow; background: 44 Blue
 "`e[38;5;33;48;5;77;5;4mHello`e[0m"
 
 256 Color-Values:
-# 0-7: standard colors, 3bits
-# 8-15: high intensity colors
-# 16-231: 6 × 6 × 6 cube (216 colors)
-# 232-255: grayscale
+  0-7: standard colors, 3bits
+  8-15: high intensity colors
+  16-231: 6 × 6 × 6 cube (216 colors)
+  232-255: grayscale
+
+# pwsh way
+"$($PSStyle.Blink) $($PSStyle.Italic) $($PSStyle.Foreground.Yellow)Hello World$($PSStyle.Reset)"
 
 '@
 

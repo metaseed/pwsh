@@ -63,7 +63,7 @@ function Complete-Command {
 
     if (!$wordToComplete) {
       # all commands
-      return $commands
+      return @($commands)
     }
 
     $cmds = $commands |
@@ -117,7 +117,7 @@ function Complete-Command {
     select -ExpandProperty Name
   } while ($cmds.count -eq 0 -and $retries--)
 
-  return $cmds
+  return @($cmds) # always return a list
 }
 
 Export-ModuleMember Test-WordToComplete

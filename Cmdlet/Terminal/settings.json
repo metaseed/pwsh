@@ -1,24 +1,25 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": 
+    "actions":
     [
         {
-            "command": 
+            "command":
             {
                 "action": "scrollDown"
             },
             "keys": "ctrl+down"
         },
         {
-            "command": 
+            "command":
             {
-                "action": "globalSummon"
+                "action": "globalSummon",
+                "desktop": "any", "monitor": "any"
             },
             "keys": "win+alt+z"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "scrollUp"
             },
@@ -29,7 +30,7 @@
             "keys": "alt+shift+z"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "moveFocus",
                 "direction": "previousInOrder"
@@ -37,14 +38,14 @@
             "keys": "alt+home"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "closeTab"
             },
             "keys": "ctrl+shift+w"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "index": 1,
@@ -61,7 +62,7 @@
             "keys": "alt+shift+f"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "moveFocus",
                 "direction": "nextInOrder"
@@ -77,7 +78,7 @@
             "keys": "alt+shift+w"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "copy",
                 "singleLine": false
@@ -85,7 +86,7 @@
             "keys": "ctrl+c"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "index": 0,
@@ -98,7 +99,7 @@
             "keys": "ctrl+shift+f"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "index": 2,
@@ -111,7 +112,7 @@
             "keys": "ctrl+v"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "split": "auto",
@@ -133,23 +134,23 @@
     "launchMode": "default",
     "minimizeToNotificationArea": false,
     "multiLinePasteWarning": false,
-    "profiles": 
+    "profiles":
     {
-        "defaults": 
+        "defaults":
         {
             "backgroundImage": "%MS_WTBackground%\\res\\bg\\matrixRain.gif",
             "backgroundImageAlignment": "center",
             "backgroundImageOpacity": 0.2,
             "backgroundImageStretchMode": "fill",
             "elevate": true,
-            "font": 
+            "font":
             {
                 "face": "CaskaydiaCove NFM"
             },
             "opacity": 100,
             "useAcrylic": false
         },
-        "list": 
+        "list":
         [
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
@@ -193,7 +194,7 @@
             }
         ]
     },
-    "schemes": 
+    "schemes":
     [
         {
             "background": "#0C0C0C",

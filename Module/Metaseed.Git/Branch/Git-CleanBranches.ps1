@@ -1,4 +1,4 @@
-function Git-ClearBranches {
+function Git-CleanBranches {
   [CmdletBinding()]
   param (
     [Parameter()]
@@ -16,7 +16,6 @@ function Git-ClearBranches {
     [switch]
     [Alias('kr')]
     $KeepRemote
-
   )
 
   Git-SaftyGuard 'Git-DeleteLocalBranches' -keep
@@ -26,14 +25,15 @@ function Git-ClearBranches {
   ## list branches
   ## not contains regex search: "^(?!.*(a|b|c)).*$"
   $filter = "^(?!\s*\S*($($BranchesToFilterOut -join '|')|\*)\s+).*$"
-  $branches = git-branch "$($merged ?'--merged': '')"  | 
+  $branches = if ($merged) { git-branch --merged } else { git-branch }
+  $branches = |
+  Select-String -Pattern $filter
   # ^(?!.*(master|main|\*)).*$
   # filter out branches contains 'master' or 'main' and the current branche (marked by *)
   # note: if just filter out current: '^[^\*].*'
-  Select-String -Pattern $filter
 
   $toRemove = $branches.Length - $BranchesToKeep
-  if($toRemove -le 0) {
+  if ($toRemove -le 0) {
     Write-Host "`nNo Enough Branch to Delete! branches available: $($branches.Length -1)`n but branches to keep on parameter:$($BranchesToKeep) " -ForegroundColor yellow
     Write-Execute "git-branch"
     return
@@ -61,3 +61,6 @@ function Git-ClearBranches {
   git fetch origin --prune
   Write-Execute "git-branch" -message 'Available  branches:'
 }
+
+# test
+Git-CleanBranches
