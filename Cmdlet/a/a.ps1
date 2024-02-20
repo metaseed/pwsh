@@ -21,7 +21,7 @@ param(
   [Parameter(Position = 0)]
   $app,
   [switch]
-  [Alias('s')]
+  [Alias('sh')] # s already used somewhere
   $showFolder,
   # used when $remaining not work. i.e. a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png, not work, because of the -i, is ambiguous to -information and -InformationVariable
   # 1. the work around is use the below string parameter

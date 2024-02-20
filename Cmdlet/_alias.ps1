@@ -2,10 +2,16 @@
 Set-Alias cpu Show-CpuUsage
 Set-Alias bumpVer Update-InfoVersion
 Set-Alias sandbox Open-Sandbox
-function __change_directory{
+function __get_directory(){
   # so d --help work
+  a tere -- @args
+}
+function __change_directory(){
+  # so d --help work
+  $args += '-setLocation'
   a tere -- @args
 }
 # it is for ls+cd (gci+sl)
 # `scb (tere)` will copy the directory to clipboard
-Set-Alias d __change_directory
+Set-Alias d __get_directory
+Set-Alias l __change_directory
