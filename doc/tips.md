@@ -237,6 +237,11 @@ ni test -ty d # type directory
 ri test
 mi test test1
 
+* zip (compress)
+Compress-Archive
+ca listOfFilesOrFolders z.zip
+
+
 ni test_safe
 ris test_safe # remove item safely
 gri -OriginalPathRegex 'safe'
@@ -247,6 +252,9 @@ copy test test2
 ga gp
 gp *
 start .
+* rename-item
+ga -d rename-item
+rni test test1 # rename test to test1
 
 
 # to show verbose for all sub function calls in module

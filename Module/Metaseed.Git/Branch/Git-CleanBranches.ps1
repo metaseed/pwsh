@@ -26,7 +26,7 @@ function Git-CleanBranches {
   ## not contains regex search: "^(?!.*(a|b|c)).*$"
   $filter = "^(?!\s*\S*($($BranchesToFilterOut -join '|')|\*)\s+).*$"
   $branches = if ($merged) { git-branch --merged } else { git-branch }
-  $branches = |
+  $branches = $branches |
   Select-String -Pattern $filter
   # ^(?!.*(master|main|\*)).*$
   # filter out branches contains 'master' or 'main' and the current branche (marked by *)

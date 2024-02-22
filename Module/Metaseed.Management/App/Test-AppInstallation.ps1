@@ -27,7 +27,7 @@ function Test-AppInstallation {
       Write-Warning "As you wish, forcely install the latest version..."
     }
 
-    Write-Host "You are using $appName $versionLocal"
+    Write-Notice "You are using $appName $versionLocal"
     Write-Notice "The latest version is $versionOnline."
 
   }
