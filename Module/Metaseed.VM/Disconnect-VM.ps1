@@ -2,12 +2,17 @@
 import-module Hyper-V -ErrorAction SilentlyContinue
 function Disconnect-VM {
 	[CmdletBinding(DefaultParameterSetName = 'name')]
-	param()
+	param(
+		# save state?
+		[Parameter()]
+		[switch]
+		$Save
+	)
 	$connectedVms = gps -n vmconnect
 	foreach ($connectedVm in $connectedVms) {
 		$title = $connectedVm.MainWindowTitle
 		$vmName = ($title -split ' on ')[0]
-		stop-vm $vmName
+		stop-vm $vmName -Save:$Save
 		spps $connectedVm
 	}
 }

@@ -12,8 +12,7 @@ function Connect-VM {
     [Alias('cn')]
     [System.String[]]$ComputerName = $env:COMPUTERNAME,
 
-    [Parameter(Position = 0,
-      Mandatory, ValueFromPipelineByPropertyName,
+    [Parameter(Position = 0, ValueFromPipelineByPropertyName,
       ValueFromPipeline, ParameterSetName = 'name')]
     [Alias('n')]
     [System.String]$Name,
@@ -47,8 +46,11 @@ function Connect-VM {
             Write-Verbose "Incoming value can cast to guid"
             $vm = Get-VM -ComputerName $computer -Id $Name -ErrorAction SilentlyContinue
           }
-          else {
+          elseif($Name -ne ''){
             $vm = Get-VM -ComputerName $computer -Name $Name -ErrorAction SilentlyContinue
+          }else {
+            # get first vm on the computer
+            $vm= @(Get-VM -ComputerName $computer)[0]
           }
         }
         elseif ($pmsn -eq 'id') {
@@ -86,3 +88,5 @@ function Connect-VM {
 
 }
 # Connect-VM work -StartVM
+# test first vm on computer
+# Connect-VM
