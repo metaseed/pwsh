@@ -31,6 +31,7 @@ Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, '']
 
 Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
+
     # session scale variables
     # __SetStepSessionVariables
     # https://stackoverflow.com/questions/67136144/getting-powershell-current-line-before-enter-is-pressed
@@ -38,7 +39,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
     $lastSessionScope = $global:__PSReadLineSessionScope
-    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now }
+    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; }
     # create a scope for a psReadline session
     New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
         scope     = $global:__PSReadLineSessionScope;
@@ -51,9 +52,9 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
 }
 
 Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
-    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('a lf')
-    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('a lf') # input
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
 }
 
 # Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {

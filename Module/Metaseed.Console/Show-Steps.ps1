@@ -12,7 +12,18 @@ function Show-Steps {
     Write-Host "No executed steps"
     return
   }
-  Write-host "`nPreious Command's Executed Steps:" -ForegroundColor DarkYellow
+
+  # update last cmd only when Steps is not empty: steps is the steps of last cmd
+  if(!$__PSReadLineSessionScope.Steps.lastCmd) {
+    $lastCmd = Get-History -Count 1
+    $cmdLine = $lastCmd.CommandLine
+    Add-Member -InputObject $__PSReadLineSessionScope.Steps -NotePropertyMembers @{lastCmd=$cmdLine}
+  }
+
+  $cmdLine = $__PSReadLineSessionScope.Steps.lastCmd
+  Write-host "Preious Command: " -NoNewline
+  write-host "$cmdLine" -ForegroundColor Blue
+  Write-host "`nExecuted Steps:" -ForegroundColor DarkGreen
   $hasErr = $false
   $__PSReadLineSessionScope.Steps | % {
     if ($_.type -eq 'Step') {
