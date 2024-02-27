@@ -21,7 +21,7 @@ function Show-Steps {
   }
 
   $cmdLine = $__PSReadLineSessionScope.Steps.lastCmd
-  Write-host "Preious Command: " -NoNewline
+  Write-host "Command: " -NoNewline
   write-host "$cmdLine" -ForegroundColor Blue
   Write-host "`nExecuted Steps:" -ForegroundColor DarkGreen
   $hasErr = $false
