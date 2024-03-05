@@ -22,11 +22,11 @@
 # if(!(git rev-parse --is-inside-work-tree 2>$null)){
 #   return
 # }
-function global:GetAdminIcon {
+function global:__GetAdminIcon {
   $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
   if ($IsAdmin) {
     if($env:WT_SESSION) {
-    "`e[93m`e[0m"
+    "`e[93m`e[0m" # person with key https://www.nerdfonts.com/cheat-sheet
     }
     else {
       "`e[33;5;1m!`e[23;25;21m" # green, blink, bold
@@ -68,18 +68,20 @@ function global:__GetLunarDateStr {
 	$icon = $lunarDate.IsLeapMonth ? $calendarWithPlus : $moon
 	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day)`e[0m"
 }
+
 function global:__GetDateStr {
   $weekDays= "日一二三四五六"
   $date = Get-Date
   $d = $date.ToString("MM-dd HH:mm:ss")
   $dayOfWeek = $weekDays[$date.DayOfWeek]
-  return "${d}${dayOfWeek}"
+  return "`e[95m${d}`e[96m${dayOfWeek}`e[0m"
 }
+
 Import-Module posh-git -ErrorAction Ignore -Scope Global
 # only config when posh-git is installed
 if ($?) {
-  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(__GetDateStr)$(__GetLunarDateStr)$(__GetPSReadLineSessionExeTime) $(GetAdminIcon) '
-  $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
+  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(__GetAdminIcon) $(__GetDateStr)$(__GetLunarDateStr)$(__GetPSReadLineSessionExeTime) '
+  $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta # not use it now, the dateStr has color inside
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
   $global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
