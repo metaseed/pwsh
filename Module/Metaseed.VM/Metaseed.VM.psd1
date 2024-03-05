@@ -4,6 +4,5 @@
   ModuleVersion     = '1.0.0'
   AliasesToExport = @()
   CmdletsToExport = @()
-  FunctionsToExport = @('Connect-VM','Disconnect-VM')
+  FunctionsToExport = @('Connect-VM', 'Disconnect-VM')
 }
-

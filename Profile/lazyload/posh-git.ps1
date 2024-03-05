@@ -52,16 +52,27 @@ function global:GetPSReadLineSessionExeTime {
     }
 
     if ($s -ge 0.01) {
-      # clock
-      $icon = $env:WT_SESSION ? "祥" : " "
-      return "${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
+      # timer
+      $icon = $env:WT_SESSION ? "󰔛" : " "
+      return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
     }
   }
 }
+# for get-lunarDate
+Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
+function global:GetLunarDateStr {
+	$lunarDate = Get-LunarDate
+	$color = "`e[35m" #Magenta
+  $moon ="" #moon https://www.nerdfonts.com/cheat-sheet
+  $calendarWithPlus = ""
+	$icon = $lunarDate.IsLeapMonth ? $calendarWithPlus : $moon
+	return "$color $($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day)`e[0m"
+}
+
 Import-Module posh-git -ErrorAction Ignore -Scope Global
 # only config when posh-git is installed
 if ($?) {
-  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
+  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetLunarDateStr)$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
   $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'

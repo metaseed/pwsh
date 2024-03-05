@@ -8,7 +8,11 @@ function Disconnect-VM {
 		[switch]
 		$Save
 	)
-	$connectedVms = gps -n vmconnect
+	$connectedVms = gps -n vmconnect -ErrorAction Ignore
+	if(!$connectedVms) {
+		Write-Notice "No openned VM"
+		return
+	}
 	foreach ($connectedVm in $connectedVms) {
 		$title = $connectedVm.MainWindowTitle
 		$vmName = ($title -split ' on ')[0]

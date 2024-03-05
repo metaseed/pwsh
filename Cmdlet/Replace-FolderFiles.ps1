@@ -4,7 +4,7 @@ param (
     [Parameter()]
     [object]
     [Alias('m')]
-    $matches = "MTemplate",
+    $matches,
 
     # string to be used for replacement
     [Parameter()]
