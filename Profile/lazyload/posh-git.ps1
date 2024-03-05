@@ -37,7 +37,7 @@ function global:GetAdminIcon {
   }
 }
 
-function global:GetPSReadLineSessionExeTime {
+function global:__GetPSReadLineSessionExeTime {
   if ($global:__PSReadLineSessionScope.SessionStartTime) {
     # 19.3s
     $s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds
@@ -60,19 +60,25 @@ function global:GetPSReadLineSessionExeTime {
 }
 # for get-lunarDate
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
-function global:GetLunarDateStr {
+function global:__GetLunarDateStr {
 	$lunarDate = Get-LunarDate
 	$color = "`e[35m" #Magenta
   $moon ="" #moon https://www.nerdfonts.com/cheat-sheet
   $calendarWithPlus = ""
 	$icon = $lunarDate.IsLeapMonth ? $calendarWithPlus : $moon
-	return "$color $($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day)`e[0m"
+	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day)`e[0m"
 }
-
+function global:__GetDateStr {
+  $weekDays= "日一二三四五六"
+  $date = Get-Date
+  $d = $date.ToString("MM-dd HH:mm:ss")
+  $dayOfWeek = $weekDays[$date.DayOfWeek]
+  return "${d}${dayOfWeek}"
+}
 Import-Module posh-git -ErrorAction Ignore -Scope Global
 # only config when posh-git is installed
 if ($?) {
-  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(Get-Date -f "MM-dd HH:mm:ss")$(GetLunarDateStr)$(GetPSReadLineSessionExeTime) $(GetAdminIcon) '
+  $global:GitPromptSettings.DefaultPromptPrefix.Text = '┌─ $(__GetDateStr)$(__GetLunarDateStr)$(__GetPSReadLineSessionExeTime) $(GetAdminIcon) '
   $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
