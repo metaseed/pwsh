@@ -110,10 +110,10 @@ if ($?) {
 
   if ($env:WT_SESSION) {
     # https://www.nerdfonts.com/cheat-sheet
-    $global:GitPromptSettings.LocalWorkingStatusSymbol = '' # something in the working dir to add to stage/index
-    $global:GitPromptSettings.LocalStagedStatusSymbol = '' # something on stage to commit
-    $global:GitPromptSettings.BeforeStatus.Text = '[ '
-    $global:GitPromptSettings.BeforePath.Text = ' '
+    $global:GitPromptSettings.LocalWorkingStatusSymbol = '' # trolley, something in the working dir to add to stage/index
+    $global:GitPromptSettings.LocalStagedStatusSymbol = '' # stage, something on stage to commit
+    $global:GitPromptSettings.BeforeStatus.Text = '[ ' # branch
+    $global:GitPromptSettings.BeforePath.Text = ' ' # folder
   }
 }
 
