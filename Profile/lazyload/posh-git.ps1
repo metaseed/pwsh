@@ -66,7 +66,7 @@ function global:__GetLunarDateStr {
   $moon ="" #moon https://www.nerdfonts.com/cheat-sheet
   $calendarWithPlus = ""
 	$icon = $lunarDate.IsLeapMonth ? $calendarWithPlus : $moon
-	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day)`e[0m"
+	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day.ToString("#,00"))`e[0m"
 }
 
 function global:__GetDateStr {
