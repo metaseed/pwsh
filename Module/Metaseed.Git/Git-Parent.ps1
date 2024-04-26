@@ -1,3 +1,27 @@
+# https://stackoverflow.com/questions/3161204/how-to-find-the-nearest-parent-of-a-git-branch/26597219#answer-17843908
+function Git-Parent {
+  [CmdletBinding()]
+  param(
+    $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
+  )
+  git show-branch -a --current --topo-order --no-color |
+  # Ancestors of the current commit are indicated by a star. Filter out everything else
+  # we want only lines that begin with an asterisk  '^[^\[]*\*'
+  Select-String '^\*' |
+  # Ignore all the commits(contain the current branch name) in the current branch.
+  # note: .*? no gredy match any to the first ]
+  Select-String -NotMatch -Pattern "\[$([Regex]::Escape($CurrentBranchName)).*?\]" |
+  # The first result will be the nearest ancestor branch. Ignore the other results
+  Select-Object -First 1 |
+  # just the part of the line between [], it's branch name
+  # .+?\[ none gredy more than one char to [
+  Foreach-Object { $_ -replace '^.+?\[(.+)\].+$', '$1' }|
+  # Sometimes the branch name will include a ~# or ^# to indicate how many commits are between the referenced commit and the branch tip. We don't care. Ignore them.
+  # and with any relative refs (^, ~n) removed
+  Foreach-Object { $_ -replace '[\^~][0-9]*', '' }
+}
+# sl C:\repos\SLB\_planck\planck\
+# git-parent
 <#
 .SYNOPSIS
     Find the "parent" branch of the current branch.
@@ -11,7 +35,7 @@
 .DESCRIPTION
     This script is not fool-proof as it's mostly a guess since Git doesn't really know the difference between parent and children branches. It uses "git show-branch", so it will use whatever short name the command decides to name a commit to compute which one is the parent branch.
 #>
-function Git-Parent {
+function Git-Parent_notused_complex_to_read {
   [CmdletBinding()]
   Param
   (
@@ -20,13 +44,14 @@ function Git-Parent {
     [switch] $FindAll
   )
 
-  $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+  ## run: git show-branch --current --topo-order --no-color
+  $pinfo = New-Object Diagnostics.ProcessStartInfo
   $pinfo.FileName = "git"
   $pinfo.RedirectStandardOutput = $true
   $pinfo.UseShellExecute = $false
   $pinfo.Arguments = "show-branch --current --topo-order --no-color"
 
-  $p = New-Object System.Diagnostics.Process
+  $p = New-Object Diagnostics.Process
   $p.StartInfo = $pinfo
   $p.Start() | Out-Null
   $stdout = $p.StandardOutput
@@ -39,9 +64,9 @@ function Git-Parent {
 
   $foundBranches = @{}
 
-  while ( ($stdout -ne $null) -and (($line = $stdout.ReadLine()) -ne $null) ) {
+  while ( ($null -ne $stdout) -and ($null -ne ($line = $stdout.ReadLine())) ) {
     if (-not $currentBranchFound) {
-      if ($BranchName -eq "") {
+      if ('' -eq $BranchName) {
         if ($line.Length -gt $currentBranchIndex -and $line[$currentBranchIndex] -eq '*') {
           $currentBranchFound = $true
           # 1) Branch names can contain ']', but not spaces, and the string pattern here is "[<branch_name>] <description>", so search for "] " which will guarantee we find the delimiter rather than part of a branch name.
@@ -72,6 +97,7 @@ function Git-Parent {
         }
       }
     }
+
     if ($line -match '^-*$') {
       if (-not $currentBranchFound) {
         Write-Host "Couldn't find the current branch."
