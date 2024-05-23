@@ -18,6 +18,7 @@ param (
   [Parameter(Position = 0)]
   [string]$web,
 
+  # addtional urls to check
   [Parameter()]
   [Hashtable]
   $urls,
@@ -31,9 +32,9 @@ param (
 )
 . "$PSScriptRoot\_config.ps1"
 if ($urls) {
-  $webs | % { $webs.$($_.key) = $_.value }
+  $urls | % { $webs.$($_.key) = $_.value }
 }
-if (!($web)) {
+if (!$web) {
   write-host "`nAvailable Names:"
   $webs | Format-Table
   return

@@ -19,12 +19,13 @@ function Git-CleanBranches {
   )
 
   Git-SaftyGuard 'Git-DeleteLocalBranches' -keep
-  # if your branches names contains non ascii characters
-  # [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
   ## list branches
   ## not contains regex search: "^(?!.*(a|b|c)).*$"
-  $filter = "^(?!\s*\S*($($BranchesToFilterOut -join '|')|\*)\s+).*$"
+  # $filter = "^(?!\s*\S*($($BranchesToFilterOut -join '|')|\*)\s+).*$"
+  $branchWithSpaces = $BranchesToFilterOut |% {"\s+$_"}
+  $filter = "^(?!($($branchWithSpaces -join '|')|\*)).*$"
+  # $filter = "^(?!(\s+master|\s+main|\*)).*$"
   $branches = if ($merged) { git-branch --merged } else { git-branch }
   $branches = $branches |
   Select-String -Pattern $filter
@@ -47,7 +48,8 @@ function Git-CleanBranches {
 
   $branches |
   % {
-    $null = $_ -match "[\*,\s] ([\S]+)\s+([\S]+)\s{0,1}(.*)$"
+    # jsong12/feat/plugin-inttest                                         2024-04-23 add nodeId of the readnode response
+    $null = $_ -match "[\*\s]\s([\S]+)"
     $branch = $matches[1]
     git branch $($merged ? '-d': '-D') $branch
     if (-not $KeepRemote) {

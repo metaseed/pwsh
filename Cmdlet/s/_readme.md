@@ -1,1 +1,1 @@
-s: shell
+'s' means shell

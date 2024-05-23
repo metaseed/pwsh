@@ -4,12 +4,17 @@ function Git-Parent {
   param(
     $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
   )
+  # file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/git-show-branch.html
+  # --no-color is faster
+  # -a --all: show remote and local branches
+  # --topo-order: show in topological order vs chronological order
   git show-branch -a --current --topo-order --no-color |
-  # Ancestors of the current commit are indicated by a star. Filter out everything else
-  # we want only lines that begin with an asterisk  '^[^\[]*\*'
-  Select-String '^\*' |
+  # contains *: Ancestors of the current commit are indicated by a star. Filter out everything else
+  # there may be '+' or '-' with the '*'
+  # '^[^\[]*\*': just find * before first [, the * in  comment message is not include
+  Select-String '^[^\[]*\*' |
   # Ignore all the commits(contain the current branch name) in the current branch.
-  # note: .*? no gredy match any to the first ]
+  # note: .*? none gredy match any to the first ]
   Select-String -NotMatch -Pattern "\[$([Regex]::Escape($CurrentBranchName)).*?\]" |
   # The first result will be the nearest ancestor branch. Ignore the other results
   Select-Object -First 1 |
@@ -20,8 +25,8 @@ function Git-Parent {
   # and with any relative refs (^, ~n) removed
   Foreach-Object { $_ -replace '[\^~][0-9]*', '' }
 }
-# sl C:\repos\SLB\_planck\planck\
-# git-parent
+sl C:\repos\SLB\_planck\planck\
+git-parent
 <#
 .SYNOPSIS
     Find the "parent" branch of the current branch.

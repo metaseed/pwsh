@@ -273,3 +273,13 @@ https://code.visualstudio.com/docs/setup/windows#_unable-to-run-as-admin-when-ap
 https://github.com/microsoft/vscode/issues/185057
 
 > `code --no-sandbox`
+
+# split and combine file of fix size
+split files:
+// 1G
+7z a -v1000m large_file.7z large_file.iso
+
+combine files:
+copy /b file1 file2 file3 file
+or
+7z x large_file.7z.001

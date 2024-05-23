@@ -23,7 +23,6 @@ if (Test-Update $Days $MyInvocation.MyCommand.Path) {
     )
 }
 
-
 [void](Start-ThreadJob -StreamingHost $host {
     $localInfo = "$PSScriptRoot\info.json"
     Import-Module Metaseed.Lib -DisableNameChecking

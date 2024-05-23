@@ -6,6 +6,9 @@
 
 # note: reload profile if modified codes in this repo
 # & $profile.CurrentUserAllHosts
+# by default it's Chinese Simplified (GB2312), is it because i installed Chinese simplified in the windows system?
+# so let change it to UTF8 explicitly
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 Clear-Host
 $IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
 "`e[5mpwsh`e[0m v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
