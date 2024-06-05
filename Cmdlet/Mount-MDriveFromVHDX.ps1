@@ -14,7 +14,7 @@ attach vdisk
     $autoPath = "$env:USERPROFILE\MountVHD.txt"
     Out-File -InputObject $content -FilePath $autoPath -Encoding ascii -Force
     schtasks /create /tn "MountVHD" /sc ONLOGON /ru SYSTEM  /tr "diskpart.exe /s '$autoPath'"
-    Write-Information "Task added successfully. The specified VHD file ($autoPath) will be auto mounted at next logon."
+    Write-Host "Task added successfully. The specified VHD file ($autoPath) will be auto mounted at next logon."
 
     if(!(test-path m:)) {
         $Letter = (Mount-VHD -Path $Path  -PassThru | Get-Disk | Get-Partition | Get-Volume).DriveLetter

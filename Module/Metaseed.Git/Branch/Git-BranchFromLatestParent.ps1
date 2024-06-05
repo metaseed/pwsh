@@ -1,22 +1,26 @@
-function Git-BranchFromLatestMaster {
+function Git-BranchFromLatestParent {
   [CmdletBinding()]
   [alias('gitb')]
   param (
     # new branch name
     [Parameter(Mandatory = $true)]
     [string]
-    $BranchName
+    $BranchName,
+    # parent branch name, current parent branch is not set
+    [Parameter()]
+    [string]
+    $ParentBranchName = (Git-Parent)
   )
-  $guard = Git-SaftyGuard 'Git-BranchFromLatestMaster'
+  $guard = Git-SaftyGuard 'Git-BranchFromLatestParent'
 
   Write-Execute 'git status'
 
   try {
     $current = Write-Execute 'git branch --show-current'
-    if ($current -ne 'master') {
-      Write-Execute 'git checkout master'
+    if ($current -ne $ParentBranchName) {
+      Write-Execute "git checkout $ParentBranchName"
       if ($LASTEXITCODE -ne 0) {
-        Write-Error "Error when checkout master, nothing changed."
+        Write-Error "Error when checkout $ParentBranchName, nothing changed."
         return
       }
     }
@@ -25,12 +29,12 @@ function Git-BranchFromLatestMaster {
     Write-Execute 'git remote prune origin'
     ## rebase master onto remote
     # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore), use Git-StashApply to do it
-    Write-Execute 'git pull --rebase'
+    Write-Execute 'git pull' #  --rebase
 
     Write-Execute "git checkout -b $BranchName"
   }
   catch {
-    Write-Error 'Git-BranchFromLatestMaster execution error.'
+    Write-Error 'Git-BranchFromLatestParent execution error.'
   }
   finally {
     if ($guard -eq [GitSaftyGuard]::Stashed) {

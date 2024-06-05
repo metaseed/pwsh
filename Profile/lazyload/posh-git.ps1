@@ -29,6 +29,7 @@ function global:__GetPrefixPrompt {
 }
 
 Import-Module posh-git -ErrorAction Ignore -Scope Global
+
 # only config when posh-git is installed
 if ($?) {
   $global:GitPromptSettings.DefaultPromptPrefix.Text = '$(__GetPrefixPrompt)'

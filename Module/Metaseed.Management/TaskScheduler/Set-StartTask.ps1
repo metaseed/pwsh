@@ -24,7 +24,7 @@ function Set-StartTask {
     } else {
         $trigger = New-ScheduledTaskTrigger -AtLogOn -RandomDelay $randomDelay
     }
-    $settings = New-ScheduledTaskSettingsSet -Compatibility Win10
+    $settings = New-ScheduledTaskSettingsSet #-Compatibility Win10
     $principal = New-ScheduledTaskPrincipal -UserId SYSTEM -LogonType ServiceAccount -RunLevel Highest
     $definition = New-ScheduledTask -Action $action -Principal $principal -Trigger $trigger -Settings $settings -Description "Run $($taskName) at $When"
 
@@ -33,9 +33,9 @@ function Set-StartTask {
     $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
 
     if ($null -ne $task) {
-        "Created scheduled task: '$($task.ToString())'."
+        Write-Host "Created scheduled task: '$($task.ToString())'."
     }
     else {
-        "Created scheduled task: FAILED."
+        Write-Host "Created scheduled task: FAILED."
     }
 }

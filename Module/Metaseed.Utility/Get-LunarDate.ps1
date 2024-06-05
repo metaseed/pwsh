@@ -1,7 +1,19 @@
 function Get-LunarDate {
-	param (
-		[DateTime]$DateTime = (Get-Date)
+	[CmdletBinding(DefaultParameterSetName = 'DateTime')]
+	param(
+		[Parameter(ParameterSetName = 'DateTime', ValueFromPipeline = $true, Position=0)]
+		[DateTime]$Date = (Get-Date),
+
+		[Parameter(Mandatory = $true, ParameterSetName = 'DateString', ValueFromPipeline = $true, Position=0)]
+		[string]$DateString
 	)
+
+	if ($PSCmdlet.ParameterSetName -eq 'DateTime') {
+		$DateTime = $Date
+	}
+	else {
+		$DateTime = [DateTime]::Parse($DateString)
+	}
 
 	$chineseCalendar = [System.Globalization.ChineseLunisolarCalendar]::new()
 	# $gregorianCal = [System.Globalization.GregorianCalendar]::new()
@@ -17,9 +29,12 @@ function Get-LunarDate {
 	# $date=[datetime]::new($currentYear,$currentMonth,$currentDay,$hour,$minute,$second,$milliSecond)
 	$isLeapMonth = $currentMonth -eq $leapMonth
 	return  [PSCustomObject]@{
-		Year=$currentYear
-		Month = $currentMonth
-		Day = $currentDay
+		Year        = $currentYear
+		Month       = $currentMonth
+		Day         = $currentDay
 		IsLeapMonth = $isLeapMonth
 	}
 }
+
+# Get-LunarDate "06/21/1981"
+# Get-LunarDate

@@ -5,5 +5,5 @@
   ModuleVersion = '1.0.5'
   AliasesToExport = @('const', 'snl')
   CmdletsToExport = @('Get-ActiveComObject', 'Test-SampleCmdlet')
-  FunctionsToExport = @('Breakable-Pipeline', 'Find-FromParent', 'Find-LockingProcess', 'Get-DotnetVersions', 'Get-LunarDate', 'Get-ParentProcess', 'Get-RedirectedUrl', 'Get-RemoteFile', 'Get-UnicodeOfChar', 'Kill-Process', 'Kill-Service', 'New-ProxyCommand', 'Open-InVisualStudio', 'Select-FileGUI', 'Select-FolderGUI', 'Set-Constant', 'Set-NewLocation', 'Start-ServiceWithTimeout', 'Stop-LockingProcess')
+  FunctionsToExport = @('Breakable-Pipeline', 'Find-FromParent', 'Find-LockingProcess', 'Get-DotnetVersions', 'Get-LunarDate', 'Get-ParentProcess', 'Get-RedirectedUrl', 'Get-RemoteFile', 'Get-UnicodeOfChar', 'Get-VSInstallationPath', 'Kill-Process', 'Kill-Service', 'New-ProxyCommand', 'Open-InVisualStudio', 'Select-FileGUI', 'Select-FolderGUI', 'Set-Constant', 'Set-NewLocation', 'Start-ServiceWithTimeout', 'Stop-LockingProcess')
 }
