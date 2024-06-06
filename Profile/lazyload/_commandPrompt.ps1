@@ -44,41 +44,146 @@ function global:__GetLunarDateStr {
 	$moons = ""
 	$moonOfToday = $moons[$lunarDate.Day]
 	$icon = $lunarDate.IsLeapMonth ? "$calendarWithPlus$moonOfToday" : $moonOfToday
-	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day.ToString("#,00"))`e[0m"
+	$specialDay = __GetSepcialDayStr
+	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day.ToString("#,00"))$specialDay`e[0m"
 }
 
 function global:__GetSepcialDayStr {
-	$icon = '♥'
-	$lunarDate = Get-LunarDate
-	$date = Get-Date
+	[CmdletBinding()]
+	param (
+		[Parameter()]
+		[datetime]
+		$Today = (Get-Date)
+	)
+	$Today = [DateTime]::new($Today.Year, $Today.Month, $Today.Day)
+	if($Global:Today -eq $Today) {
+		return $global:SpecialDayStr
+	}
+
 	$specialDays = @(
 		@{
-			Lable = '妈妈生日'
-			Lunar = $true
-			Month = 8
-			Day = 8
-		},
-		@{
-			Lable = '爸爸生日'
-			Lunar = $true
-			Month = 9
-			Day = 18
-		},
-		@{
-			Lable = '我的生日'
-			Lunar = $true
-			Month = 9
-			Day = 28
-		},
-		@{
-			Lable = '娟的生日'
-			Lunar = $false
-			Month = 6
-			Day = 21
-		}
-	)
-}
+			Type                  = '' # birthday
+			DaysToRemindInAdvance = 3
+			Dates                 = @(
+				# @{
+				# 	Lable = 'Test'
+				# 	Lunar = $true
+				# 	Month = 5
+				# 	Day   = 1
+				# },
+				@{
+					Lable = 'Mom'
+					Lunar = $true
+					Month = 8
+					Day   = 8
+				},
+				@{
+					Lable = 'Dad'
+					Lunar = $true
+					Month = 9
+					Day   = 18
+				},
+				@{
+					Lable = 'Me'
+					Lunar = $true
+					Month = 9
+					Day   = 28
+				},
+				@{
+					Lable = 'Me'
+					Lunar = $false
+					Month = 11
+					Day   = 17
+				},
+				@{
+					Lable = 'Echo'
+					Lunar = $false
+					Month = 6
+					Day   = 21
+				},
+				@{
+					Lable = 'Echo'
+					Lunar = $true
+					Month = 5
+					Day   = 20
+				},
+				@{
+					Lable = 'Qi'
+					Lunar = $false
+					Month = 8
+					Day   = 14
+				},
 
+				@{
+					Lable = 'He'
+					Lunar = $false
+					Month = 3
+					Day   = 5
+				},
+				@{
+					Lable = 'Mai'
+					Lunar = $false
+					Month = 3
+					Day   = 7
+				}
+				)
+		},
+		@{
+			Type                  = '🎉' # festeval
+			DaysToRemindInAdvance = 0
+			Dates                 = @(
+				@{
+					Lable                 = '春节'
+					Lunar                 = $true
+					DaysToRemindInAdvance = 3
+					Month                 = 1
+					Day                   = 1
+					Days                  = 8
+				}
+			)
+		}
+
+	)
+	$icon = "`e[91m♥`e[0m"
+	$str = ""
+	foreach ($catagery in $specialDays) {
+		$type = $catagery.Type
+		$daysToRemindInAdvance = $catagery.DaysToRemindInAdvance
+		foreach ($date in $catagery.Dates) {
+			if ($date.DaysToRemindInAdvance) { $daysToRemindInAdvance = $date.DaysToRemindInAdvance }
+
+			$lable = $date.Lable
+			if ($date.Lunar) {
+				$theDay = Get-DateFromLunar $Today.Year $date.Month $date.Day ($date.IsLeap ? $true :$false)
+			}
+			else {
+				try {
+					$theDay = [DateTime]::new($Today.Year, $date.Month, $date.Day)
+				}
+				catch {
+					write-host "error: Month:$($date.Month) Day:$($date.Day)"
+				}
+			}
+
+			if ($theDay -eq $Today -or ($date.Days -and ($Today -lt $theDay.AddDays($date.Days)))) {
+				$str = "`e[5m${str}${type}$lable`e[0m"
+			}
+			elseif ($theDay -gt $Today) {
+				if ($Today.AddDays($daysToRemindInAdvance) -gt $theDay) {
+					$days = ($theDay - $Today ).Days
+					$str = "${str}${type}$lable($days)"
+				}
+			}
+		}
+	}
+
+	if ($str) {
+		$str = "${icon}$str"
+	}
+	$global:Today = $Today
+	$global:SpecialDayStr = $str
+	return $str
+}
 function global:__GetDateStr {
 	$weekDays = "日一二三四五六"
 	$date = Get-Date
@@ -86,3 +191,4 @@ function global:__GetDateStr {
 	$dayOfWeek = $weekDays[$date.DayOfWeek]
 	return "`e[95m${d}`e[96m${dayOfWeek}`e[0m"
 }
+# __GetSepcialDayStr ([DateTime]::new(2024, 3, 5)) #(Get-DateFromLunar 2024 5 1)
