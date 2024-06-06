@@ -56,7 +56,7 @@ function global:__GetSepcialDayStr {
 		$Today = (Get-Date)
 	)
 	$Today = [DateTime]::new($Today.Year, $Today.Month, $Today.Day)
-	if($Global:Today -eq $Today) {
+	if ($Global:Today -eq $Today) {
 		return $global:SpecialDayStr
 	}
 
@@ -126,19 +126,53 @@ function global:__GetSepcialDayStr {
 					Month = 3
 					Day   = 7
 				}
-				)
+			)
 		},
 		@{
 			Type                  = '🎉' # festeval
-			DaysToRemindInAdvance = 0
+			DaysToRemindInAdvance = 3
 			Dates                 = @(
+				@{
+					Lable                 = '元旦'
+					Month                 = 1
+					Day                   = 1
+				},
 				@{
 					Lable                 = '春节'
 					Lunar                 = $true
-					DaysToRemindInAdvance = 3
 					Month                 = 1
 					Day                   = 1
 					Days                  = 8
+				},
+				@{
+					Lable                 = '端午'
+					Lunar                 = $true
+					Month                 = 5
+					Day                   = 5
+				},
+				@{
+					Lable                 = '清明' # in 4.4、4.5、4.6, use 4.5
+					Month                 = 4
+					Day                   = 5
+				},
+				@{
+					Lable                 = '五一'
+					Month                 = 5
+					Day                   = 1
+					Days                  = 3
+				},
+				@{
+					Lable                 = '中秋'
+					Lunar                 = $true
+					DaysToRemindInAdvance = 3
+					Month                 = 8
+					Day                   = 15
+				},
+				@{
+					Lable                 = '十一'
+					Month                 = 10
+					Day                   = 1
+					Days                  = 3
 				}
 			)
 		}
