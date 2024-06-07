@@ -1,11 +1,14 @@
+<#
+Get all ps1 files except that start with '_' or in the subfolder that start with '_'
+#>
 function Export-Cmdlets {
   param (
       $path
   )
-  write-verbose "Get all ps1 files except that start with '_' or in the subfolder that start with '_'."
+  $path = [IO.Path]::GetFullPath($path).TrimEnd('/') # note: \ changed to /, there is / is ended with \ or /
+
   $All = Get-AllCmdFiles $path
 
-  Write-Verbose "export cmdlets for Modules: $path"
-  $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
+  $Public = $All | ? { $_.fullname.TrimStart($path) -notmatch '\\Private\\' }
   Export-ModuleMember -Cmdlet $($Public | Select-Object -ExpandProperty BaseName)
 }

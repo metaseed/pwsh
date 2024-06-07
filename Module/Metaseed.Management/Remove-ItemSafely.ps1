@@ -486,7 +486,6 @@ function Show-RecycleBinSize {
     Param()
     $shell = New-Object -com shell.application
     $rb = $shell.Namespace(10)
-    $fldpath = $null
     $bin = $rb.items() | ParseItem
 
     $o = $bin | Measure-Object -Property size -sum | Select-Object Count, Sum
@@ -498,8 +497,8 @@ function Show-RecycleBinSize {
     Select-Object -Property Name, Count, @{
         Name = "SizeMB"; Expression = { [Math]::Round(($_.group | measure-object -Property size -sum).sum / 1MB, 3) }
     }
-    $all
 
+    $all
 }
 
 function open-recycleBin {

@@ -6,12 +6,13 @@ auto include all .ps1 into .psm1 except the foler/file that start with "_";
 auto export a function of the file name, except the file in the private sub-folder;
 
 to export addtional function just add `Export-ModuleMember ***` in the file
-we could explictly include the _file/_folder files
+we could explictly include the _file/_folder files, if you really want to incude the file in a folder started with '_'
 
 .NOTES
 to reload the module after changing:
 ipmo metaseed.git -fo
 import-module metaseed.git -force.
+
 .NOTES
 when make this function in as module, even dot source the funciton
 it still not work. so do this:
@@ -30,9 +31,12 @@ function Export-Functions {
     param (
         $path
     )
+
+    $path = [IO.Path]::GetFullPath($path).TrimEnd('/') # note: \ changed to /, there is / is ended with \ or /
+
     # Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
     $All = Get-AllCmdFiles $path
-    write-verbose "Dot source the files"
+    # Dot source the files
     foreach ($import in $All) {
         Try {
             . $import.fullname
@@ -42,7 +46,8 @@ function Export-Functions {
             Write-Error "Failed to import function $($import.fullname): $_"
         }
     }
-    Write-Verbose "export function for Modules: $path"
-    $Public = $All | ? { $_.fullname -notmatch '\\Private\\' }
+
+    # export function for Modules
+    $Public = $All | ? { $_.fullname.TrimStart($path) -notmatch '\\Private\\' }
     Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
 }

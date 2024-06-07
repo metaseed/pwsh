@@ -18,7 +18,7 @@ function Get-ProcessFromPort {
 	if ($PortKind -eq [PortKind]::TCP) {
 		Get-Process -Id (Get-NetTCPConnection -LocalPort $PortNumber).OwningProcess
 	}
- else {
+	else {
 		Get-Process -Id (Get-NetUDPEndpoint -LocalPort $PortNumber).OwningProcess
 	}
 }

@@ -1,14 +1,19 @@
+<#
+Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
+#>
 function Get-AllCmdFiles {
   [CmdletBinding()]
   param (
     [Parameter()]
     [string]
     $Directory,
-    [string]$filter = '*.ps1'
-  )
-  write-verbose "Get all ps1 files except that start with '_' or in the subfolder that start with '_'."
 
-  $Directory = $Directory.TrimEnd('\')
+    [Parameter()]
+    [string]
+    $filter = '*.ps1'
+  )
+
+  $Directory = [IO.Path]::GetFullPath($Directory).TrimEnd('\')
   $All = Get-ChildItem $Directory -File -include $filter -Recurse -Exclude _* -ErrorAction SilentlyContinue |
   ? {
     # if parent dirs of $Directory contains '_', it's valid

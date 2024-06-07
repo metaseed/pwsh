@@ -6,6 +6,7 @@ function Get-Explorer {
 		$Folder
 	)
 	$Folder = $Folder.Replace('\', '/')
+
 	$shell = New-Object -ComObject Shell.Application
 	# "$(([uri]"$Folder").AbsoluteUri)*"
 	$window = $shell.Windows() |? {
