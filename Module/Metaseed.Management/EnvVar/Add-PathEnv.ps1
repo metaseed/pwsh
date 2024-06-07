@@ -1,11 +1,15 @@
 using namespace System.IO
+
+<#
+add dir to 'Machine' or 'User' Path env variable, both temp and persistent
+#>
 function Add-PathEnv {
     param (
         # directory to add to path
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [String]
         $Dir,
-        # Machine or User, default based on current Admin right
+        # Machine or User, default: if the session is Admin, use the Machine scope
         [object]
         [ValidateSet('Machine', 'User')]
         $Scope = $null,
@@ -18,7 +22,7 @@ function Add-PathEnv {
     $Dir = [Path]::GetFullPath($Dir)
     $PathToUse = $append ? "$env:path;$dir" : "$dir;$env:Path"
 
-    if (-not (Test-PathInStr $env:Path $dir)) {
+    if (-not (Test-DirInPathStr $env:Path $dir)) {
         $env:Path = $PathToUse
         Write-Verbose "'$dir' was added to current `$env:Path"
     }
@@ -28,22 +32,27 @@ function Add-PathEnv {
 
     $isAdmin = Test-Admin
     $scope = $Scope ?? ($isAdmin ? "Machine": "User")
+
     $envPath = [Environment]::GetEnvironmentVariable("Path", $scope)
-    $pathes = $isAdmin ?
-        "$envPath;$([Environment]::GetEnvironmentVariable('Path', 'User'))" :
-        "$envPath"
-
-    if (-not (Test-PathInStr $pathes $dir)) {
-        [Environment]::SetEnvironmentVariable("Path", $PathToUse, $scope)
-        Write-Verbose "'$dir' was added to Environment $scope scope variable: Path"
-    }
-    else {
-        Write-Verbose "`Envirionment Variable Path already contains $dir"
+    if (Test-DirInPathStr $envPath $dir) {
+        Write-Verbose "Envirionment Variable Path already contains $dir in scope:$scope"
+        return
     }
 
+    if ($scope -eq "Machine") {
+        $envPathUser = $([Environment]::GetEnvironmentVariable('Path', 'User'))
+        if (Test-DirInPathStr $envPathUser $dir) {
+            Write-Verbose "Envirionment Variable Path already contains $dir in scope:User"
+            return
+        }
+    }
+
+    $PathToUse = $append ? "$envPath;$dir" : "$dir;$envPath"
+    [Environment]::SetEnvironmentVariable("Path", $PathToUse, $scope)
+    Write-Verbose "'$dir' was added to Environment $scope scope variable: Path"
 }
 
-function Test-PathInStr {
+function Test-DirInPathStr {
     [CmdletBinding()]
     param (
         [String] $PathStr,
@@ -58,4 +67,6 @@ function Test-PathInStr {
     }
 }
 
-# Add-PathEnv $env:ProgramFiles\Git\mingw64\bin
+# Test-DirInPathStr "c:\temp;d:\temp" "c:\temp"
+
+# Add-PathEnv C:\ProgramFiles\Git\mingw64\bin
