@@ -5,4 +5,4 @@ function Beep-DoReMi {
   }
 }
 
-Beep-DoReMi
+# Beep-DoReMi

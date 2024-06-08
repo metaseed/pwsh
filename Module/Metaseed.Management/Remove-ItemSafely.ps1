@@ -1,7 +1,6 @@
 #Set-StrictMode -Version Latest
 
 function Remove-ItemSafely {
-
     [alias('ris', 'trash')]
     [CmdletBinding(DefaultParameterSetName = 'Path', SupportsShouldProcess = $true, ConfirmImpact = 'Medium', SupportsTransactions = $true, HelpUri = 'http://go.microsoft.com/fwlink/?LinkID=113373')]
     param(
