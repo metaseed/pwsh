@@ -204,7 +204,7 @@ function global:__GetPSReadLineSessionExeTime {
 
 		if ($s -ge 0.01) {
 			# timer
-			$icon = $env:WT_SESSION ? "󰔛" : " "
+			$icon = $env:WT_SESSION ? "" : " "
 			return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
 		}
 	}
@@ -215,7 +215,7 @@ function global:__GetLunarDateStr {
 	$color = "`e[35m" #Magenta
 	# $moon = "" #moon https://www.nerdfonts.com/cheat-sheet
 	$calendarWithPlus = ""
-	$moons = ""
+	$moons = ""
 	$moonOfToday = $moons[$lunarDate.Day]
 	$icon = $lunarDate.IsLeapMonth ? "$calendarWithPlus$moonOfToday" : $moonOfToday
 	$specialDay = __GetSepcialDayStr
