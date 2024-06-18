@@ -1,9 +1,10 @@
 $LazyLoadProfile = [PowerShell]::Create()
+
 [void]$LazyLoadProfile.AddScript(@'
-    Import-Module posh-git
+    Import-Module posh-git -DisableNameChecking
 '@)
-$LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
-$LazyLoadProfile.Runspace =  $LazyLoadProfileRunspace
+
+$LazyLoadProfile.Runspace = $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
 $LazyLoadProfileRunspace.Open()
 [void]$LazyLoadProfile.BeginInvoke()
 
@@ -14,11 +15,11 @@ $null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName Invocation
   . $PSScriptRoot\configPsFzf.ps1
 
 
-# use  Invoke-FzfTabCompletion, because it support fuzzy search
+  # we instead using Invoke-FzfTabCompletion, because it support fuzzy search
   # . $PSScriptRoot\PS-GuiCompletion.ps1
-    $LazyLoadProfile.Dispose()
-    $LazyLoadProfileRunspace.Close()
-    $LazyLoadProfileRunspace.Dispose()
+  $LazyLoadProfile.Dispose()
+  $LazyLoadProfileRunspace.Close()
+  $LazyLoadProfileRunspace.Dispose()
 }
 # . $PSScriptRoot\configPsFzf.ps1
 

@@ -204,7 +204,7 @@ function global:__GetPSReadLineSessionExeTime {
 
 		if ($s -ge 0.01) {
 			# timer
-			$icon = $env:WT_SESSION ? "" : " "
+			$icon = $env:WT_SESSION ? "" : ""
 			return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
 		}
 	}

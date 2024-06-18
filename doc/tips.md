@@ -205,6 +205,7 @@ view sizes in folder `a wizTree -- $pwd`
 ## get computer info
 Get-ComputerInfo -pro *processor*
 Get-ComputerInfo
+gin # alias of Get-ComputerInfo
 systemInfo.exe
 
 ## pwsh webs
@@ -264,10 +265,6 @@ rni test test1 # rename test to test1
 tail -f logfile| bat --paging=never -l log
 gc logfile -wait -tail 10
 
-# sl or cd
-`sl` or `sl ~` change to home directory
-`sl -` last location
-
 ## run vscode / code in admin
 https://code.visualstudio.com/docs/setup/windows#_unable-to-run-as-admin-when-applocker-is-enabled
 https://github.com/microsoft/vscode/issues/185057
@@ -275,11 +272,25 @@ https://github.com/microsoft/vscode/issues/185057
 > `code --no-sandbox`
 
 # split and combine file of fix size
+`a 7z a -- -h`
+Usage: 7z <command> [<switches>...] <archive_name> [<file_names>...] [@listfile]
+
 split files:
 // 1G
+// large_file.iso: original large file
+// large_file.7z: name used to append '.001'...
+// -v1000m: partition size 1G
+// a : Add files to archive
 7z a -v1000m large_file.7z large_file.iso
 
 combine files:
 copy /b file1 file2 file3 file
 or
 7z x large_file.7z.001
+
+## navigating inside location history
+```pwsh
+cd - # previous location
+cd + # next location
+`sl` or `sl ~` change to home directory
+```
