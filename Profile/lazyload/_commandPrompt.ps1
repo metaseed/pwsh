@@ -1,14 +1,16 @@
 # for get-lunarDate
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
 Import-Module Metaseed.Terminal -DisableNameChecking
+
 function global:__GetSepcialDayStr {
-	$Today = ([datetime]::now)
+	$now = [datetime]::now
+	$Today = [datetime]::new($now.Year, $now.Month, $now.Day)
 
 	$birthdayType = "`e[95m`e[0m" # birthday
 	$holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
 
 	## play backgroud image
-	$s = ($Today - $global:__PSReadLineSessionScope.LastSessionStartTime).totalseconds
+	$s = ($Today.totalseconds - $global:__PSReadLineSessionScope.LastSessionStartTime.totalseconds)
 	if($s -gt 10*60) { # 10mins
 		if($birthdayType -in $global:SpecialDayTypes -or $holidayType -in $global:SpecialDayTypes) {
 			Show-WTBackgroundImage fireworksMany
@@ -16,7 +18,7 @@ function global:__GetSepcialDayStr {
 	}
 
 	## save computation
-	if ( $global:Today.Day -eq $Today.Day && $global:Today.Month -eq $Today.Month && $global:Today.Year -eq $Today.Year ) {
+	if ($global:Today.Day  -eq $Today.Day -and $global:Today.Month -eq $Today.Month -and $global:Today.Year -eq $Today.Year) {
 		return $global:SpecialDayStr
 	}
 
