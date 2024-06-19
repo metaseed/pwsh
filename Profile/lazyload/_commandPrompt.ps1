@@ -1,21 +1,28 @@
 # for get-lunarDate
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
-
+Import-Module Metaseed.Terminal -DisableNameChecking
 function global:__GetSepcialDayStr {
-	[CmdletBinding()]
-	param (
-		[Parameter()]
-		[datetime]
-		$Today = (Get-Date)
-	)
-	$Today = [DateTime]::new($Today.Year, $Today.Month, $Today.Day)
-	if ($global:Today -eq $Today) {
+	$Today = ([datetime]::now)
+
+	$birthdayType = "`e[95m`e[0m" # birthday
+	$holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
+
+	## play backgroud image
+	$s = ($Today - $global:__PSReadLineSessionScope.LastSessionStartTime).totalseconds
+	if($s -gt 10*60) { # 10mins
+		if($birthdayType -in $global:SpecialDayTypes -or $holidayType -in $global:SpecialDayTypes) {
+			Show-WTBackgroundImage fireworksMany
+		}
+	}
+
+	## save computation
+	if ( $global:Today.Day -eq $Today.Day && $global:Today.Month -eq $Today.Month && $global:Today.Year -eq $Today.Year ) {
 		return $global:SpecialDayStr
 	}
 
 	$specialDays = @(
 		@{
-			Type                  = '' # birthday
+			Type                  =  $birthdayType
 			DaysToRemindInAdvance = 3
 			Dates                 = @(
 				# @{
@@ -82,7 +89,7 @@ function global:__GetSepcialDayStr {
 			)
 		},
 		@{
-			Type                  = '🎉' # festeval
+			Type                  = $holidayType
 			DaysToRemindInAdvance = 3
 			Dates                 = @(
 				@{
@@ -131,8 +138,9 @@ function global:__GetSepcialDayStr {
 		}
 
 	)
-	$icon = "`e[91m♥`e[0m"
+	$icon = "`e[93m󰃰`e[0m" # ♥
 	$str = ""
+	$specialDayTypes = @()
 	foreach ($catagery in $specialDays) {
 		$type = $catagery.Type
 		$daysToRemindInAdvance = $catagery.DaysToRemindInAdvance
@@ -154,11 +162,13 @@ function global:__GetSepcialDayStr {
 
 			if ($theDay -eq $Today -or ($date.Days -and ($theDay -lt $theDay) -and ($Today -lt $theDay.AddDays($date.Days)))) {
 				$str = "`e[5m${str}${type}$lable`e[0m"
+				# $specialDayTypes += $type # only play on the day
 			}
 			elseif ($theDay -gt $Today) {
 				if ($Today.AddDays($daysToRemindInAdvance) -gt $theDay) {
 					$days = ($theDay - $Today ).Days
 					$str = "${str}${type}$lable($days)"
+					$specialDayTypes += $type
 				}
 			}
 		}
@@ -169,7 +179,7 @@ function global:__GetSepcialDayStr {
 	}
 	$global:Today = $Today
 	$global:SpecialDayStr = $str
-
+	$global:SpecialDayTypes = $specialDayTypes
 	return $str
 }
 # __GetSepcialDayStr ([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
@@ -189,7 +199,7 @@ function global:__GetAdminIcon {
 }
 
 function global:__GetPSReadLineSessionExeTime {
-	if ($global:__PSReadLineSessionScope.SessionStartTime) {
+	if ($global:__PSReadLineSessionScope.SessionStartTime) { # from the 'Enter' key press
 		# 19.3s
 		$s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds
 		if ($s -lt 1) {

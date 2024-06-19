@@ -39,7 +39,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
     $lastSessionScope = $global:__PSReadLineSessionScope
-    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; }
+    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; LastSessionStartTime = ($lastSessionScope.SessionStartTime ?? [datetime]::Now)}
     # create a scope for a psReadline session
     New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
         scope     = $global:__PSReadLineSessionScope;
