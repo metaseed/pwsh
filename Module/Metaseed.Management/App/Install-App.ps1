@@ -111,16 +111,17 @@ function Install-App {
 		else {
 			$app = @($children[0])
 		}
+
 		$app | % {
 			$ver_online -match "^[\d\.]+" > $null
 			$ver_online = [Version]::new($Matches[0])
 
 			# $app.VersionInfo
-			Write-host "install app: $app"
+			Write-host "install app: $_"
 			# $verLocal = if($app.VersionInfo) {$app.VersionInfo.ProductVersion ? $app.VersionInfo.ProductVersion : $app.VersionInfo.FileVersion}
 
 			if ($verLocal) {
-				$app.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
+				$_.VersionInfo.ProductVersion -match "^[\d\.]+" > $null
 				$verLocal = [Version]::new($Matches[0])
 				write-host "new local version: $verLocal"
 
@@ -128,12 +129,14 @@ function Install-App {
 
 			if (!$verLocal -or $verLocal -ne $ver_online) {
 				write-host "modify app version from $verLocal to $ver_online"
-				rcedit-x64 "$app" --set-file-version $ver_online --set-product-version $ver_online
+				rcedit-x64 "$_" --set-file-version $ver_online --set-product-version $ver_online
 			}
-			Move-Item $app -Destination $toLocation -Force
+			$baseName = Split-Path $_ -LeafBase
+			gps $baseName -ErrorAction SilentlyContinue|spps
+			Move-Item $_ -Destination $toLocation -Force
 			if ($newName) {
-				$name = Split-Path $app -Leaf
-				$ext = split-path $app -Extension
+				$name = Split-Path $_ -Leaf
+				$ext = split-path $_ -Extension
 				write-host "new name: $newName$ext"
 				Rename-Item "$toLocation\$name" -NewName "$newName$ext"
 			}

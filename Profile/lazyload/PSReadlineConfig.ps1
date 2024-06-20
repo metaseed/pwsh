@@ -6,32 +6,31 @@ $PSReadLineOptions = @{
     # BellStyle           = "None"
     # HistorySearchCursorMovesToEnd = $true
     MaximumHistoryCount = 10000
+    # Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
+    Colors = @{ "ListPrediction" = "`e[90m" }
+    PredictionViewStyle = 'ListView'
 }
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption?view=powershell-7.2
 Set-PSReadLineOption @PSReadLineOptions
 
-# work
+# also work
 # $options = Get-PSReadLineOption
 # $options.ListPredictionColor = "`e[90m" # original value "`e[33m"
-try {
-    Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
-    Set-PSReadLineOption -PredictionViewStyle ListView  # default is InLineView,
-}
-catch {
 
-}
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
+
 # not work in vscode
+# ctrl+enter to add a new line, `esc` to cancel all input, not only the current line.
 Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine
-#not work in vscode
+
+# not work in vscode
 Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -BriefDescription CopyPathToClipboard `
     -LongDescription "Copies the current path to the clipboard.(gl).path|scb" `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, '']
 
 Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
-
     # session scale variables
     # __SetStepSessionVariables
     # https://stackoverflow.com/questions/67136144/getting-powershell-current-line-before-enter-is-pressed
@@ -51,6 +50,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
+# open file explorer
 Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert('a lf') # input

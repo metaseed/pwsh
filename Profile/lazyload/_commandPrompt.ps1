@@ -228,7 +228,7 @@ function global:__GetLunarDateStr {
 	# $moon = "" #moon https://www.nerdfonts.com/cheat-sheet
 	$calendarWithPlus = ""
 	$moons = ""
-	$moonOfToday = $moons[$lunarDate.Day]
+	$moonOfToday = $moons[$lunarDate.Day - 1]
 	$icon = $lunarDate.IsLeapMonth ? "$calendarWithPlus$moonOfToday" : $moonOfToday
 	$specialDay = __GetSepcialDayStr
 	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day.ToString("#,00"))$specialDay`e[0m"
