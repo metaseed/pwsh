@@ -3,11 +3,11 @@ Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include un
 Import-Module Metaseed.Terminal -DisableNameChecking
 
 
-$global:birthdayType = "`e[95m`e[0m" # birthday
-$global:holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
-$global:specialDays = @{
+$global:__birthdayType = "`e[95m`e[0m" # birthday
+$global:__holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
+$global:__specialDays = @{
 	Birthday = @{
-		Type                  = $birthdayType
+		Type                  = $__birthdayType
 		DaysToRemindInAdvance = 3
 		Dates                 = @(
 			# @{
@@ -74,7 +74,7 @@ $global:specialDays = @{
 		)
 	}
 	Holiday = @{
-		Type                  = $holidayType
+		Type                  = $__holidayType
 		DaysToRemindInAdvance = 3
 		Dates                 = @(
 			@{
@@ -181,7 +181,7 @@ function global:__Get-SolarTerms {
 &{
 	$termOfThisYear = __Get-SolarTerms ([DateTime]::now).Year
 	$terms = @{
-		Type                  = $holidayType
+		Type                  = $__holidayType
 		DaysToRemindInAdvance = 3
 		Dates                 = $termOfThisYear|%{
 
@@ -194,8 +194,8 @@ function global:__Get-SolarTerms {
 		}
 	}
 	# write-host $a
-	if(!$specialDays.Contains('SolorTerms')){
-		$specialDays.SolorTerms = $terms
+	if(!$__specialDays.Contains('SolorTerms')){
+		$__specialDays.SolorTerms = $terms
 	}
 }
 function global:__GetSepcialDayStr {
@@ -214,7 +214,7 @@ function global:__GetSepcialDayStr {
 		$s = ($now - $global:__PSReadLineSessionScope.LastSessionStartTime).totalseconds
 		if ($s -gt 10 * 60) {
 			# 10mins
-			if ($birthdayType -in $global:SpecialDayTypes -or $holidayType -in $global:SpecialDayTypes) {
+			if ($__birthdayType -in $global:SpecialDayTypes -or $__holidayType -in $global:SpecialDayTypes) {
 				Show-WTBackgroundImage fireworksMany
 			}
 		}
@@ -229,7 +229,7 @@ function global:__GetSepcialDayStr {
 	$icon = "`e[93m󰃰`e[0m" # ♥
 	$str = ""
 	$specialDayTypes = @()
-	foreach ($catagery in $specialDays.Values) {
+	foreach ($catagery in $__specialDays.Values) {
 		$type = $catagery.Type
 		$daysToRemindInAdvance = $catagery.DaysToRemindInAdvance
 		foreach ($date in $catagery.Dates) {
@@ -270,6 +270,7 @@ function global:__GetSepcialDayStr {
 	$global:SpecialDayTypes = $specialDayTypes
 	return $str
 }
+
 # __GetSepcialDayStr ([DateTime]::new(2024, 10, 22)) #([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
 function global:__GetAdminIcon {
 	$IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
