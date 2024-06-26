@@ -5,4 +5,4 @@ param (
 
 # ipmo Metaseed.Management -Force
 
-Install-FromGithub 'QL-Win/QuickLook'  -filter '^QuickLook-.+\.zip$' -Verbose @Remaining
+Install-FromGithub https://github.com/QL-Win/QuickLook  -filter '^QuickLook-.+\.zip$' -versionType 'preview' -Verbose @Remaining

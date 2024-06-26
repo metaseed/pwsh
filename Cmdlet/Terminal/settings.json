@@ -4,57 +4,65 @@
   "actions": [
     {
       "command": {
+        "action": "globalSummon",
+        "monitor": "any",
+        "desktop": "onCurrent"
+      },
+      "keys": "win+`"
+    },
+    {
+      "command": {
         "action": "globalSummon"
       },
-      "keys": "win\u002Balt\u002Bz"
+      "keys": "win+alt+z"
     },
     {
       "command": {
         "action": "scrollDown"
       },
-      "keys": "ctrl\u002Bdown"
+      "keys": "ctrl+down"
     },
     {
       "command": {
         "action": "closeTab"
       },
-      "keys": "ctrl\u002Bshift\u002Bw"
+      "keys": "ctrl+shift+w"
     },
     {
       "command": "togglePaneZoom",
-      "keys": "alt\u002Bshift\u002Bz"
+      "keys": "alt+shift+z"
     },
     {
       "command": {
         "action": "moveFocus",
         "direction": "previousInOrder"
       },
-      "keys": "alt\u002Bhome"
+      "keys": "alt+home"
     },
     {
       "command": {
         "action": "scrollUp"
       },
-      "keys": "ctrl\u002Bup"
+      "keys": "ctrl+up"
     },
     {
       "command": "toggleBlockSelection",
-      "keys": "alt\u002Bv"
+      "keys": "alt+v"
     },
     {
       "command": {
         "action": "moveFocus",
         "direction": "nextInOrder"
       },
-      "keys": "alt\u002Bend"
+      "keys": "alt+end"
     },
     {
       "command": "toggleFocusMode",
-      "keys": "alt\u002Bshift\u002Bf"
+      "keys": "alt+shift+f"
     },
     {
       "command": "restoreLastClosed",
-      "keys": "ctrl\u002Bshift\u002Bt"
+      "keys": "ctrl+shift+t"
     },
     {
       "command": {
@@ -62,18 +70,18 @@
         "index": 1,
         "split": "auto"
       },
-      "keys": "alt\u002Bshift\u002B2"
+      "keys": "alt+shift+2"
     },
     {
       "command": "closePane",
-      "keys": "alt\u002Bshift\u002Bw"
+      "keys": "alt+shift+w"
     },
     {
       "command": {
         "action": "copy",
         "singleLine": false
       },
-      "keys": "ctrl\u002Bc"
+      "keys": "ctrl+c"
     },
     {
       "command": {
@@ -81,11 +89,11 @@
         "index": 0,
         "split": "auto"
       },
-      "keys": "alt\u002Bshift\u002B1"
+      "keys": "alt+shift+1"
     },
     {
       "command": "find",
-      "keys": "ctrl\u002Bshift\u002Bf"
+      "keys": "ctrl+shift+f"
     },
     {
       "command": {
@@ -93,11 +101,11 @@
         "index": 2,
         "split": "auto"
       },
-      "keys": "alt\u002Bshift\u002B3"
+      "keys": "alt+shift+3"
     },
     {
       "command": "paste",
-      "keys": "ctrl\u002Bv"
+      "keys": "ctrl+v"
     },
     {
       "command": {
@@ -105,11 +113,11 @@
         "split": "auto",
         "splitMode": "duplicate"
       },
-      "keys": "alt\u002Bshift\u002Bd"
+      "keys": "alt+shift+d"
     },
     {
       "command": "switchSelectionEndpoint",
-      "keys": "alt\u002Ba"
+      "keys": "alt+a"
     }
   ],
   "alwaysShowNotificationIcon": true,
@@ -123,10 +131,10 @@
   "multiLinePasteWarning": false,
   "profiles": {
     "defaults": {
-      "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
+      "backgroundImage": "%MS_WTBackground%\\res\\bg\\hacker.gif",
       "backgroundImageAlignment": "bottomRight",
       "backgroundImageOpacity": 0.2,
-      "backgroundImageStretchMode": "none",
+      "backgroundImageStretchMode": "fill",
       "elevate": true,
       "font": {
         "face": "CaskaydiaCove NFM"

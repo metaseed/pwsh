@@ -28,7 +28,7 @@ function Get-LocalAppInfo {
 				$appFolder = $app.Directory.Parent.FullName
 			}
 			try {
-				Write-Verbose "query local version via 'gcm' $app"
+				Write-Verbose "query local version via 'gcm $app'"
 				$cmd = gcm "$app"
 				$versionLocal = [Version]::new($cmd.FileVersionInfo.ProductVersion)
 			}

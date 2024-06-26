@@ -3,36 +3,45 @@ Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include un
 Import-Module Metaseed.Terminal -DisableNameChecking
 
 function global:__GetSepcialDayStr {
-	$now = [datetime]::now
+	[CmdletBinding()]
+	param (
+		[Parameter()]
+		[datetime]
+		$now = [datetime]::now
+	)
+
 	$Today = [datetime]::new($now.Year, $now.Month, $now.Day)
 
 	$birthdayType = "`e[95m`e[0m" # birthday
 	$holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
 
 	## play backgroud image
-	$s = ($Today.totalseconds - $global:__PSReadLineSessionScope.LastSessionStartTime.totalseconds)
-	if($s -gt 10*60) { # 10mins
-		if($birthdayType -in $global:SpecialDayTypes -or $holidayType -in $global:SpecialDayTypes) {
-			Show-WTBackgroundImage fireworksMany
+	if ($global:__PSReadLineSessionScope.LastSessionStartTime) {
+		$s = ($now - $global:__PSReadLineSessionScope.LastSessionStartTime).totalseconds
+		if ($s -gt 10 * 60) {
+			# 10mins
+			if ($birthdayType -in $global:SpecialDayTypes -or $holidayType -in $global:SpecialDayTypes) {
+				Show-WTBackgroundImage fireworksMany
+			}
 		}
 	}
 
 	## save computation
-	if ($global:Today.Day  -eq $Today.Day -and $global:Today.Month -eq $Today.Month -and $global:Today.Year -eq $Today.Year) {
+	if ($global:Today.Day -eq $Today.Day -and $global:Today.Month -eq $Today.Month -and $global:Today.Year -eq $Today.Year) {
 		return $global:SpecialDayStr
 	}
 
 	$specialDays = @(
 		@{
-			Type                  =  $birthdayType
+			Type                  = $birthdayType
 			DaysToRemindInAdvance = 3
 			Dates                 = @(
-				# @{
-				# 	Lable = 'Test'
-				# 	Lunar = $true
-				# 	Month = 5
-				# 	Day   = 1
-				# },
+				@{
+					Lable = 'Test'
+					Lunar = $true
+					Month = 6
+					Day   = 26
+				},
 				@{
 					Lable = 'Mom'
 					Lunar = $true
@@ -112,11 +121,11 @@ function global:__GetSepcialDayStr {
 					Month = 5
 					Day   = 5
 				},
-				@{
-					Lable = '清明' # in 4.4、4.5、4.6, use 4.5
-					Month = 4
-					Day   = 5
-				},
+				# @{ replaced by 24 solor terms
+				# 	Lable = '清明' # in 4.4、4.5、4.6, use 4.5
+				# 	Month = 4
+				# 	Day   = 5
+				# },
 				@{
 					Lable = '五一'
 					Month = 5
@@ -164,13 +173,13 @@ function global:__GetSepcialDayStr {
 
 			if ($theDay -eq $Today -or ($date.Days -and ($theDay -lt $theDay) -and ($Today -lt $theDay.AddDays($date.Days)))) {
 				$str = "`e[5m${str}${type}$lable`e[0m"
-				# $specialDayTypes += $type # only play on the day
+				$specialDayTypes += $type # only play on the day
 			}
 			elseif ($theDay -gt $Today) {
 				if ($Today.AddDays($daysToRemindInAdvance) -gt $theDay) {
 					$days = ($theDay - $Today ).Days
 					$str = "${str}${type}$lable($days)"
-					$specialDayTypes += $type
+					# $specialDayTypes += $type
 				}
 			}
 		}
@@ -184,7 +193,7 @@ function global:__GetSepcialDayStr {
 	$global:SpecialDayTypes = $specialDayTypes
 	return $str
 }
-# __GetSepcialDayStr ([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
+__GetSepcialDayStr ([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
 function global:__GetAdminIcon {
 	$IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
 	if ($IsAdmin) {
@@ -201,7 +210,8 @@ function global:__GetAdminIcon {
 }
 
 function global:__GetPSReadLineSessionExeTime {
-	if ($global:__PSReadLineSessionScope.SessionStartTime) { # from the 'Enter' key press
+	if ($global:__PSReadLineSessionScope.SessionStartTime) {
+		# from the 'Enter' key press
 		# 19.3s
 		$s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds
 		if ($s -lt 1) {
@@ -218,6 +228,60 @@ function global:__GetPSReadLineSessionExeTime {
 			# timer
 			$icon = $env:WT_SESSION ? "" : ""
 			return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
+		}
+	}
+}
+
+function Get-SolarTerms {
+	param (
+		[int]$Year
+	)
+
+	# Names of the 24 solar terms in Chinese
+	$solarTermNames = @(
+		"小寒", "大寒", "立春", "雨水", "惊蛰", "春分",
+		"清明", "谷雨", "立夏", "小满", "芒种", "夏至",
+		"小暑", "大暑", "立秋", "处暑", "白露", "秋分",
+		"寒露", "霜降", "立冬", "小雪", "大雪", "冬至"
+	)
+
+	# Constants for calculation
+	# a fractional value related to the Earth's orbit
+	$daysPerYear = 0.2422
+	# specific values for each solar term
+	$termCoefficients = @(
+		5.4055, 20.12, 3.87, 18.73, 5.63, 20.646,
+		4.81, 20.1, 5.52, 21.22, 5.678, 21.94,
+		7.108, 22.83, 7.5, 23.13, 7.646, 23.042,
+		8.318, 23.438, 7.438, 22.36, 7.18, 21.94
+	)
+
+	# Calculate leap year adjustment
+	$leapYearAdjustment = [math]::Floor($Year / 4) - 15
+
+	# Calculate and return solar terms
+	for ($termIndex = 0; $termIndex -lt 24; $termIndex++) {
+		$dayOfMonth = [math]::Floor($Year * $daysPerYear + $termCoefficients[$termIndex]) - $leapYearAdjustment
+		$month = [math]::Floor($termIndex / 2) + 1
+
+		# Adjust month if it exceeds 12
+		if ($month -gt 12) {
+			$month -= 12
+		}
+
+		# Create date object and adjust day
+		$termDate = Get-Date -Year $Year -Month $month -Day 1
+		$termDate = $termDate.AddDays($dayOfMonth - 1)
+
+		# Handle year crossover for first two terms
+		if ($termIndex -lt 2 -and $termDate.Month -eq 12) {
+			$termDate = $termDate.AddYears(1)
+		}
+
+		# Create and output custom object for each term
+		[PSCustomObject]@{
+			Term = $solarTermNames[$termIndex]
+			Date = $termDate.ToString("yyyy-MM-dd")
 		}
 	}
 }

@@ -94,6 +94,7 @@ function Install-App {
 
 	if (($children.count -ne 1 -and !$pickExes) -or $CreateFolder) {
 		$name = $newName ? $newName : $appName
+		gps $name -ErrorAction SilentlyContinue|spps
 		$toLocation = "$toLocation\${name}"
 		Write-Verbose "from location: $($children[0].Parent) to location: $toLocation"
 		$children | % {Move-Item $_ -Destination $toLocation -Force}

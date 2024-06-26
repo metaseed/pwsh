@@ -1,3 +1,4 @@
+# lf (list files)
 # https://medium.com/@a.hr.mostafavi/using-lf-file-manager-on-windows-fc4f1e4e1442
 # https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
 
@@ -5,7 +6,16 @@
 # https://github.dev/gokcehan/lf
 # https://github.com/gokcehan/lf
 
-# lf (list files)
+# reload config file using f5
+# :source M:/Script/Pwsh/Cmdlet/lf/config/lfrc
+map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
+
+# edit this file
+map <f-4> $code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
+
+###
+### configuration
+###
 
 # custom file preview
 unset COLORTERM
@@ -14,28 +24,53 @@ set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
 # interpreter for shell commands, on windows by default it is cmd
 # if use pwsh, it is slow, and has redraw problem
 # set shell pwsh -nologo -noninteractive -noprofile
-# reload config file using f5
-map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
-map H $code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
+
+# show icon beside the file name
 set icons
 # set drawbox
 # set filesep ";" #default is '/n'
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
+# []string: info of file or directory: size, time(modification time), ctime(creation time), atime(last access time)
 set info size:time
 # jump to the first match after each keystroke during searching.
+# after press 'enter', then 'n': next;'N':previous
 set incsearch
-# enable *?[][^] in search/back-search /?, n: next;N:previous
+
 # not work, test future version
+# enable *?[][^] in search(/) and back-search(?)
 # set globsearch
 # show hidden files
 set hidden
 
+
+##################################################################
+### commands
+##################################################################
+# change 'doc' command to use a different pager
+cmd doc $lf -doc | less
+
+##################################################################
+###	cmd map
+##################################################################
+
+map <c-d> scroll-down
+map <c-e> scroll-up
+
+## navagation:
+# up: <up> or <k>
+# down: <down> or <j>
+# right: <right> or <l>
+# left: <left> or <h>
+# home: <home> or <gg>
+# end: <end> or <G>
+# high: <H>
+# middle: <M>
+# low: <L>
+
 # comment out because it easily triggered by the cancel : input
 # map <esc> quit # the same as q
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
-# during search to open
-cmap <right> :cmd-enter; open
 
 ### file management
 # rename
@@ -68,6 +103,7 @@ cmd createfile %sh -c 'touch $0'
 cmd createdir %sh -c 'mkdir $0'
 map af push :createfile<space>
 map ad push :createdir<space>
+
 # selection
 # map u
 # unselect all
@@ -101,6 +137,7 @@ map D delete
 cmd trash $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
 #;reload
 map <delete> trash
+
 
 # map T push &wt<enter>
 
@@ -153,9 +190,7 @@ cmd extract-to-here push :extract-here<enter>
 map zuh extract-to-here
 map zur push :extract_and_remove<enter>
 
-# map H high
-# map M middle
-# map L low
+
 # quick preview
 # v: default is invert select
 # press v again to hide the preview window
@@ -175,7 +210,7 @@ map v &C:\app\QuickLook\QuickLook.exe %f%
 # cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
 cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
 # cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.bat
-map <c-d> push :dragonce<enter>
+# map <c-d> push :dragonce<enter> # c-d is used for scroll down
 
 # # use c-f to fuzzy search
 # cmd file-search push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
@@ -207,8 +242,7 @@ map i $bat %f%
 # change the shell used in default shell keybinding
 # map w $pwsh
 
-# change 'doc' command to use a different pager
-cmd doc $lf -doc | less
+
 
 # use enter for shell commands
 # map <enter> shell
@@ -220,8 +254,33 @@ cmd doc $lf -doc | less
 # map X !$f
 
 
-## command line commands
+##################################################################
+### command line map (cmap)
+##################################################################
+
 # c-p
 cmap <up> cmd-history-prev
-# c-n
+# a-f
 cmap <down> cmd-history-next
+# a-backspace
+# below not work
+# cmap <c-backspace> cmd-delete-word-back
+
+# a-d
+# below not work
+# camp <a-delete> cmd-delete-word
+# camp <c-delete> cmd-delete-word
+
+# enable use right arrow key to move cursor, otherwise it will open the file highlighted
+cmap <right> cmd-right
+
+# during search to open
+# use 'cmd-escape' to cancel the search
+cmap <a-right> :cmd-enter; open
+
+# <c-f>
+cmap <c-right> cmd-word
+# <c-b>
+cmap <c-left> cmd-word-back
+
+
