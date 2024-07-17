@@ -15,11 +15,10 @@ namespace Metaseed.TerminalBackground
             string appDir = Environment.GetEnvironmentVariable("LocalAppData");
             string Stable = @$"{appDir}\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json";
             string Preview = @$"{appDir}\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json";
-            string Unpackaged = @$"{appDir}\Microsoft\Windows Terminal\settings.json"; // Scoop, Chocolately, etc);
+            string Unpackaged = @$"{appDir}\Microsoft\Windows Terminal\settings.json"; // Scoop, Chocolately, etc;
             if (File.Exists(Stable))
             {
                 Path = Stable;
-
             }
             else if (File.Exists(Preview))
             {
@@ -34,12 +33,11 @@ namespace Metaseed.TerminalBackground
             {
                 throw new Exception("can not find installed terminal");
             }
-
         }
 
         public JsonObject GetSettings()
         {
-            using (var file = File.OpenRead(this.Path))
+            using (var file = File.OpenRead(Path))
             {
                 var settings = JsonNode.Parse(file).AsObject();
                 return settings;

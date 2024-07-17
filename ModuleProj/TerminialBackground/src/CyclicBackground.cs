@@ -11,12 +11,12 @@ namespace Metaseed.TerminalBackground
 {
     public class CyclicBackground
     {
-        private readonly JsonObject _wtSettings;
+        private JsonObject _wtSettings;
         private JsonObject _bgSettings;
         private int _duration;
         private readonly WtSetting _settings;
         Task CyclicTask;
-        private CancellationTokenSource cyclicTocken = new CancellationTokenSource();
+        private CancellationTokenSource cyclicToken = new CancellationTokenSource();
 
         public CyclicBackground()
         {
@@ -47,7 +47,7 @@ namespace Metaseed.TerminalBackground
                     {
                         try
                         {
-                            var run = Run(cyclicTocken.Token);
+                            var run = Run(cyclicToken.Token);
                             if (run.IsCanceled) break;
                             await run;
                             //Logger.Inst.Log("cyclically background changed");
@@ -57,14 +57,15 @@ namespace Metaseed.TerminalBackground
                             Logger.Inst.Log(e.ToString());
                         }
                     }
-                }, cyclicTocken.Token);
+                }, cyclicToken.Token);
             }
         }
 
         private async Task Run(CancellationToken token)
         {
             await Task.Delay(_duration * 1000, token);
-
+            // use the latest setting, that maybe modified by user at any time
+            _wtSettings = _settings.GetSettings();
             var wtProfile = findWtProfile("defaults");
             var bgProfile = _bgSettings["defaults"];
             ModifyProfile(bgProfile, wtProfile);
@@ -89,8 +90,8 @@ namespace Metaseed.TerminalBackground
                 Logger.Inst.Log("already stopped, no action this time");
                 return;
             }
-            cyclicTocken.Cancel();
-            cyclicTocken = new CancellationTokenSource();
+            cyclicToken.Cancel();
+            cyclicToken = new CancellationTokenSource();
             try
             {
                 await CyclicTask;
@@ -106,6 +107,7 @@ namespace Metaseed.TerminalBackground
         {
             try
             {
+                _wtSettings = _settings.GetSettings();
                 var wtProfile = findWtProfile(profile);
                 var bgProfile = findBgProfile(profile);
                 var bgBackground = JsonNode.Parse(jsonSettings);

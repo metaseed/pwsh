@@ -5,7 +5,7 @@ param (
   [string]
   $version = ''
 )
-  
+
 . $PSScriptRoot/_private/GetSettings.ps1
 if ($version -eq '') {
   $installs = GetSettings
@@ -29,6 +29,7 @@ if ($version -eq '') {
     $version = ($installs.GetEnumerator())[0].name
   }
 }
+
 $backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
 $location = $installs[$version]
 if (test-path $location) {
