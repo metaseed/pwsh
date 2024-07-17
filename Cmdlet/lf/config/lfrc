@@ -19,6 +19,7 @@ map <f-4> $code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
 
 # custom file preview
 unset COLORTERM
+# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.ps1"
 set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
 # set period 1
 # interpreter for shell commands, on windows by default it is cmd

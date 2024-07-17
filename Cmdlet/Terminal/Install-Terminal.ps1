@@ -70,7 +70,7 @@ Breakable-Pipeline {
     $wts = get-process -name "WindowsTerminal" -ErrorAction SilentlyContinue
     $install = @"
     & {
-      start-sleep -s 2
+      start-sleep -s 4
       Write-Step 'install windows terminal...'
       write-host `"Add-AppxPackage '$output'`"
       Import-Module Appx -UseWindowsPowerShell *>`$null

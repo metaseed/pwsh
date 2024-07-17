@@ -7,6 +7,17 @@
 
 @REM https://github.com/gokcehan/lf/issues/234
 @REM set COLORTERM=
-bat --color=always --theme=base16 %1
-
 @REM bat --color=always --theme=base16 $Args[0]
+
+set item=%1
+@REM IF not x%item:.md=%==x%item% (
+@REM 	glow %1 -s dark
+@REM ) ELSE IF not x%item:.7z=%==x%item% (
+@REM 	7z l %1 | bat
+@REM ) ELSE IF not x%item:.zip=%==x%item% (
+@REM 	unzip -l %1 | bat
+@REM ) ELSE IF not x%item:.rar=%==x%item% (
+@REM 	unrar l %1 | bat
+@REM ) ELSE (
+	bat --color=always --theme=base16 %1
+@REM )

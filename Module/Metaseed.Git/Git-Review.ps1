@@ -1,6 +1,8 @@
 <#
 This will fetch the remote branch and create a new local branch (if not exists already)
 with name ${branchName}-review and track the remote one in it.
+
+note: if want to continue contributing on the branch, we should not give a depth, i.e. when use --depth 1, we then do git pull, there will be a lot obj to merge.
 #>
 function Git-Review {
 	param (
@@ -38,3 +40,7 @@ function Git-Review {
 	code .
 	# call 'git stash apply --index' to recover after 'git checkout master'
 }
+
+# to clone a remote branch:
+# this will create a folder in current directory
+# git clone -b release/24.04 https://slb1-swt.visualstudio.com/Planck/_git/planck --depth 1

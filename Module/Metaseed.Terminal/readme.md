@@ -29,10 +29,10 @@ or a absolute image path on disk.
 
 or a file name in the folder configured at the environment variable `MS_WTBackground`:
 there could be sub folders inside the $env:MS_WTBackground.
-if the parameter is a folder a radom image inside the folder would be used.
-and you could provide a name inside the default folder: $env:MS_WTBackground\res\gifs
+if the parameter is a folder/sub-folder name, a radom image inside the folder would be used.
+and there is default images, inside the default folder: $env:MS_WTBackground\res\gifs
 ```
-Show-WtBackgroundImage success # would radom use a image in the folder success
+Show-WtBackgroundImage success # would radom use a image in the folder 'success'
 ```
 you could look at the folder structure in the $env:MS_WTBackground\res\gifs, to config your own $env: MS_WTBackground
 
