@@ -37,8 +37,8 @@ namespace Metaseed.TerminalBackground
 
       proc.Start();
     }
-    private readonly WtServer _server = new WtServer();
-    private WtBackgroundImage WtBackgroundImage = new WtBackgroundImage();
+    private readonly WtServer _server = new();
+    private WtBackgroundImage WtBackgroundImage = new();
     public Server()
     {
       _server.Start();

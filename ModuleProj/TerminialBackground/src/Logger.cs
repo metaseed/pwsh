@@ -7,7 +7,7 @@ namespace Metaseed.TerminalBackground
   {
     public static Logger Inst = new Logger(Path.Combine(Environment.GetEnvironmentVariable("temp"), "TerminalBackground_" + DateTime.Now.ToString("yyyy-MM-dd") + "_log.txt"));
     private string filePath;
-    private static object _lock = new object();
+    private static object _lock = new();
     public Logger(string path)
     {
       filePath = path;
@@ -23,7 +23,7 @@ namespace Metaseed.TerminalBackground
         var n = Environment.NewLine;
         string exc = "";
         if (exception != null) exc = n + exception.GetType() + ": " + exception.Message + n + exception.StackTrace + n;
-        File.AppendAllText(filePath, DateTime.Now.ToString() + " " + message + n + exc);
+        File.AppendAllText(filePath, DateTime.Now + " " + message + n + exc);
       }
     }
   }

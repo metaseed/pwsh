@@ -11,7 +11,6 @@ namespace Metaseed.TerminalBackground
 {
     public class CyclicBackground
     {
-        private JsonObject _wtSettings;
         private JsonObject _bgSettings;
         private int _duration;
         private readonly WtSetting _settings;
@@ -21,7 +20,6 @@ namespace Metaseed.TerminalBackground
         public CyclicBackground()
         {
             _settings = new WtSetting();
-            _wtSettings = _settings.GetSettings();
             var dirPath = Path.GetDirectoryName(typeof(CyclicBackground).Assembly.Location);
 
             _bgSettings = BgSetting.GetBackgroundSettings($"{dirPath}\\settings.json");
@@ -65,22 +63,22 @@ namespace Metaseed.TerminalBackground
         {
             await Task.Delay(_duration * 1000, token);
             // use the latest setting, that maybe modified by user at any time
-            _wtSettings = _settings.GetSettings();
-            var wtProfile = findWtProfile("defaults");
+            var wtSettings = _settings.GetSettings();
+            var wtProfile = findWtProfile("defaults", wtSettings);
             var bgProfile = _bgSettings["defaults"];
             ModifyProfile(bgProfile, wtProfile);
 
             var bgList = _bgSettings["list"]?.AsObject();
             foreach (var (key, bgListProfile) in bgList)
             {
-                var wtListProfile = findWtProfile(key);
+                var wtListProfile = findWtProfile(key, wtSettings);
                 if (wtListProfile != null)
                 {
                     ModifyProfile(bgListProfile, wtListProfile);
                 }
             }
 
-            _settings.SetSettings(_wtSettings);
+            _settings.SetSettings(wtSettings);
         }
 
         public async Task StopCyclic()
@@ -107,8 +105,8 @@ namespace Metaseed.TerminalBackground
         {
             try
             {
-                _wtSettings = _settings.GetSettings();
-                var wtProfile = findWtProfile(profile);
+                var wtSettings = _settings.GetSettings();
+                var wtProfile = findWtProfile(profile, wtSettings);
                 var bgProfile = findBgProfile(profile);
                 var bgBackground = JsonNode.Parse(jsonSettings);
                 bgProfile["_explicitSet"] = true;
@@ -122,7 +120,7 @@ namespace Metaseed.TerminalBackground
                     }
                 }
                 SetProfileValue(bgBackground, wtProfile);
-                _settings.SetSettings(_wtSettings);
+                _settings.SetSettings(wtSettings);
                 var delay = Task.Delay((int)Math.Floor(durationInSeconds * 1000));
                 await Task.WhenAny(delay, finish);
                 bgProfile["_explicitSet"] = false;
@@ -139,7 +137,7 @@ namespace Metaseed.TerminalBackground
                     SetProfileValue(valueToSet, wtProfile);
                 }
 
-                _settings.SetSettings(_wtSettings);
+                _settings.SetSettings(wtSettings);
             }
             catch (Exception e)
             {
@@ -147,19 +145,17 @@ namespace Metaseed.TerminalBackground
             }
         }
 
-        private JsonNode findWtProfile(string name)
+        private JsonNode findWtProfile(string name, JsonObject wtSettings)
         {
             if (name == "defaults")
             {
-                return _wtSettings["profiles"]?["defaults"];
+                return wtSettings["profiles"]?["defaults"];
             }
-            else
-            {
-                var wtList = _wtSettings["profiles"]?["list"]?.AsArray();
 
-                var wtListProfile = wtList?.FirstOrDefault(list => list["name"]?.GetValue<string>() == name);
-                return wtListProfile;
-            }
+            var wtList = wtSettings["profiles"]?["list"]?.AsArray();
+
+            var wtListProfile = wtList?.FirstOrDefault(list => list["name"]?.GetValue<string>() == name);
+            return wtListProfile;
         }
 
         private JsonNode findBgProfile(string name)
@@ -168,13 +164,11 @@ namespace Metaseed.TerminalBackground
             {
                 return _bgSettings["defaults"];
             }
-            else
-            {
-                var bgList = _bgSettings["list"]?.AsArray();
 
-                var bgListProfile = bgList?.FirstOrDefault(list => list["name"]?.GetValue<string>() == name);
-                return bgListProfile;
-            }
+            var bgList = _bgSettings["list"]?.AsArray();
+
+            var bgListProfile = bgList?.FirstOrDefault(list => list["name"]?.GetValue<string>() == name);
+            return bgListProfile;
         }
 
         private static void ModifyProfile(JsonNode bgProfile, JsonNode wtProfile)
