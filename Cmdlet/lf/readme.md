@@ -4,24 +4,35 @@
 ## tips
 glob: ? * [] [^]:  '*' matches any sequence, '?' matches any character, and '[...]' or '[^...] matches character sets or ranges.
 if a pattern starts with '!', then its matches are excluded from hidden files.
+
+* $env:f : file/folder at cursor
+* $env:fx : files/folders selected or file/folder at cursor if no selection
+
 ### commands
 right : open the item
 
 ### bookmarks
-m  : save a key as a mark for the current dir. ma
+> quickly navigate between dirs.
+
+m  : save a key as a mark for the current dir. `ma`
 '  : change dir to the key mark. 'a
 "  : remove the mark "a
 ### navigation
-cd : change working directory, i.e. cd: 'c:\temp'. note: the path need to be a single quoted string
+cd : change working directory, i.e. `:cd 'c:\temp'`. note: the path need to be a single quoted string
 gh: go to home directory
-f: first char in the directory, ;: next; ,: previous
-/: searching; n:next; N: previous
+f: find char in file names, ;: next; ,: previous
+/: searching; n:next; N: previous i.e. `/tex<enter>` find 'tex' in file names
 ?: search back
 c-u : half-page up
-c-d : half-page down
+c-n : half-page down
+c-e : scroll up
+c-d : scroll down
+H: high
 M: middle
+L: low
 
 ### file management
+y: copy
 rr or rn: rename
 d : cut
 c : clear selection or cutting
@@ -34,7 +45,6 @@ si: invert all selection
 D : delete permanently
 af : add new file
 ad : add new directory
-
 
 ### Display
 c-l : redraw (refresh)
@@ -54,3 +64,8 @@ zs: show size info
 zn: no info
 zh: toggle hidden
 zr: reverse current sorting
+
+shell          (modal)   (default '$')
+shell-pipe     (modal)   (default '%')
+shell-wait     (modal)   (default '!')
+shell-async    (modal)   (default '&')

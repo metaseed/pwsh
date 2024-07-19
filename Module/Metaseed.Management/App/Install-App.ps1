@@ -80,6 +80,12 @@ function Install-App {
 		}
 		tar -xf $downloadedFilePath -C "$env:temp\temp"
 	}
+	elseif ($downloadedFilePath -match '\.tar\.xz') {
+		if (!(test-path $env:temp\temp)) {
+			$null = ni $env:temp\temp -ItemType Directory
+		}
+		tar -xf $downloadedFilePath -C "$env:temp\temp"
+	}
 	else {
 		write-error "$downloadedFilePath is not a know copressed archive!"
 		break

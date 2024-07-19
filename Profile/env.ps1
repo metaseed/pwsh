@@ -30,6 +30,9 @@ if ($env:ms_pwshPathPatched -ne 'true') {
     $CmdLetFolder = $(Resolve-Path $PSScriptRoot\..\Cmdlet)
     $env:path = "$CmdLetFolder;$env:path"
 
+    ## add important app path
+    $env:path += ";C:\App\7-Zip"
+
     # -exclude only explude the leaf name start with '_'
     # -Name will return the dir path after $CmdLetFolder, then we do filter to remove the name contains '\_', '\test', '\s\'
     # note: we only add paths to temp env:path here, not to saved path env of user or machine, so these paths only used by pwsh

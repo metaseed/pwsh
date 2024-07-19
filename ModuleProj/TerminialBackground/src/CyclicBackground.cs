@@ -15,7 +15,7 @@ namespace Metaseed.TerminalBackground
         private int _duration;
         private readonly WtSetting _settings;
         Task CyclicTask;
-        private CancellationTokenSource cyclicToken = new CancellationTokenSource();
+        private CancellationTokenSource cyclicToken = new();
 
         public CyclicBackground()
         {
@@ -25,7 +25,7 @@ namespace Metaseed.TerminalBackground
             _bgSettings = BgSetting.GetBackgroundSettings($"{dirPath}\\settings.json");
         }
 
-        object _startCyclicLock = new object();
+        readonly object _startCyclicLock = new();
 
         public void StartCyclic(string settingsPath)
         {
