@@ -7,6 +7,7 @@ if a pattern starts with '!', then its matches are excluded from hidden files.
 
 * $env:f : file/folder at cursor
 * $env:fx : files/folders selected or file/folder at cursor if no selection
+> note: $f is current hightlighed file, $fs is selected files, $fx is $fs if select many else it is $f
 
 ### commands
 right : open the item

@@ -3,7 +3,7 @@ import sys
 import subprocess
 
 if __name__ == '__main__':
-    output = subprocess.run(['D:\\lf_scripts\\findfzf.bat'], capture_output=True)
+    output = subprocess.run(['M:\\Script\\pwsh\\Cmdlet\\lf\\config\\scripts\\findfzf.bat'], capture_output=True)
     selected = output.stdout.decode('utf8').split('\n')[-2]
 
     command = 'cd'

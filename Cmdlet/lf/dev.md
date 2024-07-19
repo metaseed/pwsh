@@ -9,6 +9,6 @@ Restore-LfConfig.ps1;spps -n lf; a lf
 ## ways to create commands
 * the default shell for windows is cmd, so we can use all cmd commands
 * we can use pwsh to write script file
-* we can use the 'sh' (C:\msys64\usr\bin\sh.exe) to excute cmd
+* we can use the 'sh' (C:\msys64\usr\bin\sh.exe) to excute cmd, i.e. `%sh -c '7z a $0 %fx%'` and `%sh -c 'c:/app/7-zip/7z  x %f% -o$0'`
 
 

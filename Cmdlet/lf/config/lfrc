@@ -120,11 +120,12 @@ map sgu push :glob-unselect<space>
 # <space> toggle
 
 ## copy
+# note: c is mapped to clear by default
+
 # unmap y, it's yark by default
 map y
 map yy copy %fx%
 # map Y %$env:fx | scb
-# copy file path; note: c is mapped to clear by default
 
 # below code can only copy one file, maybe cause by the '`n' seperator
 # cmd copy-current-path %echo %fx% | clip
@@ -132,23 +133,23 @@ map yy copy %fx%
 
 cmd copy-paths &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-paths.ps1
 map yp copy-paths
+
 # copy work directory
 cmd copy-dir-path %echo %PWD%| clip
 map yd copy-dir-path
 
-# copy current file names
+# copy file names
 cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-names.ps1
 map yn copy-names
 
-# delete
-# note: $f is current hightlighed file, $fs is selected files, $fx is $fs if select many else it is $f
+## delete
+
 # todo:trash not work
 # cmd trash &Remove-ItemSafely env:fx env:1
 # delete command is permanent deletion
 map D delete
 cmd trash-selected &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
 map <delete> trash-selected
-
 
 # map T push &wt<enter>
 
@@ -170,27 +171,34 @@ cmd vsCode &code %f%
 map oc vsCode
 # open explorer in current directory
 # cmd file-Explorer push &start.<enter>
-cmd file-Explorer &explorer /n, /select, %fx%
-map oe file-Explorer
+cmd fileExplorer &explorer /n, /select, %fx%
+map oe fileExplor
+# map S push &start.<enter>
+
 #default is e
 cmd Notepad &Notepad %f%
 map on Notepad
+
 cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/openWith.ps1
 map ow open-With...
+
 # vim is there when we installed git
 cmd Vim $vim %f%
 map ov Vim
+
 # map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/properity.ps1
 map op &GDProps.exe %fx%
+
 # less is there when we installed git
 # map i $less $Env:f
 
 # archive management
-cmd zip-to %sh -c 'c:/app/7-zip/7z a $0 %fx%'
-cmd extract-to %sh -c 'c:/app/7-zip/7z  x %f% -o$0'
-cmd extract-here %c:/app/7-zip/7z x %f%
-cmd extract_auto %sh -c 'c:/app/7-zip/7z x %f% -o%f%'
-cmd extract_and_remove %sh -c 'c:/app/7-zip/7z x %f% -o%f%_ && rm %f%'
+# here we use sh to parse in the argument $0
+cmd zip-to %sh -c '7z a $0 %fx%'
+cmd extract-to %sh -c '7z  x %f% -o$0'
+cmd extract-here %7z x %f%
+cmd extract_auto %7z x %f% -o%f%
+cmd extract_and_remove %sh -c '7z x %f% -o%f%_ && rm %f%'
 
 cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
@@ -218,14 +226,14 @@ map v &C:\app\QuickLook\QuickLook.exe %f%
 # # map gF push :setfilter<enter>
 
 # # # drag and drop
-# cmd drag push &python<space>%%/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
+cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
+cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>once<space>%fx%<enter>
 # cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.bat
-# map <c-d> push :dragonce<enter> # c-d is used for scroll down
+map <c-t> push :dragonce<enter> # c-d is used for scroll down
 
 # # use c-f to fuzzy search
-# cmd file-search push $python<space>D:/lf_scripts/fzfpy.py<space>%id%<enter>
-# map <c-f> :file-search
+cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/fzfpy.py<space>%id%<enter>
+map <c-f> :file-search
 
 # # cmd send_to_mobile %sh -c 'scp -P 2222 hex@192.168.1.151: %fx%'
 # cmd send_to_mobile push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.151:<enter>
@@ -248,7 +256,8 @@ cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<
 # pager. You may instead install a pager of your choice and replace the default
 # pager keybinding accordingly.
 # use bat as a pager
-map i $bat %f%
+# ! to wait after the command executed, and press any key to return to lf
+map i !bat %f%
 
 # change the shell used in default shell keybinding
 # map w $pwsh
