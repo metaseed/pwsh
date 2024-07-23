@@ -87,7 +87,12 @@ function Show-RecycleBinSize {
     Param()
     $shell = New-Object -com shell.application
     $rb = $shell.Namespace(10)
-    $bin = $rb.items() | ParseItem
+	$items = $rb.items();
+	if($items.Count -eq 0) {
+		write-host "no item in recycle bin!"
+		return
+	}
+    $bin = $items | ParseItem
 
     $o = $bin | Measure-Object -Property size -sum | Select-Object Count, Sum
     Write-Host "Tocal Count: $($o.Count) TotalSize: $([math]::Round($o.Sum/1GB, 3))G"
