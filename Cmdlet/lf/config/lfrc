@@ -141,16 +141,22 @@ map yd copy-dir-path
 # copy file names
 cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-names.ps1
 map yn copy-names
-
+# cut
+map x cut
 ## delete
 
-# todo:trash not work
-# cmd trash &Remove-ItemSafely env:fx env:1
+
 # delete command is permanent deletion
 map D delete
+
+## trash
+# cmd trash &Remove-ItemSafely env:fx env:1
 cmd trash-selected &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
 map <delete> trash-selected
 
+cmd trash-undo &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trashUndo.ps1
+map d # remove d map, by defaut its the 'cut' cmd
+map du trash-undo
 # map T push &wt<enter>
 
 ## open
@@ -172,7 +178,7 @@ map oc vsCode
 # open explorer in current directory
 # cmd file-Explorer push &start.<enter>
 cmd fileExplorer &explorer /n, /select, %fx%
-map oe fileExplor
+map oe fileExplorer
 # map S push &start.<enter>
 
 #default is e
