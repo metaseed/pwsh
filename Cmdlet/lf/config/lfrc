@@ -18,7 +18,7 @@ map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
 ###
 
 # custom file preview
-unset COLORTERM
+# unset COLORTERM
 # set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.ps1"
 # set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
 set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.cmd"
@@ -39,7 +39,7 @@ set info size:time
 # jump to the first match after each keystroke during searching.
 # after press 'enter', then 'n': next;'N':previous
 set incsearch
-
+set incfilter
 # not work, test future version
 # enable *?[][^] in search(/) and back-search(?)
 # set globsearch
@@ -90,6 +90,7 @@ map rr push :rename<space>
 cmd rename-with-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
 # a little slower
 map rn rename-with-name
+map <f-2> rename-with-name
 
 # create files and directories
 # note $env:0 not work
@@ -119,12 +120,17 @@ map sgg push :glob-select<space>
 map sgu push :glob-unselect<space>
 # <space> toggle
 
+###
+### File Management
+###
+
 ## copy
 # note: c is mapped to clear by default
 
 # unmap y, it's yark by default
 map y
 map yy copy %fx%
+map <c-c> copy %fx%
 # map Y %$env:fx | scb
 
 # below code can only copy one file, maybe cause by the '`n' seperator
@@ -141,10 +147,14 @@ map yd copy-dir-path
 # copy file names
 cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-names.ps1
 map yn copy-names
-# cut
-map x cut
-## delete
 
+## cut
+map <c-x> cut
+## delete
+# map da %pwsh -c 'echo "ddddddddd"'
+## paste
+# default is p
+map <c-v> paste
 
 # delete command is permanent deletion
 map D delete
@@ -241,6 +251,9 @@ map <c-t> push :dragonce<enter> # c-d is used for scroll down
 cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/fzfpy.py<space>%id%<enter>
 map <c-f> :file-search
 
+# only show (filter) the relevant files/folders
+map <c-s> push :filter<enter>
+
 # # cmd send_to_mobile %sh -c 'scp -P 2222 hex@192.168.1.151: %fx%'
 # cmd send_to_mobile push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.151:<enter>
 # cmd send_to_tablet push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.150:<enter>
@@ -263,12 +276,13 @@ map <c-f> :file-search
 # pager keybinding accordingly.
 # use bat as a pager
 # ! to wait after the command executed, and press any key to return to lf
+# by defaut it's `map i !%PAGER% %f%`
 map i !bat %f%
 
 # change the shell used in default shell keybinding
-# map w $pwsh
-
-
+# default: map w $%SHELL%
+# type exit<enter> to return to lf
+map w $pwsh
 
 # use enter for shell commands
 # map <enter> shell

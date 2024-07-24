@@ -58,9 +58,11 @@ function Get-RecycledItem {
         $SelectedItems = @() + $recycleBin.Items()
 
         foreach ($item in $SelectedItems) {
-            $deleteDate = $recycleBin.GetDetailsOf($item, 2)  # 2 is the index for Date Deleted
+            # $deleteDate = $recycleBin.GetDetailsOf($item, 2)  # 2 is the index for Date Deleted
+            # $deleteDate = Parse-RecycleBinDate $deleteDate
+            $deleteDate = $item.ExtendedProperty("System.Recycle.DateDeleted")
             # Add-Member -InputObject $item -NotePropertyName DeleteDate -NotePropertyValue $deleteDate
-            Add-Member -InputObject $item -NotePropertyName DeleteDate -NotePropertyValue (Parse-RecycleBinDate $deleteDate)
+            Add-Member -InputObject $item -NotePropertyName DeleteDate -NotePropertyValue $deleteDate
             $originalLocation = $recycleBin.GetDetailsOf($item, 1)
             Add-Member -InputObject $item -NotePropertyName OriginalLocation -NotePropertyValue  $originalLocation
             Add-Member -InputObject $item -NotePropertyName OriginalPath -NotePropertyValue (Join-Path $originalLocation $item.Name)

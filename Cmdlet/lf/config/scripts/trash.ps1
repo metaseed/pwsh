@@ -1,4 +1,3 @@
-write-host "trash to recycle bin:`n$env:fx"
 $items = $env:fx -split "`n"
 #  $f is current selected file, $fs is selected files, $fx is $fs if select many else it is $f
 $items | % {
@@ -10,3 +9,4 @@ $items | % {
   $shellItem.InvokeVerb("delete")
   # $shellItem.InvokeVerb("delete", "shift") # to permanently delete
 }
+Write-Output "trash to recycle bin:`n$env:fx"

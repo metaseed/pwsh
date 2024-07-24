@@ -41,8 +41,22 @@ function trashUndo {
         }
 
         foreach ($item in $items) {
-            $deleteDate = $recycleBin.GetDetailsOf($item, 2)  # 2 is the index for Date Deleted
-            Add-Member -InputObject $item -NotePropertyName DeleteDate -NotePropertyValue (parseDate $deleteDate)
+            $deleteDateStr = $recycleBin.GetDetailsOf($item, 2)  # 2 is the index for Date Deleted
+            $deleteDate = (parseDate $deleteDateStr)
+            # the obove line the the delete time that does not contains seconds info.
+            # below lines the time is wrong:  1/1/1601 1:00:00 AM, actually:  7/24/2024 3:11:00 PM
+            # $fileInfo = Get-ChildItem $item.Path
+            # $infoFileName =  $fileInfo.Name -replace '^\$R', '$$I'
+            # $infoFilePath = join-path $fileInfo.DirectoryName $infoFileName
+            # $fileContent = [System.IO.File]::ReadAllBytes($infoFilePath)
+            # $deleteDate = [DateTime]::FromFileTime([BitConverter]::ToInt64($fileContent, 8))
+
+            # we can use .ExtendedProperty("System.Recycle.DateDeleted")
+            $deleteDate = $item.ExtendedProperty("System.Recycle.DateDeleted")
+
+            # $originalPath = [System.Text.Encoding]::Unicode.GetString($fileContent, 24, $fileContent.Length - 24).TrimEnd("`0")
+
+            Add-Member -InputObject $item -NotePropertyName DeleteDate -NotePropertyValue $deleteDate
             $originalLocation = $recycleBin.GetDetailsOf($item, 1)
             Add-Member -InputObject $item -NotePropertyName OriginalLocation -NotePropertyValue  $originalLocation
             Add-Member -InputObject $item -NotePropertyName OriginalPath -NotePropertyValue (Join-Path $originalLocation $item.Name)
@@ -60,6 +74,7 @@ function trashUndo {
         # Find the most recently deleted item
         $lastDeletedTime = ($items | Sort-Object DeleteDate -Descending | Select-Object -First 1).DeleteDate
         $validItems | Where-Object { $_.DeleteDate -eq $lastDeletedTime }
+
         $lastDeletedItems = $items | Where-Object { $_.DeleteDate -eq $lastDeletedTime }
 
         # Display info about the item to be restored
@@ -68,11 +83,10 @@ function trashUndo {
         $lastDeletedItems | % {
             Move-Item $_.Path $_.OriginalPath
         }
-        Show-MessageBox "Item restored successfully."
+        Write-Host "Item restored successfully."
     }
     catch {
         Show-MessageBox "An error occurred: $_"
-
         throw
     }
     finally {

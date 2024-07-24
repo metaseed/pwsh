@@ -19,18 +19,25 @@ m  : save a key as a mark for the current dir. `ma`
 '  : change dir to the key mark. 'a
 "  : remove the mark "a
 ### navigation
-cd : change working directory, i.e. `:cd 'c:\temp'`. note: the path need to be a single quoted string
+:cd : change working directory, i.e. `:cd 'c:\temp'`. note: the path need to be a single quoted string
 gh: go to home directory
 f: find char in file names, ;: next; ,: previous
 /: searching; n:next; N: previous i.e. `/tex<enter>` find 'tex' in file names
 ?: search back
+
 c-u : half-page up
 c-n : half-page down
+pageUp: one page up
+pageDown: one page down
 c-e : scroll up
 c-d : scroll down
 H: high
 M: middle
 L: low
+]: jump-next of the folder history
+[: jump-prev of the folder history
+<ctrl-f>: to do fuzzy search and then navigate to it
+<ctrl-p>: only show relevant files/folders (to filter out files/folders irrelevant).
 
 ### file management
 y: copy
@@ -49,7 +56,7 @@ ad : add new directory
 
 ### Display
 c-l : redraw (refresh)
-c-r : flush cache and reload modified files and directories
+c-r : flush cache and reload modified files and directories, script updated.
 
 ctime: changing time: ownership, permissions
 mtime: modification time. content
