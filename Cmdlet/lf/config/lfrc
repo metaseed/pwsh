@@ -57,40 +57,85 @@ cmd doc $lf -doc | less
 ###	cmd map
 ##################################################################
 
-map <c-d> scroll-down
-map <c-e> scroll-up
-# half-up                  (default '<c-u>')
+###
+### navigation:
+###
+
+## main panel navigation #########
+
+# <up> or <k>: focus to above item
+# <down> or <j>: focus to below item
+# <left> or <h>: goto parent folder
+# <right> or <l>: `open` the item
+
+# <home> or <gg>: focus item at begin
+# end> or <G>: focua item at end
+
+## move focus within screen view
+# <H>: focus the item at high top of screen.
+# <M>: focus the item in middle of the screen.
+# <L>: focus the tiem in the low bottom of the screen.
+
+
+# pageUp: one page up
+# pageDown: one page down
+# <c-u> half-up # default
 map <c-n> half-down
 
-## navagation:
-# up: <up> or <k>
-# down: <down> or <j>
-# right: <right> or <l>
-# left: <left> or <h>
-# home: <home> or <gg>
-# end: <end> or <G>
-# high: <H>
-# middle: <M>
-# low: <L>
+## scroll, we can also use mouse wheel
+map <c-e> scroll-up
+map <c-d> scroll-down
 
-# comment out because it easily triggered by the cancel : input
-# map <esc> quit # the same as q
-# cmd on-quit &{{cd %fx%;echo 'dddd'}}
+## jump ###############
 
+# :cd : change working directory, i.e. `:cd 'c:\temp'`. note: the path need to be a single quoted string
+# gh: go to home directory
+# ]: jump-next of the folder history
+# [: jump-prev of the folder history
+
+## jump with marks(quickly navigate between dirs)
+# m  : save a key as a mark for the current dir. `ma`
+# '  : change dir to the key mark. 'a
+# "  : remove the mark "a
+
+
+## find/search/filter
+
+# f: find char in file names, ;: next; ,: previous
+# /: searching; n:next; N: previous i.e. `/tex<enter>` find 'tex' in file names
+# ?: search back
+
+# fuzzy search and then navigate to it
+cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/fzfpy.py<space>%id%<enter>
+map <c-f> :file-search
+
+## filter out irrelevant files/folders and only show the relevant files/folders
+map <c-s> push :filter<enter>
+# map F push :filter<enter>
+# map gF push :setfilter<enter>
+
+###
 ### file management
-# rename
+###
+
+## rename #######
+
 # todo: need to auto redraw
 cmd rename %sh -c 'mv -i %f% $0'
 # cmd rename %mv -i $f $1
 map r
+
 # faster
 map rr push :rename<space>
 # map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
 # https://github.com/gokcehan/lf/issues/329
 cmd rename-with-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
+
 # a little slower
 map rn rename-with-name
 map <f-2> rename-with-name
+
+## new file/folder #######
 
 # create files and directories
 # note $env:0 not work
@@ -107,26 +152,25 @@ map <f-2> rename-with-name
 # map A push :createdir<enter>
 cmd createfile %sh -c 'touch $0'
 cmd createdir %sh -c 'mkdir $0'
+
 map af push :createfile<space>
 map ad push :createdir<space>
 
-# selection
+## selection ##########
+
 # map u
 # unselect all
 map su unselect
 # map i
+# invert selection
 map si invert
 map sgg push :glob-select<space>
 map sgu push :glob-unselect<space>
-# <space> toggle
+# <space> toggle selection
 
-###
-### File Management
-###
+## copy ################
 
-## copy
 # note: c is mapped to clear by default
-
 # unmap y, it's yark by default
 map y
 map yy copy %fx%
@@ -148,15 +192,26 @@ map yd copy-dir-path
 cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-names.ps1
 map yn copy-names
 
-## cut
-map <c-x> cut
-## delete
-# map da %pwsh -c 'echo "ddddddddd"'
-## paste
-# default is p
-map <c-v> paste
+## cut ################
 
-# delete command is permanent deletion
+# cut default is 'd'
+map <c-x> cut
+
+# c: Clear file paths in copy/cut buffer: C:\Users\jsong12\AppData\Local\lf\files, remove the visual block on UI
+
+## delete #################
+
+# map da %pwsh -c 'echo "ddddddddd"'
+
+## paste #################
+
+map V paste
+# default is p
+# note: <c-v> is not working in terminal
+# In terminal applications, Ctrl+V is often interpreted as the ASCII control character 'SYN' (synchronous idle) or '^V'.
+# Most terminals use Shift+Insert or right-click for pasting. Some terminal emulators allow you to configure Ctrl+Shift+V for pasting.
+
+# permanent deletion
 map D delete
 
 ## trash
@@ -169,31 +224,30 @@ map d # remove d map, by defaut its the 'cut' cmd
 map du trash-undo
 # map T push &wt<enter>
 
-## open
+## open ##################
+
 # define a custom 'open' command
 # This command is called when current file is not a directory.
 # change the default open command to work in powerShell
 # cmd open &start $Env:f
 
-# change the editor used in default editor keybinding
-# There is no builtin terminal editor installed in Windows. The default editor
-# mapping uses 'notepad' which launches in a separate GUI window. You may
-# instead install a terminal editor of your choice and replace the default
-# editor keybinding accordingly.
-
 # note: the right arrow triggers default open
+
+## editor and open
+#default is e is edit with notepad on windows
 # open file in code
 cmd vsCode &code %f%
+map e vsCode
 map oc vsCode
+
+cmd Notepad &Notepad %f%
+map on Notepad
+
 # open explorer in current directory
 # cmd file-Explorer push &start.<enter>
 cmd fileExplorer &explorer /n, /select, %fx%
 map oe fileExplorer
 # map S push &start.<enter>
-
-#default is e
-cmd Notepad &Notepad %f%
-map on Notepad
 
 cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/openWith.ps1
 map ow open-With...
@@ -208,7 +262,8 @@ map op &GDProps.exe %fx%
 # less is there when we installed git
 # map i $less $Env:f
 
-# archive management
+## archive management #############
+
 # here we use sh to parse in the argument $0
 cmd zip-to %sh -c '7z a $0 %fx%'
 cmd extract-to %sh -c '7z  x %f% -o$0'
@@ -226,11 +281,42 @@ map zuh extract-to-here
 map zur push :extract_and_remove<enter>
 
 
-# quick preview
+## drag and drop ##################
+
+cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
+cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>once<space>%fx%<enter>
+# cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.bat
+map <c-t> push :dragonce<enter> # c-d is used for scroll down
+
+###
+### Display
+###
+
+# c-l : redraw (refresh)
+# c-r : flush cache and reload modified files and directories, script updated.
+
+# ctime: changing time: content and metadata: ownership, permissions
+# mtime: modification time. content
+# atime: access time. the file is read: opened, viewed, or executed
+
+# sa: sort by access time
+# st: sort by modification time
+# sc: sort by changing time
+
+# za: show all info: size and time
+# zt: show time info
+# zs: show size info
+# zn: no info
+# zh: toggle hidden
+# zr: reverse current sorting
+
+###
+### preview
+###
+
 # v: default is invert select
 # press v again to hide the preview window
 map v &C:\app\QuickLook\QuickLook.exe %f%
-
 
 # # must have at least a file in it
 # cmd bookmark %sh -c 'python D:/lf_scripts/bookmark.py %f% $0'
@@ -238,21 +324,6 @@ map v &C:\app\QuickLook\QuickLook.exe %f%
 # map B push :bookmark<space>
 # map b push :goto_bookmark<enter>
 
-# # map F push :filter<enter>
-# # map gF push :setfilter<enter>
-
-# # # drag and drop
-cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>once<space>%fx%<enter>
-# cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.bat
-map <c-t> push :dragonce<enter> # c-d is used for scroll down
-
-# # use c-f to fuzzy search
-cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/fzfpy.py<space>%id%<enter>
-map <c-f> :file-search
-
-# only show (filter) the relevant files/folders
-map <c-s> push :filter<enter>
 
 # # cmd send_to_mobile %sh -c 'scp -P 2222 hex@192.168.1.151: %fx%'
 # cmd send_to_mobile push $scp<space>-P<space>2222<space>%fx%<space>hex@192.168.1.151:<enter>
@@ -284,14 +355,15 @@ map i !bat %f%
 # type exit<enter> to return to lf
 map w $pwsh
 
-# use enter for shell commands
-# map <enter> shell
-
 ## execute current file (must be executable)
 # # execute with shell
 # map x $$f
 # # execute with shell_wait
 # map X !$f
+
+# comment out because it easily triggered by the input-cancel when when in command mode
+# map <esc> quit # the same as q
+# cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
 
 ##################################################################

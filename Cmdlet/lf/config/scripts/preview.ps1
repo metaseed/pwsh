@@ -97,10 +97,16 @@ function Format-Text {
 # then the preview cache for the given file is disabled. This means that if the file is selected in the future,
 # the previewer is called once again. Preview filtering is disabled and files are displayed as they are when the value of this option is left empty.
 
+# $args[0] is the full path of preview.cmd file
 $file_path = $args[1]
-$previewer_width = $args[2]
-$previewer_height = $args[3]
+$previewer_width = $args[2] # columns, i.e. 106
+$previewer_height = $args[3] # rows, i.e. 29
+# $args[4] horizontal posion i.e. 103 from left
+# $args[5] vertical posion i.e. 1, note: the 0 line is empty
+# Show-MessageBox ($args -join "&")
+
 $mimeType = Get-MimeType $file_path
+
 try {
 	$fileInfo = Get-Item -LiteralPath $file_path
 	$size = $fileInfo.Length
