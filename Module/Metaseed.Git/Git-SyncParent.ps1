@@ -15,17 +15,23 @@ function Git-SyncParent {
     Write-Step 'sync with remote'
     $hasRemote = Git-HasRemoteBranch
     if ($hasRemote) {
-      # the --autostash option just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
+      # the --autostash option of pull just do git stash apply, so the staged and changed would merge into changes(no staged anymore)
       # so we do saftyGuard first
+
       Write-Execute 'git pull --rebase'
     }
 
     $branch = git branch --show-current
     $parent = git-parent
+    $choiceIndex = $Host.UI.PromptForChoice('Confirm th parent branch to sync from', "parent branch of current branch is: $parent, use it?", @('&Yes', '&No'), 0)
+    if ($choiceIndex -eq 1) {
+      $parent = Read-Host "Please enter the parent branch name to sync from."
+    }
+
     Confirm-Continue "parent branch of current branch is: $parent"
 
     $owner = $branch.split('/')[0]
-    if (!$owner -and !$parent.Contains($owner) -and "$parent" -ne 'master') {
+    if (!$owner -and !$parent.Contains($owner) -or "$parent" -ne 'master') {
       Confirm-Continue "parent branch of current branch is not master or from you($owner)"
     }
 
@@ -64,7 +70,7 @@ function Git-SyncParent {
         }
       }
       else {
-        ##
+        ## master
         # strategy or with option prefer
         # if ours: we bump version and then conflict found online, then merge master with 'ours', the version in master is not used.
         # if theirs: I modified a file, and other developer submited the change of same location to master, after async, ours is overrided.
@@ -85,14 +91,13 @@ function Git-SyncParent {
       }
     }
 
-    Write-Step 'push synced changes to remote...'
     # strange although we have pulled   at start, if not pull again: Error:
     #  Updates were rejected because the tip of your current branch is behind
     if ($hasRemote) {
       Write-Execute 'git pull'
     }
 
-    git-push
+    Write-Notice "don't forget to push synced changes to remote..."
   }
   catch {
     Write-Error 'Git-RebaseMaster execution error.'
