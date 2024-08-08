@@ -2,7 +2,7 @@
 .Synopsis
 keep max cout stash and remove all the old ones
 #>
-function Git-StashClear {
+function Git-StashClean {
   [CmdletBinding()]
   param(
     [int]
@@ -13,7 +13,7 @@ function Git-StashClear {
   $count = $list.count
 
   if($count -le $maxToKeep) {
-    write-host "we only have $count in stash, nothing changed!"
+    Write-Information "we only have $count in stash, nothing changed!"
     return
   }
 

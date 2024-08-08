@@ -23,12 +23,13 @@ function Git-SyncParent {
 
     $branch = git branch --show-current
     $parent = git-parent
-    $choiceIndex = $Host.UI.PromptForChoice('Confirm th parent branch to sync from', "parent branch of current branch is: $parent, use it?", @('&Yes', '&No'), 0)
+    $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of current branch($branch) is: $parent, use it?", @('&Yes', '&No'), 0)
     if ($choiceIndex -eq 1) {
       $parent = Read-Host "Please enter the parent branch name to sync from."
+      Confirm-Continue "parent branch of current branch is: $parent"
     }
 
-    Confirm-Continue "parent branch of current branch is: $parent"
+
 
     $owner = $branch.split('/')[0]
     if (!$owner -and !$parent.Contains($owner) -or "$parent" -ne 'master') {
@@ -58,7 +59,7 @@ function Git-SyncParent {
       Write-Execute "git checkout $branch"
       ## merge parent branch
       if ($parent -ne 'master') {
-        $decision = $Host.UI.PromptForChoice('Question', "do you want to merge $parent into $branch?", @('&Yes', '&No'), 1)
+        $decision = $Host.UI.PromptForChoice('Question', "do you want to merge $parent into ${branch}?", @('&Yes', '&No'), 0)
         if ($decision -eq 0) {
           # parent: change do file commit, branch child, revert change, merge into parent
           # then child: merge parent
@@ -89,6 +90,10 @@ function Git-SyncParent {
           }
         }
       }
+
+      Confirm-Continue "do you want to push the merge?"
+      Write-Execute "git push"
+
     }
 
     # strange although we have pulled   at start, if not pull again: Error:

@@ -1,5 +1,6 @@
 # https://stackoverflow.com/questions/3161204/how-to-find-the-nearest-parent-of-a-git-branch/26597219#answer-17843908
-function Git-Parent {
+
+function Git-ParentCommit {
   [CmdletBinding()]
   param(
     $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
@@ -9,10 +10,11 @@ function Git-Parent {
   # -a --all: show remote and local branches
   # --topo-order: show in topological order vs chronological order
   git show-branch -a --current --topo-order --no-color |
+  # ancestors should have same commits as the current branch, the * indicates this commit is on the current branch.
   # contains *: Ancestors of the current commit are indicated by a star. Filter out everything else
   # there may be '+' or '-' with the '*'
   # '^[^\[]*\*': just find * before first [, the * in  comment message is not include
-  Select-String '^[^\[]*\*' |
+  Select-String '^[^\[]*\*' | # the string which has a star before [
   # Ignore all the commits(contain the current branch name) in the current branch.
   # note: .*? none gredy match any to the first ]
   Select-String -NotMatch -Pattern "\[$([Regex]::Escape($CurrentBranchName)).*?\]" |
@@ -20,13 +22,23 @@ function Git-Parent {
   Select-Object -First 1 |
   # just the part of the line between [], it's branch name
   # .+?\[ none gredy more than one char to [
-  Foreach-Object { $_ -replace '^.+?\[(.+)\].+$', '$1' }|
+  Foreach-Object { $_ -replace '^.+?\[(.+)\].+$', '$1' }
+}
+function Git-Parent {
+  [CmdletBinding()]
+  param(
+    $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
+  )
+  Git-ParentCommit $CurrentBranchName |
+
   # Sometimes the branch name will include a ~# or ^# to indicate how many commits are between the referenced commit and the branch tip. We don't care. Ignore them.
   # and with any relative refs (^, ~n) removed
   Foreach-Object { $_ -replace '[\^~][0-9]*', '' }
 }
-sl C:\repos\SLB\_planck\planck\
-git-parent
+
+# sl C:\repos\SLB\_planck\planck\
+# git-parent
+
 <#
 .SYNOPSIS
     Find the "parent" branch of the current branch.
@@ -145,3 +157,5 @@ function Git-Parent_notused_complex_to_read {
   }
   return $foundBranch
 }
+
+Export-ModuleMember -Function Git-ParentCommit
