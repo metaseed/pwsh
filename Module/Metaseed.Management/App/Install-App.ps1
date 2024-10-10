@@ -11,7 +11,7 @@ function backup($appLocation, $restoreList, $appName) {
 				mkdir $toL >$null
 			}
 			Write-Action "backup: $($_.FullName) to $toL"
-			Write-Execute {Copy-Item "$($_.FullName)" $toL -Recurse}
+			Write-Execute { Copy-Item "$($_.FullName)" $toL -Recurse }
 		}
 	}
 }
@@ -27,7 +27,15 @@ function restoreFrom($backupLocation, $info, $toLocation) {
 
 function Install-App {
 	[CmdletBinding()]
-	param($downloadedFilePath, $ver_online, $appName, $toLocation, [switch]$CreateFolder, [string]$newName, $verLocal, [switch]$pickExes,
+	param(
+		$downloadedFilePath,
+		$ver_online,
+		$appName,
+		$toLocation,
+		[switch]$CreateFolder,
+		[string]$newName,
+		$verLocal,
+		[switch]$pickExes,
 		# folders or files in toLocation to backup and restore
 		[string[]]$restoreList = @('_'))
 
@@ -100,10 +108,12 @@ function Install-App {
 
 	if (($children.count -ne 1 -and !$pickExes) -or $CreateFolder) {
 		$name = $newName ? $newName : $appName
-		gps $name -ErrorAction SilentlyContinue|spps
+		gps $name -ErrorAction SilentlyContinue | spps
 		$toLocation = "$toLocation\${name}"
 		Write-Verbose "from location: $($children[0].Parent) to location: $toLocation"
-		$children | % {Move-Item $_ -Destination $toLocation -Force}
+		$from = $children[0].PSParentPath
+
+		Move-Item $from -Destination $toLocation -Force
 		# _${ver_online}
 		$info = @{version = "$ver_online" }
 		# restore
@@ -139,7 +149,7 @@ function Install-App {
 				rcedit-x64 "$_" --set-file-version $ver_online --set-product-version $ver_online
 			}
 			$baseName = Split-Path $_ -LeafBase
-			gps $baseName -ErrorAction SilentlyContinue|spps
+			gps $baseName -ErrorAction SilentlyContinue | spps
 			Move-Item $_ -Destination $toLocation -Force
 			if ($newName) {
 				$name = Split-Path $_ -Leaf

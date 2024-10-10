@@ -15,10 +15,11 @@ function Write-Execute {
     [string]$command,
     [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'scriptBlock')]
     [scriptblock]$script,
+
     [Parameter( Position = 1)]
     [string]$message,
     [switch]$noThrow,
-    # to get output msg when error into a variable, or continue execution and test errors
+    # when error, write output msg then stop, or continue execution and test errors
     [switch]$noStop,
     [switch]$replay = $false
   )
@@ -27,8 +28,8 @@ function Write-Execute {
     $exe = $command ? $command : $script.ToString().Trim()
     $msg = "$exe $($message ? "$msgIcon $message": '')"
     Write-Action $msg $replay
-    # note: if put parenthesis around: return (iex $command), the output would be no color
-    # i.e. Write-Execute 'git status', if there are modification, no red text for modification files
+    # note: if put parenthesis around: return (iex $command), the command output would be no color
+    # i.e. Write-Execute 'git status', if there are git modification, no red text for modification files
     if ($command) {
       return iex $command
     }

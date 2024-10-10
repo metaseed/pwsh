@@ -37,9 +37,8 @@ path = M:\\tools\\git\\.gitconfig
 path = M:\\tools\\git\\.slb.gitconfig
 "@
 
-
 $conf = gc $home/.gitconfig -raw
-if (! $conf.contains($gitConfig)) {
+if (!$conf.contains($gitConfig)) {
 	$gitConfig >> $home/.gitconfig
 }
 else {

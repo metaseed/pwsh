@@ -1,5 +1,4 @@
 #Here, Set-Alias is better than New-Alias, because if there is already one with same name, it would not throw but replace it
-Set-Alias cpu Show-CpuUsage
 Set-Alias bumpVer Update-InfoVersion
 Set-Alias sandbox Open-Sandbox
 function __get_directory(){

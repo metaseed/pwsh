@@ -2,6 +2,7 @@ using namespace System.IO
 
 <#
 add dir to 'Machine' or 'User' Path env variable, both temp and persistent
+if already has it, do nothing
 #>
 function Add-PathEnv {
     param (

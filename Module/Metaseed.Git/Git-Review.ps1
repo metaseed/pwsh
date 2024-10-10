@@ -49,6 +49,7 @@ function Git-Review {
 
 	# code .
 	# call 'git stash apply --index' to recover after 'git checkout master'
+	Write-Execute "git checkout ${newbranchName}"
 }
 
 # to clone a remote branch:

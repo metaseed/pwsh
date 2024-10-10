@@ -82,6 +82,7 @@ function Install-FromGithub {
 		[Parameter()]
 		[string]$newName,
 		[switch] $pickExes,
+		# folders or files in toLocation to backup and restore
 		[string[]]$restoreList = @('_')
 	)
 	Assert-Admin
@@ -97,6 +98,7 @@ function Install-FromGithub {
 	$versionLocal = $null
 	Breakable-Pipeline {
 		$ver_online = [version]::new();
+
 		Get-GithubRelease -OrgName $org -RepoName $repo -Version $versionType -fileNamePattern $filter |
 		% {
 			$assets = $_

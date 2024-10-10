@@ -2,7 +2,7 @@ function Get-DotNetFrameworkVersions() {
     function Get-Framework40Version($type) {
         # .net 4.0 is installed
         $version = Get-ItemPropertyValue "HKLM:\Software\Microsoft\NET Framework Setup\NDP\v4\$type" "Release"
-            
+
         if ($version -ge 461808 -Or $version -ge 461814) {
             # .net 4.7.2
             return "4.7.2"
@@ -51,8 +51,8 @@ function Get-DotNetFrameworkVersions() {
     if (Test-ItemProperty "HKLM:\Software\Microsoft\NET Framework Setup\NDP\v3.0\Setup" "InstallSuccess") { $installedFrameworks += ".Net Framework 3.0" }
     if (Test-ItemProperty "HKLM:\Software\Microsoft\NET Framework Setup\NDP\v3.5" "Install") { $installedFrameworks += ".Net Framework 3.5" }
     if (Test-ItemProperty "HKLM:\Software\Microsoft\NET Framework Setup\NDP\v4\Client" "Install") { $installedFrameworks += ".Net Framework Client $(Get-Framework40Version 'Client')" }
-    if (Test-ItemProperty "HKLM:\Software\Microsoft\NET Framework Setup\NDP\v4\Full" "Install") { $installedFrameworks += ".Net Framework Full $(Get-Framework40Version 'Full')" }   
-     
+    if (Test-ItemProperty "HKLM:\Software\Microsoft\NET Framework Setup\NDP\v4\Full" "Install") { $installedFrameworks += ".Net Framework Full $(Get-Framework40Version 'Full')" }
+
     return $installedFrameworks
 }
 
@@ -66,20 +66,19 @@ function Install-DotNetFramwork4() {
     $url = "https://download.microsoft.com/download/3/3/2/332D9665-37D5-467A-84E1-D07101375B8C/NDP472-KB4054531-Web.exe"
     $output = "$env:TEMP\netFrameworkInstaller.exe"
     $start_time = Get-Date
-       
-    Invoke-WebRequest -Uri $url -OutFile $output  
-    Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"  
-      
+
+    Invoke-WebRequest -Uri $url -OutFile $output
+    Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
+
     Start-Process $output
     # -NoNewWindow -Wait
 }
- 
-
 
 function Get-DotnetVersions {
-
+    Write-Notice "Dotnet Frameworks 4:"
     Get-DotNetFrameworkVersions
+    Write-Notice "Dotnet Frameworks runtimes:"
     dotnet --list-runtimes
+    Write-Notice "Dotnet Frameworks sdks:"
     dotnet --list-sdks
-    
 }

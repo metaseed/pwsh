@@ -1,7 +1,7 @@
 PWSH is a set of PowerShell modules/cmdlets to help automating the daily routine task.
 The goal is to save us time, effort and improve efficiency.
 
-It is created with the script-mindset: Don't Repeat Yourself - DRY, repeat by scripts.
+It is created with the script-mindset: Don't Repeat Yourself - DRY, repeat by scripts - RBS.
 ## requirement
 powershell 7 or later
 

@@ -16,7 +16,7 @@ function Git-CommitsReview {
 		if ($choiceIndex -ne 0) {
 			do {
 				Write-Host ""
-				$CommitFrom = Read-Host "please intput the commit to review from"
+				$CommitFrom = Read-Host "please intput the commit(branch name or commit id) to review from"
 				git show -s --format="%h %s" "$CommitFrom"
 			}while ($LASTEXITCODE -ne 0) ;
 		}
@@ -25,6 +25,7 @@ function Git-CommitsReview {
 
 	# keep the current branch head commit in the a ref
 	$tipRef = "refs/heads/${currentBranchName}-mark"
+
 	$global:__git_commits_reivew_branch_tip_mark = $tipRef
 	# this will creat a file in the folder .git/refs/heads/ as ${currentBranchName}-mark
 	# or it will add a row in the .git/packed-refs
@@ -32,5 +33,6 @@ function Git-CommitsReview {
 	# move the branch head to the first commit
 	git reset $commitFrom --soft
 	Write-Notice "let's do the code rewiew now!"
+	Write-Notice "the original tip: $tipRef"
 }
 

@@ -23,7 +23,7 @@ function Git-SyncParent {
 
     $branch = git branch --show-current
     $parent = git-parent
-    $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of current branch($branch) is: $parent, use it?", @('&Yes', '&No'), 0)
+    $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of is: $parent, use it?(current branch: $branch)", @('&Yes', '&No'), 0)
     if ($choiceIndex -eq 1) {
       $parent = Read-Host "Please enter the parent branch name to sync from."
       Confirm-Continue "parent branch of current branch is: $parent"
@@ -32,9 +32,17 @@ function Git-SyncParent {
 
 
     $owner = $branch.split('/')[0]
-    if (!$owner -and !$parent.Contains($owner) -or "$parent" -ne 'master') {
-      Confirm-Continue "parent branch of current branch is not master or from you($owner)"
+
+    $msg = ""
+    if (!$owner -and !$parent.Contains($owner)) {
+      $msg += "by the branch names, the parent branch($parent) of current branch is not created by you($owner). "
     }
+    if("$parent" -ne 'master') {
+      $msg += "The parent branch is not master."
+    }
+
+    Confirm-Continue $msg
+
 
     Write-Step "rebase '$parent' with remote"
     Write-Execute "git checkout $parent"
@@ -90,7 +98,7 @@ function Git-SyncParent {
           }
         }
       }
-
+      # Write-Notice "don't forget to push synced changes to remote..."
       Confirm-Continue "do you want to push the merge?"
       Write-Execute "git push"
 
@@ -102,7 +110,7 @@ function Git-SyncParent {
       Write-Execute 'git pull'
     }
 
-    Write-Notice "don't forget to push synced changes to remote..."
+
   }
   catch {
     Write-Error 'Git-RebaseMaster execution error.'

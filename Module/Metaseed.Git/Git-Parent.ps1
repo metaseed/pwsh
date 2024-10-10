@@ -1,6 +1,6 @@
 # https://stackoverflow.com/questions/3161204/how-to-find-the-nearest-parent-of-a-git-branch/26597219#answer-17843908
 
-function Git-ParentCommit {
+function Git-ParentCommitMessage {
   [CmdletBinding()]
   param(
     $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
@@ -20,17 +20,27 @@ function Git-ParentCommit {
   Select-String -NotMatch -Pattern "\[$([Regex]::Escape($CurrentBranchName)).*?\]" |
   # The first result will be the nearest ancestor branch. Ignore the other results
   Select-Object -First 1 |
+  # remove the '    * +  '
+  % { $null = $_ -match '\[.+$'; return $Matches[0] }
+}
+
+function Git-ParentCommit {
+  [CmdletBinding()]
+  param(
+    $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
+  )
+  Git-ParentCommitMessage $CurrentBranchName |
   # just the part of the line between [], it's branch name
   # .+?\[ none gredy more than one char to [
-  Foreach-Object { $_ -replace '^.+?\[(.+)\].+$', '$1' }
+  Foreach-Object { $_ -replace '^.*?\[(.+?)\].+$', '$1' }
 }
+
 function Git-Parent {
   [CmdletBinding()]
   param(
     $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
   )
-  Git-ParentCommit $CurrentBranchName |
-
+  Git-ParentCommit $CurrentBranchName|
   # Sometimes the branch name will include a ~# or ^# to indicate how many commits are between the referenced commit and the branch tip. We don't care. Ignore them.
   # and with any relative refs (^, ~n) removed
   Foreach-Object { $_ -replace '[\^~][0-9]*', '' }
@@ -158,4 +168,4 @@ function Git-Parent_notused_complex_to_read {
   return $foundBranch
 }
 
-Export-ModuleMember -Function Git-ParentCommit
+Export-ModuleMember -Function Git-ParentCommitMessage, Git-ParentCommit
