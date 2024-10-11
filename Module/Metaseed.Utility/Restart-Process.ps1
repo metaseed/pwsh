@@ -67,30 +67,30 @@ function Restart-Process {
 }
 
 # Import Pester module for testing
-Import-Module Pester
+# Import-Module Pester
 
-# Unit tests for Add-Numbers function
-Describe "Restart-Process tests" {
-    Context "with string as parameter" {
-        It "should restart with original parameter" {
-            start notepad $env:HostsFilePath
-            Restart-Process notepad
-            $notepad = gps notepad
-            $notepad | Should -Not -BeNullOrEmpty -ErrorAction Stop
-            spps $notepad
-        }
-    }
+# # Unit tests for Add-Numbers function
+# Describe "Restart-Process tests" {
+#     Context "with string as parameter" {
+#         It "should restart with original parameter" {
+#             start notepad $env:HostsFilePath
+#             Restart-Process notepad
+#             $notepad = gps notepad
+#             $notepad | Should -Not -BeNullOrEmpty -ErrorAction Stop
+#             spps $notepad
+#         }
+#     }
 
-    Context "with process object as parameter from pipe" {
-        It "should restart with parameter" {
-            start notepad $env:HostsFilePath
-            gps notepad | Restart-Process
-            $notepad = gps notepad
-            $notepad | Should -Not -BeNullOrEmpty -ErrorAction Stop
-            spps $notepad
-        }
-    }
-}
+#     Context "with process object as parameter from pipe" {
+#         It "should restart with parameter" {
+#             start notepad $env:HostsFilePath
+#             gps notepad | Restart-Process
+#             $notepad = gps notepad
+#             $notepad | Should -Not -BeNullOrEmpty -ErrorAction Stop
+#             spps $notepad
+#         }
+#     }
+# }
 # Restart-Process TerminalBackground
 
 # Invoke-Pester

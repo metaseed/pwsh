@@ -44,4 +44,4 @@ function Open-InVisualStudio {
   $dte.ActiveDocument.Selection.MoveToLineAndOffset($line, $column + 1)
 }
 
-Open-InVisualStudio 'C:\repos\SLB\_planck\planck\acquisition-opcua-plugin\src\OpcUa.Plugin\Services\Config\OpcUaConfigService.cs' 2 3
+# Open-InVisualStudio 'C:\repos\SLB\_planck\planck\acquisition-opcua-plugin\src\OpcUa.Plugin\Services\Config\OpcUaConfigService.cs' 2 3
