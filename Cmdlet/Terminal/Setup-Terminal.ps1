@@ -31,3 +31,6 @@ Pin-TaskBar "$env:MS_PWSH\Cmdlet\Terminal\WindowsTerminal.lnk" | Out-Null
 
 # Note: to show font character in vscode
 # `ctrl+,` to show the settings, search 'font', and in the 'Editor: Font Family' add the 'CaskaydiaCove NFM'
+
+# todo: there is an official way of use pwsh to install it:
+#     https://github.com/ryanoasis/nerd-fonts/tree/master?tab=readme-ov-file#option-5-powershell-web-installer

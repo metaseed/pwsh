@@ -26,7 +26,7 @@ $global:__specialDays = @{
 				Lable = 'Dad'
 				Lunar = $true
 				Month = 9
-				Day   = 18
+				Day   = 8
 			},
 			@{
 				Lable = 'Me'
