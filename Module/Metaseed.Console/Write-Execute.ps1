@@ -24,7 +24,7 @@ function Write-Execute {
     [switch]$replay = $false
   )
   process {
-    $msgIcon = $env:WT_SESSION ?  "💬:": "@:"
+    $msgIcon = $env:TERM_NERD_FONT ?  "💬:": "@:"
     $exe = $command ? $command : $script.ToString().Trim()
     $msg = "$exe $($message ? "$msgIcon $message": '')"
     Write-Action $msg $replay

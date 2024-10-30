@@ -10,7 +10,7 @@ function Write-Attention {
 
     WriteStepMsg @{type = 'Attention'; message = $message}
   }
-  $icon = $env:WT_SESSION ? '🚩' : '!'
+  $icon = $env:TERM_NERD_FONT ? '🚩' : '!'
   $indents = ' ' * (($__PSReadLineSessionScope.indents + 1) * $__IndentLength)
   Write-Host $indents -NoNewline
   Write-Host "▐" -ForegroundColor Blue  -NoNewline

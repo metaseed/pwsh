@@ -13,7 +13,7 @@
 function Write-Marquee {
  param([string]$text,
 		# ms
-		[int]$speed = 80, 
+		[int]$speed = 80,
 		[string] $ForegroundColor = $HOST.UI.RawUI.ForegroundColor,
 		[string]$BackgroundColor = $HOST.UI.RawUI.BackgroundColor,
 	 # -1: loop
@@ -21,19 +21,19 @@ function Write-Marquee {
 	 # width of the window
 	 [int]$Width = 80
 	)
-	
+
 	$appendLast = $text.Length -lt $Width ? (' ' * ($Width - $text.Length)) : ''
 	$append = ' ' * $Width
 
 	# clear-host
 	Write-Output ""
 	# wt cursor position has problem
-	if (!($env:WT_SESSION)) {
+	if (!($env:TERM_NERD_FONT)) {
 		write-host "-$('-' * $Width)-"
 	}
 	$StartPosition = $HOST.UI.RawUI.CursorPosition
 	# $StartPosition.X = 1
-	if (!($env:WT_SESSION)) {
+	if (!($env:TERM_NERD_FONT)) {
 		write-host "$(' ' * ($Width))"
 		write-host "-$('-' * $Width)-"
 	}

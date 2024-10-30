@@ -271,12 +271,12 @@ function global:__GetSepcialDayStr {
 	return $str
 }
 
-# __GetSepcialDayStr ([DateTime]::new(2024, 10, 22)) #([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
+#  __GetSepcialDayStr ([DateTime]::new(2024, 10, 22)) #([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
 function global:__GetAdminIcon {
 	$IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
 	if ($IsAdmin) {
-		if ($env:WT_SESSION) {
-	  "`e[93m`e[0m" # person with key https://www.nerdfonts.com/cheat-sheet
+		if ($env:TERM_NERD_FONT) {
+	  		"`e[93m`e[0m" # person with key https://www.nerdfonts.com/cheat-sheet
 		}
 		else {
 			"`e[33;5;1m!`e[23;25;21m" # green, blink, bold
@@ -304,7 +304,7 @@ function global:__GetPSReadLineSessionExeTime {
 
 		if ($s -ge 0.01) {
 			# timer
-			$icon = $env:WT_SESSION ? "" : ""
+			$icon = $env:TERM_NERD_FONT ? "" : ""
 			return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
 		}
 	}

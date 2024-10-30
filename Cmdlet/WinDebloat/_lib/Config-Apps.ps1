@@ -24,10 +24,9 @@ if ($vm) {
   # ? { $_.PackageName -match "Microsoft.Xbox" } |
   Uninstall-Appx $XboxApps
 
-  # remove your phone
-  Uninstall-Appx @('*FeedbackHub*', '*YourPhone*')
-
   @(
+    '*FeedbackHub*',
+    '*YourPhone*',
     'Microsoft.WindowsCamera',
     'MicrosoftTeams',
     'Microsoft.WindowsAlarms',
@@ -51,5 +50,8 @@ if ($vm) {
 
 }
 else {
-
+  # to Permanently disable Adobe Collab Sync
+  # disable the AdobeCollabSync.exe running in background.
+  # https://community.adobe.com/t5/acrobat-discussions/permanently-disable-adobe-collab-sync/td-p/11733706
+  Set-ItemProperty 'HKCU:\Software\Adobe\Adobe Acrobat\DC\Workflows' bNeedSynchronizer 0
 }

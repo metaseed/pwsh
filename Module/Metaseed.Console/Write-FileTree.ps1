@@ -116,7 +116,7 @@ function showTree($item) {
 
   # draw item name
   if ($item.location.PSIsContainer) {
-    if ($env:WT_SESSION) {
+    if ($env:TERM_NERD_FONT) {
       # with folder icon
       write-Host " $($item.location.basename)"
     }

@@ -1,4 +1,5 @@
-#  https://github.com/dahlbyk/posh-git
+# https://github.com/dahlbyk/posh-git
+# https://github.dev/dahlbyk/posh-git
 # compare with: https://ohmyposh.dev/docs/segments/git
 # all config variables are in:
 # https://github.com/dahlbyk/posh-git/tree/master/src/PoshGitTypes.ps1
@@ -28,12 +29,15 @@ function global:__GetPrefixPrompt {
   return "┌─ $(__GetAdminIcon) $(__GetDateStr)$(__GetLunarDateStr)$(__GetPSReadLineSessionExeTime) "
 }
 
-Import-Module posh-git -ErrorAction Ignore -Scope Global
+# $ForcePoshGitPrompt to be true
+# in vscode, it has defined its own prompt function, so posh-git will not replace it by default.
+# we have to pass in the $ForcePoshGitPrompt to be true to force replace it.
+Import-Module posh-git -Scope Global -ArgumentList @($true)
 
 # only config when posh-git is installed
 if ($?) {
   $global:GitPromptSettings.DefaultPromptPrefix.Text = '$(__GetPrefixPrompt)'
-  $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta # not use it now, the dateStr has color inside
+  #$global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta # not use it now, the prefix has color inside
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
   $global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
@@ -60,7 +64,7 @@ if ($?) {
   $global:GitPromptSettings.DefaultPromptSuffix = ''
   $global:GitPromptSettings.EnableStashStatus = $true
 
-  if ($env:WT_SESSION) {
+  if ($env:TERM_NERD_FONT) {
     # https://www.nerdfonts.com/cheat-sheet
     $global:GitPromptSettings.LocalWorkingStatusSymbol = '' # trolley, something in the working dir to add to stage/index
     $global:GitPromptSettings.LocalStagedStatusSymbol = '' # stage, something on stage to commit

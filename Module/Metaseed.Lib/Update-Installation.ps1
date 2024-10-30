@@ -23,6 +23,7 @@ function Test-Installation {
 function Test-Update([int]$days, [string]$file) {
     if ($days -gt 0) {
         $_days = ((Get-Date) - (Get-Item $file).LastWriteTime).Days
+
         if ($_days -lt $days) {
             return $false
         }

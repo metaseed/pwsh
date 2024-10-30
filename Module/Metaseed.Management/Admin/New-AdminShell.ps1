@@ -12,7 +12,7 @@ function New-AdminShell {
         return
     }
 
-    if ($env:WT_SESSION) {
+    if ($env:TERM_NERD_FONT) {
         # in terminal
         # https://docs.microsoft.com/en-us/windows/terminal/command-line-arguments?tabs=windows
         # wt -w 0 nt

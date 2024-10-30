@@ -18,12 +18,12 @@ function Write-Action {
   }
 
   # Write-Progress -Activity "${command}" -status "$('' -eq $message ? ' ': ": $message")" -Id 2 -ParentId 0
-  $icon = $env:WT_SESSION ? '-->': '―→'
+  $icon = $env:TERM_NERD_FONT ? '-->': '―→'
   $exeStep = ++$__PSReadLineSessionScope.ExeStep
 
   $indents = ' ' * (($__PSReadLineSessionScope.indents + 1) * $__IndentLength)
 
   $allExe = ($null -ne $__PSReadLineSessionScope.Step) -or ($null -ne $__PSReadLineSessionScope.SubStep) ? "($($exeStep))": ''
-  $ic = $env:WT_SESSION ? '🚀' : ''
+  $ic = $env:TERM_NERD_FONT ? '🚀' : ''
   Write-Host "${indents}▐${ic}Action $StepInfo$execute$allExe$icon $message" -ForegroundColor Blue
 }

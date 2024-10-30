@@ -45,7 +45,7 @@ Function Write-ANSIProgress {
       $x = $position.x
       $y = $position.y + 1
       #may need to insert a line in case we are at the bottom of a console or terminal screen
-      if ($env:WT_SESSION -AND ($position.y + 1 -ge $host.ui.RawUI.BufferSize.Height)) {
+      if ($env:TERM_NERD_FONT -AND ($position.y + 1 -ge $host.ui.RawUI.BufferSize.Height)) {
           Write-Output "`n"
       }
 
@@ -60,7 +60,7 @@ Function Write-ANSIProgress {
       Write-Verbose "[$((Get-Date).TimeofDay) PROCESS] $PercentComplete %"
       [int]$len = $max * $PercentComplete
       #get current cursor position if in Windows Terminal
-      if ($env:WT_SESSION -AND ($position.y + 1 -ge $host.ui.RawUI.BufferSize.Height)) {
+      if ($env:TERM_NERD_FONT -AND ($position.y + 1 -ge $host.ui.RawUI.BufferSize.Height)) {
           $y = $host.ui.RawUI.CursorPosition.Y-1
       }
       [System.Console]::SetCursorPosition($x, $y)

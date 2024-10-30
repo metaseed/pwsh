@@ -9,7 +9,7 @@ function Write-Notice {
     if ($Speak || $SpeakMessage) { Speak-Text "Notice: $($SpeakMessage ?? $message)" }
     WriteStepMsg @{type = 'Notice'; message = $message }
   }
-  $icon = $env:WT_SESSION ? '🔔' : '#'
+  $icon = $env:TERM_NERD_FONT ? '🔔' : '#'
   $indents = ' ' * (($__PSReadLineSessionScope.indents + 1) * $__IndentLength)
   Write-Host $indents -NoNewline
   Write-Host "▐" -ForegroundColor Green  -NoNewline

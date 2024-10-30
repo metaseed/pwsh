@@ -5,7 +5,7 @@
 ## Setup
 in your powershell profile:
 ```powershell
-if ($env:WT_SESSION) {
+if ($env:TERM_NERD_FONT) {
   Start-WTCyclicBgImg
 }
 ```
@@ -14,7 +14,7 @@ $env:MS_WTBackground is the Metaseed.Terminal module path, it is set when load t
 
 or use your own settings
 ```powershell
-if ($env:WT_SESSION) {
+if ($env:TERM_NERD_FONT) {
   Start-WTCyclicBgImg $PSScriptRoot\settings.json
 }
 ```
