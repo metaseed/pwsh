@@ -10,13 +10,24 @@ function Git-CommitsReview {
 	$currentBranchName = (git branch --show-current)
 	if ($LASTEXITCODE -ne 0) { throw 'not on a branch' }
 
+	$choiceIndex = $Host.UI.PromptForChoice("The branch to review: ?", "$currentBranchName", @('&Yes', '&No'), 0)
+	if ($choiceIndex -ne 0) {
+		do {
+			Write-Host ""
+			$currentBranchName = Read-Host "please input the BRANCH name to switch to for reviewing"
+			git checkout $currentBranchName
+		}while ($LASTEXITCODE -ne 0);
+	}
+
+	git pull
+
 	if ([string]::IsNullOrEmpty($CommitFrom)) {
 		$CommitFrom = Git-ParentCommit
 		$choiceIndex = $Host.UI.PromptForChoice('Do you want to review from this commit(not include)?', "$CommitFrom", @('&Yes', '&No'), 0)
 		if ($choiceIndex -ne 0) {
 			do {
 				Write-Host ""
-				$CommitFrom = Read-Host "please intput the commit(branch name or commit id) to review from"
+				$CommitFrom = Read-Host "please input the commit(branch name or commit id) to review from"
 				git show -s --format="%h %s" "$CommitFrom"
 			}while ($LASTEXITCODE -ne 0) ;
 		}
@@ -27,7 +38,7 @@ function Git-CommitsReview {
 	$tipRef = "refs/heads/${currentBranchName}-mark"
 
 	$global:__git_commits_reivew_branch_tip_mark = $tipRef
-	# this will creat a file in the folder .git/refs/heads/ as ${currentBranchName}-mark
+	# this will create a file in the folder .git/refs/heads/ as ${currentBranchName}-mark
 	# or it will add a row in the .git/packed-refs
 	git update-ref $tipRef head
 	# move the branch head to the first commit

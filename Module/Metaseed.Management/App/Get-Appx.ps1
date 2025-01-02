@@ -156,3 +156,5 @@ function Get-Appx {
         saps -Path $Path
     }
 }
+
+# Get-appx https://apps.microsoft.com/detail/9nmpj99vjbwv

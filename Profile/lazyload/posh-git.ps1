@@ -37,7 +37,7 @@ Import-Module posh-git -Scope Global -ArgumentList @($true)
 # only config when posh-git is installed
 if ($?) {
   $global:GitPromptSettings.DefaultPromptPrefix.Text = '$(__GetPrefixPrompt)'
-  #$global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta # not use it now, the prefix has color inside
+  $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
   $global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
