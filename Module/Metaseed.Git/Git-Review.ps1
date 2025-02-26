@@ -39,7 +39,7 @@ function Git-Review {
 		Write-Execute "git fetch origin ${branchName}:${newbranchName} --depth=$depth"
 	}
 
-	# note: fail when no the same as remote name
+	# note: fail when not the same as remote name
 	# we can do experiment and try: --set-upstream and --track
 	# https://www.git-scm.com/docs/git-branch/2.13.7#Documentation/git-branch.txt---track
 	# Write-Execute "git branch ${newbranchName} --set-upstream-to=${branchName}"

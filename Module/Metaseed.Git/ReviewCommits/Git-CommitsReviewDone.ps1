@@ -8,7 +8,7 @@ function Git-CommitsReviewDone {
 
 	# get tipRef
 	$tipRef = $global:__git_commits_reivew_branch_tip_mark
-	$inputRefCommit = $false
+	$inputRefCommit = $true
 	if (!$tipRef) {
 		$currentBranchName = (git branch --show-current)
 		$tipRefTest = "refs/heads/${currentBranchName}-mark"
@@ -17,14 +17,11 @@ function Git-CommitsReviewDone {
 			$choiceIndex = $Host.UI.PromptForChoice('Move Current Branch Head', "Move the branch Head to the commit: ${tipRefTest}?", @('&Yes', '&No'), 0)
 			if ($choiceIndex -eq 0) {
 				$tipRef = $tipRefTest
-			}
-			else {
-				$inputRefCommit = $true
+				$inputRefCommit = $false
 			}
 		}
-		else {
-			$inputRefCommit = $true
-		}
+	} else {
+		$inputRefCommit = $false
 	}
 
 	if ($inputRefCommit) {
@@ -32,7 +29,7 @@ function Git-CommitsReviewDone {
 	}
 
 	# commit changes
-	$currentCommitInfo = git log -1 --format="%h %s"
+	$currentCommitInfo = git log -1 --format="%h %s" # hash and string message
 
 	git reset $tipRef --soft
 
@@ -42,7 +39,7 @@ function Git-CommitsReviewDone {
 		if ([string]::IsNullOrEmpty($CommitMessage)) {
 			# we need to get the current commit info before 'git reset --soft'
 			$tipCommitInfo = git show -s --format="%h %s" "$tipRef"
-			$CommitMessage = "commits review from '$currentCommitInfo' to '$tipCommitInfo'"
+			$CommitMessage = "code-review-changes from '$currentCommitInfo' to '$tipCommitInfo'"
 			$choiceIndex = $Host.UI.PromptForChoice('Do you want to use this as commit message', "$CommitMessage", @('&Yes', '&No'), 0)
 			if ($choiceIndex -ne 0) {
 				$CommitMessage = Read-Host 'please input commit message'

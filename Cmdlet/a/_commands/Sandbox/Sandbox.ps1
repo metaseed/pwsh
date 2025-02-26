@@ -8,7 +8,7 @@ param (
 )
 # or run 'OptionalFeatures.exe' to enable the 'Sandbox' feature
 $OptionalFeature = "Containers-DisposableClientVM"
-if(!(Get-WindowsOptionalFeature -Online -FeatureName $OptionalFeature)) {
+if((Get-WindowsOptionalFeature -Online -FeatureName $OptionalFeature).State -ne 'Enabled') {
   Enable-WindowsOptionalFeature -FeatureName $OptionalFeature -All -Online
 }
 
@@ -17,7 +17,7 @@ $hasMappedFolder = (test-path c:\app) -and (test-path c:\temp)
 
 if($config ) {
   if(!$hasMappedFolder) {
-    write-error "the folder in config is not find on host machine"
+    write-error "the folders: c:\app and c:\temp in config is not find on host machine"
     return
   }
   # note: double click the .wsb file or invoke from command line will launch the sandbox

@@ -9,7 +9,10 @@ function Git-ParentCommitMessage {
   # --no-color is faster
   # -a --all: show remote and local branches
   # --topo-order: show in topological order vs chronological order
+  ## problem: when there is too much branch, can not find the parent with too many warning, i.e.: warning: ignoring origin/ypolyakov/fix/wellbore-update-event; cannot handle more than 26 refs
   git show-branch -a --current --topo-order --no-color |
+  ## a solution is to look at: https://stackoverflow.com/questions/3161204/how-to-find-the-nearest-parent-of-a-git-branch/68673744#answer-68673744
+
   # ancestors should have same commits as the current branch, the * indicates this commit is on the current branch.
   # contains *: Ancestors of the current commit are indicated by a star. Filter out everything else
   # there may be '+' or '-' with the '*'

@@ -1,3 +1,4 @@
+# note: run this script in VM
 Assert-Admin
 # to show the drive in Explorer, after map in admin mode
 # Because of the UAC, and the Shell runs with standard user permissions, it can't see mapped drives which were configured by your application running with admin rights.
