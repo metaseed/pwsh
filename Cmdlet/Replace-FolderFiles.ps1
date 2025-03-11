@@ -69,7 +69,7 @@ $matches |
             }
             return $_
         } |
-        set-content $_.fullname -Encoding UTF8 -Force -NoNewline
+        set-content $_.fullname -Encoding UTF8 -Force -NoNewline #UTF8NoBOM
     }
 }
 ## usage example: create a project Modbus from a ToDo template project

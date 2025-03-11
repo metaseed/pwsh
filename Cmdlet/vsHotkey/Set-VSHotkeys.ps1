@@ -6,10 +6,15 @@ param (
 	$Force
 )
 Assert-Admin
+
 $vsPath = Get-VSInstallationPath
 # . "$vsPath\Common7\Tools\Launch-VsDevShell.ps1"
-# C:\Users\jsong12\AppData\Roaming\Microsoft\VisualStudio\17.0_475919c0
-$configPath = "$((gci $env:APPDATA\Microsoft\VisualStudio -Recurse Current.vsk).Directory)"
+
+$vsCurrentConfig = gci $env:APPDATA\Microsoft\VisualStudio -Recurse Current.vsk
+# C:\Users\jsong12\AppData\Roaming\Microsoft\VisualStudio\17.0_475919c0\Current.vsk
+
+Write-Host "current config path: $($vsCurrentConfig.PSPath)"
+$configPath = $vsCurrentConfig.DirectoryName
 
 $vskPath = "$vsPath\Common7\IDE\"
 

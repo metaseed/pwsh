@@ -6,10 +6,10 @@
 # https://git-scm.com/downloads
 
 Set-PsFzfOption `
--PSReadlineChordSetLocation 'Alt+d' `
--PSReadlineChordReverseHistoryArgs 'Alt+a' `
--PSReadlineChordProvider 'Alt+f' `
--PSReadlineChordReverseHistory 'Alt+r'
+-PSReadlineChordSetLocation 'Alt+d' ` # find dir from current dir/subdir
+-PSReadlineChordReverseHistoryArgs 'Alt+a' ` # find arg from input history
+-PSReadlineChordProvider 'Alt+f' ` # find file from current dir/subdir
+-PSReadlineChordReverseHistory 'Alt+r' # find line input from input history
 # -EnableAliasFuzzyZLocation `
 # -EnableAliasFuzzySetEverything
 
@@ -21,6 +21,7 @@ Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 
 Set-Alias ifz    -Scope global Invoke-Fzf
 
+# edit the found dir/file with vscode
 Set-Alias fe     -Scope global Invoke-FuzzyEdit
 Set-Alias fh     -Scope global Invoke-FuzzyHistory
 # Set-Alias ff     -Scope global Invoke-FuzzyFasd

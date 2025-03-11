@@ -12,7 +12,7 @@ Write-Action "restore windows terminal settings..."
 . $PSScriptRoot/_private/GetSettings.ps1
 
 $backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
-if(! (test-path $backup)) {
+if(!(test-path $backup)) {
   Write-Warning 'Backup file not found.'
   return;
 }

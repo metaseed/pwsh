@@ -1,5 +1,6 @@
-* gh
-gh Get-ChildItem -Online
+* ghp
+ghp -o ls
+ghp Get-ChildItem -Online
 
 * reload profile
 ```
@@ -14,22 +15,36 @@ rmo metaseed.git
 * copy current dir
 ```
 # pwd: print work directory
+> gl|scb
+> gcb`
+
+$pwd is a context variable
+''pwd' and 'gl' is the alias of get-location
 (pwd).path|scb
-note: (pwd).path|clip when gcb would return [path, '']
-clip is C:\WINDOWS\system32\clip.exe
+(pwd).gettype()
+note: (pwd).path|clip when gcb would return [the-path, ''], it's an string array
+
+clip is C:\WINDOWS\system32\clip.exe # gcm clip
 scb (gl).path
+gl|gp|fl #get-location|get-property|format-list
+# view all properties of an obj
+gl|select -p *|fl #get-location|select-object -property *|format-list
+> note: gl|gm # get-location|get-memeber # will list all members
+> (gl).gettype() # to get the type
+
 # scb: set-clipboard; gcb: get-clipboard; gl: get-location
 scb (pwd).path
 pwd|scb
 gl|scb
 pwd and gl is the aliases of get-location
 ```
+## create file from clipboard
+gcb > 1.txt
 
 * make dir and change to that dir
 ```
-# mcd is a function in profile
-mcd dir
-nsl dir (new and set location)
+# Set-LocationNew  is a function in Utility module
+sln dir # set to location, create new dir if not exist)
 ```
 
 * cmd's where command
@@ -37,6 +52,8 @@ nsl dir (new and set location)
 ```
 get-command code
 (gcm code).source
+gcm code|select -p source
+get-command code | select-object -property source
 ```
 * exec cmd's command in pwsh and get result
 ```
@@ -67,25 +84,41 @@ git status 2>$null; $LASTEXITCODE
 * get all env variables start with
 gci env:planck*
 
-* get cmd path
+* get cmd dir
 gcm code |% source|split-path
-gcm code|select -exp source|split-path
+gcm code | foreach-object source\split-path
+gcm code|select -exp source|split-path # note for `select` -exp -p is different
+
+gcm code|select -p source
+Source
+------
+C:\Program Files\Microsoft VS Code\bin\code.cmd
+gcm code|select -exp source
+C:\Program Files\Microsoft VS Code\bin\code.cmd
+
 get-command code|select-object -expandProperty Source|Split-Path
+* select vs %
+gcm code|% source # string
+gcm code|select source # custom obj
 
 * copy file content to clipboard
 gc file|scb
+get-content file|scb
 
 * get date to be used in file path
+get-date -f filedate
 > get-date -Format FileDate
 > 20210526
 
-> get-date -f "yyMMdd_HHmmss"
+> get-date -f yyMMdd_HHmmss # MM is month, mm is minute, HH is 24h, hh is 12h
 > 220616_115046
 * get time zone relevant to UTC
 get-date -f zz
--05 (day time saver included)
+-05 (day time saver included) houston
++01 paris
 could also call: get-timezone
 (UTC-06:00) Central Time (US & Canada)
+(UTC+01:00) Brussels, Copenhagen, Madrid, Paris
 
 * more page
 ga | oh -p
@@ -98,6 +131,7 @@ ctrl+L (just scroll all content to top)
 
 F8: complete command line from history
 remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
+Get-PSReadLineOption|% HistorySavePath|code
 Ctrl+]: goto Brace (){}[]
 ctrl-l: clear screen
 alt-.: last argument of previous command
@@ -125,6 +159,13 @@ write-host $a
 play-ring
 }&
 receive-job $b
+> about code has problem, it's not run in background, because it is $b = result&
+$a = 10
+$b = Start-Job -ScriptBlock {
+    Write-Host $using:a
+    play-ring
+}
+receive-job $b
 
 ## foreach parallel write to console work
 1,2,3|% -Parallel {write-host $_}
@@ -135,8 +176,10 @@ $a = @{}
 
 ## open 'this pc'
 explorer file:
+start file:
 * open c:
 explorer c:
+start c:
 ## -contains operator
 work on list not on string
 'abc' -contains 'a' not work
@@ -146,6 +189,13 @@ work on list not on string
 ## web browser
 saps msedge or Start-Process microsoft-edge://
 saps chrome
+start chrome
+sa firefox
+
+# open file/dir from pipeline in vscode
+> vscode does not accept parameter from stdin
+
+gci|%{code $_}
 
 # resource monitor
 resmon
@@ -163,18 +213,23 @@ Import-Module "bin\Debug\netstandard2.0\$module.dll"
 Get-Module $module
 ```
 ```
-snl Utility
+sln Utility
 dotnet new psmodule
 ```
 
 ## get item is directory or file
-gci |%{ $_ is [IO.DirectoryInfo]} # [IO.FileInfo]
+gci |?{ $_ -is [IO.DirectoryInfo]} # [IO.FileInfo]
 
 ## show all properties of obj
 gi c:\app|format-list -p(roperty) *
+gi c:\app|fl -p * # ft: format-table
+gi c:\app|select -p* #select-object
 
 ## open solution
-saps (find-fromParent *.sln)
+sa (find-fromParent *.sln)
+> `find-fromParent *.sln|sa will` not work, as the `sa` does not accept pipeline arg
+find-fromParent *.sln|ii
+find-fromParent *.sln|invoke-item # to Opens a file or directory using its default associated application
 
 ## ANSI escape sequence
 https://duffney.io/usingansiescapesequencespowershell/#:~:text=ANSI%20escape%20sequences%20are%20often,character%20representing%20an%20escape%20character.
@@ -183,11 +238,9 @@ https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 ## clear screen
 ctrl-l just scroll the screen
 cls clear the buffer
+
 ## check windows version
 winver
-
-## create file from clipboard
-gcb > 1.txt
 
 ## quickly open the 'optional features' dialog
 type `OptionalFeatures` in terminal

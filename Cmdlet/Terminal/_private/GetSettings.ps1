@@ -1,5 +1,4 @@
 function GetSettings {
-  
   # https://docs.microsoft.com/en-us/windows/terminal/install#settings-json-file
   $Settings = @{
     Stable     = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"

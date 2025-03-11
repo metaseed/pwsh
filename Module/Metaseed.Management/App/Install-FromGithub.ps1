@@ -103,6 +103,7 @@ function Install-FromGithub {
 		% {
 			$assets = $_
 			if ($assets.Count -ne 1 ) {
+				 Write-Error "Expected one asset, but found $($assets.Count)"
 				break;
 			}
 			Write-Verbose "$_"

@@ -46,7 +46,9 @@ namespace Metaseed.TerminalBackground
 
         public void SetSettings(JsonObject settings)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { WriteIndented = true,
+            // prevent:  + into \u002B in keybindings, i.e. ctrl+1 should not be ctrl\u002B1
+             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
              File.WriteAllText(Path, settings.ToJsonString(options));
         }
     }

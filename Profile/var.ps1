@@ -4,5 +4,5 @@ $m = @{
   pwsh = "$env:MS_PWSH"
   metatool = 'M:\Workspace\metatool'
 }
-# previent error when debuging
+# prevent error when debugging
 $global:__PSReadLineSessionScope = @{}
