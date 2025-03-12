@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    by default remove duplicate keys in the Path environment variable
+    remove duplicate values separated by ';' in the environment variable, by default 'Path'
 #>
-function Remove-DuplicationEnvVarValue {
+function Remove-EnvVarDuplicateValues {
   [CmdletBinding()]
   param (
       [Parameter()]
@@ -16,14 +16,13 @@ function Remove-DuplicationEnvVarValue {
           [ValidateSet('Machine', 'User')]
           $scope = $null,
           [switch]
-          $keepDead
+          $removeDead
       )
 
-      $isAdmin = Test-Admin
-      # trick: $scope is object not string, so we can use ??=. empty string not work for ??=
-      $scope ??= ($isAdmin ? "Machine": "User")
+      # trick: $scope is object not string, so we can use ??= with $null, note: empty string not work for ??=
+      $scope ??= ((Test-Admin) ? "Machine": "User")
 
-      $newPath = [System.Collections.ArrayList]::new()
+      $newPath = [SystemCollections.ArrayList]::new()
       $v = [Environment]::GetEnvironmentVariable($var, $scope)
       if ($null -eq $v) {
           write-warning "scope: $scope, do not have the env var:$var"
@@ -35,7 +34,7 @@ function Remove-DuplicationEnvVarValue {
       % {
           if (!$_) { return } # return nothing in % to filter out it
 
-          if (-not $keepDead -and -not (Test-Path $_)) {
+          if ($removeDead -and -not (Test-Path $_)) {
               write-host "remove dead path: $_"
               return # return nothing to filter it out
           }
@@ -58,10 +57,10 @@ function Remove-DuplicationEnvVarValue {
               write-host "remove duplication: $_"
           }
       }
+
       $p = $newPath -join ';'
       [Environment]::SetEnvironmentVariable($var, $p, $scope)
   }
 
-  clean 'User'
-  clean 'Machine'
+  clean $scope
 }

@@ -1,4 +1,7 @@
-function Get-Explorer {
+<#
+get the explorer opened with it's Folder like the $folder param
+#>
+function Get-OpenedExplorer {
 	[CmdletBinding()]
 	param (
 		[Parameter()]

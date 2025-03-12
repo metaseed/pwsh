@@ -16,7 +16,7 @@ rmo metaseed.git
 ```
 # pwd: print work directory
 > gl|scb
-> gcb`
+> gcb
 
 $pwd is a context variable
 ''pwd' and 'gl' is the alias of get-location
@@ -259,7 +259,10 @@ view sizes in folder `a wizTree -- $pwd`
 Get-ComputerInfo -pro *processor*
 Get-ComputerInfo
 gin # alias of Get-ComputerInfo
+gin -pro *processor*
 systemInfo.exe
+systeminfo|? {$_ -like '*host*'}
+systeminfo|? {$_ -match 'host|memory|zone|OS'}
 
 ## pwsh webs
 https://ironscripter.us/
@@ -347,3 +350,51 @@ cd - # previous location
 cd + # next location
 `sl` or `sl ~` change to home directory
 ```
+
+# write-output vs write-host
+ga echo # write-output
+write-output "hello"| out-file kk.txt
+"hello"| out-file kk.txt
+
+Write-Output is Stream 1
+Write-Error (Stream 2) → Error messages
+Write-Warning (Stream 3) → Warnings
+Write-Verbose (Stream 4) → Verbose logging
+Write-Debug (Stream 5) → Debug messages
+
+Write-Output sends data to the pipeline (it may or may not reach the host).
+Output can be redirected to files, variables, or different streams.
+
+# ForEach-Object: if the returned obj is enumerable, its content will be forwarded to the next pipe instead of the enumerable.
+ @(@(1,2),@(3,4))|%{write-host $_}
+ 1 2
+ 3 4
+ @(@(1,2),@(3,4))|%{$_.getenumerrator()}|%{write-host $_}
+ 1
+ 2
+ 3
+ 4
+
+ # ForEach-Object: return nothing to filter it out
+@(1,2,3,4)|%{if($_ -lt 3) {return $_}else {return}}
+@(1,2,3,4)|%{if($_ -lt 3) {return $_}else {return $null}}
+> '%': it's the map operator with filter capability
+>
+# `()` is important
+ Test-Admin ? "a":"b" # True
+(Test-Admin) ? "a":"b" # a
+
+# variable squeezing.
+$v = 1 # sets v to 1 and returns nothing
+($v = 1) # sets v to 1 and returns assigned value
+# open system settings
+opss envVar
+opss OptionalFeatures
+opss ProgramsAndFeatures
+opss DeviceManager
+
+# open know folders
+opkf startup
+opkf RecycleBinFolder
+opkf Downloads
+opkf DocumentsLibrary

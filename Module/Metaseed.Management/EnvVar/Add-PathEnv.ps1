@@ -1,7 +1,7 @@
 using namespace System.IO
 
 <#
-add dir to 'Machine' or 'User' Path env variable, both temp and persistent
+add dir to 'Machine' or 'User' Path env variable, and update the process env.
 if already has it, do nothing
 #>
 function Add-PathEnv {

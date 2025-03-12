@@ -12,11 +12,11 @@ function Uninstall-Apps {
     [Parameter(Mandatory = $true, Position = 0)]
     $name
   )
-  
+
   begin {
-    
+
   }
-  
+
   process {
     $app = Get-ciminstance -Class Win32_Product -Filter "Name = '$name'"
     if($null -ne $app) {
@@ -27,13 +27,13 @@ function Uninstall-Apps {
       # other way not tested
       # Get-Package -ProviderName Programs -IncludeWindowsInstaller
       # Get-Package -Name "7-zip*" | Uninstall-Package
-      Update-EnvVar
+      Update-ProcessEnvVar
     } else {
       Write-Information "no $name found in system"
     }
   }
-  
+
   end {
-    
+
   }
 }

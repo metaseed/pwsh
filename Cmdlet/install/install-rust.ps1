@@ -2,7 +2,7 @@
 iwr https://win.rustup.rs -outfile "$env:temp\rustup-init.exe"
 if(!(gcm rustup)) {
 	& "$env:temp\rustup-init.exe" -y --default-host=x86_64-pc-windows-msvc 2>&1
-	update-EnvVar
+	Update-ProcessEnvVar
 	rustc -vV
 	cargo -vV
 	# rustup -vV

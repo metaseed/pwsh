@@ -1,10 +1,13 @@
+<#
+close opened explorers, by default close all.
+#>
 function Close-Explorer {
 	[CmdletBinding()]
 	param (
 		[Parameter()]
 		[string]
-		$Folder
+		$Folder = '*'
 	)
-	Get-Explorer $Folder|% {$_.Quit()}
+	Get-OpenedExplorer $Folder|% {$_.Quit()}
 
 }

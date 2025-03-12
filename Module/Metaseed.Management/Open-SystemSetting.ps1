@@ -12,7 +12,7 @@ function Open-SystemSetting {
     'SystemProperties', 'Region', 'ProgramsAndFeatures', 'Firewall', 'InputLanguage', 'Taskbar',
     'UserAccounts','StoredUserNamePassword','DisplaySettings','ExplorerOptions',
     'FontsFolder', 'GameControllers','IndexingOptions', 'MouseOptions', 'MapNetworkDriver',
-    'Background', 'SecurityAndMaintance','Sound','StartSettings'
+    'Background', 'SecurityAndMaintance','Sound','StartSettings','Bluetooth','StartupApps'
     )]
     $setting
   )
@@ -47,6 +47,8 @@ function Open-SystemSetting {
     'Taskbar' {Rundll32.exe shell32.dll,Options_RunDLL 1}
     'UserAccounts' {Rundll32.exe shell32.dll,Control_RunDLL nusrmgr.cpl}
     'StoredUserNamePassword'{Rundll32.exe keymgr.dll,KRShowKeyMgr}
+    'Bluetooth' {Start-Process "ms-settings:bluetooth"}
+    'StartupApps' {Start-Process "ms-settings:startupapps"}
     Default {}
   }
 
