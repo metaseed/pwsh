@@ -43,6 +43,6 @@ function Speak-Text {
 		}
 	}
 	catch {
-		"⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($Error[0])"
+		"⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)"
 	}
 }

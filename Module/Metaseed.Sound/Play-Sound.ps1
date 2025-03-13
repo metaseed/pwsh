@@ -15,7 +15,7 @@ function Play-Sound {
   }
 
   # https://docs.microsoft.com/en-us/dotnet/api/system.media.soundplayer?view=dotnet-plat-ext-6.0
-  $PlayWav = New-Object System.Media.SoundPlayer
+  $PlayWav = New-Object Media.SoundPlayer
   $PlayWav.SoundLocation = $soundPath
   if ($sync) {
     $PlayWav.playsync()

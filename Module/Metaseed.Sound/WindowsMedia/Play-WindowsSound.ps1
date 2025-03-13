@@ -4,13 +4,16 @@ function GetWindowsSounds {
     [Parameter()]
     $wordToComplete
   )
-  $Sounds = @(Get-ChildItem "$env:windir\Media\Windows *.wav" | 
-  % { $_.BaseName -replace '^Windows ', '' }) | 
-  ? { 
-    if($wordToComplete) {
-      return $_ -like ($wordToComplete -split '' -join '*').TrimStart('*') 
+  $Sounds = @(Get-ChildItem "$env:windir\Media\Windows *.wav" |
+  % { $_.BaseName -replace '^Windows ', '' }) |
+  ? {
+    if($wordToComplete.contains('*')) {
+      return $_ -like $wordToComplete
+    }
+    elseif($wordToComplete) {
+      return $_ -like ($wordToComplete -split '' -join '*')
     } else {
-      return $_
+      return $true
     }
   }|
   % {
@@ -56,4 +59,4 @@ Register-ArgumentCompleter -CommandName 'Play-WindowsSound' -ParameterName 'name
   $Sounds = GetWindowsSounds $wordToComplete
   return $Sounds
 }
-# ipmo Metaseed.Sound -fo; 
+# ipmo Metaseed.Sound -fo;

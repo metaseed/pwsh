@@ -375,18 +375,19 @@ Output can be redirected to files, variables, or different streams.
  3
  4
 
- # ForEach-Object: return nothing to filter it out
+ # ForEach-Object: return nothing r $null to filter it out
 @(1,2,3,4)|%{if($_ -lt 3) {return $_}else {return}}
 @(1,2,3,4)|%{if($_ -lt 3) {return $_}else {return $null}}
 > '%': it's the map operator with filter capability
->
+
 # `()` is important
  Test-Admin ? "a":"b" # True
 (Test-Admin) ? "a":"b" # a
 
-# variable squeezing.
+## variable squeezing.
 $v = 1 # sets v to 1 and returns nothing
 ($v = 1) # sets v to 1 and returns assigned value
+
 # open system settings
 opss envVar
 opss OptionalFeatures
@@ -398,3 +399,18 @@ opkf startup
 opkf RecycleBinFolder
 opkf Downloads
 opkf DocumentsLibrary
+# .? null conditional operator
+$a = 'dddd'
+$a.length # 4
+$a?.length # 0
+
+## explanation
+> https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.5#null-conditional-operators--and-
+
+'?' is teated as part of var name, since it can be part of var name, we need to use:
+${a}?.length # 4, ${a} is the way to force query 'a' as var name
+or
+($a)?.length # 4
+
+$a = 1..10
+${a}?[0]
