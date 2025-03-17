@@ -5,7 +5,7 @@ Set-Alias sa Start-Process # default: saps, start
 . $PSScriptRoot\..\Cmdlet\_alias.ps1
 
 & { # prevent $codePath leak in to profile variable: provider
-    $codePath = (Get-Command 'code' -ErrorAction Ignore).Source
+    $codePath = (Get-Command code -ErrorAction Ignore).Source
     if ($null -eq $codePath) {
         $codePath = (Get-Command 'code-insiders' -ErrorAction Ignore).Source
         if ($null -ne $codePath) {

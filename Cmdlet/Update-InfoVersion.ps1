@@ -1,5 +1,5 @@
 <#
-1. in repo directory, and search to the parant folder, until find the info.json
+1. in repo directory, and search to the parent folder, until find the info.json
 1. increase the build version
 1. commit the changes and push the remote
 #>
@@ -16,10 +16,16 @@ param (
 )
 Write-SubStep 'try to find info.json...'
 $info = Find-FromParent 'info.json'
+if($null -eq $info) {
+  # not we have warning msg from Find-FromParent, no need to print error
+  return
+}
+
 Write-Host "find info.json at: $($info.FullName)"
 
 Write-SubStep 'bump version...'
 Write-Action 'get version info from info.json...'
+
 # "version": "{{release}}.0.414"
 $regex = '"version"\s*:\s*"(.*)\.(.*)\.(\d+)"'
 $str = select-string -path $info $regex
@@ -45,7 +51,7 @@ else {
 $newVer = "`"version`": `"$major.$minor.$build`""
 
 Write-Action 'modify version of info.json...'
-# note the parntheses around get-content to ensure the file is slurped in one go(closed)
+# note the parentheses around get-content to ensure the file is slurped in one go(closed)
 (Get-Content $info) |
 % { $_ -replace $regex, $newVer } |
 Set-Content $info -force

@@ -33,7 +33,7 @@ param(
   # --%: stop parsing, we can not have pwsh variable after it
   # --: end-of-parameters , and we can have pwsh variable after it
   # note: experiment feature in 7.2: https://docs.microsoft.com/en-us/powershell/scripting/learn/experimental-features?view=powershell-7.2#psnativecommandargumentpassing
-  # do more exploration when it finally integrated. could we do it more naturely like?: a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png
+  # do more exploration when it finally integrated. could we do it more naturally like?: a ffmpeg -y -i matrixRain.webm -vf palettegen palette.png
   [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
   # [string][Parameter(position = 1)]$arg
 )

@@ -6,10 +6,10 @@
 # https://git-scm.com/downloads
 
 Set-PsFzfOption `
--PSReadlineChordSetLocation 'Alt+d' ` # find dir from current dir/subdir
--PSReadlineChordReverseHistoryArgs 'Alt+a' ` # find arg from input history
--PSReadlineChordProvider 'Alt+f' ` # find file from current dir/subdir
--PSReadlineChordReverseHistory 'Alt+r' # find line input from input history
+-PSReadlineChordSetLocation 'Alt+d'  <# find dir from current dir/subdir and setLocation to it #> `
+-PSReadlineChordReverseHistoryArgs 'Alt+a'  <# find arg from input history#> `
+-PSReadlineChordProvider 'Alt+f' <# find file/dir from current dir/subdir or the dir at current cursor, i.e.: cd m:app(|cursor here) and then press a-f, type soft, <enter> <enter> cd to the software folder#> `
+-PSReadlineChordReverseHistory 'Alt+r' <# find full line input from input history#>
 # -EnableAliasFuzzyZLocation `
 # -EnableAliasFuzzySetEverything
 
@@ -21,14 +21,21 @@ Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 
 Set-Alias ifz    -Scope global Invoke-Fzf
 
-# edit the found dir/file with vscode
+# edit the found dir/file with vscode(windows default is vscode)
 Set-Alias fe     -Scope global Invoke-FuzzyEdit
+# find cmd from file: (Get-PSReadlineOption).HistorySavePath
 Set-Alias fh     -Scope global Invoke-FuzzyHistory
-# Set-Alias ff     -Scope global Invoke-FuzzyFasd
+# Set-Alias ff     -Scope global Invoke-FuzzyFasd # requires Fasdr to be previously installed under Windows.
+# fuzzy/faster kill
 Set-Alias fkill  -Scope global Invoke-FuzzyKillProcess
-# Set-Alias fd     -Scope global Invoke-FuzzySetLocation # use alt+d instead
-Set-Alias cde    -Scope global Set-LocationFuzzyEverything
-Set-Alias cdz    -Scope global Invoke-FuzzyZLocation
+
+# use alt+d instead
+Set-Alias slf     -Scope global Invoke-FuzzySetLocation
+# cd with everything db
+Set-Alias sle    -Scope global Set-LocationFuzzyEverything
+# fuzzy set location with zlocation db
+Set-Alias slz    -Scope global Invoke-FuzzyZLocation
+
 # Set-Alias fs     -Scope global Invoke-FuzzyScoop
 Set-Alias fgs    -Scope global Invoke-FuzzyGitStatus
 Set-Alias fgf    -Scope global Invoke-FuzzyGitFiles
@@ -36,4 +43,9 @@ Set-Alias fgh    -Scope global Invoke-FuzzyGitHashes
 Set-Alias fgt    -Scope global Invoke-FuzzyGitTags
 Set-Alias fgst    -Scope global Invoke-FuzzyGitStashes
 Set-Alias fgb    -Scope global Invoke-PsFzfGitBranches
+
+<#
+tab completion for git, gps,saps, gsv, spsv
+i.e. gps <tab>code
+#>
 

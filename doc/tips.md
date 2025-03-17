@@ -14,6 +14,12 @@ rmo metaseed.git
 ```
 * copy current dir
 ```
+# get sub dirs
+gci -at d
+get-childItem -attribute directory
+gci -n
+get-childItem -Name # only show dir name
+
 # pwd: print work directory
 > gl|scb
 > gcb
@@ -80,6 +86,8 @@ git status 2>$null; $LASTEXITCODE
 * hide output
 "aa"|out-null
 "aa" > $null
+[void]2
+
 
 * get all env variables start with
 gci env:planck*
@@ -380,14 +388,26 @@ Output can be redirected to files, variables, or different streams.
 @(1,2,3,4)|%{if($_ -lt 3) {return $_}else {return $null}}
 > '%': it's the map operator with filter capability
 
-# `()` is important
+# parenthesis `()` is important
  Test-Admin ? "a":"b" # True
 (Test-Admin) ? "a":"b" # a
 
-## variable squeezing.
-$v = 1 # sets v to 1 and returns nothing
-($v = 1) # sets v to 1 and returns assigned value
+gc
 
+(1) will output 1 to stream-out
+write-out 1
+(1);(2);($a = 3)
+1
+2
+3
+
+## variable squeezing.
+$v = 1 # sets v to 1 and output nothing
+($v = 1) # sets v to 1 and output assigned value
+($a=7);$b = 2;($c=3)
+7
+3
+$a = $b = 1 # a,b are 1
 # open system settings
 opss envVar
 opss OptionalFeatures
@@ -414,3 +434,6 @@ or
 
 $a = 1..10
 ${a}?[0]
+
+# configPsFzf
+for the shortcuts of searching

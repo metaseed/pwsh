@@ -1,5 +1,6 @@
 <#
 .description
+find from current and parent folders.
 return a FileInfo object for the given file name.
 then you can use .FullName to get the string path or "$path" to get fullpath
 
@@ -23,10 +24,13 @@ function Find-FromParent {
   if(!$path) {
     return $null
   }
+
   do {
     # force to show hidden file/folder like .git
     $info = Get-ChildItem $path -force| ? name -like $FileOrFolder
+
     if ($null -ne $info) { return $info }
+
     $path = $path | split-path
   } while ($path -ne '')
 
