@@ -52,8 +52,9 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
 
 # open file explorer
 Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
-    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('a lf') # input
+    # to accept the returned path as argument to current command
+    # [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('(a lf)') # input
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
 }
 

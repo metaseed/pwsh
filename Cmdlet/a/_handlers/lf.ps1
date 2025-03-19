@@ -17,22 +17,25 @@
 param (
     [Parameter()]
     [string]
-    $file,
+    $lfExe,
     # remaining parameters
     [Parameter(mandatory = $false,  DontShow, ValueFromRemainingArguments = $true)]$Remaining
 )
 
-$tmp = [System.IO.Path]::GetTempFileName()
+$tmp = [System.IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
 # lf -last-dir-path="$tmp" $args
 
-& $file -last-dir-path="$tmp" @Remaining
-
+& $lfExe -last-dir-path="$tmp" @Remaining
+# returned from lf UI
 if (Test-Path -PathType Leaf "$tmp") {
     $dir = Get-Content "$tmp"
     Remove-Item -Force "$tmp"
     if (Test-Path -PathType Container "$dir") {
         if ("$dir" -ne "$pwd") {
             cd "$dir"
+        }else {
+            #return [Microsoft.PowerShell.PSConsoleReadLine]::Insert($dir)
         }
     }
+
 }

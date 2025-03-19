@@ -1,6 +1,7 @@
 [Document](https://github.com/gokcehan/lf/blob/master/doc.md)
 # quick start
-`lf` to invoke
+`ctrl+o` or `lf` to invoke
+> `ctrl+o` is configured in `PSReadlineConfig.ps1`
 > the `lfrc` config file for more info
 
 > with powershell, we can not pass argument parameters

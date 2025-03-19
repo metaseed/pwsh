@@ -11,8 +11,8 @@ $setLocation = $Remaining -contains '-setLocation'
 if($setLocation) {
   $remaining.remove('-setLocation')
 }
-$setLocation
-$result = & $appPath --no-gap-search --autocd-timeout off @Remaining # --gap-search-anywhere
+# $setLocation
+$result = & $appPath --normal-search --autocd-timeout off @Remaining # --gap-search-anywhere
 
 # Write-Host $result
 if ($result) {

@@ -1,9 +1,13 @@
 # https://github.dev/kelleyma49/PSFzf
+# https://github.com/kelleyma49/PSFzf
 
 # dependency:
 # https://github.com/junegunn/fzf
-# https://github.com/powercode/PSEverything
+# > install: install-fzf
+# > install: install-poshGit
 # https://git-scm.com/downloads
+
+# https://github.com/powercode/PSEverything
 
 Set-PsFzfOption `
 -PSReadlineChordSetLocation 'Alt+d'  <# find dir from current dir/subdir and setLocation to it #> `
