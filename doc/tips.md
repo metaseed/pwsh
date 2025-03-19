@@ -388,9 +388,23 @@ Output can be redirected to files, variables, or different streams.
 @(1,2,3,4)|%{if($_ -lt 3) {return $_}else {return $null}}
 > '%': it's the map operator with filter capability
 
+# expression in function will be trait as one of returned value
+function A{'a';'b';return 'c'}
+a
+b
+c
+> to prevent the expression to be the return value, assigned it to a var or
+> [void]expression or expression|out-null
+
 # parenthesis `()` is important
  Test-Admin ? "a":"b" # True
 (Test-Admin) ? "a":"b" # a
+## Ternary operator does not work with cmd invoke as condition directly
+> https://github.com/PowerShell/PowerShell/issues/25194
+function A {$true}
+A ? 'a':'b'
+the simplest walkaround current is:
+(A)?'a':'b'
 
 gc
 
@@ -401,13 +415,22 @@ write-out 1
 2
 3
 
-## variable squeezing.
-$v = 1 # sets v to 1 and output nothing
-($v = 1) # sets v to 1 and output assigned value
+## output from expression
+$v = 1 # sets $v to 1 and output nothing
+($v = 1) # sets $v to 1 and output assigned value
+($v) # var in expression
+1
 ($a=7);$b = 2;($c=3)
 7
 3
 $a = $b = 1 # a,b are 1
+
+## we can use () to make a string as command and adjust command execution precedency
+git checkout (fgb)
+> it's also output from expression and
+> it will trait 'fgb' as a command instead of a string, execute `fgb` first and then checkout the branch returned from the cmd.
+> the `fgb` will return the git branch name with fuzzy search.
+>
 # open system settings
 opss envVar
 opss OptionalFeatures
@@ -437,3 +460,23 @@ ${a}?[0]
 
 # configPsFzf
 for the shortcuts of searching
+
+
+# make sure the output is a array
+$a = 1
+@($a)
+,1
+$a = ,1
+@($a)
+> use @(,$a) to wrapper array inside array
+,1
+> @($var) will return a new array, if $var is enumerable, the items get from the enumerable $var
+>
+```
+$a = [System.Collections.ArrayList]::new()
+$a.Add(1)
+$a.Add(1)
+$a.gettype() # arraylist
+$b = @($a)
+$b.gettype() #
+```

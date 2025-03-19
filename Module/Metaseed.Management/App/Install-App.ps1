@@ -32,7 +32,7 @@ function Install-App {
 		$ver_online,
 		$appName,
 		$toLocation,
-		[switch]$CreateFolder,
+		$CreateFolder,
 		[string]$newName,
 		$verLocal,
 		[switch]$pickExes,

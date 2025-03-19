@@ -1,3 +1,4 @@
+# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pipelines?view=powershell-7.5
 Function test1
 {
 [CmdletBinding(SupportsShouldProcess=$True)]

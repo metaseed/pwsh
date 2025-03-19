@@ -24,7 +24,7 @@ function trashUndo {
     $shell = $null
     $recycleBin = $null
     try {
-        # when the folder is empth there is no active selection, so we use $env:PWD
+        # when the folder is empty there is no active selection, so we use $env:PWD
         #split-path ($env:f).trim('"') -Parent #"c:\users\jsong12\downloads" #
         $folderPath = ($env:PWD).trim('"')
         # Show-MessageBox $folderPath
@@ -43,7 +43,7 @@ function trashUndo {
         foreach ($item in $items) {
             $deleteDateStr = $recycleBin.GetDetailsOf($item, 2)  # 2 is the index for Date Deleted
             $deleteDate = (parseDate $deleteDateStr)
-            # the obove line the the delete time that does not contains seconds info.
+            # the above line the the delete time that does not contains seconds info.
             # below lines the time is wrong:  1/1/1601 1:00:00 AM, actually:  7/24/2024 3:11:00 PM
             # $fileInfo = Get-ChildItem $item.Path
             # $infoFileName =  $fileInfo.Name -replace '^\$R', '$$I'

@@ -42,8 +42,10 @@ function Get-LocalAppInfo {
 				catch {
 					$r = $app.VersionInfo.FileVersion -match "^[\d\.]+"
 					Write-Verbose "query local version via FileVersion property(full): $($app.VersionInfo.FileVersion)"
-					Write-Verbose "query local version via FileVersion property(matched): $($matches[0])"
 					if ($r) {
+						# the matches is not exist if match failed here
+						# test-path variable:matches
+						Write-Verbose "query local version via FileVersion property(matched): $($matches[0])"
 						$versionLocal = [Version]::new($matches[0])
 					}
 					else {

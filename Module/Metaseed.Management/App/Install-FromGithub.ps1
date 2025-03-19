@@ -67,13 +67,13 @@ function Install-FromGithub {
 		},
 		[Parameter()]
 		[scriptblock]$installScript = {
-			param($downloadedFilePath, $ver_online, $toFolder, $newName, $verLocal)
+			param($downloadedFilePath, $ver_online, $toFolder, $CreateFolder, $newName, $verLocal)
 
 			$appName = $application -eq '' ? $repo : $application
 			if ($newName) {
 				Write-Host "new name: $newName"
 			}
-			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder -newName $newName -verLocal $verLocal -pickExes: $pickExes -restoreList $restoreList
+			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder $CreateFolder -newName $newName -verLocal $verLocal -pickExes: $pickExes -restoreList $restoreList
 			return $r
 		},
 		# force reinstall
@@ -125,7 +125,7 @@ function Install-FromGithub {
 		% {
 			$path = $_
 			$Folder ??= $env:MS_App
-			$des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $newName, $versionLocal
+			$des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder,$toFolder,  $newName, $versionLocal
 			write-host "app installed to $des"
 			$appPath = $des
 		}
