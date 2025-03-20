@@ -7,7 +7,7 @@ $PSReadLineOptions = @{
     # HistorySearchCursorMovesToEnd = $true
     MaximumHistoryCount = 10000
     # Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
-    Colors = @{ "ListPrediction" = "`e[90m" }
+    Colors              = @{ "ListPrediction" = "`e[90m" }
     PredictionViewStyle = 'ListView'
 }
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption?view=powershell-7.2
@@ -38,7 +38,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
     $lastSessionScope = $global:__PSReadLineSessionScope
-    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; LastSessionStartTime = ($lastSessionScope.SessionStartTime ?? [datetime]::Now)}
+    $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; LastSessionStartTime = ($lastSessionScope.SessionStartTime ?? [datetime]::Now) }
     # create a scope for a psReadline session
     New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
         scope     = $global:__PSReadLineSessionScope;
@@ -54,8 +54,10 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
 Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
     # to accept the returned path as argument to current command
     # [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('(a lf)') # input
-    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
+    # [Microsoft.PowerShell.PSConsoleReadLine]::Insert('(a lf)') # input
+    # [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
+    # Import-Module Metaseed.Utility -DisableNameChecking
+    a lf
 }
 
 # Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {

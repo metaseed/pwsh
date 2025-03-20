@@ -1,6 +1,7 @@
 # https://github.dev/kelleyma49/PSFzf
 # https://github.com/kelleyma49/PSFzf
-
+# Install-Module -Name PSFzf
+# update-Module -Name PSFzf
 # dependency:
 # https://github.com/junegunn/fzf
 # > install: install-fzf
