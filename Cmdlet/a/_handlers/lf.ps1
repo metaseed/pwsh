@@ -21,61 +21,41 @@ param (
     # remaining parameters
     [Parameter(mandatory = $false, DontShow, ValueFromRemainingArguments = $true)]$Remaining
 )
+. $PSScriptRoot/_lib/Invoke-Directory.ps1
+Invoke-Directory {
+    param (
+        $pathAtCursor, $inputLine, $cursorLeft, $cursorRight
+    )
 
-$leftCursor = $null
-$rightCursor = $null
-$line = $null
-$cursor = $null
-[Microsoft.PowerShell.PSConsoleReadline]::GetBufferState([ref]$line, [ref]$cursor)
-$currentPath = Find-PsReadlinePath $line $cursor ([ref]$leftCursor) ([ref]$rightCursor)
+    # $tmp = [System.IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
+    try {
+        # lf -last-dir-path="$tmp" $args
+        $isPath = Test-Path -PathType Container "$pathAtCursor"
 
-$tmp = [System.IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
-$isPath = $false
+        if ($isPath -and ("$pwd" -ne "$pathAtCursor")) {
+            $dir = & $lfExe -print-last-dir $pathAtCursor # -last-dir-path=`"$tmp`"
+            # note: bug: it will not save the write value into the file
+        }
+        else {
+            $dir = & $lfExe -print-last-dir
+            # & $lfExe -last-dir-path="$tmp" @Remaining
+        }
+        # if (!(Test-Path -PathType Leaf "$tmp")) {
+        #     write-host "no path: $tmp"
+        #     return
+        # }
+        #$dir = Get-Content "$tmp"
 
-try {
-    # lf -last-dir-path="$tmp" $args
-    if(Test-Path -PathType Container $currentPath){
-        $isPath = $true
+        return $dir
     }
-
-    if ($isPath -and ("$pwd" -ne "$currentPath")) {
-        & $lfExe "$currentPath -last-dir-path=$tmp" @Remaining
+    catch {
+        Write-Host "Error: $($_.Exception.Message)"
+        return;
     }
-    else {
-        & $lfExe -last-dir-path="$tmp" @Remaining
+    finally {
+        if (!$(Test-Path -PathType Container "$dir")) {
+            write-host "$lfExe -print-last-dir $pathAtCursor"
+        }
+        #Remove-Item -Force "$tmp"
     }
-    # if (!(Test-Path -PathType Leaf "$tmp")) {
-    #     write-host "no path: $tmp"
-    #     return
-    # }
-    $dir = Get-Content "$tmp"
-}
-catch {
-    Write-Host "Error: $($_.Exception.Message)"
-    return;
-}
-finally {
-    Remove-Item -Force "$tmp"
-}
-##
-## returned from lf UI
-##
-if (!(Test-Path -PathType Container "$dir")) {
-    write-host " & $lfExe '$currentPath' -last-dir-path='$tmp' @Remaining"
-    write-host "the returned path is not a dir: $dir tmp:$tmp,exist:$(Test-Path $tmp); currentPath:$currentPath,isPath:$isPath, line:$line,cursorLeft:$leftCursor,rightCursor:$rightCursor. lf.exe:$lfExe"
-    return
-}
-
-if (("$dir" -ne "$pwd") -and [string]::IsNullOrWhiteSpace($line)) {
-    sl "$dir"
-    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-}
-else {
-    if ($isPath) {
-        [Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $dir)
-    }
-    else {
-        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($dir)
-    }
-    #return [Microsoft.PowerShell.PSConsoleReadLine]::Insert($dir)
 }

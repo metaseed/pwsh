@@ -36,7 +36,7 @@ function Find-PsReadlinePath {
 
 	if ($line.Length -eq 0) {
 		$leftCursor.Value = $rightCursor.Value = 0
-		return $null
+		return ''
 	}
 
 	if ($cursor -ge $line.Length) {
