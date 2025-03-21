@@ -1,5 +1,6 @@
 # Show-MessageBox $env:fx
 # "fullPath"`n"fullPath"
-$env:fx -split "`n" |
+# "fullPath","fullPath"
+$env:fx -split "," |
 	% { split-path $_.trim('"') -leaf } |
 	Set-Clipboard

@@ -49,7 +49,7 @@ set incfilter
 set hidden
 
  #  (default "\n") https://github.com/gokcehan/lf/blob/ad6fa3fa736104ad3061797c6c74cf2e57ebe27d/doc.txt#L146
-# set filesep ";"
+set filesep ","
 
 ##################################################################
 ### commands
