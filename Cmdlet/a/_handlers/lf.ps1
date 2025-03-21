@@ -21,7 +21,11 @@ param (
     # remaining parameters
     [Parameter(mandatory = $false, DontShow, ValueFromRemainingArguments = $true)]$Remaining
 )
-
+if( $Remaining -contains '-remote') {
+    Show-MessageBox "$($Remaining -join ','), please use 'c:\app\lf.exe -remote to send command"
+    #i.e. c:\app\lf.exe -remote "send $env:id push :rename<space>$name"
+    return
+}
 $isLastSelections = $Remaining -contains '-lastSelection'
 if($isLastSelections) {
   $remaining.remove('-lastSelection')

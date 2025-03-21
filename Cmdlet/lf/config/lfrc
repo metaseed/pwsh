@@ -147,7 +147,7 @@ map r
 map rr push :rename<space>
 # map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
 # https://github.com/gokcehan/lf/issues/329
-cmd rename-with-name &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
+cmd rename-with-name $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
 
 # a little slower
 map rn rename-with-name
