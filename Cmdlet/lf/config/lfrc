@@ -48,12 +48,23 @@ set incfilter
 # show hidden files
 set hidden
 
+ #  (default "\n") https://github.com/gokcehan/lf/blob/ad6fa3fa736104ad3061797c6c74cf2e57ebe27d/doc.txt#L146
+# set filesep ";"
 
 ##################################################################
 ### commands
 ##################################################################
 # change 'doc' command to use a different pager
 cmd doc $lf -doc | less
+
+# https://github.com/gokcehan/lf/blob/master/doc.md#on-quit
+# note: the `:\=\\` is to replace '\' in %fx% into '\\'
+#cmd on-quit $echo %fx:% > %TEMP%\lf-lastSelection.json
+# can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
+cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+
+# slow
+# cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/on-quit.ps1
 
 ##################################################################
 ###	cmd map

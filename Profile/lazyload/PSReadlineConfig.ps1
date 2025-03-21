@@ -50,6 +50,9 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
+Set-PSReadLineKeyHandler -Chord Ctrl+Shift+o -ScriptBlock { # Ctrl+d  work
+    lf -lastSelection
+}
 # open file explorer
 Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
     # to accept the returned path as argument to current command
@@ -57,8 +60,11 @@ Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock {
     # [Microsoft.PowerShell.PSConsoleReadLine]::Insert('(a lf)') # input
     # [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
     # Import-Module Metaseed.Utility -DisableNameChecking
-    a lf
+    #a lf
+    lf
 }
+
+
 
 # Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
 #     # https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/Completion.cs
