@@ -21,35 +21,41 @@ function Invoke-OnPsLine {
 
 	$onQuit = Invoke-Command -ScriptBlock $dirScript -ArgumentList $pathAtCursor, $line, $leftCursor, $rightCursor
 
-	$dir = $onQuit.workingDir
+	$lfWorkingDir = $onQuit.workingDir
 	##
 	## returned from lf UI
 	##
-	if (!(Test-Path -PathType Container "$dir")) {
-		write-host "the returned path is not a dir: $dir, pathAtCursor:$pathAtCursor,line:$line,cursorLeft:$leftCursor,rightCursor:$rightCursor"
+	if (!(Test-Path -PathType Container "$lfWorkingDir")) {
+		write-host "the returned path is not a dir: $lfWorkingDir, pathAtCursor:$pathAtCursor,line:$line,cursorLeft:$leftCursor,rightCursor:$rightCursor"
 		return
 	}
 
 	if ($isLastSelections) {
 		$lastSelections = $onQuit.lastSelections
-		$pathStr = ($lastSelections|%{"'$_'"}) -join ','
+		$pathStr = ($lastSelections | % { "'$_'" }) -join ','
 		[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
 	}
 	else {
-		# handle dir
-		if (("$dir" -ne "$pwd") -and [string]::IsNullOrWhiteSpace($line)) {
-			sl "$dir"
-			[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+		# empty line
+		if ([string]::IsNullOrWhiteSpace($line)) {
+			# and not the same dir then switch
+			if ("$lfWorkingDir" -ne "$pwd") {
+				sl "$lfWorkingDir"
+				[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+			}
 		}
+		# something online
 		else {
-			$isPath = Test-Path -PathType Container "$pathAtCursor"
-			if ($isPath) {
-				[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $dir)
+			$isDir = Test-Path -PathType Container "$pathAtCursor"
+			if ($isDir) {
+				if ("$lfWorkingDir" -ne "$pwd") {
+					[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $lfWorkingDir)
+				}
 			}
+			# not a dir
 			else {
-				[Microsoft.PowerShell.PSConsoleReadLine]::Insert($dir)
+				[Microsoft.PowerShell.PSConsoleReadLine]::Insert($lfWorkingDir)
 			}
-			#return [Microsoft.PowerShell.PSConsoleReadLine]::Insert($dir)
 		}
 	}
 }
