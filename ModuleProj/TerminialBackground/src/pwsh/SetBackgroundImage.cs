@@ -1,6 +1,4 @@
-﻿using System;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
+﻿using System.Management.Automation;
 using Metaseed.TerminalBackground;
 
 namespace TerminialBackground

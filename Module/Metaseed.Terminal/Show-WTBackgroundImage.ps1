@@ -12,7 +12,7 @@ function GetGifs {
   $gifFolder = $env:WTBackgroundImage ? @("$env:WTBackgroundImage", "$psscriptroot\res\gifs") : "$psscriptroot\res\gifs"
 
   $gifs = @(Get-ChildItem $gifFolder -Recurse | % { $_.BaseName }) |
-  ? { 
+  ? {
     if ($wordToComplete) {
       return $_ -like ($wordToComplete -split '' -join '*')
     }
@@ -38,7 +38,9 @@ function Show-WTBackgroundImage {
     [ValidateSet('center', 'topLeft', 'bottomLeft', 'left', 'topRight', 'bottomRight', 'right', 'top', 'bottom')]
     [string]$alignment = 'center',
     [ValidateSet('none', 'uniformToFill', 'fill', 'uniform')]
-    [string]$stretchMode = 'none'
+    [string]$stretchMode = 'none',
+    [ValidateRange(0,1)]
+    [float]$backgroundImageOpacity = 0.8
 
   )
   $isUrl = [uri]::IsWellFormedUriString($image, 'Absolute') #-and ([uri] $uri).Scheme -in 'http', 'https'
@@ -48,13 +50,13 @@ function Show-WTBackgroundImage {
   else {
     $gifFolder = $env:WTBackgroundImage ? @("$env:WTBackgroundImage", "$psscriptroot\res\gifs") : "$psscriptroot\res\gifs"
 
-    $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image } 
+    $it = Get-ChildItem  $gifFolder -Recurse | Where-Object { $_.BaseName -eq $image }
     if ($it.PSIsContainer) {
       $it = Get-ChildItem $it -Recurse | ? {!($_.PSIsContainer)} | get-Random
       Write-Verbose $it
     }
   }
-  $str = '{"backgroundImage": ' + (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "' + $stretchMode + '","backgroundImageAlignment": "' + $alignment + '","backgroundImageOpacity":0.8}'
+  $str = '{"backgroundImage": ' + (ConvertTo-Json "$it") + ',"backgroundImageStretchMode": "' + $stretchMode + '","backgroundImageAlignment": "' + $alignment + '","backgroundImageOpacity":' + $backgroundImageOpacity + '}'
   Set-WTBgImg $prof $durationInseconds $str
 }
 

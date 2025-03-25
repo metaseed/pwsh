@@ -58,10 +58,8 @@ Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
 Set-PSReadLineKeyHandler -Chord Ctrl+s -ScriptBlock {
     # to accept the returned path as argument to current command
     # [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
-    # [Microsoft.PowerShell.PSConsoleReadLine]::Insert('(a lf)') # input
+    # [Microsoft.PowerShell.PSConsoleReadLine]::Insert('lf') # input
     # [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
-    # Import-Module Metaseed.Utility -DisableNameChecking
-    #a lf
     lf
 }
 

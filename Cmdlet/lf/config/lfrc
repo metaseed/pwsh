@@ -20,9 +20,7 @@ map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
 
 # custom file preview
 # unset COLORTERM
-# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.ps1"
-# set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.bat"
-set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/preview.cmd"
+set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/previewer.cmd"
 
 # set period 1
 # interpreter for shell commands, on windows by default it is cmd
@@ -62,9 +60,12 @@ cmd doc $lf -doc | less
 #cmd on-quit $echo %fx:% > %TEMP%\lf-lastSelection.json
 # can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
 cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
-
 # slow
 # cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/on-quit.ps1
+# cmd on-quit &{{cd %fx%;echo 'dddd'}}
+
+# comment out because it easily triggered by the input-cancel when when in command mode
+# map <esc> quit # the same as q
 
 ##################################################################
 ###	cmd map
@@ -220,18 +221,15 @@ map yn copy-names
 map <c-x> cut
 
 # c: Clear file paths in copy/cut buffer: $home\AppData\Local\lf\files, remove the visual block on UI
-
-## delete #################
-
-# map da %pwsh -c 'echo "ddddddddd"'
-
 ## paste #################
-
-map V paste
 # default is p
 # note: <c-v> is not working in terminal
 # In terminal applications, Ctrl+V is often interpreted as the ASCII control character 'SYN' (synchronous idle) or '^V'.
 # Most terminals use Shift+Insert or right-click for pasting. Some terminal emulators allow you to configure Ctrl+Shift+V for pasting.
+
+map V paste
+
+## delete #################
 
 # permanent deletion
 map D delete
@@ -240,9 +238,11 @@ map D delete
 # cmd trash &Remove-ItemSafely env:fx env:1
 cmd trash-selected &pwsh -nologo  -noprofile -noninteractive -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
 map <delete> trash-selected
-map dd trash-selected
-cmd trash-undo $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trashUndo.ps1
 map d # remove d map, by default its the 'cut' cmd
+map dd trash-selected
+
+### undo trash
+cmd trash-undo &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trashUndo.ps1
 map du trash-undo
 # map T push &wt<enter>
 
@@ -256,9 +256,10 @@ map du trash-undo
 # note: the right arrow triggers default open
 
 ## editor and open
-#default is e is edit with notepad on windows
-# open file in code
+
+### open file in code
 cmd vsCode &code %f%
+# default is e is edit with notepad on windows
 map e vsCode
 map oc vsCode
 
@@ -340,7 +341,7 @@ map <c-t> push :dragonce<enter> # c-d is used for scroll down
 ###
 
 # v: default is invert select
-# press v again to hide the preview window
+# note: press v again to hide the preview window
 map v &C:\app\QuickLook\QuickLook.exe %f%
 
 # # must have at least a file in it
@@ -380,17 +381,15 @@ map i !bat %f%
 # type exit<enter> to return to lf
 # used to switch shell to do something then switch back with `exit`
 # NOTE: all the env are accessible in this shell, inherited from parent process `lf`
-map w $pwsh
+# -noprofile
+# note: can not trigger with ctrl-s or o
+map w $pwsh -nologo
 
 ## execute current file (must be executable)
 # # execute with shell
 # map x $$f
 # # execute with shell_wait
 # map X !$f
-
-# comment out because it easily triggered by the input-cancel when when in command mode
-# map <esc> quit # the same as q
-# cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
 
 ##################################################################

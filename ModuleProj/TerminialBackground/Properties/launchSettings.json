@@ -2,7 +2,7 @@
   "profiles": {
     "ModuleProj": {
       "commandName": "Project",
-      "commandLineArgs": "sa --settingsPath \"m:/script/pwsh/profile/terminal/settings.json\""
+      "commandLineArgs": "sa --settingsPath \"m:/Script/Pwsh/ModuleProj/TerminialBackground/settings.json\""
     }
   }
 }

@@ -1,3 +1,4 @@
 # Show-MessageBox $env:fx
-$env:fx -split "`n" |
+# "`n"
+$env:fx -split ',' |
 	Set-Clipboard

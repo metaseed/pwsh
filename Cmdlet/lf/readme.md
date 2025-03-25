@@ -18,5 +18,5 @@ if a pattern starts with '!', then its matches are excluded from hidden files.
 
 shell          (modal)   (default '$')
 shell-pipe     (modal)   (default '%')
-shell-wait     (modal)   (default '!')
+shell-wait     (modal)   (default '!')  ! to wait after the command executed, and press any key to return to lf
 shell-async    (modal)   (default '&')

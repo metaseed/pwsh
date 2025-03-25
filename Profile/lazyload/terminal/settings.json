@@ -1,48 +1,100 @@
 {
-  "duration": 60,
-
-  "defaults": {
-    "random": true,
-    "backgrounds": [
-      {
-        "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
-        "backgroundImageAlignment": "bottomRight",
-        "backgroundImageOpacity": 0.2,
-        "backgroundImageStretchMode": "none"
-      },
-      {
-        "backgroundImage": "%MS_WTBackground%\\res\\bg\\hacker.gif",
-        "backgroundImageStretchMode": "fill"
-      },
-      {
-        "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
-        "backgroundImageStretchMode": "none",
-        "backgroundImageAlignment": "center",
-        "opacity": 100
-      },
-      {
-        "backgroundImage": "%MS_WTBackground%\\res\\bg\\matrixRain.gif",
-        "backgroundImageOpacity": 0.2,
-        "backgroundImageStretchMode": "fill"
-      }
-    ]
-  },
-  "list": {
-    "cmd": {
-      "random": false,
-      "backgrounds": [
-        {
-          "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
-          "backgroundImageAlignment": "bottomRight",
-          "backgroundImageStretchMode": "none"
-        },
-        {
-          "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
-          "opacity": 100,
-          "backgroundImageStretchMode": "none",
-          "backgroundImageAlignment": "center"
+    "duration": 60,
+    "defaults": {
+        "random": true,
+        "backgrounds": [
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
+                "backgroundImageAlignment": "bottomRight",
+                "backgroundImageOpacity": 0.2,
+                "backgroundImageStretchMode": "none"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\hacker.gif",
+                "backgroundImageStretchMode": "fill"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "center",
+                "opacity": 100
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\matrixRain.gif",
+                "backgroundImageOpacity": 0.5,
+                "backgroundImageStretchMode": "fill"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\circular-soundwave.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "center"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\circular-soundwave1.gif",
+                "backgroundImageOpacity": 0.5,
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "center"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\grain.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "fill",
+                "backgroundImageAlignment": "right"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\grain1.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "fill",
+                "backgroundImageAlignment": "bottom"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\magicmissile.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "right"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\hole.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "center"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\galaxy.gif",
+                "backgroundImageOpacity": 0.6,
+                "backgroundImageStretchMode": "uniform",
+                "backgroundImageAlignment": "center"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\space.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "center"
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\wave.gif",
+                "backgroundImageOpacity": 0.4,
+                "backgroundImageStretchMode": "none",
+                "backgroundImageAlignment": "center"
+            }
+        ]
+    },
+    "list": {
+        "cmd": {
+            "random": false,
+            "backgrounds": [
+                {
+                    "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
+                    "backgroundImageAlignment": "bottomRight",
+                    "backgroundImageStretchMode": "none"
+                },
+                {
+                    "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
+                    "opacity": 100,
+                    "backgroundImageStretchMode": "none",
+                    "backgroundImageAlignment": "center"
+                }
+            ]
         }
-      ]
     }
-  }
-}
