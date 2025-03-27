@@ -1,3 +1,4 @@
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 'PSReadline', 'PowershellGet', 'Pester', 'Microsoft.PowerShell.ConsoleGuiTools',
  'PSEverything', # used by psfzf Set-LocationFuzzyEverything
  'PSFzf', 'posh-git' | % {
@@ -9,5 +10,7 @@
   if ($error) {
     "   install module $module ..."
     Install-Module $module -force
+  } else {
+    "module $module updated successfully!"
   }
 }
