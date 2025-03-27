@@ -23,6 +23,8 @@ to debug this script, we change the `&pwsh` to `!pwsh` to see the log from the s
 
 > note: for pwsh script, although we invoke pwsh with `&pwsh -nologo -noninteractive -noprofile -file ...` we can still use the command in the ms_pwsh modules, i.e. call `show-messagebox` command which is defined in 'metaseed.console` module. because the  $env:PSModulePath is still used as configured before.
 >
+
+use the `w` to switch to the shell to view the log, and type `exit` to switch to lf
 ## environment variables
 https://github.com/gokcehan/lf/wiki/Tips#use-environment-variables-in-command-or-mapping
 https://github.com/gokcehan/lf/blob/master/doc.md#environment-variables

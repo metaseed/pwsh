@@ -1,432 +1,252 @@
 {
-  "$help": "https://aka.ms/terminal-documentation",
-  "$schema": "https://aka.ms/terminal-profiles-schema",
-  "actions": [
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema-preview",
+    "actions": 
+    [
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "index": 2,
+                "split": "auto"
+            },
+            "id": "User.splitPane.227DFB6"
+        },
+        {
+            "command": 
+            {
+                "action": "closeTab"
+            },
+            "id": "User.closeTab.0"
+        },
+        {
+            "command": 
+            {
+                "action": "globalSummon",
+                "desktop": "onCurrent",
+                "monitor": "any"
+            },
+            "id": "User.globalSummon.25C9281C"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "index": 1,
+                "split": "auto"
+            },
+            "id": "User.splitPane.125D7ADA"
+        },
+        {
+            "command": 
+            {
+                "action": "globalSummon"
+            },
+            "id": "User.globalSummon.51A3D78C"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "index": 0,
+                "split": "auto"
+            },
+            "id": "User.splitPane.48B6353E"
+        }
+    ],
+    "alwaysShowNotificationIcon": true,
+    "copyFormatting": "none",
+    "copyOnSelect": true,
+    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+    "focusFollowMouse": true,
+    "keybindings": 
+    [
+        {
+            "id": "User.globalSummon.25C9281C",
+            "keys": "win+`"
+        },
+        {
+            "id": "User.globalSummon.51A3D78C",
+            "keys": "win+alt+z"
+        },
+        {
+            "id": "Terminal.MoveFocusPreviousInOrder",
+            "keys": "alt+home"
+        },
+        {
+            "id": "Terminal.ScrollDown",
+            "keys": "ctrl+down"
+        },
+        {
+            "id": "User.closeTab.0",
+            "keys": "ctrl+shift+w"
+        },
+        {
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+c"
+        },
+        {
+            "id": "Terminal.TogglePaneZoom",
+            "keys": "alt+shift+z"
+        },
+        {
+            "id": "Terminal.ScrollUp",
+            "keys": "ctrl+up"
+        },
+        {
+            "id": "Terminal.ToggleBlockSelection",
+            "keys": "alt+v"
+        },
+        {
+            "id": "User.splitPane.125D7ADA",
+            "keys": "alt+shift+2"
+        },
+        {
+            "id": "Terminal.MoveFocusNextInOrder",
+            "keys": "alt+end"
+        },
+        {
+            "id": "Terminal.ToggleFocusMode",
+            "keys": "alt+shift+f"
+        },
+        {
+            "id": "Terminal.RestoreLastClosed",
+            "keys": "ctrl+shift+t"
+        },
+        {
+            "id": "Terminal.ClosePane",
+            "keys": "alt+shift+w"
+        },
+        {
+            "id": "Terminal.CopyToClipboard",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "User.splitPane.48B6353E",
+            "keys": "alt+shift+1"
+        },
+        {
+            "id": "Terminal.PasteFromClipboard",
+            "keys": "ctrl+v"
+        },
+        {
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "User.splitPane.227DFB6",
+            "keys": "alt+shift+3"
+        },
+        {
+            "id": "Terminal.SwitchSelectionEndpoint",
+            "keys": "alt+s"
+        }
+    ],
+    "launchMode": "default",
+    "minimizeToNotificationArea": false,
+    "newTabMenu": 
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles": 
     {
-      "command": {
-        "action": "globalSummon",
-        "monitor": "any",
-        "desktop": "onCurrent"
-      },
-      "keys": "win+`"
+        "defaults": 
+        {
+            "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
+            "backgroundImageAlignment": "center",
+            "backgroundImageOpacity": 0.2,
+            "backgroundImageStretchMode": "none",
+            "elevate": true,
+            "font": 
+            {
+                "face": "CaskaydiaCove NFM"
+            },
+            "opacity": 100,
+            "startingDirectory": ".",
+            "useAcrylic": false
+        },
+        "list": 
+        [
+            {
+                "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe -nologo",
+                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+                "hidden": false,
+                "name": "pwsh",
+                "source": "Windows.Terminal.PowershellCore",
+                "startingDirectory": "."
+            },
+            {
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
+                "backgroundImageAlignment": "center",
+                "backgroundImageStretchMode": "none",
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "cmd",
+                "opacity": 100
+            },
+            {
+                "commandline": "powershell.exe -NoExit -Command \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 714f30aa -SkipAutomaticLocation -DevCmdArguments \"\"\"-arch=x64 -host_arch=x64\"\"\"}\"",
+                "guid": "{eec5ba16-4bcd-430c-bb08-e16929dd00a2}",
+                "hidden": false,
+                "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
+                "name": "VS2022",
+                "startingDirectory": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional"
+            },
+            {
+                "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell",
+                "opacity": 100,
+                "padding": "7",
+                "useAcrylic": true
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": false,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
+            },
+            {
+                "guid": "{007a90ef-9991-5bc3-8ae9-4724b3763434}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{ed5828ab-72a3-5f8b-8ee0-a0b85da2682d}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{df5cc309-0441-5d20-a633-f6da2bd2e171}",
+                "hidden": true,
+                "name": "Developer Command Prompt for VS 2019",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{c58e51cb-f878-5155-b878-a76820478b3a}",
+                "hidden": true,
+                "name": "Developer PowerShell for VS 2019",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
+                "hidden": true,
+                "name": "Visual Studio Debug Console",
+                "source": "VSDebugConsole"
+            }
+        ]
     },
-    {
-      "command": {
-        "action": "globalSummon"
-      },
-      "keys": "win+alt+z"
-    },
-    {
-      "command": {
-        "action": "scrollDown"
-      },
-      "keys": "ctrl+down"
-    },
-    {
-      "command": {
-        "action": "closeTab"
-      },
-      "keys": "ctrl+shift+w"
-    },
-    {
-      "command": "togglePaneZoom",
-      "keys": "alt+shift+z"
-    },
-    {
-      "command": {
-        "action": "moveFocus",
-        "direction": "previousInOrder"
-      },
-      "keys": "alt+home"
-    },
-    {
-      "command": {
-        "action": "scrollUp"
-      },
-      "keys": "ctrl+up"
-    },
-    {
-      "command": "toggleBlockSelection",
-      "keys": "alt+v"
-    },
-    {
-      "command": {
-        "action": "moveFocus",
-        "direction": "nextInOrder"
-      },
-      "keys": "alt+end"
-    },
-    {
-      "command": "toggleFocusMode",
-      "keys": "alt+shift+f"
-    },
-    {
-      "command": "restoreLastClosed",
-      "keys": "ctrl+shift+t"
-    },
-    {
-      "command": {
-        "action": "splitPane",
-        "index": 1,
-        "split": "auto"
-      },
-      "keys": "alt+shift+2"
-    },
-    {
-      "command": "closePane",
-      "keys": "alt+shift+w"
-    },
-    {
-      "command": {
-        "action": "copy",
-        "singleLine": false
-      },
-      "keys": "ctrl+c"
-    },
-    {
-      "command": {
-        "action": "splitPane",
-        "index": 0,
-        "split": "auto"
-      },
-      "keys": "alt+shift+1"
-    },
-    {
-      "command": "find",
-      "keys": "ctrl+shift+f"
-    },
-    {
-      "command": {
-        "action": "splitPane",
-        "index": 2,
-        "split": "auto"
-      },
-      "keys": "alt+shift+3"
-    },
-    {
-      "command": "paste",
-      "keys": "ctrl+v"
-    },
-    {
-      "command": {
-        "action": "splitPane",
-        "split": "auto",
-        "splitMode": "duplicate"
-      },
-      "keys": "alt+shift+c"
-    },
-    {
-      "command": "switchSelectionEndpoint",
-      "keys": "alt+s"
-    }
-  ],
-  "alwaysShowNotificationIcon": true,
-  "confirmCloseAllTabs": false,
-  "copyFormatting": "none",
-  "copyOnSelect": true,
-  "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-  "focusFollowMouse": true,
-  "launchMode": "default",
-  "minimizeToNotificationArea": false,
-  "multiLinePasteWarning": false,
-  "profiles": {
-    "defaults": {
-      "backgroundImage": "%MS_WTBackground%\\res\\bg\\hacker.gif",
-      "backgroundImageAlignment": "bottomRight",
-      "backgroundImageOpacity": 0.2,
-      "backgroundImageStretchMode": "fill",
-      "elevate": true,
-      "font": {
-        "face": "CaskaydiaCove NFM"
-      },
-      "startingDirectory" : ".",
-      "opacity": 100,
-      "useAcrylic": false
-    },
-    "list": [
-      {
-        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-        "hidden": false,
-        "name": "pwsh",
-        "startingDirectory" : ".",
-        "source": "Windows.Terminal.PowershellCore"
-      },
-      {
-        "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
-        "backgroundImageAlignment": "bottomRight",
-        "backgroundImageStretchMode": "none",
-        "commandline": "%SystemRoot%\\System32\\cmd.exe",
-        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-        "hidden": false,
-        "name": "cmd",
-        "opacity": 100
-      },
-      {
-        "commandline": "powershell.exe -NoExit -Command \u0022\u0026{Import-Module \u0022\u0022\u0022C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\u0022\u0022\u0022; Enter-VsDevShell 714f30aa -SkipAutomaticLocation -DevCmdArguments \u0022\u0022\u0022-arch=x64 -host_arch=x64\u0022\u0022\u0022}\u0022",
-        "guid": "{eec5ba16-4bcd-430c-bb08-e16929dd00a2}",
-        "hidden": false,
-        "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
-        "name": "VS2022",
-        "startingDirectory": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional"
-      },
-      {
-        "backgroundImage": "%MS_PWSH%\\res\\img\\circle.gif",
-        "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-        "hidden": false,
-        "name": "Windows PowerShell",
-        "opacity": 100,
-        "padding": "7",
-        "useAcrylic": true
-      },
-      {
-        "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
-        "hidden": false,
-        "name": "Azure Cloud Shell",
-        "source": "Windows.Terminal.Azure"
-      },
-      {
-        "guid": "{007a90ef-9991-5bc3-8ae9-4724b3763434}",
-        "hidden": false,
-        "name": "Developer Command Prompt for VS 2022",
-        "source": "Windows.Terminal.VisualStudio"
-      },
-      {
-        "guid": "{ed5828ab-72a3-5f8b-8ee0-a0b85da2682d}",
-        "hidden": false,
-        "name": "Developer PowerShell for VS 2022",
-        "source": "Windows.Terminal.VisualStudio"
-      },
-      {
-        "guid": "{df5cc309-0441-5d20-a633-f6da2bd2e171}",
-        "hidden": true,
-        "name": "Developer Command Prompt for VS 2019",
-        "source": "Windows.Terminal.VisualStudio"
-      },
-      {
-        "guid": "{c58e51cb-f878-5155-b878-a76820478b3a}",
-        "hidden": true,
-        "name": "Developer PowerShell for VS 2019",
-        "source": "Windows.Terminal.VisualStudio"
-      },
-      {
-        "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
-        "hidden": true,
-        "name": "Visual Studio Debug Console",
-        "source": "VSDebugConsole"
-      }
-    ]
-  },
-  "schemes": [
-    {
-      "background": "#0C0C0C",
-      "black": "#0C0C0C",
-      "blue": "#0037DA",
-      "brightBlack": "#767676",
-      "brightBlue": "#3B78FF",
-      "brightCyan": "#61D6D6",
-      "brightGreen": "#16C60C",
-      "brightPurple": "#B4009E",
-      "brightRed": "#E74856",
-      "brightWhite": "#F2F2F2",
-      "brightYellow": "#F9F1A5",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#3A96DD",
-      "foreground": "#CCCCCC",
-      "green": "#13A10E",
-      "name": "Campbell",
-      "purple": "#881798",
-      "red": "#C50F1F",
-      "selectionBackground": "#FFFFFF",
-      "white": "#CCCCCC",
-      "yellow": "#C19C00"
-    },
-    {
-      "background": "#012456",
-      "black": "#0C0C0C",
-      "blue": "#0037DA",
-      "brightBlack": "#767676",
-      "brightBlue": "#3B78FF",
-      "brightCyan": "#61D6D6",
-      "brightGreen": "#16C60C",
-      "brightPurple": "#B4009E",
-      "brightRed": "#E74856",
-      "brightWhite": "#F2F2F2",
-      "brightYellow": "#F9F1A5",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#3A96DD",
-      "foreground": "#CCCCCC",
-      "green": "#13A10E",
-      "name": "Campbell Powershell",
-      "purple": "#881798",
-      "red": "#C50F1F",
-      "selectionBackground": "#FFFFFF",
-      "white": "#CCCCCC",
-      "yellow": "#C19C00"
-    },
-    {
-      "background": "#282C34",
-      "black": "#282C34",
-      "blue": "#61AFEF",
-      "brightBlack": "#5A6374",
-      "brightBlue": "#61AFEF",
-      "brightCyan": "#56B6C2",
-      "brightGreen": "#98C379",
-      "brightPurple": "#C678DD",
-      "brightRed": "#E06C75",
-      "brightWhite": "#DCDFE4",
-      "brightYellow": "#E5C07B",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#56B6C2",
-      "foreground": "#DCDFE4",
-      "green": "#98C379",
-      "name": "One Half Dark",
-      "purple": "#C678DD",
-      "red": "#E06C75",
-      "selectionBackground": "#FFFFFF",
-      "white": "#DCDFE4",
-      "yellow": "#E5C07B"
-    },
-    {
-      "background": "#FAFAFA",
-      "black": "#383A42",
-      "blue": "#0184BC",
-      "brightBlack": "#4F525D",
-      "brightBlue": "#61AFEF",
-      "brightCyan": "#56B5C1",
-      "brightGreen": "#98C379",
-      "brightPurple": "#C577DD",
-      "brightRed": "#DF6C75",
-      "brightWhite": "#FFFFFF",
-      "brightYellow": "#E4C07A",
-      "cursorColor": "#4F525D",
-      "cyan": "#0997B3",
-      "foreground": "#383A42",
-      "green": "#50A14F",
-      "name": "One Half Light",
-      "purple": "#A626A4",
-      "red": "#E45649",
-      "selectionBackground": "#FFFFFF",
-      "white": "#FAFAFA",
-      "yellow": "#C18301"
-    },
-    {
-      "background": "#002B36",
-      "black": "#002B36",
-      "blue": "#268BD2",
-      "brightBlack": "#073642",
-      "brightBlue": "#839496",
-      "brightCyan": "#93A1A1",
-      "brightGreen": "#586E75",
-      "brightPurple": "#6C71C4",
-      "brightRed": "#CB4B16",
-      "brightWhite": "#FDF6E3",
-      "brightYellow": "#657B83",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#2AA198",
-      "foreground": "#839496",
-      "green": "#859900",
-      "name": "Solarized Dark",
-      "purple": "#D33682",
-      "red": "#DC322F",
-      "selectionBackground": "#FFFFFF",
-      "white": "#EEE8D5",
-      "yellow": "#B58900"
-    },
-    {
-      "background": "#FDF6E3",
-      "black": "#002B36",
-      "blue": "#268BD2",
-      "brightBlack": "#073642",
-      "brightBlue": "#839496",
-      "brightCyan": "#93A1A1",
-      "brightGreen": "#586E75",
-      "brightPurple": "#6C71C4",
-      "brightRed": "#CB4B16",
-      "brightWhite": "#FDF6E3",
-      "brightYellow": "#657B83",
-      "cursorColor": "#002B36",
-      "cyan": "#2AA198",
-      "foreground": "#657B83",
-      "green": "#859900",
-      "name": "Solarized Light",
-      "purple": "#D33682",
-      "red": "#DC322F",
-      "selectionBackground": "#FFFFFF",
-      "white": "#EEE8D5",
-      "yellow": "#B58900"
-    },
-    {
-      "background": "#000000",
-      "black": "#000000",
-      "blue": "#3465A4",
-      "brightBlack": "#555753",
-      "brightBlue": "#729FCF",
-      "brightCyan": "#34E2E2",
-      "brightGreen": "#8AE234",
-      "brightPurple": "#AD7FA8",
-      "brightRed": "#EF2929",
-      "brightWhite": "#EEEEEC",
-      "brightYellow": "#FCE94F",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#06989A",
-      "foreground": "#D3D7CF",
-      "green": "#4E9A06",
-      "name": "Tango Dark",
-      "purple": "#75507B",
-      "red": "#CC0000",
-      "selectionBackground": "#FFFFFF",
-      "white": "#D3D7CF",
-      "yellow": "#C4A000"
-    },
-    {
-      "background": "#FFFFFF",
-      "black": "#000000",
-      "blue": "#3465A4",
-      "brightBlack": "#555753",
-      "brightBlue": "#729FCF",
-      "brightCyan": "#34E2E2",
-      "brightGreen": "#8AE234",
-      "brightPurple": "#AD7FA8",
-      "brightRed": "#EF2929",
-      "brightWhite": "#EEEEEC",
-      "brightYellow": "#FCE94F",
-      "cursorColor": "#000000",
-      "cyan": "#06989A",
-      "foreground": "#555753",
-      "green": "#4E9A06",
-      "name": "Tango Light",
-      "purple": "#75507B",
-      "red": "#CC0000",
-      "selectionBackground": "#FFFFFF",
-      "white": "#D3D7CF",
-      "yellow": "#C4A000"
-    },
-    {
-      "background": "#000000",
-      "black": "#000000",
-      "blue": "#000080",
-      "brightBlack": "#808080",
-      "brightBlue": "#0000FF",
-      "brightCyan": "#00FFFF",
-      "brightGreen": "#00FF00",
-      "brightPurple": "#FF00FF",
-      "brightRed": "#FF0000",
-      "brightWhite": "#FFFFFF",
-      "brightYellow": "#FFFF00",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#008080",
-      "foreground": "#C0C0C0",
-      "green": "#008000",
-      "name": "Vintage",
-      "purple": "#800080",
-      "red": "#800000",
-      "selectionBackground": "#FFFFFF",
-      "white": "#C0C0C0",
-      "yellow": "#808000"
-    }
-  ],
-  "themes": [],
-  "trimBlockSelection": true,
-  "windowingBehavior": "useAnyExisting"
+    "schemes": [],
+    "themes": [],
+    "trimBlockSelection": true,
+    "warning.confirmCloseAllTabs": false,
+    "warning.multiLinePaste": false,
+    "windowingBehavior": "useAnyExisting"
 }
