@@ -6,11 +6,22 @@
 
 # note: reload profile if modified codes in this repo
 # & $profile.CurrentUserAllHosts
+
 # by default it's Chinese Simplified (GB2312), is it because i installed Chinese simplified in the windows system?
 # so let change it to UTF8 explicitly
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 
-# Clear-Host # it will delete all pervious logs
+if ($env:__MS_PWSH_PARENT -ne 'true') {
+	$env:__MS_PWSH_PARENT = $true;
+	# it will delete all pervious logs, if when run a child `pwsh` process, it will also clear the logs of parent, so we determine to comment out it.
+	# Also when in the app `lf`, when we need to switch to the shell to view log, it will reload the profile, then the previous logs are removed.
+	# the solution:
+	# 1. in `windows terminal` pwsh profile, we use `pwsh -nologo` to launch pwsh (not used)
+	# 2. used the inherited env var added in profile.(used)
+	Clear-Host;
+}
+
+
 $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 "`e[5mpwsh`e[0m v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
 

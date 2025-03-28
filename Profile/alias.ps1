@@ -14,3 +14,10 @@ Set-Alias sa Start-Process # default: saps, start
         }
     }
 }
+# use to store permanent values. share value between sessions:
+# compare with ram disk and mem mapped files, the registry is also mem buffered and persistent, faster to share small objects
+# no need to worry ram wasting(initial size, persistent or releasing), and releasing between sessions (memMappedFile is released when no reference to it)
+if (-not (Test-Path "HKCU:\MS_PWSH")) {
+    New-Item -Path "HKCU:\MS_PWSH"
+}
+New-PSDrive -Name PS -PSProvider Registry -Root "HKCU:\MS_PWSH" > $null

@@ -70,24 +70,24 @@
             "keys": "win+alt+z"
         },
         {
-            "id": "Terminal.MoveFocusPreviousInOrder",
-            "keys": "alt+home"
-        },
-        {
             "id": "Terminal.ScrollDown",
             "keys": "ctrl+down"
         },
         {
-            "id": "User.closeTab.0",
-            "keys": "ctrl+shift+w"
+            "id": "Terminal.MoveFocusPreviousInOrder",
+            "keys": "alt+home"
+        },
+        {
+            "id": "Terminal.TogglePaneZoom",
+            "keys": "alt+shift+z"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "alt+shift+c"
         },
         {
-            "id": "Terminal.TogglePaneZoom",
-            "keys": "alt+shift+z"
+            "id": "User.closeTab.0",
+            "keys": "ctrl+shift+w"
         },
         {
             "id": "Terminal.ScrollUp",
@@ -154,9 +154,9 @@
     {
         "defaults": 
         {
-            "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
+            "backgroundImage": "%MS_WTBackground%\\res\\bg\\circular-soundwave.gif",
             "backgroundImageAlignment": "center",
-            "backgroundImageOpacity": 0.2,
+            "backgroundImageOpacity": 0.4,
             "backgroundImageStretchMode": "none",
             "elevate": true,
             "font": 
@@ -170,7 +170,6 @@
         "list": 
         [
             {
-                "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe -nologo",
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "pwsh",
@@ -178,8 +177,8 @@
                 "startingDirectory": "."
             },
             {
-                "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
-                "backgroundImageAlignment": "center",
+                "backgroundImage": "%MS_WTBackground%\\res\\bg\\v.gif",
+                "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
                 "commandline": "%SystemRoot%\\System32\\cmd.exe",
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
@@ -244,6 +243,7 @@
         ]
     },
     "schemes": [],
+    "startOnUserLogin": true,
     "themes": [],
     "trimBlockSelection": true,
     "warning.confirmCloseAllTabs": false,

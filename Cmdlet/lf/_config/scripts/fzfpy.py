@@ -12,7 +12,9 @@ if __name__ == '__main__':
 
     pwd = os.environ.get('PWD').strip('"')
     # check if path is a file
-    selectedPath = f"\"{pwd}\\{selected}\""
+    selectedPath = fr'"{pwd}\{selected}"'
     # print(selectedPath)
-    subprocess.run(['lf', '-remote', 'send {id} {command} {selectedPath}'.format(id=sys.argv[1], selected=selected, command=command, selectedPath=selectedPath)])
-
+    id=sys.argv[1]
+    cmd = fr'send {id} {command} {selectedPath}'.replace('\\','/')
+    print(cmd)
+    subprocess.run(['lf', '-remote', cmd])

@@ -7,12 +7,12 @@
 # https://github.com/gokcehan/lf
 
 # reload config file using f5
-# :source M:/Script/Pwsh/Cmdlet/lf/config/lfrc
+# :source M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
 # 'push' is emulating keyboard typing in cmd line
-map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/config/lfrc<enter>
+map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/_config/lfrc<enter>
 
 # edit this file
-map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
+map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
 
 ###
 ### configuration
@@ -20,7 +20,7 @@ map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/config/lfrc
 
 # custom file preview
 # unset COLORTERM
-set previewer "M:/Script/Pwsh/Cmdlet/lf/config/scripts/previewer.cmd"
+set previewer "M:/Script/Pwsh/Cmdlet/lf/_config/scripts/previewer.cmd"
 
 # set period 1
 # interpreter for shell commands, on windows by default it is cmd
@@ -38,7 +38,11 @@ set scrolloff 4
 set info size:time
 # jump to the first match after each keystroke during searching.
 # after press 'enter', then 'n': next;'N':previous
+# Enables incremental search as you type.
 set incsearch
+#  Enables cyclic search, making / wrap around to the first match after reaching the end.
+set wrapscan
+#  incrementally filter the file list as you type
 set incfilter
 # not work, test future version
 # enable *?[][^] in search(/) and back-search(?)
@@ -61,7 +65,7 @@ cmd doc $lf -doc | less
 # can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
 cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
 # slow
-# cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/on-quit.ps1
+# cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/on-quit.ps1
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
 # comment out because it easily triggered by the input-cancel when when in command mode
@@ -115,22 +119,23 @@ map <c-d> scroll-down
 
 ## find/search/filter
 
-# f: find char in file names, ;: next; ,: previous
+# f: find char in file names, ;: next; ,: previous. note: only for the first char
 # F: find back
 # /: searching; n:next; N: previous i.e. `/tex<enter>` find 'tex' in file names
 # ?: search back
 
 # fuzzy search in folder/subfolder and then navigate to it
-cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/fzfpy.py<space>%id%<enter>
-map <c-f> :file-search
+# cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/fzfpy.py<space>%id%<enter>
+cmd file-search $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/fzf.ps1
+map <c-s> :file-search
 
 ## filter out irrelevant files/folders and only show the relevant files/folders
 ## filter is remembered for the folder, and showed at right bottom corner
 ## run again will show last filer, and we can do adjustment
-map <c-s> push :filter<enter>
+map <c-f> push :filter<enter>
 # map F push :filter<enter>
 ## clear filter
-map <c-z> push :setfilter<enter>
+map <a-f> push :setfilter<enter>
 # map gF push :setfilter<enter>
 
 ###
@@ -148,7 +153,7 @@ map r
 map rr push :rename<space>
 # map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
 # https://github.com/gokcehan/lf/issues/329
-cmd rename-with-name $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/rename.ps1
+cmd rename-with-name $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/rename.ps1
 
 # a little slower
 map rn rename-with-name
@@ -178,8 +183,8 @@ map ad push :createdir<space>
 
 ## selection ##########
 
-# map u
-# unselect all
+# map u # by defaut 'u' is used for clear selection
+# unselect all, clear selection
 map su unselect
 # map i
 # invert selection
@@ -203,7 +208,7 @@ map <c-c> copy %fx%
 
 # $env:fx : files/folders selected or file/folder at cursor if no selection
 # the returned strings is separated by '\n'
-cmd copy-paths &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-paths.ps1
+cmd copy-paths &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-paths.ps1
 map yp copy-paths
 
 # copy work directory
@@ -211,7 +216,7 @@ cmd copy-dir-path %echo %PWD%| clip
 map yd copy-dir-path
 
 # copy file names
-cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/copy-names.ps1
+cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-names.ps1
 map yn copy-names
 
 ## cut ################
@@ -236,13 +241,13 @@ map D delete
 
 ## trash
 # cmd trash &Remove-ItemSafely env:fx env:1
-cmd trash-selected &pwsh -nologo  -noprofile -noninteractive -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trash.ps1
+cmd trash-selected &pwsh -nologo  -noprofile -noninteractive -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/trash.ps1
 map <delete> trash-selected
 map d # remove d map, by default its the 'cut' cmd
 map dd trash-selected
 
 ### undo trash
-cmd trash-undo &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/trashUndo.ps1
+cmd trash-undo &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/trashUndo.ps1
 map du trash-undo
 # map T push &wt<enter>
 
@@ -275,14 +280,14 @@ cmd fileExplorer &explorer /n, /select, %fx%
 map oe fileExplorer
 # map S push &start.<enter>
 
-cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/openWith.ps1
+cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/openWith.ps1
 map ow open-With...
 
 # vim is there when we installed git
 cmd Vim $vim %f%
 map ov Vim
 
-# map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/config/scripts/properity.ps1
+# map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/properity.ps1
 map op &GDProps.exe %fx%
 
 # less is there when we installed git
@@ -300,18 +305,21 @@ cmd extract_and_remove %sh -c '7z x %f% -o%f%_ && rm %f%'
 cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
 # map zut push :extract-to<space>
+
 cmd extract-to-folder push :extract-to<space>
 map zut extract-to-folder
+
 cmd extract-to-here push :extract-here<enter>
 map zuh extract-to-here
+
 map zur push :extract_and_remove<enter>
 
 
 ## drag and drop ##################
 
-cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.py<space>once<space>%fx%<enter>
-# cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/config/scripts/drag.bat
+cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/drag.py<space>multi<space>%fx%<enter>
+cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/drag.py<space>once<space>%fx%<enter>
+# cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/_config/scripts/drag.bat
 map <c-t> push :dragonce<enter> # c-d is used for scroll down
 
 ###
@@ -413,6 +421,8 @@ cmap <down> cmd-history-next
 cmap <right> cmd-right
 
 # during search to open
+# full description: in searching with `/`, the cursor is at cmd line, if we already find the item (highlighted),
+# we can use `alt-right` to open, instead of have to press `enter` and then `right`
 # use 'cmd-escape' to cancel the search
 cmap <a-right> :cmd-enter; open
 
