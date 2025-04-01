@@ -21,11 +21,13 @@ param (
     # remaining parameters
     [Parameter(mandatory = $false, DontShow, ValueFromRemainingArguments = $true)]$Remaining
 )
+
 if( $Remaining -contains '-remote') {
     Show-MessageBox "$($Remaining -join ','), please use 'c:\app\lf.exe -remote to send command"
     #i.e. c:\app\lf.exe -remote "send $env:id push :rename<space>$name"
     return
 }
+
 $isLastSelections = $Remaining -contains '-lastSelection'
 if($isLastSelections) {
   $remaining.remove('-lastSelection')
@@ -38,12 +40,12 @@ Invoke-OnPsLine -isLastSelections:$isLastSelections {
         $pathAtCursor, $inputLine, $cursorLeft, $cursorRight
     )
 
-    # $tmp = [System.IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
+    # $tmp = [IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
     try {
         # lf -last-dir-path="$tmp" $args
-        $isPath = Test-Path -PathType Container "$pathAtCursor"
+        $isFolder = Test-Path -PathType Container $pathAtCursor
 
-        if ($isPath -and ("$pwd" -ne "$pathAtCursor")) {
+        if ($isFolder -and ($pwd -ne $pathAtCursor)) {
             $dir = & $lfExe -print-last-dir $pathAtCursor
             # note: bug:  -last-dir-path=`"$tmp`" it will not save the write value into the file when the current dir is different with the path at cursor
         }
@@ -66,6 +68,7 @@ Invoke-OnPsLine -isLastSelections:$isLastSelections {
         #     ]
         # }
         if($isLastSelections){
+            # saved from lfcf on-quit event
             $onQuit = gc $env:temp\lf-onQuit.json|ConvertFrom-Json
         } else {
             $onQuit = @{workingDir = $dir}

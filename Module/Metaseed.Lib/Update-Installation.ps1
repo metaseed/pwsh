@@ -50,7 +50,7 @@ function Update-Installation {
         $Confirm
     )
 
-    # if in a git foler, we are developers, pull the latest code
+    # if in a git folder, we are developers, pull the latest code
     $localFolder = Split-Path $localInfoPath
 
     $update = Test-Update $days $LocalInfoPath
@@ -58,9 +58,14 @@ function Update-Installation {
 
     $localFile = "$localFolder/.git"
     if (Test-Path $localFile) {
+        $newChanges = git rev-list --count HEAD..origin/master
+        if(!$newChanges) {
+            return
+        }
+
         push-location $localFolder
         git pull --rebase
-        if(!$?) {write-warning "error when pull latest code to $localFolder, do you have changes to merge?"}
+        if(!$?) {write-warning "error when pull latest code to dir: $localFolder, do you have changes to merge?"}
         Pop-Location
         return
     }

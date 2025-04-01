@@ -11,17 +11,19 @@
             },
             {
                 "backgroundImage": "%MS_WTBackground%\\res\\bg\\hacker.gif",
-                "backgroundImageStretchMode": "fill"
+                "backgroundImageOpacity": 0.2,
+                "backgroundImageStretchMode": "uniformToFill"
             },
             {
                 "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
                 "backgroundImageStretchMode": "none",
                 "backgroundImageAlignment": "center",
+                "backgroundImageOpacity": 0.3,
                 "opacity": 100
             },
             {
                 "backgroundImage": "%MS_WTBackground%\\res\\bg\\matrixRain.gif",
-                "backgroundImageOpacity": 0.5,
+                "backgroundImageOpacity": 0.3,
                 "backgroundImageStretchMode": "fill"
             },
             {

@@ -12,3 +12,4 @@ $PSDefaultParameterValues['Out-Default:OutVariable'] = '__' # use $($__) or $__[
 function _ {
     $__[0]
 }
+# so gi (_)

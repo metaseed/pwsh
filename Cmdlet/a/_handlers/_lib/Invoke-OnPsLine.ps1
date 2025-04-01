@@ -46,9 +46,9 @@ function Invoke-OnPsLine {
 		}
 		# something online
 		else {
-			$isDir = Test-Path -PathType Container "$pathAtCursor"
+			$isDir = Test-Path -PathType Container $pathAtCursor
 			if ($isDir) {
-				if ("$lfWorkingDir" -ne "$pwd") {
+				if ($lfWorkingDir -ne $pwd) {
 					[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $lfWorkingDir)
 				}
 			}

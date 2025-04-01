@@ -8,7 +8,7 @@ param (
   [switch]
   $force
 )
-Write-Action "restore windows terminal settings..."
+Write-Information "restore windows terminal settings..."
 . $PSScriptRoot/_private/GetSettings.ps1
 
 $backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
@@ -57,3 +57,5 @@ if (test-path $backup) {
 else {
   Write-Error "Could not find $backup, nothing to restore!"
 }
+
+restore-terminalSetting
