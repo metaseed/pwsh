@@ -297,7 +297,7 @@ map op &GDProps.exe %fx%
 
 # here we use sh to parse in the argument $0
 cmd zip-to %sh -c '7z a $0 %fx%'
-cmd extract-to %sh -c '7z  x %f% -o$0'
+cmd extract-to %sh -c '7z x %f% -o$0'
 cmd extract-here %7z x %f%
 cmd extract_auto %7z x %f% -o%f%
 cmd extract_and_remove %sh -c '7z x %f% -o%f%_ && rm %f%'

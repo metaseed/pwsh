@@ -50,7 +50,7 @@ Invoke-OnPsLine -isLastSelections:$isLastSelections {
             # note: bug:  -last-dir-path=`"$tmp`" it will not save the write value into the file when the current dir is different with the path at cursor
         }
         else {
-            $dir = & $lfExe -print-last-dir
+            $dir = & $lfExe -print-last-dir @Remaining
             # & $lfExe -last-dir-path="$tmp" @Remaining
         }
         # if (!(Test-Path -PathType Leaf "$tmp")) {

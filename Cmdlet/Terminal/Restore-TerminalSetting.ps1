@@ -58,4 +58,4 @@ else {
   Write-Error "Could not find $backup, nothing to restore!"
 }
 
-restore-terminalSetting
+# restore-terminalSetting

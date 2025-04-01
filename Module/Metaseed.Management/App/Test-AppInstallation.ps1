@@ -24,7 +24,7 @@ function Test-AppInstallation {
       if (!$force) {
         return $false
       }
-      Write-Warning "As you wish, forcely install the latest version..."
+      Write-Warning "As you wish, forcedly install the latest version..."
     }
 
     Write-Notice "You are using $appName $versionLocal"

@@ -5,4 +5,4 @@ param (
 
 # ipmo Metaseed.Management -Force
 
-Install-FromGithub https://github.com/jgraph/drawio-desktop 'windows-no-installer\.exe$' -versionType 'preview' -newName drawio -pickExes @Remaining
+Install-FromGithub https://github.com/jgraph/drawio-desktop 'windows-no-installer\.exe$' -versionType 'preview' -newName drawio -filesToPickup '*.exe' @Remaining

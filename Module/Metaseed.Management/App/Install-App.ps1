@@ -1,27 +1,28 @@
-function backup($appLocation, $restoreList, $appName) {
+function backup($appLocation, $restoreList) {
+	$name = split-path $appLocation -leaf
+	$toL = "$env:temp\${name}_backup"
+	if (!(test-path $toL)) {
+		mkdir $toL >$null
+	}
+	Write-Verbose "backup to: $toL with restoreList $restoreList"
+
 	gci $appLocation | % {
-		$childName = $_.Name
+		$childName = $_.Name # with ext
 		$any = $restoreList | ? { $childName -like $_ }
 		if ($any) {
-			Write-Verbose "restoreList $restoreList"
-
-			$toL = "$env:temp\${appName}_backup"
-			Write-Verbose "backukp $toL"
-			if (!(test-path $toL)) {
-				mkdir $toL >$null
-			}
-			Write-Action "backup: $($_.FullName) to $toL"
+			Write-Action "backup: $($_.FullName) to $toL, filter: $any"
 			Write-Execute { Copy-Item "$($_.FullName)" $toL -Recurse }
 		}
 	}
 }
 
-function restoreFrom($backupLocation, $info, $toLocation) {
+function restoreFrom($toLocation, $name) {
+	$backupLocation = "$env:temp\${name}_backup"
+
 	if (Test-Path $backupLocation) {
-		$info.restoreList = @(Get-ChildItem $backupLocation)
 		Write-Action "restore from $backupLocation to $toLocation"
 		gci $backupLocation | % { Move-Item $_ $toLocation -Force }
-		Write-Execute { Remove-Item $backupLocation }
+		# Write-Execute { Remove-Item $backupLocation -Recurse }
 	}
 }
 
@@ -31,38 +32,43 @@ function Install-App {
 		$downloadedFilePath,
 		$ver_online,
 		$appName,
+		# folder to store the app
 		$toLocation,
 		$CreateFolder,
+		# one exe: rename the exe file to new name
+		# zip: new folder name
 		[string]$newName,
 		$verLocal,
-		[switch]$pickExes,
+		# just pickup the files from downloaded files in zip, not folders
+		[string[]]$filesToPickup,
 		# folders or files in toLocation to backup and restore
 		[string[]]$restoreList = @('_'))
 
-	Write-Host "Install $appName ..."
-	Write-Host "from $downloadedFilePath"
-	## delete app
-	# ignore error, may not exist
-	if ($newName) {
-		$app = gci $toLocation -Filter "$newName*"
-		if ($app) {
-			Remove-Item $app -Recurse -Force
+	$name = $newName ? $newName : $appName
+	Write-Host "Install $appName from $downloadedFilePath"
+	## backup files and delete app
+	$app = "$toLocation\$name.exe"
+	gps $name -ErrorAction SilentlyContinue | spps -Force
+	Wait-Process -Name $name -ErrorAction SilentlyContinue
+	if (test-path $app) {
+		ri $app -force
+	}
+	else {
+		if (test-path "$toLocation\$name") {
+			gi "$toLocation\$name" |
+			% {
+				backup $_  $restoreList
+				# ignore error, may not exist
+				Remove-Item $_ -Recurse -Force
+			}
 		}
 	}
-
-	if (!$newName -or !$app) {
-		gci $toLocation -Filter "$appName*" |
-		% {
-			backup $_  $restoreList ($newName ? $newName : $appName)
-		} |
-		Remove-Item -Recurse -Force
-	}
-	## is exe file
-	# Write-Host "to localtion: $toLocation"
+	### is exe file
+	# Write-Host "to location: $toLocation"
 	if ($downloadedFilePath -match '\.exe$') {
-		Move-Item "$_" -Destination $toLocation -Force
+		Move-Item $downloadedFilePath -Destination $toLocation -Force
 		if ($newName) {
-			$exe = Split-Path "$_" -Leaf
+			$exe = Split-Path $downloadedFilePath -Leaf
 			Rename-Item "$toLocation\$exe" -NewName "$newName.exe"
 		}
 		return $toLocation
@@ -95,7 +101,7 @@ function Install-App {
 		tar -xf $downloadedFilePath -C "$env:temp\temp"
 	}
 	else {
-		write-error "$downloadedFilePath is not a know copressed archive!"
+		write-error "$downloadedFilePath is not a know compressed archive!"
 		break
 	}
 
@@ -106,9 +112,8 @@ function Install-App {
 		$children = @(gci $children[0])
 	}
 
-	if (($children.count -ne 1 -and !$pickExes) -or $CreateFolder) {
-		$name = $newName ? $newName : $appName
-		gps $name -ErrorAction SilentlyContinue | spps
+	# many children and no need to pickup
+	if (($children.count -ne 1 -and !$filesToPickup) -or $CreateFolder) {
 		$toLocation = "$toLocation\${name}"
 		Write-Verbose "from location: $($children[0].Parent) to location: $toLocation"
 		$from = $children[0].PSParentPath
@@ -117,14 +122,15 @@ function Install-App {
 		# _${ver_online}
 		$info = @{version = "$ver_online" }
 		# restore
-		restoreFrom "$env:temp\${name}_backup"  $info  $toLocation
+		restoreFrom $toLocation $name
 		$info | ConvertTo-Json | Set-Content -path "$toLocation\info.json" -force
 	}
 	else {
-		# only one file: *.exe
-		if ($pickExes) {
-			$app = gci -Recurse -Filter '*.exe' "$env:temp\temp"
+		# need pickup
+		if ($filesToPickup) {
+			$app = gci -Recurse -include $filesToPickup "$env:temp\temp\*"
 		}
+		# only one file: *.exe
 		else {
 			$app = @($children[0])
 		}
@@ -151,7 +157,8 @@ function Install-App {
 			$baseName = Split-Path $_ -LeafBase
 			gps $baseName -ErrorAction SilentlyContinue | spps
 			Move-Item $_ -Destination $toLocation -Force
-			if ($newName) {
+
+			if ($newName -and (app.count -eq 1)) {
 				$name = Split-Path $_ -Leaf
 				$ext = split-path $_ -Extension
 				write-host "new name: $newName$ext"

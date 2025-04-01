@@ -73,7 +73,7 @@ function Install-FromGithub {
 			if ($newName) {
 				Write-Host "new name: $newName"
 			}
-			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder $CreateFolder -newName $newName -verLocal $verLocal -pickExes: $pickExes -restoreList $restoreList
+			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder $CreateFolder -newName $newName -verLocal $verLocal -filesToPickup: $filesToPickup -restoreList $restoreList
 			return $r
 		},
 		# force reinstall
@@ -81,9 +81,11 @@ function Install-FromGithub {
 		[switch]$Force,
 		[Parameter()]
 		[string]$newName,
-		[switch] $pickExes,
+		# the * and ? can be used
+		[string[]] $filesToPickup,
 		# folders or files in toLocation to backup and restore
-		[string[]]$restoreList = @('_')
+		[string[]]$restoreList = @('_'),
+		[switch]$CreateFolder
 	)
 	Assert-Admin
 	$v = $url.Split('/')
@@ -125,7 +127,7 @@ function Install-FromGithub {
 		% {
 			$path = $_
 			$Folder ??= $env:MS_App
-			$des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder,$toFolder,  $newName, $versionLocal
+			$des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder,$CreateFolder, $newName, $versionLocal
 			write-host "app installed to $des"
 			$appPath = $des
 		}

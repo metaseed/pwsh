@@ -5,6 +5,6 @@ param (
 
 # ipmo Metaseed.Management -Force
 
-Install-FromGithub 'https://github.com/cli/cli' '_windows_amd64\.zip$' -versionType 'preview' -newName gh -pickExes @Remaining
+Install-FromGithub 'https://github.com/cli/cli' '_windows_amd64\.zip$' -versionType 'preview' -newName gh -filesToPickup '*.exe' @Remaining
 
 
