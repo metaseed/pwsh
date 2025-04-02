@@ -201,9 +201,15 @@ start chrome
 sa firefox
 
 # open file/dir from pipeline in vscode
-> vscode does not accept parameter from stdin
+> vscode does not accept parameter from stdin,
+> so it's not valid: `gi *.json|code`
 
 gci|%{code $_}
+
+# how to open multiple files from command line
+```pwsh
+gi *.json |%{ code $_ }
+```
 
 # resource monitor
 resmon

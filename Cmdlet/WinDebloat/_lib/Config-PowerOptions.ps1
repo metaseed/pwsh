@@ -32,15 +32,28 @@ else {
   # powercfg /change disk-timeout-dc #default is 10
 
   ## power buttons actions
-  ## 0: do nothing; 1: sleep; 2: hibernate; 3: shutdown
+
+  # 4f971e89-eebd-4455-a8de-9e59040e7347 → Power Subgroup: Power Buttons and Lid.
+  # 7648efa3-dd9c-4e3e-b566-50f929386280 → Power Button Action setting
+  # 0	Do nothing
+  # 1	Sleep
+  # 2	Hibernate
+  # 3	Shut down
+  # 4	Turn off the display
 
   # power button
   powercfg -setdcvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 2
   powercfg -setacvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 2
+
   # lid close
+  # 4f971e89-eebd-4455-a8de-9e59040e7347 → Power Subgroup: Power Buttons and Lid.
+  # 5ca83367-6e45-459f-a27b-476b1d01c936 → lid close action setting
   powercfg -setdcvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347  5ca83367-6e45-459f-a27b-476b1d01c936 1
   powercfg -setacvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347  5ca83367-6e45-459f-a27b-476b1d01c936 1
+
   # sleep button
   # powercfg -setdcvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347  96996bc0-ad50-47ec-923b-6f41874dd9eb 1
   # powercfg -setacvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347  96996bc0-ad50-47ec-923b-6f41874dd9eb 1
+
+  powercfg -SetActive SCHEME_CURRENT
 }

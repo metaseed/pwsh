@@ -13,8 +13,7 @@ if (Test-Update $Days $MyInvocation.MyCommand.Path) {
     [void](
         Start-ThreadJob -StreamingHost $host -ArgumentList $PSScriptRoot {
             param($scriptRoot)
-
-            Write-Host "Updating help via a background job" -ForegroundColor yellow
+            Write-Verbose "Updating help via a background job" -ForegroundColor yellow
             $back = $ProgressPreference
             # hide progress bar
             $ProgressPreference = 'SilentlyContinue'

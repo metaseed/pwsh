@@ -20,12 +20,13 @@ map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
 
 # custom file preview
 # unset COLORTERM
-set previewer "M:/Script/Pwsh/Cmdlet/lf/_config/scripts/previewer.cmd"
+set previewer "M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/previewer.cmd"
 
 # set period 1
 # interpreter for shell commands, on windows by default it is cmd
 # if use pwsh, it is slow, and has redraw problem
 # set shell pwsh -nologo -noninteractive -noprofile
+# set shellflag -NoProfile
 
 # show icon beside the file name
 set icons
@@ -65,7 +66,7 @@ cmd doc $lf -doc | less
 # can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
 cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
 # slow
-# cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/on-quit.ps1
+# cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/on-quit.ps1
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
 # comment out because it easily triggered by the input-cancel when when in command mode
@@ -125,8 +126,8 @@ map <c-d> scroll-down
 # ?: search back
 
 # fuzzy search file or folder in the current folder/subfolder and then navigate to it
-# cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/fzfpy.py<space>%id%<enter>
-cmd file-search $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/fzf.ps1
+# cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/fzfpy.py<space>%id%<enter>
+cmd file-search $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/fzf.ps1
 map <c-s> :file-search
 
 ## filter out irrelevant files/folders and only show the relevant files/folders
@@ -153,7 +154,7 @@ map r
 map rr push :rename<space>
 # map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
 # https://github.com/gokcehan/lf/issues/329
-cmd rename-with-name $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/rename.ps1
+cmd rename-with-name $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/rename.ps1
 
 # a little slower
 map rn rename-with-name
@@ -208,17 +209,17 @@ map <c-c> copy %fx%
 
 # $env:fx : files/folders selected or file/folder at cursor if no selection
 # the returned strings is separated by '\n'
-cmd copy-paths &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-paths.ps1
+cmd copy-paths &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/copy-paths.ps1
 map yp copy-paths
 
 ## copy work directory
 # below: always with `"`
 # cmd copy-dir-path %echo %PWD%| clip
-cmd copy-dir-path &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-curDir.ps1
+cmd copy-dir-path &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/copy-curDir.ps1
 map yd copy-dir-path
 
 # copy file names
-cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-names.ps1
+cmd copy-names &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/copy-names.ps1
 map yn copy-names
 
 ## cut ################
@@ -243,13 +244,13 @@ map D delete
 
 ## trash
 # cmd trash &Remove-ItemSafely env:fx env:1
-cmd trash-selected &pwsh -nologo  -noprofile -noninteractive -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/trash.ps1
+cmd trash-selected &pwsh -nologo  -noprofile -noninteractive -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/trash.ps1
 map <delete> trash-selected
 map d # remove d map, by default its the 'cut' cmd
 map dd trash-selected
 
 ### undo trash
-cmd trash-undo &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/trashUndo.ps1
+cmd trash-undo &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/trashUndo.ps1
 map du trash-undo
 # map T push &wt<enter>
 
@@ -282,14 +283,14 @@ cmd fileExplorer &explorer /n, /select, %fx%
 map oe fileExplorer
 # map S push &start.<enter>
 
-cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/openWith.ps1
+cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/openWith.ps1
 map ow open-With...
 
 # vim is there when we installed git
 cmd Vim $vim %f%
 map ov Vim
 
-# map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/properity.ps1
+# map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/properity.ps1
 map op &GDProps.exe %fx%
 
 # less is there when we installed git
@@ -319,9 +320,9 @@ map zur push :extract_and_remove<enter>
 
 ## drag and drop ##################
 
-cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/drag.py<space>once<space>%fx%<enter>
-# cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/_config/scripts/drag.bat
+cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>multi<space>%fx%<enter>
+cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>once<space>%fx%<enter>
+# cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.bat
 map <c-t> push :dragonce<enter> # c-d is used for scroll down
 
 ###
@@ -400,6 +401,9 @@ map w $pwsh -nologo
 # map x $$f
 # # execute with shell_wait
 # map X !$f
+
+
+map <right> open
 
 
 ##################################################################

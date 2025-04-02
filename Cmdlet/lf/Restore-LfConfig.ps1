@@ -1,7 +1,6 @@
-# make the lf to use current config in _config dir, by default it's in "$env:LOCALAPPDATA\lf"
-# $backup = "$PSScriptRoot\_Config\lf\*"
-# $location = "$env:LOCALAPPDATA\lf"
-# Copy-Item  $backup $location -Force -Recurse
+# copy the current config of `lf` in _config/lf dir into  "$env:LOCALAPPDATA\lf"
+# we have setup the 'LF_CONFIG_HOME' env var, so this script is not needed
 
-[System.Environment]::SetEnvironmentVariable('LF_CONFIG_HOME', "$PSScriptRoot\_config",'User')
-$env:LF_CONFIG_HOME = "$PSScriptRoot\_config"
+$backup = "$PSScriptRoot\_Config\lf\*"
+$location = "$env:LOCALAPPDATA\lf"
+Copy-Item  $backup $location -Force -Recurse

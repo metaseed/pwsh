@@ -1,16 +1,21 @@
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
 'PSReadline', 'PowershellGet', 'Pester', 'Microsoft.PowerShell.ConsoleGuiTools',
  'PSEverything', # used by psfzf Set-LocationFuzzyEverything
  'PSFzf', 'posh-git' | % {
   $module = $_
+  $WarningPreferenceBackup = $WarningPreference
+  $WarningPreference = 'SilentlyContinue'
   # write-host "try update module $module" -ForegroundColor Yellow
   $error.Clear()
-  "update module $module ..."
+  Write-Verbose "update module $module ..."
   Update-Module $module -ErrorAction Ignore
   if ($error) {
-    "   install module $module ..."
+    Write-Verbose "   install module $module ..."
     Install-Module $module -force
   } else {
-    "module $module updated successfully!"
+    Write-Verbose "module $module updated successfully!"
   }
+  $WarningPreference = $WarningPreferenceBackup
+
 }
