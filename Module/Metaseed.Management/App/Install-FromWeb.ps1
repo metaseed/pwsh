@@ -54,8 +54,8 @@ function Install-FromWeb {
 	if ($res.Content -match $filter) {
 		## get url from the filter
 		$fileUrl = $Matches[1]
+		Write-Host "find: $fileUrl"
 		$fileNameWithVer = [IO.Path]::GetFileNameWithoutExtension($fileUrl)
-
 
 		if ($fileUrl.startsWith('/')) {
 			$uri = [System.Uri]$url
@@ -65,7 +65,7 @@ function Install-FromWeb {
 
 		## find ver from file name in url
 		if ($fileNameWithVer -match '\d+\.\d+\.?\d*\.?\d*') {
-			$verOnline = $Matches[0]
+			$verOnline = $Matches[0].trim('.')
 		}
 		$nameFromOnline = $fileNameWithVer -replace '(\.|-|_|_v|-v|_version|ver)\d+(\.\d+)*.*', ''
 		$name = ($newName) ?? $nameFromOnline
@@ -113,3 +113,5 @@ function Install-FromWeb {
 		write-error 'can not parse the returned html to find the download file url with the filter:' + $filter
 	}
 }
+import-Module metaseed.utility -Force
+

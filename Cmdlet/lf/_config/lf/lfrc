@@ -124,7 +124,7 @@ map <c-d> scroll-down
 # /: searching; n:next; N: previous i.e. `/tex<enter>` find 'tex' in file names
 # ?: search back
 
-# fuzzy search in folder/subfolder and then navigate to it
+# fuzzy search file or folder in the current folder/subfolder and then navigate to it
 # cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/_config/scripts/fzfpy.py<space>%id%<enter>
 cmd file-search $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/fzf.ps1
 map <c-s> :file-search
@@ -183,7 +183,7 @@ map ad push :createdir<space>
 
 ## selection ##########
 
-# map u # by defaut 'u' is used for clear selection
+# map u # by default 'u' is used for clear selection, keep it.
 # unselect all, clear selection
 map su unselect
 # map i
@@ -195,7 +195,7 @@ map sgu push :glob-unselect<space>
 
 ## copy ################
 
-# note: by default, c is mapped to clear the copy&cut files saved in $home\AppData\Local\lf\files
+# note: by default, `c` is mapped to clear the copy&cut files saved in $home\AppData\Local\lf\files
 # unmap y, it's yank by default
 map y
 map yy copy %fx%
@@ -211,8 +211,10 @@ map <c-c> copy %fx%
 cmd copy-paths &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-paths.ps1
 map yp copy-paths
 
-# copy work directory
-cmd copy-dir-path %echo %PWD%| clip
+## copy work directory
+# below: always with `"`
+# cmd copy-dir-path %echo %PWD%| clip
+cmd copy-dir-path &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/scripts/copy-curDir.ps1
 map yd copy-dir-path
 
 # copy file names
@@ -225,7 +227,7 @@ map yn copy-names
 # can do multi-select before cut
 map <c-x> cut
 
-# c: Clear file paths in copy/cut buffer: $home\AppData\Local\lf\files, remove the visual block on UI
+# c: Clear file paths in copy/cut buffer: $env:LOCALAPPDATA\lf\files, remove the visual block on UI
 ## paste #################
 # default is p
 # note: <c-v> is not working in terminal

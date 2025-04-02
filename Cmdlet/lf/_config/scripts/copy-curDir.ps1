@@ -1,6 +1,4 @@
-# Show-MessageBox $env:fx
-# "`n"
-$env:fx -split ',' |
+$env:pwd |
 % {
 	if ($_.Contains(' ')) {
 		return $_
