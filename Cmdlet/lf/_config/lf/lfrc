@@ -117,6 +117,15 @@ map <c-d> scroll-down
 # '  : change dir to the key mark. 'a
 # "  : remove the mark "a
 
+## tags
+
+#https://github.com/gokcehan/lf/blob/master/doc.md#tag
+#https://github.com/gokcehan/lf/pull/791
+#  C:\Users\<user>\AppData\Local\lf\tags
+# tag-toggle # defaut t
+# tag-clear
+# tagfmt            string    (default "\033[31m")
+# tag: Tag a file with * or a single-width character given in the argument.
 
 ## find/search/filter
 
@@ -354,6 +363,7 @@ map <c-t> push :dragonce<enter> # c-d is used for scroll down
 # v: default is invert select
 # note: press v again to hide the preview window
 map v &C:\app\QuickLook\QuickLook.exe %f%
+
 
 # # must have at least a file in it
 # cmd bookmark %sh -c 'python D:/lf_scripts/bookmark.py %f% $0'
