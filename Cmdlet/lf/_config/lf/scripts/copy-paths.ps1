@@ -8,3 +8,5 @@ $env:fx -split ',' |
 	return $_.Trim('"')
 }|
 Set-Clipboard
+
+c:\app\lf.exe -remote "send $env:id echomsg 'path copied: $env:fx'"

@@ -1,7 +1,9 @@
 # interpreter for shell commands
 set shell pwsh
-set shellflag -NoProfile -nologo
+# set shellwflag "-NoProfile -nologo -Command"
 
+set icons
+# set preview off
 # Shell commands with multiline definitions and/or positional arguments and/or
 # quotes do not work in Windows. For anything but the simplest shell commands,
 # it is recommended to create separate script files and simply call them here
@@ -37,6 +39,17 @@ cmd doc $lf -doc | less
 set scrolloff 10
 
 # use enter for shell commands
-map <enter> shell
-# still slow
-cmd on-quit $& M:/Script/Pwsh/Cmdlet/lf/config/scripts/on-quit.ps1
+# map <enter> shell
+# # still slow
+# cmd on-quit $& M:/Script/Pwsh/Cmdlet/lf/config/scripts/on-quit.ps1
+
+map ad ${{
+  $dir_name = Read-Host "Directory Name: "
+  New-Item $dir_name -ItemType Directory
+}}
+
+map af ${{
+  $file_name = Read-Host "File Name: "
+  New-Item $file_name -ItemType File
+  Write-Output "yes"
+}}

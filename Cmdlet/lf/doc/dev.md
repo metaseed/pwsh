@@ -31,3 +31,10 @@ https://github.com/gokcehan/lf/blob/master/doc.md#environment-variables
 > to view the env value: `w` to launch the shell to view
 You can't use environment variables directly in mappings and internal commands. In order to utilize environment variables, lf -remote must be called.
 > map gG $lf -remote "send $id cd $GOPATH"
+
+## show message
+https://github.com/gokcehan/lf/blob/master/doc.md#echomsg
+c:\app\lf.exe -remote "send $env:id echomsg 'path copied: $env:fx'"
+echoerr to show error
+
+use % to execute to make `echo` work, but it just flash not stay there

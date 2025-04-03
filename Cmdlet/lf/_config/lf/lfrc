@@ -215,7 +215,7 @@ map yp copy-paths
 ## copy work directory
 # below: always with `"`
 # cmd copy-dir-path %echo %PWD%| clip
-cmd copy-dir-path &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/copy-curDir.ps1
+cmd copy-dir-path %pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/copy-curDir.ps1
 map yd copy-dir-path
 
 # copy file names
