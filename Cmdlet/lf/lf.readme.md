@@ -21,3 +21,6 @@ shell          (modal)   (default '$')
 shell-pipe     (modal)   (default '%')
 shell-wait     (modal)   (default '!')  ! to wait after the command executed, and press any key to return to lf
 shell-async    (modal)   (default '&')
+
+> the key trigger can be upcase
+> i.e. map Q quit
