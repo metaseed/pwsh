@@ -1,5 +1,6 @@
 # note the `invoke-fzf` can find directory but `fzf` can only used to find files,
 # but fzf is faster (--preview)
+# not the pwd is the current dir
 invoke-fzf -preview 'bat --style=numbers --color=always {}'|
 %{
 	$select = $_

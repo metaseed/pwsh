@@ -1,3 +1,20 @@
+
+glob: ? * [] [^]:  '*' matches any sequence, '?' matches any character, and '[...]' or '[^...] matches character sets or ranges.
+if a pattern starts with '!', then its matches are excluded from hidden files.
+
+* $env:f : file/folder at cursor
+* $env:fx : files/folders selected or file/folder at cursor if no selection
+> note: $f is current hightlighed file, $fs is selected files, $fx is $fs if select many else it is $f
+> the separator in $fx is configured in 'filesep' option
+
+shell          (modal)   (default '$')
+shell-pipe     (modal)   (default '%')
+shell-wait     (modal)   (default '!')  ! to wait after the command executed, and press any key to return to lf
+shell-async    (modal)   (default '&')
+
+> the key trigger can be upcase
+> i.e. map Q quit
+
 ## how to debug lfrc file changes
 F4 to open the lfrc file in vscode, then changing and saving,
 F5 to reload the lfrc config
@@ -31,6 +48,8 @@ https://github.com/gokcehan/lf/blob/master/doc.md#environment-variables
 > to view the env value: `w` to launch the shell to view
 You can't use environment variables directly in mappings and internal commands. In order to utilize environment variables, lf -remote must be called.
 > map gG $lf -remote "send $id cd $GOPATH"
+## pass in arguments into the pwsh script
+> refer the example `test-args.ps1` and config in lfrc
 
 ## show message
 https://github.com/gokcehan/lf/blob/master/doc.md#echomsg

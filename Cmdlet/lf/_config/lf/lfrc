@@ -1,4 +1,5 @@
-# lf (list files)
+# lf (as in "list files") is a terminal file manager written in Go with a heavy inspiration from ranger file manager.
+# [Document](https://github.com/gokcehan/lf/blob/master/doc.md)
 # https://medium.com/@a.hr.mostafavi/using-lf-file-manager-on-windows-fc4f1e4e1442
 # https://github.com/ahrm/dotfiles/blob/main/lf-windows/lfrc
 
@@ -13,6 +14,15 @@ map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/_config/lfrc<enter>
 
 # edit this file
 map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
+
+###
+### usage note:
+###
+
+# `alt+d` to launch to modify console input
+# `lf` to launch with return values
+# `q` to quit with current dir; `Q` to quit with current selections
+# > `ctrl+o` is configured in `PSReadlineConfig.ps1`
 
 ###
 ### configuration
@@ -123,9 +133,13 @@ map <c-d> scroll-down
 # [: jump-prev of the folder changing history
 
 ## jump with marks(quickly navigate between dirs)
+# mark-save      (modal)   (default 'm')
+# mark-load      (modal)   (default "'")
+# mark-remove    (modal)   (default '"')
 # m  : save a key as a mark for the current dir. `ma`
 # '  : change dir to the key mark. 'a
 # "  : remove the mark "a
+# map m
 
 ## tags
 
@@ -133,7 +147,6 @@ map <c-d> scroll-down
 #https://github.com/gokcehan/lf/pull/791
 #  C:\Users\<user>\AppData\Local\lf\tags
 # tag-toggle # defaut t
-# tag-clear
 # tagfmt            string    (default "\033[31m")
 # tag: Tag a file with * or a single-width character given in the argument.
 
@@ -147,7 +160,7 @@ map <c-d> scroll-down
 # fuzzy search file or folder in the current folder/subfolder and then navigate to it
 # cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/fzfpy.py<space>%id%<enter>
 cmd file-search $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/fzf.ps1
-map <c-s> :file-search
+map <a-f> :file-search
 
 ## filter out irrelevant files/folders and only show the relevant files/folders
 ## filter is remembered for the folder, and showed at right bottom corner
@@ -155,7 +168,7 @@ map <c-s> :file-search
 map <c-f> push :filter<enter>
 # map F push :filter<enter>
 ## clear filter
-map <a-f> push :setfilter<enter>
+map cf push :setfilter<enter>
 # map gF push :setfilter<enter>
 
 ###
@@ -164,11 +177,10 @@ map <a-f> push :setfilter<enter>
 
 ## rename #######
 
+map r
 # todo: need to auto redraw
 cmd rename %sh -c 'mv -i %f% $0'
 # cmd rename %mv -i $f $1
-map r
-
 
 # faster
 map rr push :rename<space>
@@ -217,6 +229,8 @@ map sgu push :glob-unselect<space>
 ## copy ################
 
 # note: by default, `c` is mapped to clear the copy&cut files saved in $home\AppData\Local\lf\files
+map c
+map cc clear
 # unmap y, it's yank by default
 map y
 map yy copy %fx%
@@ -305,6 +319,10 @@ map oe fileExplorer
 
 cmd open-With... &pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/openWith.ps1
 map ow open-With...
+
+# test pass input into the pwsh script
+cmd open-ith &pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/test-args.ps1 $0
+map <c-p> push :open-ith<space>
 
 # vim is there when we installed git
 cmd Vim $vim %f%

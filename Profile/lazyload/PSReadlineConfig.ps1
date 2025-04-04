@@ -53,7 +53,7 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
 ## `lf` shortcuts
 
 # like open dialog to select one or more file dir
-Set-PSReadLineKeyHandler -Chord Ctrl+d -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
+Set-PSReadLineKeyHandler -Chord alt+e -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
     lf -ChordTrigger
 }
 # Set-PSReadLineKeyHandler -Chord Ctrl+s -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
