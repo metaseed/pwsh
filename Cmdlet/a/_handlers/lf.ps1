@@ -28,13 +28,17 @@ if( $Remaining -contains '-remote') {
     return
 }
 
-$isLastSelections = $Remaining -contains '-lastSelection'
-if($isLastSelections) {
-  $remaining.remove('-lastSelection')
+$isSelections = $Remaining -contains '-selections'
+if($isSelections) {
+  $remaining.remove('-selections')
+}
+$isDir = $Remaining -contains '-dir'
+if($isDir) {
+  $remaining.remove('-dir')
 }
 
 . $PSScriptRoot/_lib/Invoke-OnPsLine.ps1
-Invoke-OnPsLine -isLastSelections:$isLastSelections {
+Invoke-OnPsLine -isSelections:$isSelections -isDir:$isDir {
     [CmdletBinding()]
     param (
         $pathAtCursor, $inputLine, $cursorLeft, $cursorRight
@@ -67,7 +71,7 @@ Invoke-OnPsLine -isLastSelections:$isLastSelections {
         #       "C:\\Windows\\System32\\1028"
         #     ]
         # }
-        if($isLastSelections){
+        if($isSelections){
             # saved from lfcf on-quit event
             $onQuit = gc $env:temp\lf-onQuit.json|ConvertFrom-Json
         } else {
@@ -86,3 +90,10 @@ Invoke-OnPsLine -isLastSelections:$isLastSelections {
         #Remove-Item -Force "$tmp"
     }
 }
+
+<#
+lf|sl
+ctrl+s
+ctrl+d
+sl ctrl+d
+#>

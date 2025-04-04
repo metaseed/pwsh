@@ -2,7 +2,9 @@ function Invoke-OnPsLine {
 	[CmdletBinding()]
 	param (
 		[Parameter()]
-		[switch]$isLastSelections,
+		[switch]$isSelections,
+		[Parameter()]
+		[switch]$isDir,
 		[Parameter()]
 		[scriptblock] $dirScript = {
 			param (
@@ -30,32 +32,61 @@ function Invoke-OnPsLine {
 		return
 	}
 
-	if ($isLastSelections) {
+	# from `ctrl+s`
+	if ($isSelections) {
 		$lastSelections = $onQuit.lastSelections
 		$pathStr = ($lastSelections | % { "'$_'" }) -join ','
-		[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
+		if ($pathStr -ne $pathAtCursor) {
+			[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
+		}
+		return
 	}
-	else {
-		# empty line
-		if ([string]::IsNullOrWhiteSpace($line)) {
-			# and not the same dir then switch
+	# from `ctrl+d`
+	elseif ($isDir) {
+		if ([string]::IsNullOrWhiteSpace($line) ) {
 			if ("$lfWorkingDir" -ne "$pwd") {
 				sl "$lfWorkingDir"
-				[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+				# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+				return
 			}
 		}
-		# something online
 		else {
-			$isDir = Test-Path -PathType Container $pathAtCursor
-			if ($isDir) {
-				if ($lfWorkingDir -ne $pwd) {
+			$pathAtCursorIsDir = Test-Path -PathType Container $pathAtCursor
+			if ($pathAtCursorIsDir) {
+				# Show-MessageBox "$lfWorkingDir and $pwd"
+				if ($lfWorkingDir -ne $pathAtCursor) {
+					# replace dir it to $lfWorkingDir
 					[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $lfWorkingDir)
+					return
 				}
 			}
 			# not a dir
 			else {
-				[Microsoft.PowerShell.PSConsoleReadLine]::Insert($lfWorkingDir)
+				if ($isDir -or $isSelections) {
+					[Microsoft.PowerShell.PSConsoleReadLine]::Insert($lfWorkingDir)
+				}
 			}
 		}
 	}
+	# from `lf` command
+	else {
+		# Show-MessageBox "line: $line"
+		if ('lf' -eq $line) {
+			# Show-MessageBox "lf working dir: $lfWorkingDir"
+			# and not the same dir then switch
+			if ($lfWorkingDir -ne $pwd) {
+				sl "$lfWorkingDir"
+				# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+				return
+			}
+			else {
+				#	do nothing #return $lfWorkingDir
+			}
+		}
+		# something not 'lf' on line
+		else {
+			return $lfWorkingDir
+		}
+	}
+
 }

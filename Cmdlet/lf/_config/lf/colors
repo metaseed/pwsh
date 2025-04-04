@@ -94,13 +94,16 @@
 # ex      01;32   # EXEC
 # fi      00      # FILE
 
-ln      01;36   # LINK
+ln      01;32   # LINK
 or      31;01   # ORPHAN
 tw      34      # STICKY_OTHER_WRITABLE
-ow      94      # OTHER_WRITABLE #note: actually it's dir
-# when a directory's sticky bit is set, the filesystem treats the files in such directories in a special way so only the file's owner, the directory's owner, or root user can rename or delete the file. Without the sticky bit set, any user with write and execute permissions for the directory can rename or delete contained files, regardless of the file's owner. Typically this is set on the /tmp directory to prevent ordinary users from deleting or moving other users' files.
+di      01;36   # DIR # not writable dir
+ow      94      # OTHER_WRITABLE #note: it's dir that is writable
+# when a directory's sticky bit is set, the filesystem treats the files in such directories in a special way,
+# so only the file's owner, the directory's owner, or root user can rename or delete the file.
+# Without the sticky bit set, any user with write and execute permissions for the directory can rename or delete contained files, regardless of the file's owner.
+# Typically this is set on the /tmp directory to prevent ordinary users from deleting or moving other users' files.
 st      01;34   # STICKY # some dir is this
-di      01;34   # DIR
 pi      33      # FIFO
 so      01;35   # SOCK
 bd      33;01   # BLK

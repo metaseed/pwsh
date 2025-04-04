@@ -1,3 +1,4 @@
+lf (as in "list files") is a terminal file manager written in Go with a heavy inspiration from ranger file manager.
 [Document](https://github.com/gokcehan/lf/blob/master/doc.md)
 # quick start
 `ctrl+o` or `lf` to invoke

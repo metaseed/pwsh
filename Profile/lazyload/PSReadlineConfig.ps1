@@ -50,17 +50,19 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
+## `lf` shortcuts
+
 # like open dialog to select one or more file dir
-Set-PSReadLineKeyHandler -Chord Ctrl+o -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
-    lf -lastSelection
+Set-PSReadLineKeyHandler -Chord Ctrl+s -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
+    lf -selections
 }
 # like save dialog to chose a dir
-Set-PSReadLineKeyHandler -Chord Ctrl+s -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord Ctrl+d -ScriptBlock {
     # to accept the returned path as argument to current command
     # [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine() # clear current buffer
     # [Microsoft.PowerShell.PSConsoleReadLine]::Insert('lf') # input
     # [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # execute
-    lf
+    lf -dir
 }
 
 
