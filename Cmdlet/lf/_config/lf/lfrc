@@ -66,13 +66,22 @@ cmd doc $lf -doc | less
 #cmd on-quit $echo %fx:% > %TEMP%\lf-lastSelection.json
 # can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
 
-cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+
+# we want to use q and Q to trigger different action and the then quit, an this on-quit is the same action
+# so we try to define different cmds
+# cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+cmd pre-quite-select $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+cmd pre-quite $echo {"lastSelections":null,"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+
 # slow
 # cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/on-quit.ps1
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
 # comment out because it easily triggered by the input-cancel when when in command mode
 # map <esc> quit # the same as q
+
+map q push :pre-quite;quit<enter>
+map Q push :pre-quite-select;quit<enter>
 ##################################################################
 ###	cmd map
 ##################################################################

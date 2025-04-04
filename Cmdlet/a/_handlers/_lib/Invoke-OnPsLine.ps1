@@ -1,10 +1,12 @@
 function Invoke-OnPsLine {
 	[CmdletBinding()]
 	param (
+		# [Parameter()]
+		# [switch]$isSelections,
+		# [Parameter()]
+		# [switch]$isSelections,
 		[Parameter()]
-		[switch]$isSelections,
-		[Parameter()]
-		[switch]$isDir,
+		[switch]$isChordTrigger,
 		[Parameter()]
 		[scriptblock] $dirScript = {
 			param (
@@ -22,7 +24,8 @@ function Invoke-OnPsLine {
 	$pathAtCursor = Find-PsReadlinePath $line $cursor ([ref]$leftCursor) ([ref]$rightCursor)
 
 	$onQuit = Invoke-Command -ScriptBlock $dirScript -ArgumentList $pathAtCursor, $line, $leftCursor, $rightCursor
-
+	$isSelections = $onQuit.lastSelections -ne $null
+	$isDir = $isChordTrigger -and -not $isSelections
 	$lfWorkingDir = $onQuit.workingDir
 	##
 	## returned from lf UI
@@ -48,7 +51,7 @@ function Invoke-OnPsLine {
 		if ([string]::IsNullOrWhiteSpace($line) ) {
 			if ("$lfWorkingDir" -ne "$pwd") {
 				sl "$lfWorkingDir"
-				# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+				[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 				return
 			}
 		}
