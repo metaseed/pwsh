@@ -35,9 +35,11 @@ function Invoke-OnPsLine {
 	# from `ctrl+s`
 	if ($isSelections) {
 		$lastSelections = $onQuit.lastSelections
-		$pathStr = ($lastSelections | % { "'$_'" }) -join ','
-		if ($pathStr -ne $pathAtCursor) {
-			[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
+		if($lastSelections) {
+			$pathStr = ($lastSelections | % { "'$_'" }) -join ','
+			if ($pathStr -ne $pathAtCursor) {
+				[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
+			}
 		}
 		return
 	}

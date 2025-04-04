@@ -60,18 +60,20 @@ set filesep ","
 # change 'doc' command to use a different pager
 cmd doc $lf -doc | less
 
+## quit
 # https://github.com/gokcehan/lf/blob/master/doc.md#on-quit
 # note: the `:\=\\` is to replace '\' in %fx% into '\\'
 #cmd on-quit $echo %fx:% > %TEMP%\lf-lastSelection.json
 # can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
-cmd on-quit $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+cmd on-quit $echo {"lastSelections":null,"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
+cmd on-quit-s $echo {"lastSelections":[%fx:\=\\%],"workingDir":%PWD:\=\\%} > %TEMP%\lf-onQuit.json
 # slow
 # cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/on-quit.ps1
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
 # comment out because it easily triggered by the input-cancel when when in command mode
 # map <esc> quit # the same as q
-
+map Q on-quit-s
 ##################################################################
 ###	cmd map
 ##################################################################
@@ -158,6 +160,7 @@ map <a-f> push :setfilter<enter>
 cmd rename %sh -c 'mv -i %f% $0'
 # cmd rename %mv -i $f $1
 map r
+
 
 # faster
 map rr push :rename<space>

@@ -49,6 +49,8 @@ function Show-Image {
 	Write-Output "Image Size: $($img.Width)x$($img.Height)"
 	try {
 		chafa $resolvedPath --view-size=$PreviewerWidth"x"$PreviewerHeight -c full --color-space rgb
+		# Show-MessageBox $resolvedPath
+		# Show-WTBackgroundImage -image $resolvedPath -alignment right -durationInseconds 10 -stretchMode none -backgroundImageOpacity 1
 	}
 	catch {
 		Write-Output "chara must be installed to preview the image."
