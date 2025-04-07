@@ -336,7 +336,7 @@ map op &GDProps.exe %fx%
 
 ## archive management #############
 
-# here we use sh to parse in the argument $0
+# here we use pass in the argument $0 from input to the sh's command
 cmd zip-to %sh -c '7z a $0 %fx%'
 cmd extract-to %sh -c '7z x %f% -o$0'
 cmd extract-here %7z x %f%

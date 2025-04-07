@@ -52,6 +52,10 @@ $commands = @{
   "OfflineFilesGeneralTab" = "Rundll32.exe Shell32.dll,Control_RunDLL cscui.dll,0,0"
   "PowerOptions" = "Rundll32.exe shell32.dll,Control_RunDLL powercfg.cpl"
   "PowerOptionsAdvanced"="Rundll32.exe shell32.dll,Control_RunDLL powercfg.cpl,0,3"
+  # we can find more definition from here
+  # https://learn.microsoft.com/en-us/windows/win32/shell/controlpanel-canonical-names
+  "PowerOptionsButtons"="control /name Microsoft.PowerOptions /page pageGlobalSettings"
+  "PowerOptionsPlanSettings"="control /name Microsoft.PowerOptions /page pagePlanSettings"
   "Profiles" = "rundll32.exe sysdm.cpl, EditUserProfiles"
   "ProgramsAndFeatures" = "Rundll32.exe shell32.dll,Control_RunDLL appwiz.cpl,0,0"
   "Region" = "Rundll32.exe shell32.dll,Control_RunDLL Intl.cpl,0,0"

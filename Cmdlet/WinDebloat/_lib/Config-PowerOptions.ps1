@@ -25,7 +25,7 @@ else {
   powercfg /change standby-timeout-dc 10
   powercfg /change standby-timeout-ac 60
   # hibernate
-  powercfg /change  hibernate-timeout-dc 30
+  powercfg /change  hibernate-timeout-dc 30 # 10 mins by default
   powercfg /change  hibernate-timeout-ac 0
   # disk
   # powercfg /change disk-timeout-ac #default is 20
