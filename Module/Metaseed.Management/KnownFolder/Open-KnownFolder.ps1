@@ -11,7 +11,7 @@ function Open-KnownFolder {
 
   # HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\explorer\FolderDescriptions
   if (!$FolderName) {
-    get-shellFolders
+    get-shellFolder
     return
   }
   # https://superuser.com/questions/395015/how-to-open-the-recycle-bin-from-the-windows-command-line
@@ -21,6 +21,6 @@ function Open-KnownFolder {
 
 Register-ArgumentCompleter -CommandName 'Open-KnownFolder' -ParameterName 'FolderName' -ScriptBlock {
   param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-  $folders = get-shellFolders $wordToComplete
+  $folders = get-shellFolder $wordToComplete
   return $folders
 }
