@@ -57,16 +57,24 @@ function Install-FromWeb {
 		Write-Host "find: $fileUrl"
 		$fileNameWithVer = [IO.Path]::GetFileNameWithoutExtension($fileUrl)
 
-		if ($fileUrl.startsWith('/')) {
-			$uri = [System.Uri]$url
-			$baseUrl = "$($uri.Scheme)://$($uri.Host)"
-			$fileUrl = "$baseUrl$fileUrl"
+		# if ($fileUrl.startsWith('/')) {
+		# 	$uri = [System.Uri]$url
+		# 	$baseUrl = "$($uri.Scheme)://$($uri.Host)"
+		# 	$fileUrl = "$baseUrl$fileUrl"
+		# }
+		$isAbsolute = [System.Uri]::TryCreate($fileUrl, [System.UriKind]::Absolute, [ref]$null)
+		if (!$isAbsolute){
+			$fileUrl = New-Object System.Uri([System.Uri]$url, $fileUrl)
 		}
-
+		$verOnline = ''
 		## find ver from file name in url
 		if ($fileNameWithVer -match '\d+\.\d+\.?\d*\.?\d*') {
 			$verOnline = $Matches[0].trim('.')
 		}
+		if(!$verOnline -and ($fileNameWithVer -match '\d+_\d+_?\d*_?\d*')) {
+			$verOnline = $Matches[0].replace('_', '.').trim('.')
+		}
+		# wiztree_4_25_portable
 		$nameFromOnline = $fileNameWithVer -replace '(\.|-|_|_v|-v|_version|ver)\d+(\.\d+)*.*', ''
 		$name = ($newName) ?? $nameFromOnline
 		if (!$verOnline) {

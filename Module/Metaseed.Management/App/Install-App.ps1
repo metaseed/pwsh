@@ -46,9 +46,14 @@ function Install-App {
 
 	$name = $newName ? $newName : $appName
 	Write-Host "Install $appName from $downloadedFilePath"
-	## backup files and delete app
+	## stop app
 	$app = "$toLocation\$name.exe"
-	gps $name -ErrorAction SilentlyContinue | spps -Force
+	gps $name -ErrorAction SilentlyContinue |% {
+		Write-Host "force stop app $name"
+		spps $_ -Force
+	}
+
+	## backup files and delete app
 	Wait-Process -Name $name -ErrorAction SilentlyContinue
 	if (test-path $app) {
 		ri $app -force

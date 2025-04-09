@@ -486,3 +486,14 @@ $a.gettype() # arraylist
 $b = @($a)
 $b.gettype() #
 ```
+
+# how to find the target of a hardlink
+
+```
+fsutil hardlink list M:\app\wiztree_4_10_portable\size.exe
+```
+\App\wiztree_4_10_portable\size.exe
+\App\wiztree_4_10_portable\WizTree64.exe
+
+> note: we can not use `gi`, `gi M:\app\wiztree_4_10_portable\size.exe|fl`, the`Target` property is empty,
+> because window does not trace the oder of the file name creation to the content, and it's two file names to same data on disk.
