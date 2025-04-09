@@ -51,9 +51,21 @@ You can't use environment variables directly in mappings and internal commands. 
 ## pass in arguments into the pwsh script
 > refer the example `test-args.ps1` and config in lfrc
 
+> it use `space` to separate args, if the arg has `space` in it, need to use `'`,
+> we can do ` $args -join ' '` to join all input
+
 ## show message
 https://github.com/gokcehan/lf/blob/master/doc.md#echomsg
 c:\app\lf.exe -remote "send $env:id echomsg 'path copied: $env:fx'"
 echoerr to show error
 
-use % to execute to make `echo` work, but it just flash not stay there
+## interaction to read input from user and continue
+use $ to execute to make `read-host` work, it will switch to the shell for you to input
+> note: the % is even better, it way stay in the lf to read and then continue
+
+```
+cmd createfile $pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/createFile.ps1 $0
+```
+> note: no `-noninteractive`
+and use `read-host` to read input from user, refer the `createFile.ps1`
+

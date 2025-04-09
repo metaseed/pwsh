@@ -13,3 +13,5 @@ $items | % {
   # Show-MessageBox "sss $result"
   # $shellItem.InvokeVerb("delete", "shift") # to permanently delete
 }
+
+c:\app\lf.exe -remote "send $env:id echomsg 'deleted(du to undo): $env:fx'"

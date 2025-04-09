@@ -207,10 +207,12 @@ map <f-2> rename-with-name
 # }}
 # map a push :createfile<enter>;redraw
 # map A push :createdir<enter>
-cmd createfile %sh -c 'touch $0'
+
 # below do allow `space` in name, it will create several dirs with name separated by 'space', and it will not select the newly created dir, so we do it with pwsh
+# cmd createfile %sh -c 'touch $0'
 # cmd createdir %sh -c 'mkdir $0'
 cmd createdir %pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/createDir.ps1 $0
+cmd createfile %pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/createFile.ps1 $0
 
 # add file/directory
 map af push :createfile<space>
