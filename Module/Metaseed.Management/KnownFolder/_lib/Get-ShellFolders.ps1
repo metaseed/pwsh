@@ -28,3 +28,4 @@ function get-shellFolder($wordToComplete) {
 	return $folders
   }
 
+#  get-shellFolder start

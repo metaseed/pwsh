@@ -50,6 +50,7 @@ $commands = @{
   "NetworkConnections" = "Rundll32.exe shell32.dll,Control_RunDLL ncpa.cpl"
   "OdbcDataAdministrator" = "Rundll32.exe shell32.dll,Control_RunDLL odbccp32.cpl"
   "OfflineFilesGeneralTab" = "Rundll32.exe Shell32.dll,Control_RunDLL cscui.dll,0,0"
+  'OptionalFeatures' = "optionalFeatures"
   "PowerOptions" = "Rundll32.exe shell32.dll,Control_RunDLL powercfg.cpl"
   "PowerOptionsAdvanced"="Rundll32.exe shell32.dll,Control_RunDLL powercfg.cpl,0,3"
   # we can find more definition from here

@@ -9,25 +9,26 @@ function Test-WordToComplete {
     $wordToComplete,
     [Parameter()]
     [float]
-    $oderBase = 0
+    $orderBase = 0
   )
+
   if ($null -eq $wordToComplete -or $wordToComplete.length -le 1) {
     return $true
   }
   # start with
   elseif ($obj.Name.StartsWith($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
-    $obj.Order = $oderBase
+    $obj.Order = $orderBase
     return $true
   }
   # $_ -like "*$wordToComplete*"
   # contains while word
   elseif ($obj.Name.Contains($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
-    $obj.Order = ($oderbase + 1)
+    $obj.Order = ($orderBase + 1)
     return $true
   }
   # start with the first char and has the remaining chars of the word
   elseif ($obj.Name -like (($wordToComplete -split '' -join '*').Substring(1))) {
-    $obj.Order = $oderBase + 2
+    $obj.Order = $orderBase + 2
     return $true
   }
   # has the chars of the word

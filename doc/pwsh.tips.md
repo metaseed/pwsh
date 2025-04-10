@@ -442,12 +442,13 @@ opss envVar
 opss OptionalFeatures
 opss ProgramsAndFeatures
 opss DeviceManager
-
+bluetooth taskbar
 # open know folders
 opkf startup
 opkf RecycleBinFolder
 opkf Downloads
 opkf DocumentsLibrary
+desktop recent
 # .? null conditional operator
 $a = 'dddd'
 $a.length # 4
@@ -473,7 +474,6 @@ $a = 1
 @($a)
 ,1
 $a = ,1
-@($a)
 > use @(,$a) to wrapper array inside array
 ,1
 > @($var) will return a new array, if $var is enumerable, the items get from the enumerable $var
@@ -496,4 +496,4 @@ fsutil hardlink list M:\app\wiztree_4_10_portable\size.exe
 \App\wiztree_4_10_portable\WizTree64.exe
 
 > note: we can not use `gi`, `gi M:\app\wiztree_4_10_portable\size.exe|fl`, the`Target` property is empty,
-> because window does not trace the oder of the file name creation to the content, and it's two file names to same data on disk.
+> because for hardlink, window does not trace the oder of the file name creation to the content, and it's two file names to same data on disk.
