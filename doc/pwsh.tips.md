@@ -360,11 +360,13 @@ or
 
 ## navigating inside location history
 ```pwsh
-cd - # previous location
-cd + # next location
+alt+[: cd - # previous location
+alt+]: cd + # next location
 `sl` or `sl ~` change to home directory
 ```
 
+alt+left: cd.. (no space) works because of parsing behavior
+alt+right: goto child dir by fzf
 # write-output vs write-host
 ga echo # write-output
 write-output "hello"| out-file kk.txt
@@ -497,3 +499,7 @@ fsutil hardlink list M:\app\wiztree_4_10_portable\size.exe
 
 > note: we can not use `gi`, `gi M:\app\wiztree_4_10_portable\size.exe|fl`, the`Target` property is empty,
 > because for hardlink, window does not trace the oder of the file name creation to the content, and it's two file names to same data on disk.
+>
+
+# share data between sessions
+refer `alias.ps1`

@@ -24,7 +24,7 @@
 #   return
 # }
 # . $PSScriptRoot/_specialDays.ps1
-. $PSScriptRoot/_commandPrompt.ps1
+. $PSScriptRoot/_prompt/commandPrompt.ps1
 function global:__GetPrefixPrompt {
   return "┌─ $(__GetAdminIcon) $(__GetDateStr)$(__GetLunarDateStr)$(__GetPSReadLineSessionExeTime) "
 }
@@ -41,6 +41,8 @@ if ($?) {
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
   $global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
+  # no need to modify the console window title.
+  $global:GitPromptSettings.WindowTitle = $null
   function global:PromptWriteErrorInfo() {
     # While $? also reflects (immediately afterwards) whether an external program reported an exit code of 0 (signaling success, making $? report $true) or a nonzero exit code (typically signaling failure, making $? $false), it is the automatic $LASTEXICODE variable that contains the specific exit code as an integer, and that value is retained until another external program, if any, is called in the same session.
     # $?: true: success, false: failure
@@ -74,7 +76,7 @@ if ($?) {
 }
 
 
-# below logic set the last readline session exectution time, but has problem, when adjust window size
+# below logic set the last readline session execution time, but has problem, when adjust window size
 # so set it in prompt starting segments
 # function SetStatus {
 #   # last readline session running time

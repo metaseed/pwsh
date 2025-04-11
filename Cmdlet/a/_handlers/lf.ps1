@@ -13,6 +13,11 @@
 # You may put this in one of the profiles found in $PROFILE.
 #
 
+<#
+in `lfrc`, pre-quite and pre-quite-select
+Q: selects
+q: for dir
+#>
 [CmdletBinding()]
 param (
     [Parameter()]

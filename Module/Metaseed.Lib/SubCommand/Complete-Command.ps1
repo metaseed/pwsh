@@ -15,7 +15,7 @@ function Test-WordToComplete {
   if ($null -eq $wordToComplete -or $wordToComplete.length -le 1) {
     return $true
   }
-  # start with
+  # start with wordToComplete
   elseif ($obj.Name.StartsWith($wordToComplete, [StringComparison]::InvariantCultureIgnoreCase)) {
     $obj.Order = $orderBase
     return $true
@@ -42,7 +42,7 @@ function Test-WordToComplete {
 }
 
 
-function Complete-Command {
+function Complete-Command {`
   param(
     [Parameter()]
     [string]

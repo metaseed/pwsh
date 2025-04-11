@@ -274,6 +274,7 @@ map <c-x> cut
 # Most terminals use Shift+Insert or right-click for pasting. Some terminal emulators allow you to configure Ctrl+Shift+V for pasting.
 
 map V paste
+map <c-v> paste
 
 ## delete #################
 

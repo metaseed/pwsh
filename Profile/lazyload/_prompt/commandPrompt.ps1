@@ -1,7 +1,7 @@
 # for get-lunarDate
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
-Import-Module Metaseed.Terminal -DisableNameChecking
 
+Import-Module Metaseed.Terminal -DisableNameChecking
 
 $global:__birthdayType = "`e[95m`e[0m" # birthday
 $global:__holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
@@ -209,9 +209,9 @@ function global:__GetSepcialDayStr {
 	$Today = [datetime]::new($now.Year, $now.Month, $now.Day)
 
 
-	## play backgroud image
+	## play background image
 	if ($global:__PSReadLineSessionScope.LastSessionStartTime) {
-		$s = ($now - $global:__PSReadLineSessionScope.LastSessionStartTime).totalseconds
+		$s = ($now - $global:__PSReadLineSessionScope.LastSessionStartTime).totalSeconds
 		if ($s -gt 10 * 60) {
 			# 10mins
 			if ($__birthdayType -in $global:SpecialDayTypes -or $__holidayType -in $global:SpecialDayTypes) {
@@ -291,7 +291,7 @@ function global:__GetPSReadLineSessionExeTime {
 	if ($global:__PSReadLineSessionScope.SessionStartTime) {
 		# from the 'Enter' key press
 		# 19.3s
-		$s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds
+		$s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalSeconds
 		if ($s -lt 1) {
 			$color = "`e[32m" #green
 		}

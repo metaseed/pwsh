@@ -37,8 +37,11 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     # cursor is the cursor position in the line, start from 0
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
+
     $lastSessionScope = $global:__PSReadLineSessionScope
+    # the time when press enter key
     $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; LastSessionStartTime = ($lastSessionScope.SessionStartTime ?? [datetime]::Now) }
+
     # create a scope for a psReadline session
     New-Event -SourceIdentifier 'PSReadlineSessionScopeEvent' -EventArguments @{
         scope     = $global:__PSReadLineSessionScope;
@@ -50,10 +53,31 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
+## navigation
+Set-PSReadLineKeyHandler -Key Alt+LeftArrow -BriefDescription 'Goto Parent Directory' -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd ..")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+# Alt+RightArrow is used to goto child directory, and configured in configPsFzf.ps1
+
+Set-PSReadLineKeyHandler -Chord 'Alt+]' -BriefDescription 'Goto Next Directory in Navigation-History' -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd +")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+Set-PSReadLineKeyHandler -Chord 'Alt+[' -BriefDescription 'Goto Previous Directory in Navigation-History' -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd -")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
 ## `lf` shortcuts
 
-# like open dialog to select one or more file dir
-Set-PSReadLineKeyHandler -Chord alt+e -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
+# explore: like open dialog to select one or more file dir
+Set-PSReadLineKeyHandler -Chord alt+e -ScriptBlock {
     lf -ChordTrigger
 }
 # Set-PSReadLineKeyHandler -Chord Ctrl+s -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
