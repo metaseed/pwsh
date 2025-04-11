@@ -1,7 +1,5 @@
-# for get-lunarDate
+# for Get-DateFromLunar
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
-
-Import-Module Metaseed.Terminal -DisableNameChecking
 
 $global:__birthdayType = "`e[95m`e[0m" # birthday
 $global:__holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
@@ -10,12 +8,12 @@ $global:__specialDays = @{
 		Type                  = $__birthdayType
 		DaysToRemindInAdvance = 3
 		Dates                 = @(
-			# @{
-			# 	Lable = 'Test'
-			# 	# Lunar = $true
-			# 	Month = 6
-			# 	Day   = 26
-			# },
+			@{
+				Lable = 'Test'
+				# Lunar = $true
+				Month = 4
+				Day   = 12
+			},
 			@{
 				Lable = 'Mom'
 				Lunar = $true
@@ -198,7 +196,7 @@ function global:__Get-SolarTerms {
 		$__specialDays.SolorTerms = $terms
 	}
 }
-function global:__GetSepcialDayStr {
+function global:__GetSpecialDayStr {
 	[CmdletBinding()]
 	param (
 		[Parameter()]
@@ -271,61 +269,4 @@ function global:__GetSepcialDayStr {
 	return $str
 }
 
-#  __GetSepcialDayStr ([DateTime]::new(2024, 10, 22)) #([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
-function global:__GetAdminIcon {
-	$IsAdmin = ([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole] "Administrator")
-	if ($IsAdmin) {
-		if ($env:TERM_NERD_FONT) {
-	  		"`e[93m`e[0m" # person with key https://www.nerdfonts.com/cheat-sheet
-		}
-		else {
-			"`e[33;5;1m!`e[23;25;21m" # green, blink, bold
-		}
-	}
-	else {
-		''
-	}
-}
-
-function global:__GetPSReadLineSessionExeTime {
-	if ($global:__PSReadLineSessionScope.SessionStartTime) {
-		# from the 'Enter' key press
-		# 19.3s
-		$s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalSeconds
-		if ($s -lt 1) {
-			$color = "`e[32m" #green
-		}
-		elseif ($s -lt 3) {
-			$color = "`e[33m" # yellow
-		}
-		else {
-			$color = "`e[31m" # red
-		}
-
-		if ($s -ge 0.01) {
-			# timer
-			$icon = $env:TERM_NERD_FONT ? "" : ""
-			return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
-		}
-	}
-}
-
-function global:__GetLunarDateStr {
-	$lunarDate = Get-LunarDate
-	$color = "`e[35m" #Magenta
-	# $moon = "" #moon https://www.nerdfonts.com/cheat-sheet
-	$calendarWithPlus = ""
-	$moons = ""
-	$moonOfToday = $moons[$lunarDate.Day - 1]
-	$icon = $lunarDate.IsLeapMonth ? "$calendarWithPlus$moonOfToday" : $moonOfToday
-	$specialDay = __GetSepcialDayStr
-	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day.ToString("#,00"))$specialDay`e[0m"
-}
-
-function global:__GetDateStr {
-	$weekDays = "日一二三四五六"
-	$date = Get-Date
-	$d = $date.ToString("MM-dd HH:mm:ss")
-	$dayOfWeek = $weekDays[$date.DayOfWeek]
-	return "`e[95m${d}`e[96m${dayOfWeek}`e[0m"
-}
+#  __GetSpecialDayStr ([DateTime]::new(2024, 10, 22)) #([DateTime]::new(2024, 3, 7)) #(Get-DateFromLunar 2024 5 1)
