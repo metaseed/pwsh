@@ -5,9 +5,12 @@ $PSReadLineOptions = @{
     # Prevent annoying beeping noises (e.g. when pressing backspace on empty line)
     # BellStyle           = "None"
     # HistorySearchCursorMovesToEnd = $true
+    # https://jdhitsolutions.com/blog/powershell/8969/powershell-predicting-with-style/
     MaximumHistoryCount = 10000
     # Set-PSReadLineOption -Colors @{ "ListPrediction" = "`e[90m" }
     Colors              = @{ "ListPrediction" = "`e[90m" }
+    # https://learn.microsoft.com/en-us/powershell/scripting/learn/shell/using-predictors?view=powershell-7.5
+    # press F2 to switch between ListView and InlineView
     PredictionViewStyle = 'ListView'
 }
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption?view=powershell-7.2

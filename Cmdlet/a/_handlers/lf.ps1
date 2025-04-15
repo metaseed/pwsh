@@ -32,6 +32,7 @@ if( $Remaining -contains '-remote') {
     #i.e. c:\app\lf.exe -remote "send $env:id push :rename<space>$name"
     return
 }
+
 $chordTrigger = $Remaining -contains '-ChordTrigger'
 if($chordTrigger) {
   $remaining.remove('-ChordTrigger')

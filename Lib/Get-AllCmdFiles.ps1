@@ -14,6 +14,7 @@ function Get-AllCmdFiles {
   )
 
   $Directory = [IO.Path]::GetFullPath($Directory).TrimEnd('\')
+
   $All = Get-ChildItem $Directory -File -include $filter -Recurse -Exclude _* -ErrorAction SilentlyContinue |
   ? {
     # if parent dirs of $Directory contains '_', it's valid

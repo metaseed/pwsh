@@ -8,12 +8,12 @@ $global:__specialDays = @{
 		Type                  = $__birthdayType
 		DaysToRemindInAdvance = 3
 		Dates                 = @(
-			@{
-				Lable = 'Test'
-				# Lunar = $true
-				Month = 4
-				Day   = 12
-			},
+			# @{
+			# 	Lable = 'Test'
+			# 	# Lunar = $true
+			# 	Month = 4
+			# 	Day   = 12
+			# },
 			@{
 				Lable = 'Mom'
 				Lunar = $true

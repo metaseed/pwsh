@@ -41,6 +41,7 @@ if ($?) {
   $global:GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
   #  posh-git uses the `[System.Drawing.ColorTranslator]::FromHtml(string colorName)` method to parse a color name as an HTML color.
   $global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
+  $global:GitPromptSettings.DefaultPromptPath.Text = '$(Get-PromptConnectionInfo -Format "[{1}@{0}]")$(Get-PromptPath)'
   $global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
   # no need to modify the console window title.
   $global:GitPromptSettings.WindowTitle = $null
@@ -61,7 +62,7 @@ if ($?) {
 
   }
   # ─→
-  $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n└─$(PromptWriteErrorInfo) '
+  $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`r`n└─$(PromptWriteErrorInfo) '
 
   $global:GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = [ConsoleColor]::Magenta
   $global:GitPromptSettings.DefaultPromptSuffix = ''

@@ -3,7 +3,20 @@
 [CmdletBinding()]
 param (
     [Parameter(ValueFromPipeline=$true)]
-    [object[]]$InputObject,
+    [ArgumentCompleter({
+      param(
+        [string] $CommandName,
+        [string] $ParameterName,
+        [string] $WordToComplete,
+        [System.Management.Automation.Language.CommandAst] $CommandAst,
+        [System.Collections.IDictionary] $FakeBoundParameters
+      )
+
+      $CompletionResults = (Get-ZLocation).GetEnumerator() | Sort-Object { $_.Value } -Descending | ForEach-Object { $_.Key }| Invoke-Fzf -NoSort -Filter $WordToComplete
+
+      return $CompletionResults
+    })]
+    [object]$InputObject,
 
     [Parameter(DontShow, ValueFromRemainingArguments)]
     $Remaining

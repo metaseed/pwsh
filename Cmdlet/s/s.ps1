@@ -43,6 +43,7 @@ end {
     Write-AllSubCommands "$PSScriptRoot\_Commands"
     return
   }
+
   $file = Find-CmdItem $__CmdCache "$PSScriptRoot\_Commands" $Command '*.ps1'
   if ($null -eq $file) {
     Write-Host "Command $Command not found"
@@ -58,11 +59,14 @@ end {
   $__CmdFolder = "$PSScriptRoot\_Commands"
   $__LibFolder = "$PSScriptRoot\_Lib"
   $__RootFolder = Resolve-Path "$PSScriptRoot\..\.."
+
   $null = $PSBoundParameters.Remove('Command')
   & $file @PSBoundParameters
+
   $err = $error | ? {
     $_.InvocationInfo.Line -notmatch '-ErrorAction\s+SilentlyContinue'
   }
+
   if ($err) {
     Write-AnsiText "Errors:" -Blink -ForegroundColor Red -Inverted
     $err

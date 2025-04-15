@@ -15,11 +15,12 @@ param(
       $commands = Complete-Command 'app_commands' "$PSScriptRoot\_Commands" $wordToComplete '*.ps1'
       $apps = Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
       $handlers = Complete-Command 'app_handlers' "$PSScriptRoot\_handlers" $wordToComplete '*.ps1'
-      $cmds = (@()+ $handlers + $apps + $commands) | get-unique
+      $cmds = (@() + $handlers + $apps + $commands) | get-unique
       return $cmds
     })]
   [Parameter(Position = 0)]
   $app,
+
   [switch]
   [Alias('sh')] # s already used somewhere
   $showFolder,
@@ -61,7 +62,7 @@ dynamicparam {
 }
 
 end {
-  if($showFolder){
+  if ($showFolder) {
     start $env:MS_App
     return
   }
@@ -107,11 +108,11 @@ end {
     }
   } while ($update)
 
-if(!$file){
-  write-error "can not find app: $app"
-  return
-}
-& $file @Remaining
+  if (!$file) {
+    write-error "can not find app: $app"
+    return
+  }
+  & $file @Remaining
 
   # if ($Remaining) {
   #   & $file @Remaining
