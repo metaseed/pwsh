@@ -16,6 +16,7 @@ function Invoke-OnPsLine {
 			return  $selectedPath
 		}
 	)
+
 	$leftCursor = $null
 	$rightCursor = $null
 	$line = $null
@@ -24,6 +25,7 @@ function Invoke-OnPsLine {
 	$pathAtCursor = Find-PsReadlinePath $line $cursor ([ref]$leftCursor) ([ref]$rightCursor)
 
 	$onQuit = Invoke-Command -ScriptBlock $dirScript -ArgumentList $pathAtCursor, $line, $leftCursor, $rightCursor
+
 	$isSelections = $onQuit.lastSelections -ne $null
 	$isDir = $isChordTrigger -and -not $isSelections
 	$lfWorkingDir = $onQuit.workingDir

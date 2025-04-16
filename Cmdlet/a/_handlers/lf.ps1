@@ -27,15 +27,15 @@ param (
     [Parameter(mandatory = $false, DontShow, ValueFromRemainingArguments = $true)]$Remaining
 )
 
-if( $Remaining -contains '-remote') {
+if ( $Remaining -contains '-remote') {
     Show-MessageBox "$($Remaining -join ','), please use 'c:\app\lf.exe -remote to send command"
     #i.e. c:\app\lf.exe -remote "send $env:id push :rename<space>$name"
     return
 }
 
 $chordTrigger = $Remaining -contains '-ChordTrigger'
-if($chordTrigger) {
-  $remaining.remove('-ChordTrigger')
+if ($chordTrigger) {
+    $remaining.remove('-ChordTrigger')
 }
 # $isSelections = $Remaining -contains '-selections'
 # if($isSelections) {
@@ -47,7 +47,8 @@ if($chordTrigger) {
 # }
 
 . $PSScriptRoot/_lib/Invoke-OnPsLine.ps1
-Invoke-OnPsLine -isChordTrigger:$chordTrigger {# -isSelections:$isSelections -isDir:$isDir
+
+Invoke-OnPsLine -isChordTrigger:$chordTrigger { # -isSelections:$isSelections -isDir:$isDir
     [CmdletBinding()]
     param (
         $pathAtCursor, $inputLine, $cursorLeft, $cursorRight
@@ -55,14 +56,19 @@ Invoke-OnPsLine -isChordTrigger:$chordTrigger {# -isSelections:$isSelections -is
 
     # $tmp = [IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
     try {
-        # lf -last-dir-path="$tmp" $args
-        $isFolder = Test-Path -PathType Container $pathAtCursor
+        if($pathAtCursor) {
+            $pathAtCursor = resolve-path $pathAtCursor # resolve-path to convert m: to m:\, lf.exe do not accept m: directly(it will become pwd\m:)
+            # lf -last-dir-path="$tmp" $args
+            $isFolder = Test-Path -PathType Container $pathAtCursor
+        }
 
         if ($isFolder -and ($pwd -ne $pathAtCursor)) {
-            $dir = & $lfExe -print-last-dir $pathAtCursor
+            # Write-Host "bbb $pathAtCursor"
+            $dir = & $lfExe -print-last-dir $pathAtCursor @Remaining
             # note: bug:  -last-dir-path=`"$tmp`" it will not save the write value into the file when the current dir is different with the path at cursor
         }
         else {
+            # Write-Host "aaa"+ $Remaining
             $dir = & $lfExe -print-last-dir @Remaining
             # & $lfExe -last-dir-path="$tmp" @Remaining
         }
@@ -81,15 +87,16 @@ Invoke-OnPsLine -isChordTrigger:$chordTrigger {# -isSelections:$isSelections -is
         #     ]
         # }
 
-            # saved from lfcf on-quit event
-            $onQuit = gc $env:temp\lf-onQuit.json|ConvertFrom-Json
+        # saved from lfcf on-quit event
+        $onQuit = gc $env:temp\lf-onQuit.json | ConvertFrom-Json
 
-           # $onQuit = @{workingDir = $dir}
+        # $onQuit = @{workingDir = $dir}
 
         return $onQuit
     }
     catch {
-        Write-Host "Error: $($_.Exception.Message)"
+        Write-ErrorDetails $_
+        # Write-Host "Error: $($_.Exception)"
         return;
     }
     finally {
@@ -106,3 +113,4 @@ ctrl+s
 ctrl+d
 sl ctrl+d
 #>
+

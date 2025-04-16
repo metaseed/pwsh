@@ -2,20 +2,20 @@
 # so just invoke the lf.ps1 with 'lf' not 'a lf'
 [CmdletBinding()]
 param (
-    [Parameter(ValueFromPipeline=$true)]
+    [Parameter(ValueFromPipeline = $true)]
     [ArgumentCompleter({
-      param(
-        [string] $CommandName,
-        [string] $ParameterName,
-        [string] $WordToComplete,
-        [System.Management.Automation.Language.CommandAst] $CommandAst,
-        [System.Collections.IDictionary] $FakeBoundParameters
-      )
+            param(
+                [string] $CommandName,
+                [string] $ParameterName,
+                [string] $WordToComplete,
+                [System.Management.Automation.Language.CommandAst] $CommandAst,
+                [System.Collections.IDictionary] $FakeBoundParameters
+            )
 
-      $CompletionResults = (Get-ZLocation).GetEnumerator() | Sort-Object { $_.Value } -Descending | ForEach-Object { $_.Key }| Invoke-Fzf -NoSort -Filter $WordToComplete
+            $CompletionResults = (Get-ZLocation).GetEnumerator() | Sort-Object { $_.Value } -Descending | ForEach-Object { $_.Key } | Invoke-Fzf -NoSort -Filter $WordToComplete
 
-      return $CompletionResults
-    })]
+            return $CompletionResults
+        })]
     [object]$InputObject,
 
     [Parameter(DontShow, ValueFromRemainingArguments)]
@@ -38,8 +38,11 @@ end {
     # After all pipeline items are processed
     # Call the original command with both pipeline items and remaining arguments
     if ($pipelineItems.Count -gt 0) {
+        Write-Host $pipelineItems
+        # Write-Host $Remaining
         a lf -- $pipelineItems @Remaining
-    } else {
+    }
+    else {
         a lf -- @Remaining
     }
 }

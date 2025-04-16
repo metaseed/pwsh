@@ -96,6 +96,7 @@ end {
       $handler = $HandlerCache[$app]
       Write-Verbose "handler: $handler"
       if ($handler) {
+        # Write-Host "bbb $remaining"
         & $handler $file $Remaining
         return
       }
