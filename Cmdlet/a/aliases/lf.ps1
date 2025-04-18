@@ -12,37 +12,34 @@ param (
                 [System.Collections.IDictionary] $FakeBoundParameters
             )
 
-            $CompletionResults = (Get-ZLocation).GetEnumerator() | Sort-Object { $_.Value } -Descending | ForEach-Object { $_.Key } | Invoke-Fzf -NoSort -Filter $WordToComplete
+            $CompletionResults = (Get-ZLocation).GetEnumerator() | Sort-Object { $_.Value } -Descending |
+            % {
+                $pathValue = $_.Key
+                if($pathValue.Contains(' ')){
+                    $pathValue = "`"$pathValue`""
+                }
+                return $pathValue
+            } | Invoke-Fzf -NoSort -Filter $WordToComplete
 
             return $CompletionResults
         })]
-    [object]$InputObject,
+    [object]$Path,
 
     [Parameter(DontShow, ValueFromRemainingArguments)]
     $Remaining
 )
 
-begin {
-    # Initialize an array to collect pipeline input if needed
-    $pipelineItems = @()
-}
-
-process {
-    # This block processes each item coming through the pipeline
-    if ($InputObject) {
-        $pipelineItems += $InputObject
-    }
-}
 
 end {
     # After all pipeline items are processed
     # Call the original command with both pipeline items and remaining arguments
-    if ($pipelineItems.Count -gt 0) {
-        Write-Host $pipelineItems
+    if ($path -and (Test-Path $Path)) {
+        $Path = Resolve-Path $Path
+        # Write-Host $pipelineItems
         # Write-Host $Remaining
-        a lf -- $pipelineItems @Remaining
+        a lf -- $Path @Remaining
     }
-    else {
+    else { # when from chord
         a lf -- @Remaining
     }
 }

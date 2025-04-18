@@ -140,16 +140,22 @@ ctrl+L (just scroll all content to top)
 F8: complete command line from history, from history of this command
 alt+a: find argument from all command history
 
-remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
-Get-PSReadLineOption|% HistorySavePath|code
+remove cmd history:
+Remove-Item (Get-PSReadlineOption).HistorySavePath
+Get-PSReadLineOption |select -ExpandProperty  HistorySavePath |ri
+
+Get-PSReadLineOption|% HistorySavePath|%{code $_}
 Ctrl+]: goto Brace (){}[]
 ctrl-l: clear screen
+esc: clear current line buffer
 alt-.: last argument of previous command
 ctrl-space: MenuComplete
 
 ## peek function implementation
+> need to be a script function
 gcm mkdir |% scriptblock
 (Get-Command mkdir).ScriptBlock
+gcm Get-LunarDate  |% scriptblock |code -
 gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 
 ## beep
@@ -157,10 +163,11 @@ gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 1. [Console]::Beep(), [Console]::Beep(1000,1000)
 
 * show unicode: [char]0x2261
+≡
 
 ## write format table to host
   $process = [System.Diagnostics.Process]::GetCurrentProcess()
-  $process |Format-Table | Out-String|%{ Write-Verbose $_}
+  $process |Format-Table | Out-String|write-host
 
 ## execute job and capture scope variables
 $a = 10
@@ -169,7 +176,7 @@ write-host $a
 play-ring
 }&
 receive-job $b
-> about code has problem, it's not run in background, because it is $b = result&
+> about code has problem, it's not run in background, because it is $b = result& (result is &{})
 $a = 10
 $b = Start-Job -ScriptBlock {
     Write-Host $using:a
@@ -187,12 +194,14 @@ $a = @{}
 ## open 'this pc'
 explorer file:
 start file:
+sa file:
 * open c:
 explorer c:
 start c:
 ## -contains operator
 work on list not on string
 'abc' -contains 'a' not work
+'abc'.getEnumerator() -contains 'a' work
 'abc'.contains('a') work
 'abc','e','fd' -contains 'fd' work
 

@@ -61,7 +61,9 @@ echoerr to show error
 
 ## interaction to read input from user and continue
 use $ to execute to make `read-host` work, it will switch to the shell for you to input
-> note: the % is even better, it way stay in the lf to read and then continue
+> note: the % is even better, it will stay in the lf to read and then continue, but we can not use `write-host` to show message to user
+>
+ to show log with `write-host` we need to use the `!` to execute and wait to see the pwsh instance outputs
 
 ```
 cmd createfile $pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/createFile.ps1 $0

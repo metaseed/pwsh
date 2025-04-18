@@ -1,7 +1,8 @@
 # for Get-DateFromLunar
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
 
-$global:__birthdayType = "`e[95m`e[0m" # birthday
+# birthday
+$global:__birthdayType = if ($env:TERM_NERD_FONT) { "`e[95m`e[0m" } else { ""}
 $global:__holidayType = "`e[93m󱁖`e[0m"  #  party poper'🎉' # festeval
 $global:__specialDays = @{
 	Birthday = @{

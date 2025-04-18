@@ -56,22 +56,29 @@ Invoke-OnPsLine -isChordTrigger:$chordTrigger { # -isSelections:$isSelections -i
 
     # $tmp = [IO.Path]::GetTempFileName() # a new temp file name inside the temp dir
     try {
-        if($pathAtCursor) {
-            $pathAtCursor = resolve-path $pathAtCursor # resolve-path to convert m: to m:\, lf.exe do not accept m: directly(it will become pwd\m:)
-            # lf -last-dir-path="$tmp" $args
-            $isFolder = Test-Path -PathType Container $pathAtCursor
-        }
+        # only output path when invoke from chord (alt+e)
+        if ($chordTrigger) {
+            if (Test-path $pathAtCursor) {
+                $pathAtCursor = resolve-path $pathAtCursor # resolve-path to convert m: to m:\, lf.exe do not accept m: directly(it will become pwd\m:)
+                # $isFolder = Test-Path -PathType Container $pathAtCursor
+                # lf -last-dir-path="$tmp" $args
+                # if($isFolder -and ($pwd -ne $pathAtCursor)){
+                #     Write-Host "$lfExe -print-last-dir $pathAtCursor $Remaining"
+                $dir = & $lfExe -print-last-dir $pathAtCursor @Remaining
+                #     # note: bug:  -last-dir-path=`"$tmp`" it will not save the write value into the file when the current dir is different with the path at cursor
+                # }
 
-        if ($isFolder -and ($pwd -ne $pathAtCursor)) {
-            # Write-Host "bbb $pathAtCursor"
-            $dir = & $lfExe -print-last-dir $pathAtCursor @Remaining
-            # note: bug:  -last-dir-path=`"$tmp`" it will not save the write value into the file when the current dir is different with the path at cursor
+            }
+            else {
+                # empty or not a pathi
+            }
         }
         else {
             # Write-Host "aaa"+ $Remaining
             $dir = & $lfExe -print-last-dir @Remaining
             # & $lfExe -last-dir-path="$tmp" @Remaining
         }
+
         # if (!(Test-Path -PathType Leaf "$tmp")) {
         #     write-host "no path: $tmp"
         #     return

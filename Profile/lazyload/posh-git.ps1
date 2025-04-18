@@ -81,7 +81,7 @@ if ($?) {
 # below logic set the last readline session execution time, but has problem, when adjust window size
 # so set it in prompt starting segments
 # function SetStatus {
-#   # last readline session running time
+#   # last readline session running timeE
 #   if ($global:__PSReadLineSessionScope.SessionStartTime) {
 #     # 19.3s
 #     $s = ([datetime]::now - $global:__PSReadLineSessionScope.SessionStartTime).totalseconds

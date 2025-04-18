@@ -26,7 +26,7 @@ function Invoke-OnPsLine {
 
 	$onQuit = Invoke-Command -ScriptBlock $dirScript -ArgumentList $pathAtCursor, $line, $leftCursor, $rightCursor
 
-	$isSelections = $onQuit.lastSelections -ne $null
+	$isSelections = $null -ne $onQuit.lastSelections
 	$isDir = $isChordTrigger -and -not $isSelections
 	$lfWorkingDir = $onQuit.workingDir
 	##
@@ -37,10 +37,9 @@ function Invoke-OnPsLine {
 		return
 	}
 
-	# from `ctrl+s`
 	if ($isSelections) {
 		$lastSelections = $onQuit.lastSelections
-		if($lastSelections) {
+		if ($lastSelections) {
 			$pathStr = ($lastSelections | % { "'$_'" }) -join ','
 			if ($pathStr -ne $pathAtCursor) {
 				[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
@@ -48,7 +47,6 @@ function Invoke-OnPsLine {
 		}
 		return
 	}
-	# from `ctrl+d`
 	elseif ($isDir) {
 		if ([string]::IsNullOrWhiteSpace($line) ) {
 			if ("$lfWorkingDir" -ne "$pwd") {
@@ -78,22 +76,22 @@ function Invoke-OnPsLine {
 	# from `lf` command
 	else {
 		# Show-MessageBox "line: $line"
-		if ('lf' -eq $line) {
-			# Show-MessageBox "lf working dir: $lfWorkingDir"
-			# and not the same dir then switch
-			if ($lfWorkingDir -ne $pwd) {
-				sl "$lfWorkingDir"
-				# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-				return
-			}
-			else {
-				#	do nothing #return $lfWorkingDir
-			}
+		# if ('lf' -eq $line) {
+		# Show-MessageBox "lf working dir: $lfWorkingDir"
+		# and not the same dir then switch
+		if ($lfWorkingDir -ne $pwd) {
+			sl "$lfWorkingDir"
+			# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+			return
 		}
-		# something not 'lf' on line
 		else {
-			return $lfWorkingDir
+			#	do nothing #return $lfWorkingDir
 		}
+		# }
+		# something not 'lf' on line
+		# else {
+		# 	return $lfWorkingDir
+		# }
 	}
 
 }

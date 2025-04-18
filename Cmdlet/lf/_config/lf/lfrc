@@ -10,10 +10,10 @@
 # reload config file using f5
 # :source M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
 # 'push' is emulating keyboard typing in cmd line
-map <f-5> push :source<space>M:/Script/Pwsh/Cmdlet/lf/_config/lfrc<enter>
+map <f-5> push :source<space>M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc<enter>
 
 # edit this file
-map <f-4> &code M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
+map <f-4> &code M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc
 
 ###
 ### usage note:
@@ -347,18 +347,25 @@ cmd extract-to %sh -c '7z x %f% -o$0'
 cmd extract-here %7z x %f%
 cmd extract_auto %7z x %f% -o%f%
 cmd extract_and_remove %sh -c '7z x %f% -o%f%_ && rm %f%'
+cmd extract-to-folder %sh -c '7z x %f% -o$(basename $0 .zip)'
+cmd extract &pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/unzip.ps1 $0
 
 cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
 # map zut push :extract-to<space>
 
-cmd extract-to-folder push :extract-to<space>
-map zut extract-to-folder
+cmd extract-to... push :extract-to<space>
+map zut extract-to...
+
+cmd extract-to-folder
+map zuf extract-to-folder
 
 cmd extract-to-here push :extract-here<enter>
 map zuh extract-to-here
 
 map zur push :extract_and_remove<enter>
+
+map zuu extract
 
 
 ## drag and drop ##################
