@@ -514,3 +514,15 @@ fsutil hardlink list M:\app\wiztree_4_10_portable\size.exe
 
 # share data between sessions
 refer `alias.ps1`
+
+# array item operator in string interpolation
+$a=$('dd','bbb','ccc')
+$i = 1
+"item$i $a[$i]"
+out: item1 dd bbb ccc[1]
+> the '[' and ']' is not considered as an operator
+"item$i $($a[$i])"
+out: item1 bbb
+
+# kill process
+gps|? ProcessName -like *dex|spps

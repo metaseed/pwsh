@@ -1,8 +1,9 @@
-$items = $env:fx -split ',' # "`n"
 
 #  $f is current focused file, $fs is selected files, $fx is $fs if select many else it is $f
-$items | % {
+# "`n"
+$env:fx -split ','| % {
   $item = get-item $_.trim('"')
+
   $directoryPath = Split-Path $item -Parent
 
   $shellCom = New-Object -ComObject "Shell.Application"

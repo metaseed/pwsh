@@ -343,7 +343,9 @@ map op &GDProps.exe %fx%
 
 # here we use pass in the argument $0 from input to the sh's command
 cmd zip-to %sh -c '7z a $0 %fx%'
+# work but not used
 cmd extract-to %sh -c '7z x %f% -o$0'
+
 cmd extract-here %7z x %f%
 cmd extract_auto %7z x %f% -o%f%
 cmd extract_and_remove %sh -c '7z x %f% -o%f%_ && rm %f%'
@@ -354,8 +356,8 @@ cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
 # map zut push :extract-to<space>
 
-cmd extract-to... push :extract-to<space>
-map zut extract-to...
+# cmd extract-to... push :extract-to<space>
+# map zut extract-to...
 
 cmd extract-to-folder
 map zuf extract-to-folder
@@ -364,7 +366,7 @@ cmd extract-to-here push :extract-here<enter>
 map zuh extract-to-here
 
 map zur push :extract_and_remove<enter>
-
+map zut extract... push :extract<space>
 map zuu extract
 
 
