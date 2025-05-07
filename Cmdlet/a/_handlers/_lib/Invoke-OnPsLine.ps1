@@ -3,10 +3,10 @@ function Invoke-OnPsLine {
 	param (
 		# [Parameter()]
 		# [switch]$isSelections,
-		# [Parameter()]
-		# [switch]$isSelections,
 		[Parameter()]
 		[switch]$isChordTrigger,
+		[Parameter()]
+		[switch]$PassThru,
 		[Parameter()]
 		[scriptblock] $dirScript = {
 			param (
@@ -26,8 +26,6 @@ function Invoke-OnPsLine {
 
 	$onQuit = Invoke-Command -ScriptBlock $dirScript -ArgumentList $pathAtCursor, $line, $leftCursor, $rightCursor
 
-	$isSelections = $null -ne $onQuit.lastSelections
-	$isDir = $isChordTrigger -and -not $isSelections
 	$lfWorkingDir = $onQuit.workingDir
 	##
 	## returned from lf UI
@@ -37,61 +35,68 @@ function Invoke-OnPsLine {
 		return
 	}
 
-	if ($isSelections) {
-		$lastSelections = $onQuit.lastSelections
+	$lastSelections = $onQuit.lastSelections
+	if ($isChordTrigger) {
+		# is selection
 		if ($lastSelections) {
 			$pathStr = ($lastSelections | % { "'$_'" }) -join ','
 			if ($pathStr -ne $pathAtCursor) {
 				[Microsoft.PowerShell.PSConsoleReadLine]::Insert($pathStr)
 			}
-		}
-		return
-	}
-	elseif ($isDir) {
-		if ([string]::IsNullOrWhiteSpace($line) ) {
-			if ("$lfWorkingDir" -ne "$pwd") {
-				sl "$lfWorkingDir"
-				[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-				return
-			}
+
+			return
 		}
 		else {
-			$pathAtCursorIsDir = Test-Path -PathType Container $pathAtCursor
-			if ($pathAtCursorIsDir) {
-				# Show-MessageBox "$lfWorkingDir and $pwd"
-				if ($lfWorkingDir -ne $pathAtCursor) {
-					# replace dir it to $lfWorkingDir
-					[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $lfWorkingDir)
+			# working dir
+			if ([string]::IsNullOrWhiteSpace($line) ) {
+				if ("$lfWorkingDir" -ne "$pwd") {
+					sl "$lfWorkingDir"
+					[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 					return
 				}
 			}
-			# not a dir
 			else {
-				if ($isDir -or $isSelections) {
-					[Microsoft.PowerShell.PSConsoleReadLine]::Insert($lfWorkingDir)
+				$pathAtCursorIsDir = Test-Path -PathType Container $pathAtCursor
+				if ($pathAtCursorIsDir) {
+					# Show-MessageBox "$lfWorkingDir and $pwd"
+					if ($lfWorkingDir -ne $pathAtCursor) {
+						# replace dir it to $lfWorkingDir
+						[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $lfWorkingDir)
+						return
+					}
+				}
+				# not a dir
+				else {
+					if ($isDir -or $isSelections) {
+						[Microsoft.PowerShell.PSConsoleReadLine]::Insert($lfWorkingDir)
+					}
 				}
 			}
+		}
+		else {
+			throw "no such option"
 		}
 	}
 	# from `lf` command
 	else {
-		# Show-MessageBox "line: $line"
-		# if ('lf' -eq $line) {
-		# Show-MessageBox "lf working dir: $lfWorkingDir"
-		# and not the same dir then switch
-		if ($lfWorkingDir -ne $pwd) {
-			sl "$lfWorkingDir"
-			# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-			return
+		if ($PassThru) {
+			if ($lastSelections) {
+				$pathStr = ($lastSelections | % { "'$_'" }) -join ','
+				return $pathStr
+			} else {
+				return $lfWorkingDir
+			}
 		}
 		else {
-			#	do nothing #return $lfWorkingDir
+			if ($lfWorkingDir -ne $pwd) {
+				sl "$lfWorkingDir"
+				# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+				return
+			}
+			else {
+				#	do nothing #return $lfWorkingDir
+			}
 		}
-		# }
-		# something not 'lf' on line
-		# else {
-		# 	return $lfWorkingDir
-		# }
 	}
 
 }

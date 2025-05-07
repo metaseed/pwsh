@@ -35,8 +35,14 @@ if ( $Remaining -contains '-remote') {
 
 $chordTrigger = $Remaining -contains '-ChordTrigger'
 if ($chordTrigger) {
-    $remaining.remove('-ChordTrigger')
+    $null = $remaining.remove('-ChordTrigger')
 }
+
+$PassThru = $Remaining -contains '-PassThru'
+if ($PassThru) {
+    $null = $remaining.remove('-PassThru')
+}
+# Show-MessageBox "pass: $passThru"
 # $isSelections = $Remaining -contains '-selections'
 # if($isSelections) {
 #   $remaining.remove('-selections')
@@ -48,7 +54,7 @@ if ($chordTrigger) {
 
 . $PSScriptRoot/_lib/Invoke-OnPsLine.ps1
 
-Invoke-OnPsLine -isChordTrigger:$chordTrigger { # -isSelections:$isSelections -isDir:$isDir
+Invoke-OnPsLine -isChordTrigger:$chordTrigger -PassThru:$PassThru { # -isSelections:$isSelections -isDir:$isDir
     [CmdletBinding()]
     param (
         $pathAtCursor, $inputLine, $cursorLeft, $cursorRight
@@ -115,7 +121,7 @@ Invoke-OnPsLine -isChordTrigger:$chordTrigger { # -isSelections:$isSelections -i
 }
 
 <#
-lf|sl
+lf -o|sl
 ctrl+s
 ctrl+d
 sl ctrl+d

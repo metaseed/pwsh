@@ -25,6 +25,11 @@ param (
         })]
     [object]$Path,
 
+    # to output the dir if quit with q; and selections if quit with Q
+    [Parameter()]
+    [Alias('pt','o')]
+    [switch]$PassThru,
+
     [Parameter(DontShow, ValueFromRemainingArguments)]
     $Remaining
 )
@@ -43,7 +48,7 @@ end {
             $Path = Resolve-Path $Path
             # Write-Host $pipelineItems
             # Write-Host $Remaining
-            a lf -- $Path @Remaining
+            a lf --  $Path ($PassThru ? '-PassThru': '') @Remaining
         }
         else {
             $parentPath = $Path
@@ -56,15 +61,15 @@ end {
                 Write-Notice "only this part of path available: $parentPath"
                 $decision = $Host.UI.PromptForChoice('Continue with partial path?', "$parentPath", @('&Yes', '&No'), 0)
                 if($decision -eq 0) {
-                    a lf -- $parentPath @Remaining
+                    a lf -- $parentPath ($PassThru ? '-PassThru': '') @Remaining
                 }
             }
             # throw "path does not exist: $Path"
         }
     }
     else {
-        # when from chord
-        a lf -- @Remaining
+        # when from chord or path is not set
+        a lf ($PassThru ? '-PassThru': '') -- @Remaining
     }
 }
 # work too:
