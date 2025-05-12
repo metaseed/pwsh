@@ -48,7 +48,7 @@ end {
             $Path = Resolve-Path $Path
             # Write-Host $pipelineItems
             # Write-Host $Remaining
-            a lf --  $Path ($PassThru ? '-PassThru': '') @Remaining
+            a lf --  "$Path" ($PassThru ? '-PassThru': '') @Remaining
         }
         else {
             $parentPath = $Path

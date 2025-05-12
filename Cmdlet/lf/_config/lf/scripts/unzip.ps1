@@ -39,6 +39,6 @@ $zipFiles | % {
 		write-error "$zipFile is not a know compressed archive!"
 		return
 	}
-	write-host 'done!'
+	# write-host 'done!'
 	c:\app\lf.exe -remote "send $env:id echomsg 'done'"
 }

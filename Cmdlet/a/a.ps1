@@ -38,6 +38,7 @@ param(
   [Parameter(DontShow, ValueFromRemainingArguments)]$Remaining
   # [string][Parameter(position = 1)]$arg
 )
+
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters
 dynamicparam {
   # Show-MessageBox "$PSScriptRoot\_args"
@@ -62,6 +63,7 @@ dynamicparam {
 }
 
 end {
+  $Remaining = $Remaining |? Length
   if ($showFolder) {
     start $env:MS_App
     return
