@@ -102,8 +102,8 @@ cmd doc $lf -doc | less
 map <c-n> half-down
 
 ## scroll, we can also use mouse wheel
-map <c-e> scroll-up
-map <c-d> scroll-down
+map <c-tab> scroll-up # strange: the c-i is interpreted as c-tab
+map <c-k> scroll-down
 
 ## jump ###############
 
@@ -380,7 +380,9 @@ map zuu extract
 cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>multi<space>%fx%<enter>
 cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>once<space>%fx%<enter>
 # cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.bat
-map <c-t> push :dragonce<enter> # c-d is used for scroll down
+cmd dragDrop &pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drapDrop.ps1
+# map <c-d> push :dragonce<enter>
+map <c-d> dragDrop
 
 ###
 ### Display
