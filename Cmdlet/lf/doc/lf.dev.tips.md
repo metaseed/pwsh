@@ -71,6 +71,7 @@ cmd createfile $pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/l
 > note: no `-noninteractive`
 and use `read-host` to read input from user, refer the `createFile.ps1`
 
+> we can show ansi text in `read-host`, please refer zip.ps1
 ## to link to another folder
 ni -itemtype SymbolLink FolderName -value source-dir-path
 > lf can navigate into the folder without change the path(not the source's path)

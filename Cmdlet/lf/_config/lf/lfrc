@@ -348,7 +348,7 @@ map op &GDProps.exe %fx%
 
 # here we use pass in the argument $0 from input to the sh's command
 # cmd zip-to %sh -c '7z a $0 %fx%'
-cmd zip-to &pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/zip.ps1 $0
+cmd zip-to %pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/zip.ps1 $0
 # work but not used
 cmd extract-to %sh -c '7z x %f% -o$0'
 
