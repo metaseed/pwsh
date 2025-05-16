@@ -73,6 +73,7 @@ cmd createfile $pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/l
 and use `read-host` to read input from user, refer the `createFile.ps1`
 
 > we can show ansi text in `read-host`, please refer zip.ps1
+> note: the `read-host` not works good, it will override the prompt text, when inputing.
 ## to link to another folder
 ni -itemtype SymbolLink FolderName -value source-dir-path
 > lf can navigate into the folder without change the path(not the source's path)
@@ -92,3 +93,7 @@ https://github.com/gokcehan/lf/wiki/Troubleshoot#multiline-shell-commands-dont-w
 map gag :{{set sortby atime; set info atime;}} # but this works
 need to
 map Q push :pre-quite-select;quit<enter>
+## to modify text and invoke command
+c:\app\lf.exe -remote "send $env:id push :rename<space>'$name'"
+reference rename.ps1
+> not if we use % to invoke pwsh, it will not wait use to input, here we use '&', but when we after we do 'read-host' (with %), it will wait.

@@ -46,8 +46,7 @@ function Invoke-OnPsLine {
 
 			return
 		}
-		else {
-			# working dir
+		else { # working dir
 			if ([string]::IsNullOrWhiteSpace($line) ) {
 				if ("$lfWorkingDir" -ne "$pwd") {
 					sl "$lfWorkingDir"
@@ -61,6 +60,9 @@ function Invoke-OnPsLine {
 					# Show-MessageBox "$lfWorkingDir and $pwd"
 					if ($lfWorkingDir -ne $pathAtCursor) {
 						# replace dir it to $lfWorkingDir
+						if($lfWorkingDir.contains(' ')) {
+							$lfWorkingDir = "'$lfWorkingDir'"
+						}
 						[Microsoft.PowerShell.PSConsoleReadLine]::Replace($leftCursor, $rightCursor - $leftCursor + 1, $lfWorkingDir)
 						return
 					}
@@ -72,9 +74,6 @@ function Invoke-OnPsLine {
 					}
 				}
 			}
-		}
-		else {
-			throw "no such option"
 		}
 	}
 	# from `lf` command

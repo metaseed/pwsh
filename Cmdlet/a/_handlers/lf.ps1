@@ -77,7 +77,8 @@ Invoke-OnPsLine -isChordTrigger:$chordTrigger -PassThru:$PassThru { # -isSelecti
 
             }
             else {
-                # empty or not a pathi
+                # empty or not a path
+                $dir = & $lfExe -print-last-dir @Remaining
             }
         }
         else {
@@ -112,12 +113,6 @@ Invoke-OnPsLine -isChordTrigger:$chordTrigger -PassThru:$PassThru { # -isSelecti
         Write-ErrorDetails $_
         # Write-Host "Error: $($_.Exception)"
         return;
-    }
-    finally {
-        if (!$(Test-Path -PathType Container "$dir")) {
-            write-host "$lfExe -print-last-dir $pathAtCursor"
-        }
-        #Remove-Item -Force "$tmp"
     }
 }
 

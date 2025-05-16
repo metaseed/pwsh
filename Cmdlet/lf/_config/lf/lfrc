@@ -151,11 +151,13 @@ cmd pre-quite $echo {"lastSelections":null,"workingDir":%PWD:\=\\%} > %TEMP%\lf-
 # cmd on-quit $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/on-quit.ps1
 # cmd on-quit &{{cd %fx%;echo 'dddd'}}
 
+
 # comment out because it easily triggered by the input-cancel when when in command mode
 # map <esc> quit # the same as q
-
 map q push :pre-quite;quit<enter>
+map <esc> push :pre-quite;quit<enter>
 map Q push :pre-quite-select;quit<enter>
+map <s-esc> push :pre-quite-select;quit<enter>
 
 
 ## find/search/filter
@@ -188,18 +190,20 @@ map cf clearFilter
 
 map r
 # todo: need to auto redraw
-cmd rename %sh -c 'mv -i %f% $0'
+cmd rename %sh -c 'mv -i %f% "$0"'
 # cmd rename %mv -i $f $1
 
-# faster
-map rr push :rename<space>
+# faster; give a new name
+map rn push :rename<space>
+
+# to edit old name
 # map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
 # https://github.com/gokcehan/lf/issues/329
-cmd rename-with-name %pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/rename.ps1
+cmd edit-name &pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/rename.ps1
 
 # a little slower
-map rn rename-with-name
-map <f-2> rename-with-name
+map rr edit-name
+map <f-2> edit-name
 
 ## new file/folder #######
 
