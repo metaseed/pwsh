@@ -62,7 +62,8 @@ echoerr to show error
 ## interaction to read input from user and continue
 use $ to execute to make `read-host` work, it will switch to the shell for you to input
 > note: the % is even better, it will stay in the lf to read and then continue, but we can not use `write-host` to show message to user
->
+> % can show progress from output i.e. zip.ps1
+
  to show log with `write-host` we need to use the `!` to execute and wait to see the pwsh instance outputs
 
 ```
@@ -77,3 +78,17 @@ ni -itemtype SymbolLink FolderName -value source-dir-path
 > lf can navigate into the folder without change the path(not the source's path)
 > lf can not navigate into the `Junction` type
 > `symbolLink` is good for link between drives too.
+>
+## map key to readable cmd
+cmd viewProperty &GDProps.exe %fx%
+map op viewProperty
+instead of:
+map op &GDProps.exe %fx%
+## run a sequence of commands
+https://github.com/gokcehan/lf/wiki/Troubleshoot#multiline-shell-commands-dont-work-on-windows
+> Multiline shell commands don't work on Windows
+
+
+map gag :{{set sortby atime; set info atime;}} # but this works
+need to
+map Q push :pre-quite-select;quit<enter>

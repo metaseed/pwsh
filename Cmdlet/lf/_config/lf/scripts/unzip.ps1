@@ -9,13 +9,14 @@ $zipFiles | % {
 	$outputFolder ??= (Split-Path $zipFile -LeafBase)
 
 	# Show-MessageBox "zipFile: $_, output:$outputFolder"
-	if ($zipFile -match '\.zip|\.zipx') {
-		Expand-Archive $zipFile -DestinationPath $outputFolder
-	}
-	elseif ($zipFile -match '\.7z|\.rar') {
+	# if ($zipFile -match '\.zipx') {
+	# 	Expand-Archive $zipFile -DestinationPath $outputFolder
+	# }
+	# else
+	if ($zipFile -match '\.zipx|\.zip|\.7z|\.rar') {
 		$7z = "c:\app\7-zip\7z.exe"
 		if ( test-path $7z) {
-			Invoke-Expression "$7z x '$zipFile' -o$outputFolder"
+			Invoke-Expression "$7z x '$zipFile' -o'$outputFolder' -bsp2" # -bsp1 to show progress
 		}
 		else { write-error "can not find: $7z" }
 	}

@@ -10,10 +10,10 @@
 # reload config file using f5
 # :source M:/Script/Pwsh/Cmdlet/lf/_config/lfrc
 # 'push' is emulating keyboard typing in cmd line
-map <f-5> push :source<space>M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc<enter>
+map <f-5> push :source<space>'M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc'<enter>
 
 # edit this file
-map <f-4> &code M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc
+map <f-4> &code 'M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc'
 
 ###
 ### usage note:
@@ -31,6 +31,7 @@ map <f-4> &code M:\Script\pwsh\Cmdlet\lf\_config\lf\lfrc
 
 # custom file preview
 # unset COLORTERM
+set sixel
 set previewer "M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/previewer.cmd"
 
 # set period 1
@@ -105,6 +106,18 @@ map <c-n> half-down
 map <c-tab> scroll-up # strange: the c-i is interpreted as c-tab
 map <c-k> scroll-down
 
+## tags
+
+#https://github.com/gokcehan/lf/blob/master/doc.md#tag
+#https://github.com/gokcehan/lf/pull/791
+#  C:\Users\<user>\AppData\Local\lf\tags
+# tag-toggle # defaut t
+# tagfmt            string    (default "\033[31m")
+# tag: Tag a file with * or a single-width character given in the argument.
+map t
+map tt tag-toggle
+map tg push :tag<space>
+
 ## jump ###############
 
 # :cd : change working directory, i.e. `:cd 'c:\temp'`. note: the path need to be a single quoted string
@@ -121,14 +134,12 @@ map <a-left> jump-prev
 # m  : save a key as a mark for the current dir. `ma`
 # '  : change dir to the key mark. 'a
 # "  : remove the mark "a
-# map m
 
 ## quit
 # https://github.com/gokcehan/lf/blob/master/doc.md#on-quit
 # note: the `:\=\\` is to replace '\' in %fx% into '\\'
 #cmd on-quit $echo %fx:% > %TEMP%\lf-lastSelection.json
 # can not handle multiple files returned from multi selection(the new line is the separator), we can make the seperator to be ';' by `set filesep ";"`, but not flexible enough, so we determined to use pwsh.
-
 
 # we want to use q and Q to trigger different action and the then quit, an this on-quit is the same action
 # so we try to define different cmds
@@ -146,14 +157,6 @@ cmd pre-quite $echo {"lastSelections":null,"workingDir":%PWD:\=\\%} > %TEMP%\lf-
 map q push :pre-quite;quit<enter>
 map Q push :pre-quite-select;quit<enter>
 
-## tags
-
-#https://github.com/gokcehan/lf/blob/master/doc.md#tag
-#https://github.com/gokcehan/lf/pull/791
-#  C:\Users\<user>\AppData\Local\lf\tags
-# tag-toggle # defaut t
-# tagfmt            string    (default "\033[31m")
-# tag: Tag a file with * or a single-width character given in the argument.
 
 ## find/search/filter
 
@@ -165,15 +168,16 @@ map Q push :pre-quite-select;quit<enter>
 # fuzzy search file or folder in the current folder/subfolder and then navigate to it
 # cmd file-search push $python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/fzfpy.py<space>%id%<enter>
 cmd file-search $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/fzf.ps1
-map <a-f> :file-search
+map <c-f> :file-search
 
 ## filter out irrelevant files/folders and only show the relevant files/folders
 ## filter is remembered for the folder, and showed at right bottom corner
 ## run again will show last filer, and we can do adjustment
-map <c-f> push :filter<enter>
+map <a-f> push :filter<enter>
 # map F push :filter<enter>
 ## clear filter
-map cf push :setfilter<enter>
+cmd clearFilter push :setfilter<enter>
+map cf clearFilter
 # map gF push :setfilter<enter>
 
 ###
@@ -191,7 +195,7 @@ cmd rename %sh -c 'mv -i %f% $0'
 map rr push :rename<space>
 # map r push :rename<space> %f% # %f% in the command line not expanded, so have to use a script
 # https://github.com/gokcehan/lf/issues/329
-cmd rename-with-name $pwsh -nologo -noninteractive -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/rename.ps1
+cmd rename-with-name %pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/rename.ps1
 
 # a little slower
 map rn rename-with-name
@@ -239,7 +243,10 @@ map sgu push :glob-unselect<space>
 
 # note: by default, `c` is mapped to clear the copy&cut files saved in $home\AppData\Local\lf\files
 map c
-map cc clear
+cmd clearCopyCut clear
+map cc clearCopyCut
+cmd clearSelection unselect
+map cs clearSelection
 # unmap y, it's yank by default
 map y
 map yy copy %fx%
@@ -339,10 +346,13 @@ cmd Vim $vim %f%
 map ov Vim
 
 # map op !pwsh -nologo -noprofile -file M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/properity.ps1
-map op &GDProps.exe %fx%
+cmd viewProperty &GDProps.exe %fx%
+map op viewProperty
 
 # less is there when we installed git
 # map i $less $Env:f
+
+
 
 ## archive management #############
 
@@ -352,11 +362,11 @@ cmd zip-to %pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/sc
 # work but not used
 cmd extract-to %sh -c '7z x %f% -o$0'
 
-cmd extract-here %7z x %f%
+# cmd extract-here %7z x %f%
 # cmd extract_auto %7z x %f% -o%f%
 cmd extract_and_remove %sh -c '7z x %f% -o%f%_ && rm %f%'
 # cmd extract-to-folder %sh -c '7z x %f% -o$(basename $0 .zip)'
-cmd extract &pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/unzip.ps1 $0
+cmd extract %pwsh -NoProfile -nologo -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/unzip.ps1 $0
 
 cmd zip-to-file push :zip-to<space>
 map zz zip-to-file
@@ -367,14 +377,13 @@ map zz zip-to-file
 
 # map zuf extract-to-folder
 
-cmd extract-to-here push :extract-here<enter>
-map zuh extract-to-here
+# cmd extract-to-here push :extract-here<enter>
+# map zxh extract-to-here
 
-map zur push :extract_and_remove<enter>
+map zxr push :extract_and_remove<enter>
 
-map zut extract... push :extract<space>
-map zuu extract
-
+map zxt extract... push :extract<space>
+map zxx extract
 
 ## drag and drop ##################
 
@@ -465,12 +474,17 @@ map w $pwsh -nologo
 
 
 map <right> open
+map <enter> open
 
 
 ##################################################################
 ### command line map (cmap)
 ##################################################################
 
+# c-c is mapped to copy
+# cmd-interrupt mapped to <c-c> by default
+# cmap <c-delete> cmd-interrupt # should be in cmd mode: press ':' then <c-delete>
+map <c-delete> cmd-interrupt # Interrupt the current shell-pipe command and return to the normal mode. but when try to stop 7z, it trying to kill process but access denied
 # c-p
 cmap <up> cmd-history-prev
 # a-f

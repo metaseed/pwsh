@@ -89,6 +89,18 @@ $global:__specialDays = @{
 				Days  = 8
 			},
 			@{
+				Lable = '四月十八'
+				Lunar = $true
+				Month = 4
+				Day   = 18
+			},
+			@{
+				Lable = '月季花节'
+				Lunar = $false
+				Month = 5
+				Day   = 15
+			},
+			@{
 				Lable = '端午'
 				Lunar = $true
 				Month = 5
@@ -248,7 +260,7 @@ function global:__GetSpecialDayStr {
 			}
 
 			if ($theDay -eq $Today -or ($date.Days -and ($theDay -lt $theDay) -and ($Today -lt $theDay.AddDays($date.Days)))) {
-				$str = "`e[5m${str}${type}$lable`e[0m"
+				$str = "${str}`e[5m${type}`e[0m$lable"
 				$specialDayTypes += $type # only play on the day
 			}
 			elseif ($theDay -gt $Today) {

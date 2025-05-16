@@ -48,9 +48,13 @@ function Show-Image {
 
 	Write-Output "Image Size: $($img.Width)x$($img.Height)"
 	try {
-		chafa $resolvedPath --view-size=$PreviewerWidth"x"$PreviewerHeight -c full --color-space rgb
+		chafa $resolvedPath -f sixel --animate off --polite on -t 1 --bg black --view-size=$PreviewerWidth"x"$PreviewerHeight
+		# chafa $resolvedPath --view-size=$PreviewerWidth"x"$PreviewerHeight -c full --color-space rgb
 		# Show-MessageBox $resolvedPath
 		# Show-WTBackgroundImage -image $resolvedPath -alignment right -durationInseconds 10 -stretchMode none -backgroundImageOpacity 1
+		# ConvertTo-Sixel $resolvedPath #-Width $PreviewerWidth
+		# $a = gc 'C:\tmp\chibi.six'
+		# Write-Output $a
 	}
 	catch {
 		Write-Output "chara must be installed to preview the image."
