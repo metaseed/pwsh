@@ -3,12 +3,14 @@ param ($0) # $0 or any name is ok
 # Load the Windows Forms assembly
 Add-Type -AssemblyName System.Windows.Forms
 
+# Write-Host "$env:pwd , $env:f, $env:fx"
+$dir = $env:pwd -replace '"', ''
 # Create OpenFileDialog object
 $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
 
 # Configure the dialog properties
 $openFileDialog.Title = "Drag/Drop"
-$openFileDialog.InitialDirectory = "$env:pwd"
+$openFileDialog.InitialDirectory = $dir
 $openFileDialog.Filter = "All Files (*.*)|*.*"
 $openFileDialog.FilterIndex = 1 # Default to first filter
 $openFileDialog.RestoreDirectory = $true
@@ -16,11 +18,11 @@ $openFileDialog.Multiselect = $true
 
 $result = $openFileDialog.ShowDialog()
 
-if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
-    $selectedFilePath = $openFileDialog.FileName
+# if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+#     $selectedFilePath = $openFileDialog.FileName
 
-    Write-Host "Selected File: $selectedFilePath"
-}
-else {
-    Write-Host "No file was selected."
-}
+#     Write-Host "Selected File: $selectedFilePath"
+# }
+# else {
+#     Write-Host "No file was selected."
+# }

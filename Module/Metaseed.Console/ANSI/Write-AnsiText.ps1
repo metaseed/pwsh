@@ -324,5 +324,4 @@ function Show-ConsoleColors {
   [Enum]::GetValues([System.ConsoleColor]) | Foreach-Object { Write-Host "$($_.value__) $_" -ForegroundColor $_ }
 }
 
-
 Export-ModuleMember @('Show-Ansi16Colors', 'Show-AnsiColors8Bits', 'Show-ConsoleColors', 'Get-AnsiText')

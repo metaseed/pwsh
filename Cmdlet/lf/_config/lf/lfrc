@@ -391,10 +391,10 @@ map zxx extract
 
 ## drag and drop ##################
 
-cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>multi<space>%fx%<enter>
-cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>once<space>%fx%<enter>
+# cmd drag push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>multi<space>%fx%<enter>
+# cmd dragonce push &python<space>M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.py<space>once<space>%fx%<enter>
 # cmd dragonce &explorer M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drag.bat
-cmd dragDrop &pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drapDrop.ps1
+cmd dragDrop !pwsh -NoProfile -nologo -noninteractive -File M:/Script/Pwsh/Cmdlet/lf/_config/lf/scripts/drapDrop.ps1
 # map <c-d> push :dragonce<enter>
 map <c-d> dragDrop
 

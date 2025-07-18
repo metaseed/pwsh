@@ -122,7 +122,7 @@ function Write-ProcessTreeRecursive {
 }
 
 # Export the object-oriented function for programmatic use
-# Export-ModuleMember @('Show-ProcessTree')
+Export-ModuleMember @('Show-ProcessTree')
 
 # Example usage:
 # Get tree object for programmatic use
