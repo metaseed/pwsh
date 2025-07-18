@@ -6,14 +6,14 @@ function global:__GetAdminIcon {
 	$clear = "`e[0m" # slb checking no (space})) char before `e[0m in string, use interpolation to walk around
 	if ($IsAdmin) {
 		if ($env:TERM_NERD_FONT) {
-	  		"`e[93m$clear" # person with key https://www.nerdfonts.com/cheat-sheet
+	  		return "`e[93m$clear" # person with key https://www.nerdfonts.com/cheat-sheet
 		}
 		else {
-			"`e[33;5;1m!`e[23;25;21m" # green, blink, bold
+			return "`e[33;5;1m!`e[23;25;21m" # green, blink, bold
 		}
 	}
 	else {
-		''
+		return ''
 	}
 }
 
