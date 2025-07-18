@@ -2,10 +2,11 @@
 Import-Module Metaseed.Utility -DisableNameChecking # remove waring:  include unapproved verbs
 Import-Module Metaseed.Terminal -DisableNameChecking
 function global:__GetAdminIcon {
-	$IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+	$IsAdmin= ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+	$clear = "`e[0m" # slb checking no (space})) char before `e[0m in string, use interpolation to walk around
 	if ($IsAdmin) {
 		if ($env:TERM_NERD_FONT) {
-	  		"`e[93m`e[0m" # person with key https://www.nerdfonts.com/cheat-sheet
+	  		"`e[93m$clear" # person with key https://www.nerdfonts.com/cheat-sheet
 		}
 		else {
 			"`e[33;5;1m!`e[23;25;21m" # green, blink, bold
@@ -34,7 +35,8 @@ function global:__GetPSReadLineSessionExeTime {
 		if ($s -ge 0.01) {
 			# timer
 			$icon = $env:TERM_NERD_FONT ? "" : ""
-			return " ${color}$icon" + $s.ToString("#,0.00") + "s`e[0m"
+			$clear = "`e[0m"
+			return " ${color}$icon" + $s.ToString("#,0.00") + "s$clear"
 		}
 	}
 }
