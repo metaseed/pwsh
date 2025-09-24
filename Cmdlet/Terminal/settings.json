@@ -161,7 +161,7 @@
             "elevate": true,
             "font": 
             {
-                "face": "CaskaydiaCove NFM"
+                "face": "CaskaydiaCove Nerd Font Mono"
             },
             "opacity": 100,
             "startingDirectory": ".",

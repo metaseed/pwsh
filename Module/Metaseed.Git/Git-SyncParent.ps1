@@ -1,6 +1,9 @@
 function Git-SyncParent {
   [CmdletBinding()]
   param (
+    [Parameter(Mandatory = $false)]
+    [string]
+    $parent,
     [Parameter()]
     [switch]
     $rebase,
@@ -22,13 +25,14 @@ function Git-SyncParent {
     }
 
     $branch = git branch --show-current
-    $parent = git-parent
-    $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of is: $parent, use it?(current branch: $branch)", @('&Yes', '&No'), 0)
-    if ($choiceIndex -eq 1) {
-      $parent = Read-Host "Please enter the parent branch name to sync from."
-      Confirm-Continue "parent branch of current branch is: $parent"
+    if (!$parent) {
+      $parent = git-parent;
+      $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of is: $parent, use it?(current branch: $branch)", @('&Yes', '&No'), 0)
+      if ($choiceIndex -eq 1) {
+        $parent = Read-Host "Please enter the parent branch name to sync from."
+        Confirm-Continue "parent branch of current branch is: $parent"
+      }
     }
-
 
 
     $owner = $branch.split('/')[0]
@@ -37,11 +41,13 @@ function Git-SyncParent {
     if (!$owner -and !$parent.Contains($owner)) {
       $msg += "by the branch names, the parent branch($parent) of current branch is not created by you($owner). "
     }
-    if("$parent" -ne 'master') {
+    if ("$parent" -ne 'master') {
       $msg += "The parent branch is not master."
     }
 
-    Confirm-Continue $msg
+    if($msg){
+      Confirm-Continue $msg
+    }
 
 
     Write-Step "rebase '$parent' with remote"

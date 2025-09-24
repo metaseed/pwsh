@@ -1,22 +1,64 @@
 # https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/CascadiaCode
 Assert-Admin
+# old way
+# $CaskaydiaCoveNF = @(
+#   # "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Italic.otf",
+#   "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/CaskaydiaCoveNerdFontMono-Regular.ttf"
+# )
+# # Caskaydia Cove Nerd Font Complete Mono Windows
+# Write-Step 'Downloading CaskaydiaCove NFM...'
+# $CaskaydiaCoveNF |
+# %{
+#   $fi = Split-Path -Leaf $_
+#   $fi = $fi -replace '%20', ' '
+#   $path =  "$env:temp/$fi"
+#   Write-Host "download to: $env:temp\$fi"
+#   iwr $_ -OutFile $path
+#   Write-Step 'Installing CaskaydiaCove NFM...'
+#   Install-Font -Path $path -Scope User
+# }
 
-$CaskaydiaCoveNF = @(
-  # "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Windows%20Compatible%20Italic.otf",
-  "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/CaskaydiaCoveNerdFontMono-Regular.ttf"
-)
-# Caskaydia Cove Nerd Font Complete Mono Windows
-Write-Step 'Downloading CaskaydiaCove NFM...'
-$CaskaydiaCoveNF |
-%{
-  $fi = Split-Path -Leaf $_
-  $fi = $fi -replace '%20', ' '
-  $path =  "$env:temp/$fi"
-  Write-Host "download to: $env:temp\$fi"
-  iwr $_ -OutFile $path
-  Write-Step 'Installing CaskaydiaCove NFM...'
-  Install-Font -Path $path -Scope User
-}
+# & ([scriptblock]::Create((iwr 'https://to.loredo.me/Install-NerdFont.ps1'))) -Name hack, heavy-data
+# it insatalled:
+  # ✓ CaskaydiaCoveNerdFont-Bold.ttf
+  # ✓ CaskaydiaCoveNerdFont-BoldItalic.ttf
+  # ✓ CaskaydiaCoveNerdFont-ExtraLight.ttf
+  # ✓ CaskaydiaCoveNerdFont-ExtraLightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFont-Italic.ttf
+  # ✓ CaskaydiaCoveNerdFont-Light.ttf
+  # ✓ CaskaydiaCoveNerdFont-LightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFont-Regular.ttf
+  # ✓ CaskaydiaCoveNerdFont-SemiBold.ttf
+  # ✓ CaskaydiaCoveNerdFont-SemiBoldItalic.ttf
+  # ✓ CaskaydiaCoveNerdFont-SemiLight.ttf
+  # ✓ CaskaydiaCoveNerdFont-SemiLightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-Bold.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-BoldItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-ExtraLight.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-ExtraLightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-Italic.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-Light.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-LightItalic.ttf
+  # *** ✓ CaskaydiaCoveNerdFontMono-Regular.ttf ***
+  # ✓ CaskaydiaCoveNerdFontMono-SemiBold.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-SemiBoldItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-SemiLight.ttf
+  # ✓ CaskaydiaCoveNerdFontMono-SemiLightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-Bold.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-BoldItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-ExtraLight.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-ExtraLightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-Italic.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-Light.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-LightItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-Regular.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-SemiBold.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-SemiBoldItalic.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-SemiLight.ttf
+  # ✓ CaskaydiaCoveNerdFontPropo-SemiLightItalic.ttf
+& ([scriptblock]::Create((iwr 'https://to.loredo.me/Install-NerdFont.ps1'))) -Name CaskaydiaCove Nerd Font
+
+
 Restore-TerminalSetting -force
 
 Pin-TaskBar "$env:MS_PWSH\Cmdlet\Terminal\WindowsTerminal.lnk" | Out-Null

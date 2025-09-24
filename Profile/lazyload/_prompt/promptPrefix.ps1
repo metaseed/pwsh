@@ -6,7 +6,7 @@ function global:__GetAdminIcon {
 	$clear = "`e[0m" # slb checking no (space})) char before `e[0m in string, use interpolation to walk around
 	if ($IsAdmin) {
 		if ($env:TERM_NERD_FONT) {
-	  		return "`e[93m$clear" # person with key https://www.nerdfonts.com/cheat-sheet
+	  		return "`e[93m󰀋$clear" # person with key https://www.nerdfonts.com/cheat-sheet
 		}
 		else {
 			return "`e[33;5;1m!`e[23;25;21m" # green, blink, bold
@@ -46,7 +46,7 @@ function global:__GetLunarDateStr {
 	$color = "`e[35m" #Magenta
 	# $moon = "" #moon https://www.nerdfonts.com/cheat-sheet
 	$calendarWithPlus = ""
-	$moons = ""
+	$moons = ""
 	$moonOfToday = $moons[$lunarDate.Day - 1]
 	$icon = $lunarDate.IsLeapMonth ? "$calendarWithPlus$moonOfToday" : $moonOfToday
 	return "$color$($lunarDate.Month.ToString("#,00"))$icon$($lunarDate.Day.ToString("#,00"))`e[0m"

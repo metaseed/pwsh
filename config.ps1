@@ -1,4 +1,5 @@
-
+# need to:
+# Set-ExecutionPolicy Bypass -Scope Process -Force
 "config ms_pwsh ..."
 if ($PSVersionTable.PSVersion.Major -lt 7) {
   if (!(gcm pwsh -ErrorAction Ignore)) {
@@ -71,11 +72,6 @@ else {
 [System.Environment]::SetEnvironmentVariable("MS_PWSH", $PSScriptRoot, 'User')
 $env:MS_PWSH = $PSScriptRoot
 write-host "set env:MS_PWSH to $($env:MS_PWSH)"
-. $PSScriptRoot\Lib\update-modules.ps1
-# rebuilds the command cache and re-examines all modules in all PowerShell default locations
-# so the dynamic module-command would work
-Get-Module -ListAvailable -Refresh > $null
-. $PSScriptRoot\profile.ps1
 
 ## app
 # $App = "C:\App"
@@ -83,4 +79,10 @@ Get-Module -ListAvailable -Refresh > $null
 # [System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
 
 . $PSScriptRoot\Cmdlet\Mount-AppFoder.ps1
+
+. $PSScriptRoot\Lib\update-modules.ps1
+# rebuilds the command cache and re-examines all modules in all PowerShell default locations
+# so the dynamic module-command would work
+Get-Module -ListAvailable -Refresh > $null
+. $PSScriptRoot\profile.ps1
 'finish ms_pwsh configuration!'

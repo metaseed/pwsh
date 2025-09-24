@@ -10,7 +10,7 @@ param (
 & $PSScriptRoot\_lib\Config-PowerOptions.ps1 $vm
 & $PSScriptRoot\_lib\Config-Apps.ps1 $vm
 & $PSScriptRoot\_lib\Config-Services.ps1 $vm
-& $PSScriptRoot\_lib\Config-Shell.ps1 $vm
+& $PSScriptRoot\_lib\Config-Explorer.ps1 $vm
 & $PSScriptRoot\_lib\Config-TaskScheduler.ps1 $vm
 & $PSScriptRoot\_lib\Config-System.ps1 $vm
 & $PSScriptRoot\_lib\Config-Features.ps1 $vm

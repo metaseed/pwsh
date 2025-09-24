@@ -30,4 +30,6 @@ Set-Alias np New-ItemProperty # rp: Remove-ItemProperty; gp: Get-ItemProperty
 if (-not (Test-Path "HKCU:\MS_PWSH")) {
     New-Item -Path "HKCU:\MS_PWSH"
 }
-New-PSDrive -Name R -PSProvider Registry -Root "HKCU:\MS_PWSH" > $null
+if (!(Test-Path 'R:')) {
+    New-PSDrive -Name R -PSProvider Registry -Root "HKCU:\MS_PWSH" > $null
+}

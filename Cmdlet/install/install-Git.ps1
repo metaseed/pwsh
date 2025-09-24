@@ -11,7 +11,7 @@ Install-FromGithub 'git-for-windows/git' '64-bit.exe$' -getLocalInfoScript {
 
 	Write-Notice "installation started in background, please wait..."
 	Start-Process -NoNewWindow -Wait $downloadedFilePath -ArgumentList '/SILENT /NORESTART'
-
+	Write-Notice "git-for-windows installed"
 }
 
 Write-Step "config git"
@@ -37,11 +37,12 @@ path = M:\\tools\\git\\.gitconfig
 path = M:\\tools\\git\\.slb.gitconfig
 "@
 
-$conf = gc $home/.gitconfig -raw
-if (!$conf.contains($gitConfig)) {
+$conf = gc $home/.gitconfig -raw -ErrorAction Ignore
+if (!$conf -or !$conf.contains($gitConfig)) {
 	$gitConfig >> $home/.gitconfig
-}
-else {
+} else {
 	write-host 'no action, git already configured'
 }
+# enable long path
+git config --system core.longpaths true
 

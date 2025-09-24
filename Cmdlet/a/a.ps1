@@ -12,6 +12,8 @@ param(
         $wordToComplete,
         $appAst,
         $fakeBoundParameters )
+      # if(!$env:MS_App) {return @();}
+
       $commands = Complete-Command 'app_commands' "$PSScriptRoot\_Commands" $wordToComplete '*.ps1'
       $apps = Complete-Command 'app' $env:MS_App $wordToComplete '*.exe'
       $handlers = Complete-Command 'app_handlers' "$PSScriptRoot\_handlers" $wordToComplete '*.ps1'
@@ -63,6 +65,10 @@ dynamicparam {
 }
 
 end {
+  if(!$env:MS_App) {
+    Write-Notice "`$env:MS_App is not set!!"
+    return;
+  }
   $Remaining = $Remaining |? Length
   if ($showFolder) {
     start $env:MS_App

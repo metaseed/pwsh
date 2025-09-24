@@ -14,7 +14,7 @@ function Set-HKItemProperty {
     $Path,
     $Name,
     $Value,
-    $PropertyType,
+    $Type,
     $Descriptoin
   )
   if ($Descriptoin) {
@@ -24,6 +24,7 @@ function Set-HKItemProperty {
   if (!(Test-Path $Path)) {
     New-Item $Path -Force # force: will create container in middle if not exist. i.e. a\b\c\d if b\c is not exist
   }
+
   if ($Type) {
     Set-ItemProperty $Path -Name $Name -Value $Value -Type $Type
   }

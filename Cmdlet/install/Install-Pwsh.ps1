@@ -1,4 +1,4 @@
-
+# used for update pwsh 7 to latest version.
 [CmdletBinding()]
 param(
   [parameter(Position=0,ValueFromRemainingArguments)]

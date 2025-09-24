@@ -280,20 +280,24 @@ $objFolder.items() | % { remove-item $_.path -Recurse -Confirm:$false }
 #   Write-Progress -Activity "Recycle Bin Clean-up" -Status "Complete" -Completed -Id 1
 # }
 
-Write-Step "Cleaning C:\temp and c:\tmp folders"
-Write-SubStep "clearing C:\temp"
-# Listing all files in C:\Temp\* recursively, using Force parameter displays hidden files.
-Get-ChildItem -Path "C:\Temp\*"  -Force |
-? LastWriteTime -LT $DelTempDate |
-% {
-  Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+if (Test-Path "C:\temp") {
+  Write-Step "Cleaning C:\temp and c:\tmp folders"
+  Write-SubStep "clearing C:\temp"
+  # Listing all files in C:\Temp\* recursively, using Force parameter displays hidden files.
+  Get-ChildItem -Path "C:\Temp\*"  -Force |
+  ? LastWriteTime -LT $DelTempDate |
+  % {
+    Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+  }
 }
 
-Write-SubStep "clearing C:\tmp"
-Get-ChildItem -Path "C:\tmp\*" -Recurse -Force |
-? LastWriteTime -LT $DelTempDate |
-% {
-  Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+if (Test-Path "C:\tmp") {
+  Write-SubStep "clearing C:\tmp"
+  Get-ChildItem -Path "C:\tmp\*" -Recurse -Force |
+  ? LastWriteTime -LT $DelTempDate |
+  % {
+    Remove-Item $_ -Force -Recurse -ErrorAction SilentlyContinue -Verbose
+  }
 }
 
 Write-Step "Clearing Application temp Folders..."
@@ -387,7 +391,7 @@ $After
 
 # Another reminder about running Windows update if needed as it would get lost in all the scrolling text.
 if ($CleanWU -eq 'Y') {
-  Write-Notic "You can rerun Windows Update to pull down the latest updates "
+  Write-Notice "You can rerun Windows Update to pull down the latest updates "
 }
 
 # Completed Successfully!
@@ -402,7 +406,7 @@ Invoke-Item $Cleanuplog
   # activex of ie
   "$env:windir\Downloaded Program Files"
 ) | % {
-  Remove-Item -Path "$_\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
+  Remove-Item -Path "$_" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
 }
 # yarn cache clean
 if (gcm yarn -ErrorAction Ignore) {
