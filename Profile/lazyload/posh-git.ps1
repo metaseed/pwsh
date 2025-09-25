@@ -6,7 +6,7 @@
 
 # https://www.commandline.ninja/customize-pscmdprompt/
 
-
+# https://www.nerdfonts.com/cheat-sheet
 # to install posh-git
 # PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 # to update
@@ -70,8 +70,8 @@ if ($?) {
 
   if ($env:TERM_NERD_FONT) {
     # https://www.nerdfonts.com/cheat-sheet
-    $global:GitPromptSettings.LocalWorkingStatusSymbol = '' # trolley, something in the working dir to add to stage/index
-    $global:GitPromptSettings.LocalStagedStatusSymbol = '' # stage, something on stage to commit
+    $global:GitPromptSettings.LocalWorkingStatusSymbol = '󱔨' # trolley, something in the working dir to add to stage/index
+    $global:GitPromptSettings.LocalStagedStatusSymbol = '󰁸' # stage, something on stage to commit
     $global:GitPromptSettings.BeforeStatus.Text = '[' # branch
     $global:GitPromptSettings.BeforePath.Text = ''# '' # folder
   }
