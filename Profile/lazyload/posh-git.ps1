@@ -73,7 +73,8 @@ if ($?) {
     $global:GitPromptSettings.LocalWorkingStatusSymbol = '󱔨' # trolley, something in the working dir to add to stage/index
     $global:GitPromptSettings.LocalStagedStatusSymbol = '󰁸' # stage, something on stage to commit
     $global:GitPromptSettings.BeforeStatus.Text = '[' # branch
-    $global:GitPromptSettings.BeforePath.Text = ''# '' # folder
+    # use exanding string: write with "" and change it to '', then it will be evaluated at runtime dynamically.
+    $global:GitPromptSettings.BeforePath.Text = '$($global:GitStatus ? "":"")'#  '''' # '' # folder
   }
 }
 
