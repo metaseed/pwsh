@@ -70,11 +70,19 @@ if ($?) {
 
   if ($env:TERM_NERD_FONT) {
     # https://www.nerdfonts.com/cheat-sheet
-    $global:GitPromptSettings.LocalWorkingStatusSymbol = '󱔨' # trolley, something in the working dir to add to stage/index
-    $global:GitPromptSettings.LocalStagedStatusSymbol = '󰁸' # stage, something on stage to commit
+    #'󱔨' # trolley, something in the working dir to add to stage/index
+    $global:GitPromptSettings.LocalWorkingStatusSymbol ='󰵧'#'󰁸' 
+    # stage, something on stage to commit
+    $global:GitPromptSettings.LocalStagedStatusSymbol = '󱊛'#'󱊝'#'󰔾' # # truck
     $global:GitPromptSettings.BeforeStatus.Text = '[' # branch
     # use exanding string: write with "" and change it to '', then it will be evaluated at runtime dynamically.
     $global:GitPromptSettings.BeforePath.Text = '$($global:GitStatus ? "":"")'#  '''' # '' # folder
+
+    $global:GitPromptSettings.BranchIdenticalStatusSymbol.Text = '󰅠'#'󱋌' #'󰅠'#default is "≡"
+    $global:GitPromptSettings.BranchAheadStatusSymbol.Text = '󰅧'# '󰭾'#'󱋌'󰅧 default is "↑"
+    $global:GitPromptSettings.BranchBehindStatusSymbol.Text = '󰅢'#󰭽'#'󱋌' default is "↓"
+    $global:GitPromptSettings.BranchBehindAndAheadStatusSymbol.Text = '󰘿'#'󱋌' default is "↕"
+    
   }
 }
 

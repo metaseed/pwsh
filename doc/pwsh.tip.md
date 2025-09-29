@@ -526,3 +526,11 @@ out: item1 bbb
 
 # kill process
 gps|? ProcessName -like *dex|spps
+
+# dynamic expand string
+  $execContext = Get-Variable ExecutionContext -ValueOnly
+  $expandedText = $execContext.SessionState.InvokeCommand.ExpandString($this.Text)
+
+  use exanding string: write with "" and change it to '', then it will be evaluated at runtime dynamically.
+  example: 
+    $global:GitPromptSettings.BeforePath.Text = '$($global:GitStatus ? "":"")'

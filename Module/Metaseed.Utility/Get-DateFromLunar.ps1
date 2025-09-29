@@ -20,7 +20,14 @@ function Get-DateFromLunar {
         return
     }
 
-    $monthIndex = if ($IsLeapMonth) { $leapMonth } else { $Month }
+    $monthIndex = $Month
+    if ($IsLeapMonth) {
+        $monthIndex = $Month + 1
+    } elseif ($leapMonth -gt 0 -and $Month -ge $leapMonth) {
+        # If there is a leap month and the requested month is after the leap month,
+        # we need to increment the month index for the calendar methods.
+        $monthIndex++
+    }
 
     # Convert the lunar date to a Gregorian DateTime
     $gregorianDate = $chineseCalendar.ToDateTime($lunarYear, $monthIndex, $Day, 0, 0, 0, 0, 0)
@@ -29,3 +36,4 @@ function Get-DateFromLunar {
 }
 
 # Get-DateFromLunar 1981 5 20
+# `Get-DateFromLunar 2025 8 8 # returns 2025-09-29
