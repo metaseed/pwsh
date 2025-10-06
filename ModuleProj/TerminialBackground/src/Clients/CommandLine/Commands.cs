@@ -8,6 +8,7 @@ public class StartSubCommand : Command
     {
         AddAlias("sa");
         AddAlias("start");
+        
         var o = new Option<string>(new[] {"--settingsPath", "-settings", "-s"},
             "the settings for cyclic background image");
         AddOption(o);

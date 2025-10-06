@@ -2,6 +2,7 @@ using System.Text.Json;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;
+using System.Text.Encodings.Web;
 
 namespace Metaseed.TerminalBackground
 {
@@ -31,7 +32,10 @@ namespace Metaseed.TerminalBackground
 
             if (Path == null)
             {
-                throw new Exception("can not find installed terminal");
+                var error = "can not find installed terminal";
+                var ex = new Exception(error);
+                Logger.Inst.Log(error, ex);
+                throw ex;
             }
         }
 
@@ -48,7 +52,7 @@ namespace Metaseed.TerminalBackground
         {
             var options = new JsonSerializerOptions { WriteIndented = true,
             // prevent:  + into \u002B in keybindings, i.e. ctrl+1 should not be ctrl\u002B1
-             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
              File.WriteAllText(Path, settings.ToJsonString(options));
         }
     }

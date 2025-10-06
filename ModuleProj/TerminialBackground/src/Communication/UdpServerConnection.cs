@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Metaseed.TerminalBackground.Communication
 {
-    public sealed class WtServer : IWtBgIpcServer
+    public sealed class UdpServerConnection : IWtBgIpcServer
     {
-        private readonly UdpClient server = new UdpClient(9000);
+        private readonly UdpClient udpClient = new UdpClient(9000);
 
         void IDisposable.Dispose()
         {
-            this.Stop();
+            Close();
 
-            (this.server as IDisposable).Dispose();
+            (udpClient as IDisposable).Dispose();
         }
 
-        public void Start()
+        public void Open()
         {
             Task.Factory.StartNew(() =>
             {
@@ -27,16 +25,16 @@ namespace Metaseed.TerminalBackground.Communication
 
                 while (true)
                 {
-                    var bytes = this.server.Receive(ref ip);
+                    var bytes = udpClient.Receive(ref ip);
                     var data  = Encoding.Default.GetString(bytes);
-                    this.OnReceived(new DataReceivedEventArgs(data));
+                    OnReceived(new DataReceivedEventArgs(data));
                 }
             });
         }
 
         private void OnReceived(DataReceivedEventArgs e)
         {
-            var handler = this.Received;
+            var handler = Received;
 
             if (handler != null)
             {
@@ -44,9 +42,9 @@ namespace Metaseed.TerminalBackground.Communication
             }
         }
 
-        public void Stop()
+        public void Close()
         {
-            this.server.Close();
+            udpClient.Close();
         }
 
         public event EventHandler<DataReceivedEventArgs> Received;

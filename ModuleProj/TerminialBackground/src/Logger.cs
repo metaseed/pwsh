@@ -20,10 +20,13 @@ namespace Metaseed.TerminalBackground
 
       lock (_lock)
       {
-        var n = Environment.NewLine;
+        var newline = Environment.NewLine;
         string exc = "";
-        if (exception != null) exc = n + exception.GetType() + ": " + exception.Message + n + exception.StackTrace + n;
-        File.AppendAllText(filePath, DateTime.Now + " " + message + n + exc);
+        if (exception != null)
+          exc = newline + "error: " + exception.GetType() + ": " + exception.Message +
+                newline + exception.StackTrace + newline;
+                
+        File.AppendAllText(filePath, DateTime.Now + " " + message + newline + exc);
       }
     }
   }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Metaseed.TerminalBackground
 {
-    public class CyclicBackground
+    public class CyclicWTBackground
     {
         private JsonObject _bgSettings;
         private int _duration;
@@ -17,10 +17,10 @@ namespace Metaseed.TerminalBackground
         Task CyclicTask;
         private CancellationTokenSource cyclicToken = new();
 
-        public CyclicBackground()
+        public CyclicWTBackground()
         {
             _settings = new WtSetting();
-            var dirPath = Path.GetDirectoryName(typeof(CyclicBackground).Assembly.Location);
+            var dirPath = Path.GetDirectoryName(typeof(CyclicWTBackground).Assembly.Location);
 
             _bgSettings = BgSetting.GetBackgroundSettings($"{dirPath}\\settings.json");
         }

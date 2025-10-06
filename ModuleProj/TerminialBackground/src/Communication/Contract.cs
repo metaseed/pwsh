@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Metaseed.TerminalBackground.Communication
 {
@@ -13,8 +9,8 @@ namespace Metaseed.TerminalBackground.Communication
 
     public interface IWtBgIpcServer : IDisposable
     {
-        void Start();
-        void Stop();
+        void Open();
+        void Close();
 
         event EventHandler<DataReceivedEventArgs> Received;
     }

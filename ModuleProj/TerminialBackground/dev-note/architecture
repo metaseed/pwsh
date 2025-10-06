@@ -1,0 +1,16 @@
+
+a long running service like program, that is single instance.
+
+
+## decisions
+* not use windows service, because it's window specific.
+* use Mutex -> single instance
+
+## client sides
+### from command line
+invoke a instance by command line to communicate with server by udp
+### from pwsh
+invoke from pwsh cmdlet that communicate with server by udp
+
+## server side
+udp socket to listen invoke from clients

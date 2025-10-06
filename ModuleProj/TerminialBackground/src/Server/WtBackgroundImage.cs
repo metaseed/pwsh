@@ -4,11 +4,16 @@ namespace Metaseed.TerminalBackground
 {
     public class WtBackgroundImage
     {
-        readonly CyclicBackground cyclicBackground = new CyclicBackground();
+        readonly CyclicWTBackground cyclicBackground = new();
 
-        public  void StartCyclic(string settingsPath)
+        public void StartCyclic(string settingsPath)
         {
             cyclicBackground.StartCyclic(settingsPath);
+        }
+
+        public async void StopCyclic()
+        {
+            await cyclicBackground.StopCyclic();
         }
 
         /// <summary>
@@ -16,14 +21,15 @@ namespace Metaseed.TerminalBackground
         /// </summary>
         TaskCompletionSource<object> completionSource;
         Task setImageTask;
-        public  async void SetBackgroundImage(string profile, float durationInSeconds, string jsonProfileValueString)
+        public async void SetBackgroundImage(string profile, float durationInSeconds, string jsonProfileValueString)
         {
-            if(setImageTask !=null && !setImageTask.IsCompleted)
+            if (setImageTask != null && !setImageTask.IsCompleted)
             {
                 completionSource.SetResult(null);
                 await setImageTask;
             }
-            completionSource = new TaskCompletionSource<object>();
+            
+            completionSource = new();
             setImageTask = Task.Run(async () =>
             {
                 await cyclicBackground.SetBackgroundImage(profile, durationInSeconds, jsonProfileValueString, completionSource.Task);
@@ -31,9 +37,5 @@ namespace Metaseed.TerminalBackground
 
         }
 
-        public  void StopCyclic()
-        {
-            cyclicBackground.StopCyclic();
-        }
     }
 }
