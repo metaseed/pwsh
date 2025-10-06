@@ -12,11 +12,11 @@ param (
   $Part = 'build',
 
   [switch]
-  $NoPush
+  $Push
 )
 Write-SubStep 'try to find info.json...'
 $info = Find-FromParent 'info.json'
-if($null -eq $info) {
+if ($null -eq $info) {
   # not we have warning msg from Find-FromParent, no need to print error
   return
 }
@@ -35,7 +35,7 @@ if ($null -eq $str.Matches) {
 }
 Write-Notice "old $($str.Matches[0].Value)"
 
-Write-Action "increase $Part version"
+Write-Action "bump version at $Part part..."
 if ($str.Matches.Success) {
   $major = $str.Matches.Groups[1].Value
   $minor = $str.Matches.Groups[2].Value
@@ -50,13 +50,13 @@ else {
 }
 $newVer = "`"version`": `"$major.$minor.$build`""
 
-Write-Action 'modify version of info.json...'
+Write-Action 'save modification into info.json...'
 # note the parentheses around get-content to ensure the file is slurped in one go(closed)
 (Get-Content $info) |
 % { $_ -replace $regex, $newVer } |
 Set-Content $info -force
 Write-Notice "new $newVer"
-if (!$NoPush) {
+if ($Push) {
   Write-SubStep 'commit changes...'
   Write-Execute "git status"
   # code $info # it will bring code as active
@@ -64,4 +64,7 @@ if (!$NoPush) {
   Write-Execute "git add $info"
   Write-Execute "git commit -m 'bump $newVer'"
   git-push
+}
+else {
+  Write-Notice 'changes not pushed to remote, use "git push" or run the command with -Push paramter'
 }

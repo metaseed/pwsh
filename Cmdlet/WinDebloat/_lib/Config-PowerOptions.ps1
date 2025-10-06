@@ -19,11 +19,11 @@ if ($vm) {
 }
 else {
   # display
-  powercfg /change monitor-timeout-dc 10 # 5mins by default
-  powercfg /change monitor-timeout-ac 20 # 10mins by default
+  powercfg /change monitor-timeout-dc 10 # 3mins by default
+  powercfg /change monitor-timeout-ac 20 # 5mins by default
   # sleep
-  powercfg /change standby-timeout-dc 10
-  powercfg /change standby-timeout-ac 60
+  powercfg /change standby-timeout-dc 20 # 3mins by default
+  powercfg /change standby-timeout-ac 60 # 5mins by default
   # hibernate
   powercfg /change  hibernate-timeout-dc 30 # 10 mins by default
   powercfg /change  hibernate-timeout-ac 0
@@ -42,8 +42,8 @@ else {
   # 4	Turn off the display
 
   # power button
-  powercfg -setdcvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 2
-  powercfg -setacvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 2
+  powercfg -setdcvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 2 # dc
+  powercfg -setacvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 2 # ac
 
   # lid close
   # 4f971e89-eebd-4455-a8de-9e59040e7347 → Power Subgroup: Power Buttons and Lid.

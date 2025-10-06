@@ -9,7 +9,7 @@ function Git-BranchFromLatestParent {
     # parent branch name, current parent branch is not set
     [Parameter()]
     [string]
-    $ParentBranchName = (Git-Parent)
+    $ParentBranchName = 'master'
   )
   $guard = Git-SaftyGuard 'Git-BranchFromLatestParent'
 
