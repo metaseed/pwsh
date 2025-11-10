@@ -76,7 +76,7 @@ function Install-FromGithub {
 			$r = Install-App $downloadedFilePath $ver_online $appName $toFolder $CreateFolder -newName $newName -verLocal $verLocal -filesToPickup: $filesToPickup -restoreList $restoreList
 			return $r
 		},
-		# force reinstall
+		# force reinstall, even the version is the same
 		[Parameter()]
 		[switch]$Force,
 		[Parameter()]
