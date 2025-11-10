@@ -16,25 +16,25 @@ $global:__specialDays = @{
 			# 	Day   = 12
 			# },
 			@{
-				Lable = 'Mom'
+				Lable = '妈'
 				Lunar = $true
 				Month = 8
 				Day   = 8
 			},
 			@{
-				Lable = 'Dad'
+				Lable = '爸'
 				Lunar = $true
 				Month = 9
 				Day   = 8
 			},
 			@{
-				Lable = 'Me'
+				Lable = '我'
 				Lunar = $true
 				Month = 9
 				Day   = 28
 			},
 			@{
-				Lable = 'Me'
+				Lable = '我'
 				Lunar = $false
 				Month = 11
 				Day   = 17
@@ -46,26 +46,26 @@ $global:__specialDays = @{
 				Day   = 21
 			},
 			@{
-				Lable = 'Echo'
+				Lable = '娟'
 				Lunar = $true
 				Month = 5
 				Day   = 20
 			},
 			@{
-				Lable = 'Qi'
+				Lable = '祺'
 				Lunar = $false
 				Month = 8
 				Day   = 14
 			},
 
 			@{
-				Lable = 'He'
+				Lable = '禾禾'
 				Lunar = $false
 				Month = 3
 				Day   = 5
 			},
 			@{
-				Lable = 'Mai'
+				Lable = '麦麦'
 				Lunar = $false
 				Month = 3
 				Day   = 7

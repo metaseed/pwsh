@@ -1,3 +1,6 @@
+## a hardlink in M:\Workspace\OpenInVisualStudio\src\
+## to the M:\Script\Pwsh\Module\Metaseed.Utility\Open-InVisualStudio.ps1
+
 function Open-InVisualStudio {
     [CmdletBinding()]
     # Takes file, line, column, and an optional solution name as arguments
@@ -134,10 +137,12 @@ public static class ComHelper {
 
         foreach ($dteInstance in $allDtes) {
             try {
+                # Note: $commandLineArgs = $dteInstance.CommandLineArguments has the solution full path
                 $solutionPath = $dteInstance.Solution.FullName
                 if (-not [string]::IsNullOrEmpty($solutionPath)) {
                     $baseSolutionName = [System.IO.Path]::GetFileNameWithoutExtension($solutionPath)
-                    if ($baseSolutionName -eq $SolutionName) {
+                    $procPath = $dteInstance.FileName # path of the exe
+                    if (($baseSolutionName -eq $SolutionName) -and ($procPath -and $procPath.EndsWith('devenv.exe'))) {
                         $dte = $dteInstance
                         break
                     }
@@ -148,7 +153,7 @@ public static class ComHelper {
             }
         }
 
-        if ($dte -eq $null) {
+        if ($null -eq $dte) {
             Write-Error "Could not find a running Visual Studio instance with solution '$SolutionName'."
             exit 1 # Exit without creating a new instance
         }
@@ -157,13 +162,18 @@ public static class ComHelper {
     # --- AUTOMATION --- #
     # At this point, we should have the correct DTE object stored in $dte.
 
-    if ($dte -eq $null) {
+    if ($null -eq $dte) {
         Write-Error "Failed to get a handle on a Visual Studio instance."
         exit 1
     }
 
     try {
         $dte.MainWindow.Activate()
+        $dte.MainWindow.Visible = $True
+        $dte.UserControl = $True
+
+        $wsShell = New-Object -ComObject WScript.Shell
+        [void]$wsShell.AppActivate($dte.MainWindow.Caption)
         $dte.ItemOperations.OpenFile($File) | Out-Null
 
         if ($Line -gt 0) {
@@ -172,6 +182,8 @@ public static class ComHelper {
         if ($Column -gt 1) {
             $dte.ActiveDocument.Selection.CharRight($false, $Column - 1)
         }
+        # could use:
+        # $dte.ActiveDocument.Selection.MoveToLineAndOffset($line, $column + 1)
     }
     catch {
         Write-Error "An error occurred while trying to control Visual Studio: $_"
@@ -180,5 +192,5 @@ public static class ComHelper {
 
 }
 
-# .\open-in-visualstudio.ps1 -File "C:\Repo\Slb\DrillOpsRig\planck\acquisition-profibus-plugin\open-in-visualstudio.ps1" -Line 5 -Column 10
-# .\open-in-visualstudio.ps1 -File "C:\Repo\Slb\DrillOpsRig\planck\acquisition-profibus-plugin\open-in-visualstudio.ps1" -Line 5 -Column 10 -SolutionName Slb.Planck.Acquisition.Profibus.Plugin
+# Open-InVisualStudio "C:\Repo\Slb\DrillOpsRig\planck\acquisition-profibus-plugin\open-in-visualstudio.ps1" -Line 5 -Column 10
+# Open-InVisualStudio "M:\Script\Pwsh\Module\Metaseed.Utility\Open-InVisualStudio.ps1" -Line 5 -Column 10 -SolutionName Slb.Planck.Acquisition.Profibus.Plugin

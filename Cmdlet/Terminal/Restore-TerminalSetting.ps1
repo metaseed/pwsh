@@ -4,16 +4,17 @@ param (
   [Parameter()]
   [ValidateSet('Stable', 'Preview', 'Unpackaged')]
   [string]
-  $version ="",
+  $version = "",
   [switch]
   $force
 )
+
 Write-Information "restore windows terminal settings..."
 . $PSScriptRoot/_private/GetSettings.ps1
 
 $backup = "$env:MS_PWSH\Cmdlet\Terminal\settings.json"
-if(!(test-path $backup)) {
-  Write-Warning 'Backup file not found.'
+if (!(test-path $backup)) {
+  Write-Error "Could not find $backup, nothing to restore!"
   return;
 }
 
@@ -28,8 +29,9 @@ if ($version -eq '') {
     $installs.GetEnumerator() | % {
       Write-Host "$($_.name): $($_.value)"
     }
-    $decision = $Host.UI.PromptForChoice('Selection', 'select version to backup', ($installs.keys | % { "&$_" }), 0)
-    $version = ($installs.GetEnumerator())[$decision].name
+    $decision = $Host.UI.PromptForChoice('Selection', 'select version to restore', ($installs.keys | % { "&$_" }), 0)
+    # $installs is a HashTable, .Keys is of KeyCollection type, it's not indexable, so convert it into an array:
+    $version = @($installs.Keys)[$decision]
   }
   else {
     # only one install found
@@ -42,20 +44,16 @@ if ($version -eq '') {
 }
 
 $location = $installs[$version]
-if (test-path $backup) {
-  # Confirm-Continue "Overwrite existing setting.json for the WindowsTerminal $version version?"
-  if (! $force -and (gi $location).LastWriteTime -gt (gi $backup).LastWriteTime) {
-    $decision = $Host.UI.PromptForChoice('Skip Restore?', "installed setting file is newer than the backuped setting file. Continue the restore?", @('&Yes', '&No'), 0)
-    if ($decision -ne 0) {
-      Write-Host "Skipping restore."
-      return
-    }
+
+# Confirm-Continue "Overwrite existing setting.json for the WindowsTerminal $version version?"
+if (! $force -and (gi $location).LastWriteTime -gt (gi $backup).LastWriteTime) {
+  $decision = $Host.UI.PromptForChoice('Skip Restore?', "installed setting file is newer than the backup setting file. Continue the restore?", @('&Yes', '&No'), 0)
+  if ($decision -ne 0) {
+    Write-Host "Skipping restore."
+    return
   }
-  Copy-Item  $backup $location -Force
-  # write-execute {}#.GetNewClosure()
 }
-else {
-  Write-Error "Could not find $backup, nothing to restore!"
-}
+Copy-Item  $backup $location -Force
+# write-execute {}#.GetNewClosure()
 
 # restore-terminalSetting

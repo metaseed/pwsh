@@ -8,3 +8,12 @@ NOTE: the sc solution is not work on windows 10
 
 and finally using the task scheduler
 Note: need to run the task using the SYSTEM account, otherwise there will be a console window.
+
+
+### NOTE!!!
+currently all the settings are stored in:
+C:\Users\jsong12\AppData\Local\Microsoft\VisualStudio\17.0_dbfcb49d\Settings
+and it's synced into your account, no need to store
+there is also option in vs to do this export and import, but it's all settings not just the shortcuts
+https://learn.microsoft.com/en-us/visualstudio/ide/reference/import-and-export-settings-command?view=vs-2022
+& $devenvPath /Command "Tools.ImportandExportSettings /export:C:/temp/allsettings.vssettings"
