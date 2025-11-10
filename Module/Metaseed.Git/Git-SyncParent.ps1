@@ -12,9 +12,7 @@ function Git-SyncParent {
     #('ours', 'theirs','')]
     $strategyOption = ''
   )
-  $guard = Git-SaftyGuard 'Git-SyncParent'
-
-  try {
+  $guard = Git-StashPushApply {
     Write-Step 'sync with remote'
     $hasRemote = Git-HasRemoteBranch
     if ($hasRemote) {
@@ -45,7 +43,7 @@ function Git-SyncParent {
       $msg += "The parent branch is not master."
     }
 
-    if($msg){
+    if ($msg) {
       Confirm-Continue $msg
     }
 
@@ -117,20 +115,6 @@ function Git-SyncParent {
     }
 
 
-  }
-  catch {
-    Write-Error 'Git-RebaseMaster execution error.'
-  }
-  finally {
-    if ($guard -eq [GitSaftyGuard]::Stashed) {
-      if (! $mergeError) {
-        Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
-      }
-    }
-    # else {
-    # we have git status in git-push
-    #   Write-Execute 'git status'
-    # }
   }
 
 }

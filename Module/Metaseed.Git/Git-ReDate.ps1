@@ -17,8 +17,8 @@ function Git-ReDate {
     [ValidateSet('now', 'oneHourAhead', 'oneHourAheadWithRandomMinSec')]
     $date = 'oneHourAheadWithRandomMinSec'
   )
-  $guard = Git-SaftyGuard 'Git-ReDate'
-  try {
+
+  Git-StashPushApply {
     if ($date -eq 'now') {
       ### this way the date of commits are the same
       # It changes both the committer and author dates.
@@ -30,7 +30,7 @@ function Git-ReDate {
     else {
       ### mimic interactive way, could modify every commit's author/commit date
       # config the rebase command use the sequence.editor notepad, override the one in .gitconfig
-      start-job -scriptblock { 
+      start-job -scriptblock {
         git -c sequence.editor=notepad rebase --interactive "head~$using:commits"
       } -name redate
 
@@ -67,14 +67,6 @@ function Git-ReDate {
 
     if (!$NoPush) {
       git push --force
-    }
-  }
-  catch {
-    Write-Error 'Git-BranchFromLatestMaster execution error.'
-  }
-  finally {
-    if ($guard -eq [GitSaftyGuard]::Stashed) {
-      Write-Execute 'git stash apply --index' 'restore index&tree&untracked' # --index: not merge index into worktree, the same as the state before stash
     }
   }
 
