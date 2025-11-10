@@ -6,7 +6,7 @@ function Git-SyncParent {
     $parent,
     [Parameter()]
     [switch]
-    $rebase,
+    $merge,
     [Parameter()]
     [string]
     #('ours', 'theirs','')]
@@ -52,8 +52,8 @@ function Git-SyncParent {
     Write-Execute "git checkout $parent"
     Write-Execute 'git pull --rebase'
 
-    Write-Step "sync branch with '$parent' - $($rebase ? 'rebase': 'merge')"
-    if ($rebase) {
+    Write-Step "sync branch with '$parent' - $($merge ? 'merge': 'rebase')"
+    if (!$merge) {
       if ($parent -ne 'master') {
         # replay one by one, may resolve conflict several times
         # so merge parent to reduce conflicts.
