@@ -1,0 +1,1 @@
+. $PSScriptRoot/../Backup-OneDriveFile.ps1 c:/temp /_/271828.kdbx

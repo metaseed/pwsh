@@ -31,6 +31,10 @@ Set-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideD
 write-action 'show Recycle Bin on desktop'
 Set-HKItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' -Value 'Recycle Bin'
 
+# write-action 'hide Recycle Bin on desktop'
+# 0: show; 1: hide
+# Set-HKItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' -Value 1
+# Stop-Process -Name explorer -Force
 
 Write-Action 'when open explorer, show this pc versus home'
 $sipParams = @{
@@ -103,7 +107,7 @@ $regName = "FourFingerSlideEnabled"
 # 0Nothing
 # 1Switch apps and show desktop
 # 2Switch desktops and show desktop
-# 3Change audio and volume 
+# 3Change audio and volume
 $regValue = 3
 
 # Create the key if it doesn't exist
@@ -122,7 +126,7 @@ New-ItemProperty -Path $regPath -Name "System.IsPinnedToNameSpaceTree" -Property
 # Show Downloads folder in the explorer navigation pane
 $downloadsRegPath = "HKCU:\Software\Classes\CLSID\{374DE290-123F-4565-9164-39C4925E467B}"
 Remove-Item -Path $downloadsRegPath -Recurse -Force -ErrorAction SilentlyContinue
-New-Item -Path $downloadsRegPath -Force | Out-Null    
+New-Item -Path $downloadsRegPath -Force | Out-Null
 New-ItemProperty -Path $downloadsRegPath -Name "System.IsPinnedToNameSpaceTree" -PropertyType DWord -Value 1 -Force | Out-Null
 # Stop-Process -Name explorer -Force
 
@@ -134,4 +138,4 @@ New-ItemProperty -Path $downloadsRegPath -Name "System.IsPinnedToNameSpaceTree" 
 gps explorer|spps
 
 ## not easy
-# turn on lunar calendar 
+# turn on lunar calendar
