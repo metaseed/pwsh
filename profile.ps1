@@ -25,6 +25,9 @@ if ($env:__MS_PWSH_PARENT -ne 'true') {
 $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 $cl="`e[0m"
 "`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
+if($IsAdmin) {
+	Set-Location $env:USERPROFILE # when run in admin mode it's System32 folder
+}
 
 # not needed if we run pwsh with -noexit, so even we install ms_pwsh from v5 powershell, we still in pwsh.
 # fix after install, the env is not updated
