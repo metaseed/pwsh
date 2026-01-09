@@ -26,7 +26,7 @@ $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 $cl="`e[0m"
 "`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
 if($IsAdmin) {
-	Set-Location $env:USERPROFILE # when run in admin mode it's System32 folder
+	Set-Location $PWD #$env:USERPROFILE # when run in admin mode it's System32 folder
 }
 
 # not needed if we run pwsh with -noexit, so even we install ms_pwsh from v5 powershell, we still in pwsh.
