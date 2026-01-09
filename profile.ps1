@@ -26,7 +26,9 @@ $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 $cl="`e[0m"
 "`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
 if($IsAdmin) {
-	Set-Location $PWD #$env:USERPROFILE # when run in admin mode it's System32 folder
+	if ($PWD.ProviderPath -ieq (Join-Path $env:SystemRoot 'System32')) {
+		Set-Location -Path $env:USERPROFILE
+	}
 }
 
 # not needed if we run pwsh with -noexit, so even we install ms_pwsh from v5 powershell, we still in pwsh.
@@ -38,3 +40,5 @@ if($IsAdmin) {
 # $InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
 . $PSScriptRoot\profile\main.ps1
 . $PSScriptRoot\update.ps1 -days 3
+# pixi auto completion
+(& pixi completion --shell powershell) | Out-String | Invoke-Expression
