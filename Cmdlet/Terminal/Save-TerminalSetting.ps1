@@ -19,14 +19,14 @@ if ($version -eq '') {
       Write-Host "$($_.name): $($_.value)"
     }
     $decision = $Host.UI.PromptForChoice('Selection', 'select version to backup', ($installs.keys | % { "&$_" }), 0)
-    $version = ($installs.GetEnumerator())[$decision].name
+    $version = @($installs.Keys)[$decision] #($installs.GetEnumerator())|select -index [$decision]|select -ExpandProperty name
   }
   else {
     # only one install found
     $installs.GetEnumerator() | % {
       Write-Host "$($_.name): $($_.value)"
     }
-    $version = ($installs.GetEnumerator())[0].name
+    $version = @($installs.Keys)[$decision]
   }
 }
 
