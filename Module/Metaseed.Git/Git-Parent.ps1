@@ -43,6 +43,16 @@ function Git-Parent {
   param(
     $CurrentBranchName = (git branch --show-current) # the same: git rev-parse --abbrev-ref HEAD
   )
+  if($currentBranchName -eq 'master' -or $currentBranchName -eq 'main') {
+    return ''
+  }
+  # $CurrentBranchName = git symbolic-ref --short HEAD 2>$null
+  $parent = git config "branch.$CurrentBranchName.parent"
+
+  if ($parent) {
+    return $parent
+  }
+
   Git-ParentCommit $CurrentBranchName|
   # Sometimes the branch name will include a ~# or ^# to indicate how many commits are between the referenced commit and the branch tip. We don't care. Ignore them.
   # and with any relative refs (^, ~n) removed

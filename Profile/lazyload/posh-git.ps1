@@ -29,7 +29,15 @@
 function global:__GetPrefixPrompt {
   return "┌─ $(($global:__adminIcon ??= __GetAdminIcon)) $(__GetDateStr)$(__GetLunarDateStr)$(__GetSpecialDayStr)$(__GetPSReadLineSessionExeTime) "
 }
-
+function global:ParentGitBranch() {
+  if(!(Test-GitRepo)) {
+    return ""
+  }
+  $parent = Git-Parent
+  $end = "`e[0m`e[93m]`e[0m"
+  if(!$parent){return $end}
+  return "`e[90m$parent$end"
+}
 # $ForcePoshGitPrompt to be true
 # in vscode, it has defined its own prompt function, so posh-git will not replace it by default.
 # we have to pass in the $ForcePoshGitPrompt to be true to force replace it.
@@ -61,6 +69,7 @@ if ($?) {
     }
 
   }
+
   # ─→
   $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`r`n└─$(PromptWriteErrorInfo) '
 
@@ -71,18 +80,19 @@ if ($?) {
   if ($env:TERM_NERD_FONT) {
     # https://www.nerdfonts.com/cheat-sheet
     #'󱔨' # trolley, something in the working dir to add to stage/index
-    $global:GitPromptSettings.LocalWorkingStatusSymbol ='󰵧'#'󰁸' 
+    $global:GitPromptSettings.LocalWorkingStatusSymbol ='󰵧'#'󰁸'
     # stage, something on stage to commit
     $global:GitPromptSettings.LocalStagedStatusSymbol = '󱊛'#'󱊝'#'󰔾' # # truck
     $global:GitPromptSettings.BeforeStatus.Text = '[' # branch
+    $global:GitPromptSettings.AfterStatus.Text = '' # default is ']'
     # use exanding string: write with "" and change it to '', then it will be evaluated at runtime dynamically.
-    $global:GitPromptSettings.BeforePath.Text = '$($global:GitStatus ? "":"")'#  '''' # '' # folder
+    $global:GitPromptSettings.BeforePath.Text = '$(ParentGitBranch)`e[93m$($global:GitStatus ? "":"")`e[0m' ##  '''' # '' # folder
 
     $global:GitPromptSettings.BranchIdenticalStatusSymbol.Text = '󰅠'#'󱋌' #'󰅠'#default is "≡"
     $global:GitPromptSettings.BranchAheadStatusSymbol.Text = '󰅧'# '󰭾'#'󱋌'󰅧 default is "↑"
     $global:GitPromptSettings.BranchBehindStatusSymbol.Text = '󰅢'#󰭽'#'󱋌' default is "↓"
     $global:GitPromptSettings.BranchBehindAndAheadStatusSymbol.Text = '󰘿'#'󱋌' default is "↕"
-    
+
   }
 }
 
