@@ -15,5 +15,5 @@ function Git-SetupHooks {
 		Write-Host "Backing up existing post-checkout hook: $backup"
 		copy-item $checkout $backup
 	}
-	ni -type SymbolicLink -Path "$git\hooks\post-checkout" -Target "M:\Script\Pwsh\Module\Metaseed.Git\_features\parent-branch\resources\.git-templates\hooks\post-checkout"
+	ni -type SymbolicLink -Force -Path "$git\hooks\post-checkout" -Target "M:\Script\Pwsh\Module\Metaseed.Git\_features\parent-branch\resources\.git-templates\hooks\post-checkout"
 }

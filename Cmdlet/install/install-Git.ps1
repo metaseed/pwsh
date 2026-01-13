@@ -42,7 +42,7 @@ path = M:\\tools\\git\\.slb.gitconfig
 ; git config --global init.templateDir 'M:\tools\git\.git-templates'
 ; for existing repos, run run git-SetupHook
 [init]
-	templateDir = M:\\tools\\git\\.git-templates
+	templateDir = M:\\Script\\Pwsh\\Module\\Metaseed.Git\\_features\\parent-branch\\resources\\.git-templates
 "@
 
 $conf = gc $home/.gitconfig -raw -ErrorAction Ignore
