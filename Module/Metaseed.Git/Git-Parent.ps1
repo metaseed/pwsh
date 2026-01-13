@@ -1,5 +1,5 @@
 # https://stackoverflow.com/questions/3161204/how-to-find-the-nearest-parent-of-a-git-branch/26597219#answer-17843908
-
+# link to: M:\Script\Pwsh\Module\Metaseed.Git\Git-Parent.ps1
 function Git-ParentCommitMessage {
   [CmdletBinding()]
   param(

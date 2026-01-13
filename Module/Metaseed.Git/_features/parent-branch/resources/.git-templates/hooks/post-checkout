@@ -1,0 +1,141 @@
+#!/bin/bash
+warning() {
+    echo -e "\033[0;33m[WARNING]\033[0m $*" >&2
+}
+# use git-setupHooks to setup this hook to repo
+
+# symbolic link to: /m:/tools/git/post-checkout
+# Arguments provided by Git to post-checkout:
+# $1 = Previous HEAD (the "parent" commit/branch)
+# $2 = New HEAD (the new branch)
+# $3 = Flag (1 if it was a branch checkout, 0 if it was a file checkout)
+# note: the post-checkout hook can not differentiate between a branch checkout and a branch creation.
+# we need to filter out a branch creation action: git checkout -b <branch-name>, git switch -c <branch-name>
+# Confirmation:
+# 1. the Previous HEAD and New HEAD are the same (indicating a branch creation)
+# 2. the current branch has a ref history (reflog) with only 1 entry
+# 3. the current branch's creation time is less than 5 seconds ago.
+
+PREV_HEAD=$1 # hash
+NEW_HEAD=$2 # hash
+IS_BRANCH_CHECKOUT=$3
+
+# when there is not commit in repo, this script will never be executed
+# Only proceed if it's a branch change (flag 1)
+if [ "$IS_BRANCH_CHECKOUT" -eq 1 ]; then
+    ## 1. the Previous HEAD and New HEAD are the same (indicating a branch creation)
+    if [ "$PREV_HEAD" != "$NEW_HEAD" ]; then
+        warning "📝post-checkout: previous HEAD and new HEAD are different."
+        warning "📝post-checkout: previous HEAD: $PREV_HEAD"
+        warning "📝post-checkout: new HEAD: $NEW_HEAD"
+
+        exit 0 # not try to create a new branch
+    else
+        echo "📝post-checkout: previous HEAD and new HEAD is the same: $PREV_HEAD"
+    fi
+
+    # Get the name of the current (new) branch
+    CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
+
+    # 2. the current branch has a ref history (reflog) with only 1 entry
+    # Use unix timestamp for easier calculation
+    REFLOG_CURRENT=$(git reflog "$CURRENT_BRANCH" --date=unix --max-count=3 2>/dev/null)
+    if [ -z "$REFLOG_CURRENT" ]; then
+        REFLOG_COUNT=0
+    else
+        REFLOG_COUNT=$(echo "$REFLOG_CURRENT" | wc -l)
+    fi
+    if [ "$REFLOG_COUNT" -eq 1 ]; then
+        echo "📝post-checkout: Current branch has only one reflog entry, indicating it's maybe a new branch creation."
+    else
+        warning "📝post-checkout: Current branch has $REFLOG_COUNT reflog entries, not a new branch creation."
+        exit 0
+    fi
+    # 3. the current branch's creation time is less than 5 seconds ago.
+    # Output example: b261059 test@{1736720135}: commit: ddfd
+    # Extract timestamp inside {}
+    CREATION_TIME=$(echo "$REFLOG_CURRENT" | tail -n 1 | sed -n 's/.*@{\([^}]*\)}.*/\1/p')
+
+    # Ensure CREATION_TIME is a number
+    if ! [[ "$CREATION_TIME" =~ ^[0-9]+$ ]]; then
+        warning "📝post-checkout: Could not parse creation time from reflog."
+        exit 0
+    fi
+
+    CURRENT_TIME=$(date +%s)
+    TIME_DIFF=$((CURRENT_TIME - CREATION_TIME)) # in seconds
+    if [ "$TIME_DIFF" -lt 5 ]; then
+        echo "📝post-checkout: Current branch creation time is $TIME_DIFF seconds later since last header moving in this branch '$CURRENT_BRANCH'(less than 5 seconds ago), so $CURRENT_BRANCH maybe a new branch."
+    else
+        # convert $TIME_DIFF to human-readable format: hh:mm:ss
+        HOURS=$((TIME_DIFF / 3600))
+        MINUTES=$(((TIME_DIFF % 3600) / 60))
+        SECONDS=$((TIME_DIFF % 60))
+        warning "📝post-checkout: Current branch('$CURRENT_BRANCH') creation time is $TIME_DIFF seconds($HOURS:$MINUTES:$SECONDS) later since last header moving(more than 5 seconds ago), so $CURRENT_BRANCH is not a new branch."
+        exit 0
+    fi
+
+    PARENT_BRANCH=$(git config "branch.$CURRENT_BRANCH.parent")
+    # -z to check the string is empty
+    # -n to check the string is not empty
+    if [ -n "$PARENT_BRANCH" ]; then
+        warning "📝post-checkout: parent ($PARENT_BRANCH) already recorded in git config for '$CURRENT_BRANCH'."
+        exit 0
+    fi
+
+    # if current is 'main' or 'master', do nothing
+    if [ "$CURRENT_BRANCH" == "main" ] || [ "$CURRENT_BRANCH" == "master" ]; then
+        warning "📝post-checkout: Skipping for main/master branch."
+        exit 0
+    fi
+
+    # 1. Try to get the exact name from Reflog
+    # We check if reflog has at least 2 entries to avoid the "fatal" error
+    REFLOG_COUNT=$(git reflog --max-count=3 2>/dev/null | wc -l)
+
+    if [ "$REFLOG_COUNT" -gt 1 ]; then
+        # @{-n} the nth previous branch you had checked out
+        PARENT_BRANCH=$(git rev-parse --abbrev-ref '@{-1}' 2>/dev/null)
+        if [ "$PARENT_BRANCH" == "@{-1}" ]; then
+            PARENT_BRANCH=""
+        else
+            echo "📝post-checkout: Parent branch from Reflog: $PARENT_BRANCH"
+        fi
+    fi
+
+    # 2. Fallback: If Reflog failed, use name-rev
+    if [ -z "$PARENT_BRANCH" ]; then
+        # translate a raw commit hash (the "Previous HEAD") back into a human-readable branch name
+        # Get the name of the previous branch (the parent)
+        # git name-rev helps resolve the previous hash back to a human-readable name
+        # Looks at the Commit Hash. If three branches point to a1b2c3d, it guesses which one you meant.
+        # sed: Remove the "^0" suffix from the name-rev output
+        # steam-editor, s/old/new/
+        # ^0: the 0th parent, the commit itself
+        PARENT_BRANCH=$(git name-rev --name-only "$PREV_HEAD" | sed 's/\^0//')
+        echo "📝post-checkout: Parent branch from name-rev: $PARENT_BRANCH"
+    fi
+
+    if [ "$CURRENT_BRANCH" == "$PARENT_BRANCH" ]; then
+        warning "📝post-checkout: Parent branch '$PARENT_BRANCH' is the same as the current branch '$CURRENT_BRANCH'."
+        exit 0
+    fi
+
+    # 3. Final Fallback: If it's still empty (e.g., brand new repo)
+    # when the current comment is not belong to any branch, i.e.  a detected Head, will be "undefined"
+    if [ -z "$PARENT_BRANCH" ] || [ "$PARENT_BRANCH" = "undefined" ]; then
+        warning "📝post-checkout: Parent branch is undefined or empty."
+        exit -1
+    fi
+
+    # Only save if we have a valid current branch and it's different from parent
+    git config "branch.$CURRENT_BRANCH.parent" "$PARENT_BRANCH"
+    echo "📝post-checkout: Parent branch '$PARENT_BRANCH' recorded for '$CURRENT_BRANCH'."
+fi
+
+# do if necessary:
+# wsl
+# chmod +x .git-templates/hooks/post-checkout
+# exit
+
+# for existing proj, run git-setupHooks

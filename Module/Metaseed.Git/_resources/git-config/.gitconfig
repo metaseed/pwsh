@@ -1,0 +1,87 @@
+# Hard link:
+# M:\Script\Pwsh\Module\Metaseed.Git\_resources\git-config\.gitconfig
+# M:\tools\git\.gitconfig
+
+# config file
+#
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	autocrlf = true
+	whitespace = cr-at-eol
+	editor = code --wait
+	longpaths = true
+[http]
+	sslverify = true
+; to remove fatal: unsafe repository ('//slb-fncl5y2/M/Script/Pwsh' is owned by someone else)
+[safe]
+	directory = *
+[user]
+	name = metasong
+	email = metaseed@gmail.com
+# [difftool "vscode"]
+# 	cmd = "code --wait --diff  "
+# [diff]
+# 	tool = vscode
+[alias]
+# Display a textual history of all commits, including remote branches.
+# Ancestors of the current commit are indicated by a star. Filter out everything else.
+# Ignore all the commits in the current branch.
+# The first result will be the nearest ancestor branch. Ignore the other results.
+# Branch names are displayed [in brackets]. Ignore everything outside the brackets, and the brackets.
+# Sometimes the branch name will include a ~# or ^# to indicate how many commits are between the referenced commit and the branch tip. We don't care. Ignore them.
+# https://stackoverflow.com/questions/3161204/how-to-find-the-nearest-parent-of-a-git-branch#answer-17843908
+	parent = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
+
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+	;
+	s = status
+	co = checkout
+	cob = checkout -b
+	; fetch and prune the local branches that  already deleted remotely.
+	f = fetch -p
+	c = commit
+	p = push
+	st = status -sb
+	a = add -p
+	; diff
+	diffst = diff --name-only
+	dc = diff --cached
+	;
+	; branch
+	;
+	; list all local and remote branches
+	ba = branch -a
+	bd = branch -d
+	bD = branch -D
+	;bra = !git branch | grep -v "master" | xargs git branch -D
+	; Branch Remove All: local branches except master and current
+	bra = !git branch | grep -v "master$" | grep -v $(git branch --show-current) | xargs git branch -D
+	brd = !sh -c \"git checkout master && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"
+	bdm = !git branch --merged | grep -v '*' | xargs -n 1 git branch -d
+	; git branch --merged | select-string '^[^*].*' | ForEach-Object {git branch -d $_.ToString().Trim()}
+	brdhere = !sh -c \"git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"
+	; git branch -r ; remote
+	; remove all remote branches and push to remote
+  ;gd = !git branch -r | grep 'origin' | grep -v 'master$' | grep -v HEAD | cut -d/ -f2- | while read line; do git push origin :heads/$line; done;
+	;
+	; others
+	;
+	pullf = !sh -c \"git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)\"
+	amend = commit --amend -C HEAD
+	; To push the current branch AND set the remote as upstream
+	pushr = !git push --set-upstream origin $(git branch --show-current)
+	;
+	; log
+	;
+	; i.e. to show log of the 2 branches:
+	; git lg feat/featureA release/24.05
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	tlog = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
+	rank = shortlog -sn --no-merges
+
+; Note:
+; grep: global regular expression print; -v invert matching
