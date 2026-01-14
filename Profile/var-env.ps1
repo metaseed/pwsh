@@ -1,4 +1,4 @@
-# new veriables
+# new variables
 $env:MyDoc = [Environment]::GetFolderPath('MyDocument');
 # [System.Environment]::GetFolderPath([System.Environment.SpecialFolder]::Desktop)
 $env:Desktop = [Environment]::GetFolderPath("Desktop")

@@ -12,6 +12,18 @@ $PSReadLineOptions = @{
     # https://learn.microsoft.com/en-us/powershell/scripting/learn/shell/using-predictors?view=powershell-7.5
     # press F2 to switch between ListView and InlineView
     PredictionViewStyle = 'ListView'
+    ##
+    ## the VI mode settings:
+    ##
+    # https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/VisualEditing.vi.cs
+    # EditMode           = 'Vi'
+    # ViModeIndicator   = 'Cursor'
+    # HistorySearchCursorMovesToEnd = $true
+
+    ### Get-PSReadLineKeyHandler
+    ### the Windows mode shortcuts:
+    ### https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/KeyBindings.vi.cs
+    ###
 }
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption?view=powershell-7.2
 Set-PSReadLineOption @PSReadLineOptions
@@ -20,12 +32,23 @@ Set-PSReadLineOption @PSReadLineOptions
 # $options = Get-PSReadLineOption
 # $options.ListPredictionColor = "`e[90m" # original value "`e[33m"
 
+## Get-PSReadLineKeyHandler to view all key bindings
+## PSConsoleReadLine Class:
+## https://learn.microsoft.com/en-us/dotnet/api/microsoft.powershell.psconsolereadline
+## all the functions that can be used:
+## https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/KeyBindings.cs#L402
+##
+## a config sample that has handler examples: (very versatile!! worth to check!)
+## https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/KeyBindings.cs
+##
+
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
 Set-PSReadlineKeyHandler -Chord Alt+F4 -Function ViExit
 
 # not work in vscode
 # ctrl+enter to add a new line, `esc` to cancel all input, not only the current line.
 Set-PSReadlineKeyHandler -Chord Ctrl+Shift+K -Function DeleteLine
+Set-PSReadLineKeyHandler -Chord alt+c -Function MenuComplete
 
 # not work in vscode
 Set-PSReadlineKeyHandler -Key Shift+Alt+C `
@@ -83,6 +106,7 @@ Set-PSReadLineKeyHandler -Chord 'Alt+[' -BriefDescription 'Goto Previous Directo
 Set-PSReadLineKeyHandler -Chord alt+e -ScriptBlock {
     lf -ChordTrigger
 }
+
 # Set-PSReadLineKeyHandler -Chord Ctrl+s -ScriptBlock { #Ctrl+Shift+o Ctrl+d  work
 #     lf -selections
 # }
@@ -114,6 +138,7 @@ tips:
 remove cmd history: Remove-Item (Get-PSReadlineOption).HistorySavePath
 Ctrl+]: goto Brace
 ctrl-l: clear screen
+alt+f7: clean command history
 alt-.: last argument of previous command
 ctrl-space: MenuComplete
 

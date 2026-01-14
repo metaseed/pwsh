@@ -8,6 +8,8 @@ $m = [PSCustomObject]@{
 # prevent error when debugging
 $global:__PSReadLineSessionScope = @{}
 
+## my typing-shortcut-vars
+# 4 is easier to type after typed $
 $4 = [PSCustomObject]@{
   tm = $env:TEMP # transient temp
   tmp = 'c:\tmp' # short temp
