@@ -39,7 +39,7 @@ Set-PSReadLineOption @PSReadLineOptions
 ## https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/KeyBindings.cs#L402
 ##
 ## a config sample that has handler examples: (very versatile!! worth to check!)
-## https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/KeyBindings.cs
+## https://github.dev/PowerShell/PSReadLine/blob/master/PSReadLine/SamplePSReadLineProfile.ps1
 ##
 
 # https://docs.microsoft.com/en-us/powershell/module/psreadline/set-psreadlinekeyhandler?view=powershell-7.2
@@ -142,4 +142,8 @@ alt+f7: clean command history
 alt-.: last argument of previous command
 ctrl-space: MenuComplete
 
+ctrl+home: delete to beginning of line
+ctrl+end: delete to end of line
+alt+2, alt+3, f: type f 23 times
+alt+8,left: move cursor left 8 times
 #>
