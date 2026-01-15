@@ -13,6 +13,22 @@ cursor jumping to the char location in console's input buffer by minimum key typ
 "background-color-code": ["g: green", "w: white",  "r: red", "b: blue",  "c: cyan, "y: yellow", "m: magenta"]
 user can config and remove or modify the key-value, i.e. remove the color used by the console background.
 * trigger shortcut i.e. `alt+.` is also configurable.
+# Solution
+## How to get location key from user typing after the trigger of the command
+> use [Console]::ReadKey($true)
+
+reference:https://github.dev/PowerShell/PSReadLine/SamplePSReadLineProfile.ps1 line 537: Ctrl+j then the same key will change back to that directory
+
+## How to modify the background color of chars in buffer?
+1. Capture State: Get the current buffer text and cursor position.
+1. Get Target: Wait for the user to type the target character.
+1. Calculate Matches: Find occurrences of that character.
+1. Render Overlay:
+  1. Calculate the visual position of the input start.
+  1. Overwrite the displayed text with ANSI-colored characters (Green, Red, Blue, etc.) corresponding to your jump keys.
+  1. Wait for Selection: Read the user's next key (the color code).
+1. Jump: Move the PSReadLine cursor to the matching index.
+1. Restore: Refresh the PSReadLine interface.
 
 # Implementation
 * a pwsh module like other modules in the grand parent folder(PWSH/Module), following same pattern to create the .psm1 file and .psd1 file, which should be in the parent folder `MetaGo`.
@@ -22,6 +38,3 @@ user can config and remove or modify the key-value, i.e. remove the color used b
 
 # Document
 * generate usage document in doc folder
-
-# Output
-* make sure generate product quality code

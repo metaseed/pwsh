@@ -1,7 +1,7 @@
 # note: auto-setup in config.ps1
 
 # include this file in $profile:
-# notepad $profile.CurrentUserAllHost
+# notepad $profile.CurrentUserAllHosts
 # . m:\script\pwsh\profile.ps1
 
 # note: reload profile if modified codes in this repo

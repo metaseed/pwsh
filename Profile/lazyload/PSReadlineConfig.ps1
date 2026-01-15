@@ -129,6 +129,58 @@ Set-PSReadLineKeyHandler -Chord alt+e -ScriptBlock {
 #     [Microsoft.PowerShell.PSConsoleReadLine]::TabCompleteNext()
 # }
 
+#
+# Ctrl+Shift+j then type a key to mark the current directory.
+# Ctrl+j then the same key will change back to that directory without
+# needing to type cd and won't change the command line.
+
+#
+$global:PSReadLineMarks = @{}
+
+Set-PSReadLineKeyHandler -Key Ctrl+J `
+    -BriefDescription MarkDirectory `
+    -LongDescription "Mark the current directory" `
+    -ScriptBlock {
+    param($key, $arg)
+
+    $key = [Console]::ReadKey($true)
+    $global:PSReadLineMarks[$key.KeyChar] = $pwd
+}
+
+Set-PSReadLineKeyHandler -Key Ctrl+j `
+    -BriefDescription JumpDirectory `
+    -LongDescription "Goto the marked directory" `
+    -ScriptBlock {
+    param($key, $arg)
+
+    $key = [Console]::ReadKey()
+    $dir = $global:PSReadLineMarks[$key.KeyChar]
+    if ($dir) {
+        cd $dir
+        [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+    }
+}
+
+Set-PSReadLineKeyHandler -Key Alt+j `
+    -BriefDescription ShowDirectoryMarks `
+    -LongDescription "Show the currently marked directories" `
+    -ScriptBlock {
+    param($key, $arg)
+
+    $global:PSReadLineMarks.GetEnumerator() | % {
+        [PSCustomObject]@{Key = $_.Key; Dir = $_.Value } } |
+    Format-Table -AutoSize | Out-Host
+
+    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+}
+
+Set-PSReadLineKeyHandler -Key Alt+d `
+    -BriefDescription jump `
+    -LongDescription "cursor jump in the current command line" `
+    -ScriptBlock {
+    param($key, $arg)
+    Invoke-MetaJump
+}
 <#
 Get-PSReadLineKeyHandler -Bound -Unbound
 Ctrl+s    ForwardSearchHistory    Search history forward interactively
