@@ -1,167 +1,303 @@
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
 
+# Configuration
+function Get-MetaJumpConfig {
+    return @{
+        CodeChars                       = "f,j,d,k,s,l,a,g,h,q,w,e,r,t,y,u,i,o,p,z,x,c,v,b,n,m" -split ',' | ForEach-Object { $_.Trim() }
+        OneCharBackgroundColor          = "Yellow"
+        MoreThanOneCharBackgroundColor  = "Blue"
+        NextTypeableCharBackgroundColor = "Gray"
+        UserTypedTextBackgroundColor    = "DarkCyan"
+        IndicatorFgColor                = "Black"
+        TooltipText                     = "Jump: type target char..."
+    }
+}
+
+function Get-VisualOffset {
+    param($Line, $Index, $StartLeft, $BufferWidth, $ContinuationPromptWidth = 0)
+
+    $x = $StartLeft
+    $y = 0
+
+    for ($i = 0; $i -lt $Index; $i++) {
+        $c = $Line[$i]
+        if ($c -eq "`n") {
+            $x = $ContinuationPromptWidth
+            $y++
+        }
+        elseif ($c -eq "`r") {
+            $x = 0
+        }
+        else {
+            $x++
+            if ($x -ge $BufferWidth) {
+                $x = 0
+                $y++
+            }
+        }
+    }
+    return @{ X = $x; Y = $y }
+}
+
 function Get-BufferInfo {
     $line = $null
     $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-    
+
     $consoleLeft = [Console]::CursorLeft
     $consoleTop = [Console]::CursorTop
-    
-    $startLeft = $consoleLeft - $cursor
-    $startTop = $consoleTop
+    $bufferWidth = [Console]::BufferWidth
+    $continuationPromptWidth = (Get-PSReadLineOption).ContinuationPrompt.Length
 
-    while ($startLeft -lt 0) {
-        $startLeft += [Console]::BufferWidth
-        $startTop--
+    # Check for newlines before cursor
+    $substring = $line.Substring(0, $cursor)
+    if ($substring.Contains("`n")) {
+        # Temporarily move to start to get the prompt width
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(0)
+        $startLeft = [Console]::CursorLeft
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor)
+
+        $offset = Get-VisualOffset -Line $line -Index $cursor -StartLeft $startLeft -BufferWidth $bufferWidth -ContinuationPromptWidth $continuationPromptWidth
+        $startTop = $consoleTop - $offset.Y
+    }
+    else {
+        $startLeft = $consoleLeft - $cursor
+        $startTop = $consoleTop
+
+        # Adjust if wrapped
+        while ($startLeft -lt 0) {
+            $startLeft += $bufferWidth
+            $startTop--
+        }
     }
 
     return @{
-        Line = $line
-        Cursor = $cursor
+        Line        = $line
+        Cursor      = $cursor
         ConsoleLeft = $consoleLeft
-        ConsoleTop = $consoleTop
-        StartLeft = $startLeft
-        StartTop = $startTop
+        ConsoleTop  = $consoleTop
+        StartLeft   = $startLeft
+        StartTop    = $startTop
+        ContinuationPromptWidth = $continuationPromptWidth
     }
 }
 
 function Show-Tooltip {
-    param($Top)
-    
-    $tooltip = "please type the char to jump to..."
-    
+    param($Top, $Text)
+
     if ($Top -lt [Console]::BufferHeight) {
         [Console]::SetCursorPosition(0, $Top)
         $originalColor = [Console]::ForegroundColor
         [Console]::ForegroundColor = 'Cyan'
-        [Console]::Write($tooltip)
+        [Console]::Write($Text)
         [Console]::ForegroundColor = $originalColor
+        return $Text.Length
     }
-    return $tooltip.Length
+    return 0
 }
 
 function Clear-Tooltip {
     param($Top, $Length)
-    
-    if ($Top -lt [Console]::BufferHeight) {
+
+    if ($Top -lt [Console]::BufferHeight -and $Length -gt 0) {
         [Console]::SetCursorPosition(0, $Top)
         [Console]::Write(" " * $Length)
     }
 }
 
-function Show-Indicator {
+function Show-StartIndicator {
     param($Info)
-    
-    [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop)
-    $indicatorChar = ' '
-    if ($Info.Cursor -lt $Info.Line.Length) {
-        $indicatorChar = $Info.Line[$Info.Cursor]
-    }
-    
-    $prevBg = [Console]::BackgroundColor
-    $prevFg = [Console]::ForegroundColor
-    
-    [Console]::BackgroundColor = 'Green'
-    [Console]::ForegroundColor = 'Black'
-    [Console]::Write($indicatorChar)
-    
-    [Console]::BackgroundColor = $prevBg
-    [Console]::ForegroundColor = $prevFg
-    [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop)
-    
-    return @{ Char = $indicatorChar; Bg = $prevBg; Fg = $prevFg }
+
+    # the 🏃is 2 char width, so move back 1 char or better ui view
+    $drawLeft = if ($Info.ConsoleLeft -gt 0) { $Info.ConsoleLeft - 1 } else { $Info.ConsoleLeft }
+    [Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
+    [Console]::Write("🏃")
+    [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop) # Restore cursor
+    return $null
 }
 
-function Restore-Indicator {
+function Restore-StartIndicator {
     param($Info, $SavedState)
-    
-    [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop)
-    [Console]::BackgroundColor = $SavedState.Bg
-    [Console]::ForegroundColor = $SavedState.Fg
-    [Console]::Write($SavedState.Char)
+
+    $drawLeft = if ($Info.ConsoleLeft -gt 0) { $Info.ConsoleLeft - 1 } else { $Info.ConsoleLeft }
+    [Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
+
+    # Restore 2 chars (width of runner)
+    $startIdx = $Info.Cursor - ($Info.ConsoleLeft - $drawLeft)
+    $restoreText = ""
+    for ($i = 0; $i -lt 2; $i++) {
+        $idx = $startIdx + $i
+        if ($idx -ge 0 -and $idx -lt $Info.Line.Length) {
+            $restoreText += $Info.Line[$idx]
+        } else {
+            $restoreText += " "
+        }
+    }
+    [Console]::Write($restoreText)
     [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop)
 }
 
-function Get-CharMatches {
-    param($Line, $Char)
-    
+function Get-Matches {
+    param($Line, $FilterText)
+
+    if ([string]::IsNullOrEmpty($FilterText)) { return @() }
+
     $matches = @()
-    for ($i = 0; $i -lt $Line.Length; $i++) {
-        if ($Line[$i] -eq $Char) {
-            $matches += $i
-        }
+    $index = 0
+    while ($true) {
+        $index = $Line.IndexOf($FilterText, $index, [System.StringComparison]::OrdinalIgnoreCase)
+        if ($index -eq -1) { break }
+        $matches += $index
+        $index++
     }
     return $matches
 }
 
-function Get-ColorMap {
-    return @(
-        @{ Key = 'g'; Color = "42"; Label = "Green" }
-        @{ Key = 'w'; Color = "47"; Label = "White" }
-        @{ Key = 'r'; Color = "41"; Label = "Red" }
-        @{ Key = 'b'; Color = "44"; Label = "Blue" }
-        @{ Key = 'c'; Color = "46"; Label = "Cyan" }
-        @{ Key = 'y'; Color = "43"; Label = "Yellow" }
-        @{ Key = 'm'; Color = "45"; Label = "Magenta" }
-    )
+function Get-JumpCodes {
+    param($Count, $Charset)
+
+    $codes = @()
+    $charsetLen = $Charset.Count
+
+    if ($Count -le $charsetLen) {
+        # Single char codes
+        for ($i = 0; $i -lt $Count; $i++) {
+            $codes += $Charset[$i]
+        }
+    }
+    else {
+        # Multi-char codes (2 chars)
+        # We need roughly Sqrt(Count) chars for first position if we want balanced tree,
+        # or we just iterate.
+        # Simple strategy: Use all combinations aa, ab, ac...
+        # If Count > N*N, we might need 3 chars, but let's stick to 2 for now or fallback.
+
+        $idx = 0
+        foreach ($c1 in $Charset) {
+            foreach ($c2 in $Charset) {
+                if ($idx -ge $Count) { break }
+                $codes += "$c1$c2"
+                $idx++
+            }
+            if ($idx -ge $Count) { break }
+        }
+    }
+    return $codes
 }
 
+function Get-AnsiColor {
+    param($Name, $IsBg = $false)
+
+    $code = 0
+    $isBright = $false
+
+    switch ($Name) {
+        'Black' { $code = 0 }
+        'Red' { $code = 1 }
+        'Green' { $code = 2 }
+        'Yellow' { $code = 3 }
+        'Blue' { $code = 4 }
+        'Magenta' { $code = 5 }
+        'Cyan' { $code = 6 }
+        'White' { $code = 7 }
+
+        # Extended/Special mappings
+        'Gray' { $code = 0; $isBright = $true } # Bright Black
+        'DarkGray' { $code = 0; $isBright = $true }
+        'DarkCyan' { $code = 6 }
+
+        Default { $code = 7 }
+    }
+
+    $base = if ($IsBg) { 40 } else { 30 }
+    if ($isBright) { $base += 60 }
+
+    return "$($base + $code)"
+}
 function Draw-Overlay {
-    param($Info, $Matches, $ColorMap)
-    
-    $overlayParts = @()
-    $lastIndex = 0
-    $matchIndex = 0
+    param($Info, $Matches, $Codes, $FilterText, $Config)
 
+    # Reconstruct the line with visual indicators
+
+    $esc = [char]0x1b
+    $reset = "${esc}[0m"
+
+    # Pre-calculate ANSI codes
+    $bg1 = $Config.OneCharBackgroundColor
+    $bg2 = $Config.MoreThanOneCharBackgroundColor
+    $bgTyped = $Config.UserTypedTextBackgroundColor
+    $bgNext = $Config.NextTypeableCharBackgroundColor
+    $fgInd = $Config.IndicatorFgColor
+
+    # We need to map linear index to (Left, Top)
+    $GetPos = { param($idx)
+        $offset = Get-VisualOffset -Line $Info.Line -Index $idx -StartLeft $Info.StartLeft -BufferWidth ([Console]::BufferWidth) -ContinuationPromptWidth $Info.ContinuationPromptWidth
+        return @{ X = $offset.X; Y = $Info.StartTop + $offset.Y }
+    }
+
+    $filterLen = $FilterText.Length
+
+    # 1. Draw Backgrounds (Filter + Next)
     foreach ($idx in $Matches) {
-        if ($idx -gt $lastIndex) {
-            $overlayParts += $Info.Line.Substring($lastIndex, $idx - $lastIndex)
+        $pos = &$GetPos $idx
+
+        # Draw Filtered Text
+        if ($filterLen -gt 0) {
+            $txt = $Info.Line.Substring($idx, $filterLen)
+            # Using Underline (4)
+            $ansi = "${esc}[4m$txt$reset"
+            [Console]::SetCursorPosition($pos.X, $pos.Y)
+            [Console]::Write($ansi)
         }
-        
-        if ($matchIndex -lt $ColorMap.Count) {
-            $map = $ColorMap[$matchIndex]
-            $esc = [char]0x1b
-            $coloredChar = "$esc[$($map.Color)m$($Info.Line[$idx])$esc[0m"
-            $overlayParts += $coloredChar
-        } else {
-            $overlayParts += $Info.Line[$idx]
+
+        # Draw Next Char
+        $nextIdx = $idx + $filterLen
+        if ($nextIdx -lt $Info.Line.Length) {
+            $nextPos = &$GetPos $nextIdx
+            $nextChar = $Info.Line[$nextIdx]
+            # Using Italics (3)
+            $ansi = "${esc}[3m$nextChar$reset"
+            [Console]::SetCursorPosition($nextPos.X, $nextPos.Y)
+            [Console]::Write($ansi)
         }
-        
-        $lastIndex = $idx + 1
-        $matchIndex++
-    }
-    
-    if ($lastIndex -lt $Info.Line.Length) {
-        $overlayParts += $Info.Line.Substring($lastIndex)
     }
 
-    $overlayString = $overlayParts -join ""
-    
-    [Console]::SetCursorPosition($Info.StartLeft, $Info.StartTop)
-    [Console]::Write($overlayString)
+    # 2. Draw Codes (On top)
+    for ($i = 0; $i -lt $Matches.Count; $i++) {
+        $idx = $Matches[$i]
+        $code = $Codes[$i]
+        $pos = &$GetPos $idx
+
+        $bg = if ($code.Length -gt 1) { "44" } else { "43" } # Blue (44) or Yellow (43)
+        $ansi = "${esc}[$($bg)m${esc}[30m$code$reset"
+
+        [Console]::SetCursorPosition($pos.X, $pos.Y)
+        [Console]::Write($ansi)
+    }
 }
 
 function Restore-Visuals {
     param($Info)
-    
-    # Force PSReadLine to refresh. 
-    # Logic requires cursor to be at the correct calculated physical position for the current buffer cursor.
-    
-    $line = $null
-    $cursor = $null
-    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
 
-    $finalLeft = $Info.StartLeft + $cursor
-    $finalTop = $Info.StartTop
-    
-    while ($finalLeft -ge [Console]::BufferWidth) {
-        $finalLeft -= [Console]::BufferWidth
-        $finalTop++
+    # 1. Clear overlays by overwriting with original plain text
+    $currentLeft = [Console]::CursorLeft
+    $currentTop = [Console]::CursorTop
+
+    $lines = $Info.Line -split "`n", -1
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($i -eq 0) {
+            [Console]::SetCursorPosition($Info.StartLeft, $Info.StartTop)
+        } else {
+            $y = [Console]::CursorTop
+            if ([Console]::CursorLeft -gt 0 -or $lines[$i-1].Length -eq 0) { $y++ }
+            [Console]::SetCursorPosition($Info.ContinuationPromptWidth, $y)
+        }
+        [Console]::Write($lines[$i])
     }
 
-    [Console]::SetCursorPosition($finalLeft, $finalTop)
+    # 2. Restore cursor and force PSReadLine to refresh (restore syntax highlighting)
+    [Console]::SetCursorPosition($currentLeft, $currentTop)
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert("")
 }
 
@@ -170,49 +306,100 @@ function Invoke-MetaJump {
     param()
 
     $info = Get-BufferInfo
+    $config = Get-MetaJumpConfig
+
+    if ([string]::IsNullOrEmpty($info.Line)) { return }
+
     $cursorVisible = [Console]::CursorVisible
     [Console]::CursorVisible = $false
-    
+
     try {
-        # 1. Show Visual Cues
-        $tooltipTop = $info.ConsoleTop + 1
-        $tooltipLen = Show-Tooltip -Top $tooltipTop
-        $indicatorState = Show-Indicator -Info $info
-        
-        # 2. Read Target
-        $targetKey = [Console]::ReadKey($true)
-        
-        # 3. Cleanup Immediate Visuals
-        Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
-        Restore-Indicator -Info $info -SavedState $indicatorState
-        
-        if ($targetKey.Key -eq 'Escape') { return }
-        
-        $targetChar = $targetKey.KeyChar
-        
-        # 4. Find Matches
-        $matches = Get-CharMatches -Line $info.Line -Char $targetChar
-        if ($matches.Count -eq 0) { return }
-        
-        # 5. Draw Overlay
-        $colorMap = Get-ColorMap
-        Draw-Overlay -Info $info -Matches $matches -ColorMap $colorMap
-        
-        # 6. Select Jump Target
-        $selectionKey = [Console]::ReadKey($true)
-        if ($selectionKey.Key -eq 'Escape') { return }
-        
-        $selectedMatchIndex = -1
-        for ($k = 0; $k -lt $colorMap.Count; $k++) {
-            if ("$($colorMap[$k].Key)" -eq "$($selectionKey.KeyChar)") {
-                $selectedMatchIndex = $k
-                break
-            }
+        # 1. Init & Visuals, First Input (Target)
+        try {
+            $endOffset = Get-VisualOffset -Line $info.Line -Index $info.Line.Length -StartLeft $info.StartLeft -BufferWidth ([Console]::BufferWidth) -ContinuationPromptWidth $info.ContinuationPromptWidth
+            $tooltipTop = $info.StartTop + $endOffset.Y + 1
+
+            $tooltipLen = Show-Tooltip -Top $tooltipTop -Text $config.TooltipText
+            $startIndicator = Show-StartIndicator -Info $info
+            $key = [Console]::ReadKey($true)
+            if ($key.Key -eq 'Escape') { return }
+        }
+        finally {
+            Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
+            # Restore start indicator before drawing overlay
+            Restore-StartIndicator -Info $info -SavedState $startIndicator
         }
 
-        if ($selectedMatchIndex -ge 0 -and $selectedMatchIndex -lt $matches.Count) {
-            $newCursorPos = $matches[$selectedMatchIndex]
-            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($newCursorPos)
+        $filterText = "$($key.KeyChar)"
+        $currentCodeInput = ""
+
+        # 3. Loop
+        while ($true) {
+            # Clean Slate (Restore Line Text)
+            # We must restore original text to clear previous overlays
+            [Console]::SetCursorPosition($info.StartLeft, $info.StartTop)
+            [Console]::Write($info.Line)
+
+            # Find Matches
+            $matches = Get-Matches -Line $info.Line -FilterText $filterText
+            if ($matches.Count -eq 0) {
+                [Console]::Beep()
+                # Backtrack logic or exit?
+                # If filtered to 0, maybe revert last char?
+                if ($filterText.Length -gt 1) {
+                    $filterText = $filterText.Substring(0, $filterText.Length - 1)
+                    continue
+                }
+                else {
+                    return # Nothing matches start char
+                }
+            }
+
+            # Generate Codes
+            $codes = Get-JumpCodes -Count $matches.Count -Charset $config.CodeChars
+
+            # Draw Overlay
+            Draw-Overlay -Info $info -Matches $matches -Codes $codes -FilterText $filterText -Config $config
+
+            # Wait for Selection / Filter
+            $key = [Console]::ReadKey($true)
+            if ($key.Key -eq 'Escape') { return }
+            $inputChar = $key.KeyChar
+
+            $potentialCode = $currentCodeInput + $inputChar
+
+            # Check for Exact Match
+            $jumpIndex = -1
+            for ($i = 0; $i -lt $codes.Count; $i++) {
+                if ($codes[$i] -eq $potentialCode) {
+                    $jumpIndex = $matches[$i]
+                    break
+                }
+            }
+
+            if ($jumpIndex -ne -1) {
+                # Jump!
+                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($jumpIndex)
+                return
+            }
+
+            # Check for Partial Match
+            $isPartial = $false
+            foreach ($c in $codes) {
+                if ($c.StartsWith($potentialCode)) {
+                    $isPartial = $true
+                    break
+                }
+            }
+
+            if ($isPartial) {
+                $currentCodeInput = $potentialCode
+                continue # Wait for next char to complete code
+            }
+
+            # Not a code match (full or partial) -> Treat as filter
+            $currentCodeInput = "" # Reset partial code
+            $filterText += $inputChar
         }
     }
     finally {
@@ -220,5 +407,3 @@ function Invoke-MetaJump {
         Restore-Visuals -Info $info
     }
 }
-
-Export-ModuleMember -Function Invoke-MetaJump
