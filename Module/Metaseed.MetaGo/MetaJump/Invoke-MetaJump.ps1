@@ -5,11 +5,11 @@ using namespace System.Collections.Generic
 
 # Configuration
 $MetaJumpConfig = @{
-        CodeChars                       = "f,j,d,k,s,l,a,g,h,q,w,e,r,t,y,u,i,o,p,z,x,c,v,b,n,m" -split ',' | ForEach-Object { $_.Trim() }
-        OneCharBackgroundColor          = "Yellow"
-        MoreThanOneCharBackgroundColor  = "Blue"
-        TooltipText                     = "Jump: type target char..."
-    }
+    CodeChars                      = "f,j,d,k,s,l,a,g,h,q,w,e,r,t,y,u,i,o,p,z,x,c,v,b,n,m" -split ',' | ForEach-Object { $_.Trim() }
+    OneCharBackgroundColor         = "Yellow"
+    MoreThanOneCharBackgroundColor = "Blue"
+    TooltipText                    = "Jump: type target char..."
+}
 
 
 function Get-VisualOffset {
@@ -35,6 +35,8 @@ function Get-VisualOffset {
             }
         }
     }
+    # x: 0-based, from left of console include continuation prompt for seconde line and after
+    # y: 0-based, from top of buffer
     return @{ X = $x; Y = $y }
 }
 
@@ -46,7 +48,7 @@ function Get-BufferInfo {
 
     $consoleLeft = [Console]::CursorLeft
     $consoleTop = [Console]::CursorTop
-    $bufferWidth = [Console]::BufferWidth
+    $bufferWidth = [Console]::BufferWidth # window width in chars
     $continuationPromptWidth = (Get-PSReadLineOption).ContinuationPrompt.Length
 
     # Check for newlines before cursor
@@ -72,13 +74,14 @@ function Get-BufferInfo {
     }
 
     return @{
-        Line        = $line
-        Cursor      = $cursor
-        ConsoleLeft = $consoleLeft
-        ConsoleTop  = $consoleTop
-        StartLeft   = $startLeft
-        StartTop    = $startTop
-        ContinuationPromptWidth = $continuationPromptWidth
+        Line                    = $line # line text include '\n'
+        Cursor                  = $cursor # cursor x position in the whole text, 0-based
+        ConsoleLeft             = $consoleLeft # cursor x position in console 0-based
+        ConsoleTop              = $consoleTop # cursor y position in console 0-based
+        ConsoleWidth            = $bufferWidth # window width in chars, always same if window is not resized
+        StartLeft               = $startLeft # the buffer's fist line's x position, 0-based
+        StartTop                = $startTop # the buffer's fist line's y position, 0-based
+        ContinuationPromptWidth = $continuationPromptWidth # width of '>> ' be default
     }
 }
 
@@ -130,54 +133,55 @@ function Get-JumpCodes {
     return $codes
 }
 enum ForegroundColorAnsi {
-  Black = 30 # 0x1E 0b0001 1110
-  Red = 31
-  Green = 32
-  Yellow = 33
-  Blue = 34
-  Magenta = 35
-  Cyan = 36
-  LightGray = 37
-  #38: forground for 8 or 256bits
+    Black = 30 # 0x1E 0b0001 1110
+    Red = 31
+    Green = 32
+    Yellow = 33
+    Blue = 34
+    Magenta = 35
+    Cyan = 36
+    LightGray = 37
+    #38: forground for 8 or 256bits
 
-  DarkGray = 90 # 0x5A 0b0101 1010
-  LightRed = 91
-  LightGreen = 92
-  LightYellow = 93
-  LightBlue = 94
-  LightMagenta = 95
-  LightCyan = 96
-  White = 97
+    DarkGray = 90 # 0x5A 0b0101 1010
+    LightRed = 91
+    LightGreen = 92
+    LightYellow = 93
+    LightBlue = 94
+    LightMagenta = 95
+    LightCyan = 96
+    White = 97
 }
 
 # for 16colors
 enum BackgroundColorAnsi {
-  Black = 40 # 0x28 0b0010 1000
-  Red = 41 # 0x29 0b0010 1001
-  Green = 42
-  Yellow = 43
-  Blue = 44
-  Magenta = 45
-  Cyan = 46
-  LightGray = 47
-  #48: backround for 8 or 256bits;folowwing parameters give details; 2: 256bits; 5: 8bits;
+    Black = 40 # 0x28 0b0010 1000
+    Red = 41 # 0x29 0b0010 1001
+    Green = 42
+    Yellow = 43
+    Blue = 44
+    Magenta = 45
+    Cyan = 46
+    LightGray = 47
+    #48: backround for 8 or 256bits;folowwing parameters give details; 2: 256bits; 5: 8bits;
 
-  DarkGray = 100 # 0x64 0b0110 1000
-  LightRed = 101 # 0x65 0b0110 1001
-  LightGreen = 102
-  LightYellow = 103
-  LightBlue = 104
-  LightMagenta = 105
-  LightCyan = 106
-  White = 107
+    DarkGray = 100 # 0x64 0b0110 1000
+    LightRed = 101 # 0x65 0b0110 1001
+    LightGreen = 102
+    LightYellow = 103
+    LightBlue = 104
+    LightMagenta = 105
+    LightCyan = 106
+    White = 107
 }
 function Get-AnsiColor {
     param($Name, $IsBg = $false)
 
     if ($IsBg) {
-        return [BackgroundColorAnsi]$Name
-    } else {
-        return [ForegroundColorAnsi]$Name
+        return [int][BackgroundColorAnsi]$Name
+    }
+    else {
+        return [int][ForegroundColorAnsi]$Name
     }
 }
 function Draw-Overlay {
@@ -189,11 +193,15 @@ function Draw-Overlay {
 
     # Pre-calculate ANSI codes
     $bg1 = $Config.OneCharBackgroundColor
+    $bg1Color = Get-AnsiColor -Name $bg1 -IsBg $true
     $bg2 = $Config.MoreThanOneCharBackgroundColor
+    $bg2Color = Get-AnsiColor -Name $bg2 -IsBg $true
 
     # We need to map linear index to (Left, Top)
-    $GetPos = { param($idx)
-        $offset = Get-VisualOffset -Line $Info.Line -Index $idx -StartLeft $Info.StartLeft -BufferWidth ([Console]::BufferWidth) -ContinuationPromptWidth $Info.ContinuationPromptWidth
+    $GetPos = {
+        param($idx)
+
+        $offset = Get-VisualOffset -Line $Info.Line -Index $idx -StartLeft $Info.StartLeft -BufferWidth  $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
         return @{ X = $offset.X; Y = $Info.StartTop + $offset.Y }
     }
 
@@ -230,42 +238,50 @@ function Draw-Overlay {
         $code = $Codes[$i]
         $pos = &$GetPos $idx
 
-        $bg = if ($code.Length -gt 1) { "44" } else { "43" } # Blue (44) or Yellow (43)
+        $bg = if ($code.Length -gt 1) { $bg2Color } else { $bg1Color }
         $ansi = "${esc}[$($bg)m${esc}[30m$code$reset"
 
         [Console]::SetCursorPosition($pos.X, $pos.Y)
         [Console]::Write($ansi)
     }
+
 }
 
-function Restore-Visuals {
+function Write-BufferText {
     param($Info)
-
-    # 1. Clear overlays by overwriting with original plain text
-    $currentLeft = [Console]::CursorLeft
-    $currentTop = [Console]::CursorTop
-
-    $lines = $Info.Line -split "`n", -1
+    # Handle CRLF: remove CR so it doesn't mess up cursor position logic
+    $lines = ($Info.Line -replace "`r", "") -split "`n"
+    # $dbg = @{ContinueWidth=$Info.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
     for ($i = 0; $i -lt $lines.Count; $i++) {
         if ($i -eq 0) {
             [Console]::SetCursorPosition($Info.StartLeft, $Info.StartTop)
-        } else {
-            $y = [Console]::CursorTop
-            if ([Console]::CursorLeft -gt 0 -or $lines[$i-1].Length -eq 0) { $y++ }
-            [Console]::SetCursorPosition($Info.ContinuationPromptWidth, $y)
+            # $dbg.Line += "${Info.StartLeft}:${Info.StartTop}, "
         }
+        else {
+            $y = [Console]::CursorTop
+            if ([Console]::CursorLeft -gt 0 -or $lines[$i - 1].Length -eq 0) { $y++ }
+            [Console]::SetCursorPosition($Info.ContinuationPromptWidth, $y)
+            # $dbg.Line += "${Info.ContinuationPromptWidth}:$y}, "
+        }
+        # $dbg.Line += $lines[$i]
+        # $dbg.Line+= "`n"
         [Console]::Write($lines[$i])
     }
-
-    # 2. Restore cursor and force PSReadLine to refresh (restore syntax highlighting)
-    [Console]::SetCursorPosition($currentLeft, $currentTop)
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("")
+    # Show-ObjAsTooltip -Info $Info -Obj $dbg
 }
 
-function Get-TargetChar {
+function Show-ObjAsTooltip{
+    param($Info, $Obj)
+    $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
+    $tooltipTop = $Info.StartTop + $endOffset.Y + 1
+    $tooltipLen = Show-Tooltip -Top $tooltipTop -Text ($Obj | ConvertTo-Json -Compress)
+    return $tooltipLen
+}
+
+function Get-InitTargetChar {
     param($Info, $Config)
 
-    $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth ([Console]::BufferWidth) -ContinuationPromptWidth $Info.ContinuationPromptWidth
+    $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
     $tooltipTop = $Info.StartTop + $endOffset.Y + 1
 
     try {
@@ -285,8 +301,20 @@ function Reset-View {
     param($Info)
     # Clean Slate (Restore Line Text)
     # We must restore original text to clear previous overlays
-    [Console]::SetCursorPosition($Info.StartLeft, $Info.StartTop)
-    [Console]::Write($Info.Line)
+    Write-BufferText -Info $Info
+}
+function Restore-Visuals {
+    param($Info)
+
+    # 1. Clear overlays by overwriting with original plain text
+    $currentLeft = [Console]::CursorLeft
+    $currentTop = [Console]::CursorTop
+
+    Write-BufferText -Info $Info
+
+    # 2. Restore cursor and force PSReadLine to refresh (restore syntax highlighting)
+    [Console]::SetCursorPosition($currentLeft, $currentTop)
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("")
 }
 
 function Get-ExactMatchIndex {
@@ -379,7 +407,7 @@ function Invoke-MetaJump {
 
     try {
         # 1. Init & Visuals, First Input (Target)
-        $key = Get-TargetChar -Info $info -Config $MetaJumpConfig
+        $key = Get-InitTargetChar -Info $info -Config $MetaJumpConfig
         if ($null -eq $key -or $key.Key -eq 'Escape') { return }
 
         Invoke-JumpLoop -Info $info -InitialChar $key.KeyChar -Config $MetaJumpConfig

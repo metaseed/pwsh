@@ -13,6 +13,7 @@ function Show-Tooltip {
     return $Text.Length
 }
 
+
 function Clear-Tooltip {
     param($Top, $Length)
 
