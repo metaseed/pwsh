@@ -32,9 +32,6 @@ Set-PSReadLineKeyHandler -Chord 'Alt+.' -ScriptBlock {
     *   *Note:* If your input matches the start of a jump code, it is treated as a code input. If it doesn't match any code, it is treated as a filter input.
 5.  **Exit:** Press `Esc` to cancel at any time.
 
-## Configuration
-*Currently, configuration (colors, keys) is defined internally in `Get-MetaJumpConfig`. You must edit the `.psm1` file directly to change these.*
-
 ## Visuals
 *   **Target Matches:** Cyan Background.
 *   **Next Char (Guide):** Underlined.

@@ -39,11 +39,6 @@ If `Get-JumpCodes` returns a code like "ab", the user types 'a'.
 *   'a' is then added to `$filterText`, treating it as a filter refinement rather than the first half of a jump code.
 *   **Fix Required:** Implement a state machine to track "partial code match" vs "filter input".
 
-#### B. Configuration
-The configuration is hardcoded in `Get-MetaJumpConfig` inside the `.psm1` file.
-*   *Issue:* Users cannot change colors or charset without editing source code.
-*   *Recommendation:* Allow passing config as parameters or reading from a global/module variable.
-
 #### C. ANSI Color Mapping
 The `Get-AnsiColor` function and `Draw-Overlay` have hardcoded ANSI values (e.g., "46" for DarkCyan, "100" for Gray) that might not match the textual configuration names perfectly or support all terminals.
 
