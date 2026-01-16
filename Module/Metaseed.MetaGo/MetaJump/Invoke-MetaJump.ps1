@@ -250,6 +250,8 @@ function Draw-Overlay {
 function Write-BufferText {
     param($Info)
     # Handle CRLF: remove CR so it doesn't mess up cursor position logic
+    ## NOTE: we should not add -1 to -split like below, otherwise we only return 1 element in $lines
+    # $lines = ($Info.Line -replace "`r", "") -split "`n" , -1
     $lines = ($Info.Line -replace "`r", "") -split "`n"
     # $dbg = @{ContinueWidth=$Info.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
     for ($i = 0; $i -lt $lines.Count; $i++) {
