@@ -193,7 +193,7 @@ function Get-AnsiColor {
     return "$($base + $code)"
 }
 function Draw-Overlay {
-    param($Info, $Matches, $Codes, $FilterText)
+    param($Info, $Matches, $Codes, $FilterText, $Config)
 
     # Reconstruct the line with visual indicators
 
@@ -201,8 +201,8 @@ function Draw-Overlay {
     $reset = "${esc}[0m"
 
     # Pre-calculate ANSI codes
-    $bg1 = $MetaJumpConfig.OneCharBackgroundColor
-    $bg2 = $MetaJumpConfig.MoreThanOneCharBackgroundColor
+    $bg1 = $Config.OneCharBackgroundColor
+    $bg2 = $Config.MoreThanOneCharBackgroundColor
 
     # We need to map linear index to (Left, Top)
     $GetPos = { param($idx)
@@ -275,6 +275,110 @@ function Restore-Visuals {
     [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
 
+function Get-TargetChar {
+    param($Info, $Config)
+
+    $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth ([Console]::BufferWidth) -ContinuationPromptWidth $Info.ContinuationPromptWidth
+    $tooltipTop = $Info.StartTop + $endOffset.Y + 1
+
+    try {
+        $tooltipLen = Show-Tooltip -Top $tooltipTop -Text $Config.TooltipText
+        $startIndicator = Show-StartIndicator -Info $Info
+        $key = [Console]::ReadKey($true)
+    }
+    finally {
+        Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
+        # Restore start indicator before drawing overlay
+        Restore-StartIndicator -Info $Info -SavedState $startIndicator
+    }
+    return $key
+}
+
+function Reset-View {
+    param($Info)
+    # Clean Slate (Restore Line Text)
+    # We must restore original text to clear previous overlays
+    [Console]::SetCursorPosition($Info.StartLeft, $Info.StartTop)
+    [Console]::Write($Info.Line)
+}
+
+function Get-ExactMatchIndex {
+    param($Codes, $Matches, $InputCode)
+    for ($i = 0; $i -lt $Codes.Count; $i++) {
+        if ($Codes[$i] -eq $InputCode) {
+            return $Matches[$i]
+        }
+    }
+    return -1
+}
+
+function Test-PartialMatch {
+    param($Codes, $InputCode)
+    foreach ($c in $Codes) {
+        if ($c.StartsWith($InputCode)) {
+            return $true
+        }
+    }
+    return $false
+}
+
+function Invoke-JumpLoop {
+    param($Info, $InitialChar, $Config)
+
+    $filterText = "$($InitialChar)"
+    $currentCodeInput = ""
+
+    while ($true) {
+        Reset-View -Info $Info
+
+        # Find Matches
+        $matches = Get-Matches -Line $Info.Line -FilterText $filterText
+        if ($matches.Count -eq 0) {
+            [Console]::Beep()
+            # Backtrack logic or exit?
+            # If filtered to 0, maybe revert last char?
+            if ($filterText.Length -gt 1) {
+                $filterText = $filterText.Substring(0, $filterText.Length - 1)
+                continue
+            }
+            else {
+                return # Nothing matches start char
+            }
+        }
+
+        # Generate Codes
+        $codes = Get-JumpCodes -Count $matches.Count -Charset $Config.CodeChars
+
+        # Draw Overlay
+        Draw-Overlay -Info $Info -Matches $matches -Codes $codes -FilterText $filterText -Config $Config
+
+        # Wait for Selection / Filter
+        $key = [Console]::ReadKey($true)
+        if ($key.Key -eq 'Escape') { return }
+        $inputChar = $key.KeyChar
+
+        $potentialCode = $currentCodeInput + $inputChar
+
+        # Check for Exact Match
+        $jumpIndex = Get-ExactMatchIndex -Codes $codes -Matches $matches -InputCode $potentialCode
+        if ($jumpIndex -ne -1) {
+            # Jump!
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($jumpIndex)
+            return
+        }
+
+        # Check for Partial Match
+        if (Test-PartialMatch -Codes $codes -InputCode $potentialCode) {
+            $currentCodeInput = $potentialCode
+            continue # Wait for next char to complete code
+        }
+
+        # Not a code match (full or partial) -> Treat as filter
+        $currentCodeInput = "" # Reset partial code
+        $filterText += $inputChar
+    }
+}
+
 function Invoke-MetaJump {
     [CmdletBinding()]
     param()
@@ -288,92 +392,10 @@ function Invoke-MetaJump {
 
     try {
         # 1. Init & Visuals, First Input (Target)
-        try {
-            $endOffset = Get-VisualOffset -Line $info.Line -Index $info.Line.Length -StartLeft $info.StartLeft -BufferWidth ([Console]::BufferWidth) -ContinuationPromptWidth $info.ContinuationPromptWidth
-            $tooltipTop = $info.StartTop + $endOffset.Y + 1
+        $key = Get-TargetChar -Info $info -Config $MetaJumpConfig
+        if ($null -eq $key -or $key.Key -eq 'Escape') { return }
 
-            $tooltipLen = Show-Tooltip -Top $tooltipTop -Text $MetaJumpConfig.TooltipText
-            $startIndicator = Show-StartIndicator -Info $info
-            $key = [Console]::ReadKey($true)
-            if ($key.Key -eq 'Escape') { return }
-        }
-        finally {
-            Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
-            # Restore start indicator before drawing overlay
-            Restore-StartIndicator -Info $info -SavedState $startIndicator
-        }
-
-        $filterText = "$($key.KeyChar)"
-        $currentCodeInput = ""
-
-        # 3. Loop
-        while ($true) {
-            # Clean Slate (Restore Line Text)
-            # We must restore original text to clear previous overlays
-            [Console]::SetCursorPosition($info.StartLeft, $info.StartTop)
-            [Console]::Write($info.Line)
-
-            # Find Matches
-            $matches = Get-Matches -Line $info.Line -FilterText $filterText
-            if ($matches.Count -eq 0) {
-                [Console]::Beep()
-                # Backtrack logic or exit?
-                # If filtered to 0, maybe revert last char?
-                if ($filterText.Length -gt 1) {
-                    $filterText = $filterText.Substring(0, $filterText.Length - 1)
-                    continue
-                }
-                else {
-                    return # Nothing matches start char
-                }
-            }
-
-            # Generate Codes
-            $codes = Get-JumpCodes -Count $matches.Count -Charset $MetaJumpConfig.CodeChars
-
-            # Draw Overlay
-            Draw-Overlay -Info $info -Matches $matches -Codes $codes -FilterText $filterText -Config $MetaJumpConfig
-
-            # Wait for Selection / Filter
-            $key = [Console]::ReadKey($true)
-            if ($key.Key -eq 'Escape') { return }
-            $inputChar = $key.KeyChar
-
-            $potentialCode = $currentCodeInput + $inputChar
-
-            # Check for Exact Match
-            $jumpIndex = -1
-            for ($i = 0; $i -lt $codes.Count; $i++) {
-                if ($codes[$i] -eq $potentialCode) {
-                    $jumpIndex = $matches[$i]
-                    break
-                }
-            }
-
-            if ($jumpIndex -ne -1) {
-                # Jump!
-                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($jumpIndex)
-                return
-            }
-
-            # Check for Partial Match
-            $isPartial = $false
-            foreach ($c in $codes) {
-                if ($c.StartsWith($potentialCode)) {
-                    $isPartial = $true
-                    break
-                }
-            }
-
-            if ($isPartial) {
-                $currentCodeInput = $potentialCode
-                continue # Wait for next char to complete code
-            }
-
-            # Not a code match (full or partial) -> Treat as filter
-            $currentCodeInput = "" # Reset partial code
-            $filterText += $inputChar
-        }
+        Invoke-JumpLoop -Info $info -InitialChar $key.KeyChar -Config $MetaJumpConfig
     }
     finally {
         [Console]::CursorVisible = $cursorVisible
