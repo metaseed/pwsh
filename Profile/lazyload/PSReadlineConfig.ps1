@@ -174,7 +174,7 @@ Set-PSReadLineKeyHandler -Key Alt+j `
     [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
 
-Set-PSReadLineKeyHandler -Key Alt+d `
+Set-PSReadLineKeyHandler -Key Alt+. `
     -BriefDescription jump `
     -LongDescription "cursor jump in the current command line" `
     -ScriptBlock {
