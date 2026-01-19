@@ -5,10 +5,13 @@ using namespace System.Collections.Generic
 
 # Configuration
 $MetaJumpConfig = @{
-    CodeChars                      = "f,j,d,k,s,l,a,g,h,q,w,e,r,t,y,u,i,o,p,z,x,c,v,b,n,m" -split ',' | ForEach-Object { $_.Trim() }
-    OneCharBackgroundColor         = "Yellow"
-    MoreThanOneCharBackgroundColor = "Blue"
-    TooltipText                    = "Jump: type target char..."
+    CodeChars            = "k, j, d, f, l, s, a, h, g, i, o, n, u, r, v, c, w, e, x, m, b, p, q, t, y, z" -split ',' | ForEach-Object { $_.Trim() }
+    # only appears as one char decoration codes
+    AdditionalSingleCodeChars = "J,D,F,L,A,H,G,I,N,R,E,M,B,Q,T,Y, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0" -split ',' | ForEach-Object { $_.Trim() }
+    # bgColors for one-length code, two-length code, 3-length code, ect..
+    # if the code length is larger than the array length, the last color is used
+    CodeBackgroundColors = @("Yellow", "Blue", "Cyan", "Magenta")
+    TooltipText          = "Jump: type target char..."
 }
 
 
@@ -84,7 +87,7 @@ function Get-BufferInfo {
         ContinuationPromptWidth = $continuationPromptWidth # width of '>> ' be default
     }
 }
-
+# returns array of match start indexes, 0-based
 function Get-Matches {
     param($Line, $FilterText)
 
@@ -100,38 +103,7 @@ function Get-Matches {
     }
     return $matches
 }
-
-function Get-JumpCodes {
-    param($Count, $Charset)
-
-    $codes = @()
-    $charsetLen = $Charset.Count
-
-    if ($Count -le $charsetLen) {
-        # Single char codes
-        for ($i = 0; $i -lt $Count; $i++) {
-            $codes += $Charset[$i]
-        }
-    }
-    else {
-        # Multi-char codes (2 chars)
-        # We need roughly Sqrt(Count) chars for first position if we want balanced tree,
-        # or we just iterate.
-        # Simple strategy: Use all combinations aa, ab, ac...
-        # If Count > N*N, we might need 3 chars, but let's stick to 2 for now or fallback.
-
-        $idx = 0
-        foreach ($c1 in $Charset) {
-            foreach ($c2 in $Charset) {
-                if ($idx -ge $Count) { break }
-                $codes += "$c1$c2"
-                $idx++
-            }
-            if ($idx -ge $Count) { break }
-        }
-    }
-    return $codes
-}
+# enter key is used as ripple stopping key, so we don't need to avoid following char conflict for the wave
 enum ForegroundColorAnsi {
     Black = 30 # 0x1E 0b0001 1110
     Red = 31
@@ -192,9 +164,9 @@ function Draw-Overlay {
     $reset = "${esc}[0m"
 
     # Pre-calculate ANSI codes
-    $bg1 = $Config.OneCharBackgroundColor
+    $bg1 = $Config.CodeBackgroundColors[0]
     $bg1Color = Get-AnsiColor -Name $bg1 -IsBg $true
-    $bg2 = $Config.MoreThanOneCharBackgroundColor
+    $bg2 = $Config.CodeBackgroundColors[1]
     $bg2Color = Get-AnsiColor -Name $bg2 -IsBg $true
 
     # We need to map linear index to (Left, Top)
@@ -272,7 +244,7 @@ function Write-BufferText {
     # Show-ObjAsTooltip -Info $Info -Obj $dbg
 }
 
-function Show-ObjAsTooltip{
+function Show-ObjAsTooltip {
     param($Info, $Obj)
     $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
     $tooltipTop = $Info.StartTop + $endOffset.Y + 1
@@ -364,7 +336,7 @@ function Invoke-JumpLoop {
         }
 
         # Generate Codes
-        $codes = Get-JumpCodes -Count $matches.Count -Charset $Config.CodeChars
+        $codes = Get-JumpCodesForWave -Charset $Config.CodeChars -TargetMatchIndexes $matches -BufferText $Info.Line -FilterText $filterText
 
         # Draw Overlay
         Draw-Overlay -Info $Info -Matches $matches -Codes $codes -FilterText $filterText -Config $Config
