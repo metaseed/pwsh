@@ -2,6 +2,18 @@ function Show-Tooltip {
     param($Top, $Text)
 
     if ($Top -ge [Console]::BufferHeight) {
+        try {
+            [Console]::BufferHeight = $Top + 1
+            if ($Top -ge ([Console]::WindowTop + [Console]::WindowHeight)) {
+                [Console]::WindowTop = $Top - [Console]::WindowHeight + 1
+            }
+        }
+        catch {
+            return 0
+        }
+    }
+
+    if ($Top -ge [Console]::BufferHeight) {
         return 0
     }
 

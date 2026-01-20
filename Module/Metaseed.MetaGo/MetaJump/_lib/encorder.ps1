@@ -165,6 +165,11 @@ function Align-CodesAroundCursor {
 	if($CursorIndex -eq 0) {
 		return $Codes
 	}
+	if($CursorIndex -ge $TargetMatchIndexes[-1]) {
+		# reverse the codes
+		$newCodes = $Codes[($Codes.Count - 1)..0]
+		return $newCodes
+	}
 
 	$newCodes = [string[]]::new($Codes.Count)
 	# find the index in TargetMatchIndexes of the first match that is after the cursor
