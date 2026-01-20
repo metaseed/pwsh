@@ -268,7 +268,7 @@ function Get-TargetChar {
     }
     finally {
         if ($toolTip) {
-            Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
+            Clear-Tooltip -Top $tooltipTop
         }
         if ($icon) {
             # Restore start indicator before drawing overlay
