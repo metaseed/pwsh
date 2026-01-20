@@ -217,6 +217,7 @@ function Write-BufferText {
     # $lines = ($BufferInfo.Line -replace "`r", "") -split "`n" , -1
     $lines = ($BufferInfo.Line -replace "`r", "") -split "`n"
     # $dbg = @{ContinueWidth=$BufferInfo.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
+    $esc = [char]0x1b
     for ($i = 0; $i -lt $lines.Count; $i++) {
         if ($i -eq 0) {
             [Console]::SetCursorPosition($BufferInfo.StartLeft, $BufferInfo.StartTop)
@@ -230,7 +231,9 @@ function Write-BufferText {
         }
         # $dbg.Line += $lines[$i]
         # $dbg.Line+= "`n"
-        [Console]::Write($lines[$i])
+        # if the code is show outiside the end of line, i.e. for multiple char code, how to clear it, the write will not override the virsual
+        # with clear to end of line
+        [Console]::Write($lines[$i] + "$esc[K")
     }
     # Show-ObjAsTooltip -BufferInfo $BufferInfo -Obj $dbg
 }
@@ -456,7 +459,7 @@ function Navigate {
         for ($i = 0; $i -lt $codes.Count; $i++) {
             $c = $codes[$i]
             if ($c.Length -eq 0) {
-                if ($c -eq $keyChar) {
+                if ($c -ceq $keyChar) {
                     $newCodes = @($c)
                     $newTargetMatchIndexes = @($TargetMatchIndexes[$i])
                     break
