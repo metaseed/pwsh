@@ -1,8 +1,10 @@
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
+. $PSScriptRoot\_lib\AnsiUtils.ps1
 . $PSScriptRoot\_lib\Tooltip.ps1
 . $PSScriptRoot\_lib\start-indicator.ps1
-. $PSScriptRoot\_lib\encorder.ps1
+. $PSScriptRoot\_lib\encoder.ps1
+. $PSScriptRoot\_lib\visual.ps1
 
 # Configuration
 $MetaJumpConfig = @{
@@ -93,167 +95,6 @@ function Get-BufferInfo {
 }
 
 # enter key is used as ripple stopping key, so we don't need to avoid following char conflict for the wave
-enum ForegroundColorAnsi {
-    Black = 30 # 0x1E 0b0001 1110
-    Red = 31
-    Green = 32
-    Yellow = 33
-    Blue = 34
-    Magenta = 35
-    Cyan = 36
-    LightGray = 37
-    #38: forground for 8 or 256bits
-
-    DarkGray = 90 # 0x5A 0b0101 1010
-    LightRed = 91
-    LightGreen = 92
-    LightYellow = 93
-    LightBlue = 94
-    LightMagenta = 95
-    LightCyan = 96
-    White = 97
-}
-
-# for 16colors
-enum BackgroundColorAnsi {
-    Black = 40 # 0x28 0b0010 1000
-    Red = 41 # 0x29 0b0010 1001
-    Green = 42
-    Yellow = 43
-    Blue = 44
-    Magenta = 45
-    Cyan = 46
-    LightGray = 47
-    #48: backround for 8 or 256bits;folowwing parameters give details; 2: 256bits; 5: 8bits;
-
-    DarkGray = 100 # 0x64 0b0110 1000
-    LightRed = 101 # 0x65 0b0110 1001
-    LightGreen = 102
-    LightYellow = 103
-    LightBlue = 104
-    LightMagenta = 105
-    LightCyan = 106
-    White = 107
-}
-function Get-AnsiColor {
-    param($Name, $IsBg = $false)
-
-    if ($IsBg) {
-        return [int][BackgroundColorAnsi]$Name
-    }
-    else {
-        return [int][ForegroundColorAnsi]$Name
-    }
-}
-function Draw-Overlay {
-    param($BufferInfo, $Matches, $Codes, $FilterLength, $Config, $isRipple = $true)
-
-    if ( $Matches.Count -eq 0 -or $Codes.Count -eq 0) {
-        return
-    }
-
-    Reset-View -BufferInfo $BufferInfo
-    # Reconstruct the line with visual indicators
-    $esc = [char]0x1b
-    $reset = "${esc}[0m"
-
-    # We need to map linear index to (Left, Top)
-    $GetPos = {
-        param($idx)
-
-        $offset = Get-VisualOffset -Line $BufferInfo.Line -Index $idx -StartLeft $BufferInfo.StartLeft -BufferWidth  $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
-        return @{ X = $offset.X; Y = $BufferInfo.StartTop + $offset.Y }
-    }
-
-    $filterLen = $FilterLength
-
-    # 1. Draw Backgrounds (Filter + Next)
-    foreach ($idx in $Matches) {
-        $pos = &$GetPos $idx
-
-        # Draw Filtered Text
-        if ($filterLen -gt 0) {
-            $txt = $BufferInfo.Line.Substring($idx, $filterLen)
-            # Using Underline (4)
-            $ansi = "${esc}[4m$txt$reset"
-            [Console]::SetCursorPosition($pos.X, $pos.Y)
-            [Console]::Write($ansi)
-        }
-
-        if ($isRipple) {
-            # Draw Next Char
-            $nextIdx = $idx + $filterLen
-            if ($nextIdx -lt $BufferInfo.Line.Length) {
-                $nextPos = &$GetPos $nextIdx
-                $nextChar = $BufferInfo.Line[$nextIdx]
-                # Using Italics (3)
-                $ansi = "${esc}[3m$nextChar$reset"
-                [Console]::SetCursorPosition($nextPos.X, $nextPos.Y)
-                [Console]::Write($ansi)
-            }
-        }
-    }
-
-    # 2. Draw Codes (On top)
-    for ($i = 0; $i -lt $Matches.Count; $i++) {
-        $idx = $Matches[$i]
-        $code = $Codes[$i]
-        $pos = &$GetPos $idx
-
-        # Pre-calculate ANSI codes
-        $bgName = $Config.CodeBackgroundColors[$code.Length - 1] ?? $Config.CodeBackgroundColors[-1]
-        $bgColor = Get-AnsiColor -Name $bgName -IsBg $true
-
-        $ansi = "${esc}[$($bgColor)m${esc}[30m$code$reset" # foreground is black
-        # $ansi = "${esc}[$($bgColor)m$code$reset" # foreground is white
-
-        [Console]::SetCursorPosition($pos.X, $pos.Y)
-        [Console]::Write($ansi)
-    }
-
-}
-
-function Write-BufferText {
-    param($BufferInfo)
-    # Handle CRLF: remove CR so it doesn't mess up cursor position logic
-    ## NOTE: we should not add -1 to -split like below, otherwise we only return 1 element in $lines
-    # $lines = ($BufferInfo.Line -replace "`r", "") -split "`n" , -1
-    $lines = ($BufferInfo.Line -replace "`r", "") -split "`n"
-    # $dbg = @{ContinueWidth=$BufferInfo.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
-    $esc = [char]0x1b
-    for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($i -eq 0) {
-            if ($BufferInfo.StartTop -ge 0) {
-                [Console]::SetCursorPosition($BufferInfo.StartLeft, $BufferInfo.StartTop)
-                # $dbg.Line += "$($BufferInfo.StartLeft):$($BufferInfo.StartTop}, "
-            }
-        }
-        else {
-            $y = [Console]::CursorTop
-            if ([Console]::CursorLeft -gt 0 -or $lines[$i - 1].Length -eq 0) {
-                $y++
-            }
-            if ($y -lt [Console]::BufferHeight) {
-                [Console]::SetCursorPosition($BufferInfo.ContinuationPromptWidth, $y)
-            }
-            # $dbg.Line += "${Info.ContinuationPromptWidth}:$y}, "
-        }
-        # $dbg.Line += $lines[$i]
-        # $dbg.Line+= "`n"
-        # if the code is show outside the end of line, i.e. for multiple char code, how to clear it, the write will not override the virsual
-        # with clear to end of line
-        [Console]::Write($lines[$i] + "$esc[K")
-    }
-    # Show-ObjAsTooltip -BufferInfo $BufferInfo -Obj $dbg
-}
-
-function Show-ObjAsTooltip {
-    param($BufferInfo, $Obj)
-    $endOffset = Get-VisualOffset -Line $BufferInfo.Line -Index $BufferInfo.Line.Length -StartLeft $BufferInfo.StartLeft -BufferWidth $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
-    $tooltipTop = $BufferInfo.StartTop + $endOffset.Y + 1
-    $tooltipLen = Show-Tooltip -Top $tooltipTop -Text ($Obj | ConvertTo-Json -Compress)
-    return $tooltipLen
-}
 
 function Get-TargetChar {
     param($BufferInfo, $icon = "", $toolTip = "")
@@ -282,26 +123,6 @@ function Get-TargetChar {
         }
     }
     return $key
-}
-
-function Reset-View {
-    param($BufferInfo)
-    # Clean Slate (Restore Line Text)
-    # We must restore original text to clear previous overlays
-    Write-BufferText -BufferInfo $BufferInfo
-}
-function Restore-Visuals {
-    param($BufferInfo)
-
-    # 1. Clear overlays by overwriting with original plain text
-    $currentLeft = [Console]::CursorLeft
-    $currentTop = [Console]::CursorTop
-
-    Write-BufferText -BufferInfo $BufferInfo
-
-    # 2. Restore cursor and force PSReadLine to refresh (restore syntax highlighting)
-    [Console]::SetCursorPosition($currentLeft, $currentTop)
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("")
 }
 
 function Get-ExactMatchIndex {
@@ -507,11 +328,10 @@ function Invoke-MetaJump {
     [Console]::CursorVisible = $false
 
     try {
-        $res = Ripple $info $MetaJumpConfig
+        $res = Ripple -BufferInfo $info -Config $MetaJumpConfig
         if ( $res.Count -eq 0) { return } # cancelled
 
-        $initKey = if ($res.Count -ge 4) { $res[3] } else { $null }
-        Navigate $res[0] $res[1] $res[2] $info $MetaJumpConfig $initKey
+        Navigate -TargetMatchIndexes $res[0] -Codes $res[1] -FilterLength $res[2] -BufferInfo $info -Config $MetaJumpConfig -InitialKey $res[3]
     }
     finally {
         [Console]::CursorVisible = $cursorVisible

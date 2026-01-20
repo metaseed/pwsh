@@ -14,7 +14,6 @@ function Show-Tooltip {
     return $Text.Length
 }
 
-
 function Clear-Tooltip {
     param($Top)
 
@@ -23,4 +22,12 @@ function Clear-Tooltip {
         # [Console]::Write(" " * $Length)
         [Console]::Write("`e[K")
     }
+}
+
+function Show-ObjAsTooltip {
+    param($BufferInfo, $Obj)
+    $endOffset = Get-VisualOffset -Line $BufferInfo.Line -Index $BufferInfo.Line.Length -StartLeft $BufferInfo.StartLeft -BufferWidth $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
+    $tooltipTop = $BufferInfo.StartTop + $endOffset.Y + 1
+    $tooltipLen = Show-Tooltip -Top $tooltipTop -Text ($Obj | ConvertTo-Json -Compress)
+    return $tooltipLen
 }
