@@ -1,5 +1,6 @@
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
+
 . $PSScriptRoot\_lib\AnsiUtils.ps1
 . $PSScriptRoot\_lib\Tooltip.ps1
 . $PSScriptRoot\_lib\start-indicator.ps1
@@ -14,7 +15,6 @@ $MetaJumpConfig = @{
     # bgColors for one-length code, two-length code, 3-length code, ect..
     # if the code length is larger than the array length, the last color is used
     CodeBackgroundColors      = @("Yellow", "Blue", "Cyan", "Magenta")
-    TooltipText               = "Jump: type target char..."
 }
 
 
@@ -42,7 +42,7 @@ function Get-VisualOffset {
         }
     }
     # x: 0-based, from left of console include continuation prompt for seconde line and after
-    # y: 0-based, from top of buffer
+    # y: 0-based, from top of input
     return @{ X = $x; Y = $y }
 }
 
@@ -103,7 +103,7 @@ function Get-TargetChar {
         if ($toolTip) {
             $endOffset = Get-VisualOffset -Line $BufferInfo.Line -Index $BufferInfo.Line.Length -StartLeft $BufferInfo.StartLeft -BufferWidth $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
             $tooltipTop = $BufferInfo.StartTop + $endOffset.Y + 1
-            $tooltipLen = Show-Tooltip $tooltipTop  $toolTip
+            Show-Tooltip $tooltipTop  $toolTip
         }
         if ($icon) {
             $startIndicator = Show-StartIndicator $BufferInfo  $icon
@@ -123,16 +123,6 @@ function Get-TargetChar {
         }
     }
     return $key
-}
-
-function Get-ExactMatchIndex {
-    param($Codes, $Matches, $InputCode)
-    for ($i = 0; $i -lt $Codes.Count; $i++) {
-        if ($Codes[$i] -eq $InputCode) {
-            return $Matches[$i]
-        }
-    }
-    return -1
 }
 
 function Test-PartialMatch {
@@ -322,14 +312,19 @@ function Invoke-MetaJump {
 
     $info = Get-BufferInfo
 
-    if ([string]::IsNullOrEmpty($info.Line)) { return }
+    if ([string]::IsNullOrEmpty($info.Line)) {
+        return
+    }
 
     $cursorVisible = [Console]::CursorVisible
     [Console]::CursorVisible = $false
 
     try {
         $res = Ripple -BufferInfo $info -Config $MetaJumpConfig
-        if ( $res.Count -eq 0) { return } # cancelled
+        if ( $res.Count -eq 0) {
+            # cancelled
+            return
+        }
 
         Navigate -TargetMatchIndexes $res[0] -Codes $res[1] -FilterLength $res[2] -BufferInfo $info -Config $MetaJumpConfig -InitialKey $res[3]
     }

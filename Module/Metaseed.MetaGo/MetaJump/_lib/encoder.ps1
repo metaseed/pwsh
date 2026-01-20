@@ -208,14 +208,3 @@ function Align-CodesAroundCursor {
 	}
 	return $newCodes
 }
-
-# $Config = @{
-#     CodeChars                 = "k, j, d, f, l, s, a, h, g, i, o, n, u, r, v, c, w, e, x, m, b, p, q, t, y, z" -split ',' | ForEach-Object { $_.Trim() }
-#     # only appears as one char decoration codes
-#     AdditionalSingleCodeChars = "J,D,F,L,A,H,G,I,N,R,E,M,B,Q,T,Y, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0" -split ',' | ForEach-Object { $_.Trim() }
-#     # bgColors for one-length code, two-length code, 3-length code, ect..
-#     # if the code length is larger than the array length, the last color is used
-#     CodeBackgroundColors      = @("Yellow", "Blue", "Cyan", "Magenta")
-#     TooltipText               = "Jump: type target char..."
-# }
-# Get-JumpCodesForWave $Config.CodeChars
