@@ -143,8 +143,11 @@ function Get-AnsiColor {
     }
 }
 function Draw-Overlay {
-    param($BufferInfo, $Matches, $Codes, $TargetFilterTextLength, $Config, $isRipple = $true)
+    param($BufferInfo, $Matches, $Codes, $FilterLength, $Config, $isRipple = $true)
 
+    if ( $Matches.Count -eq 0 -or $Codes.Count -eq 0) {
+        return
+    }
     # Reconstruct the line with visual indicators
     $esc = [char]0x1b
     $reset = "${esc}[0m"
@@ -157,7 +160,7 @@ function Draw-Overlay {
         return @{ X = $offset.X; Y = $BufferInfo.StartTop + $offset.Y }
     }
 
-    $filterLen = $TargetFilterTextLength
+    $filterLen = $FilterLength
 
     # 1. Draw Backgrounds (Filter + Next)
     foreach ($idx in $Matches) {
@@ -361,14 +364,14 @@ function Ripple {
             $icon = "" # no icon
             $tooltip = "MetaJump: Please type code to jump to or continue typing target chars..."
         }
-# write-host "Ripple: icon='$icon', tooltip='$tooltip', filterText='$filterText', codes='$codes"
+        # write-host "Ripple: icon='$icon', tooltip='$tooltip', filterText='$filterText', codes='$codes"
         $key = Get-TargetChar $BufferInfo  $icon  $tooltip
         if ($key.Key -eq 'Escape') {
             return @()
         }
 
         if (Test-PartialMatch -Codes $codes -InputCode $key.KeyChar) {
-            return @($TargetMatchIndexes, $codes, $filterText.Length)
+            return @($TargetMatchIndexes, $codes, $filterText.Length, $key)
         }
         else {
             # Find Matches
@@ -396,7 +399,7 @@ function Ripple {
         }
 
         # Draw Overlay
-        Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterText $filterText.Length -Config $Config
+        Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterLength $filterText.Length -Config $Config
     }
 }
 
@@ -405,48 +408,57 @@ shrink the codes and when only 1 code and match index available, navigate to tar
 if the typing char is not in the starting chars of any code, warning to let user to type the code on screen or 'Esc' to cancel.
 #>
 function Navigate {
-    param($TargetMatchIndexes,  $codes, $TargetFilterTextLength, $BufferInfo, $Config)
+    param($TargetMatchIndexes, $codes, $FilterLength, $BufferInfo, $Config, $InitialKey)
 
     $guidingInfo = "MetaJump: Type codes to jump to target, or 'Esc' to cancel."
     # info icon
     $icon = "ℹ️"
     $tooltip = $guidingInfo
+    $firstLoop = $true
+
     while ($true) {
-        $key = Get-TargetChar $BufferInfo  $icon  $tooltip
-        if ($key.Key -eq 'Escape') {
-            return @()
+        # check if only one match index and code
+        if ($codes.Count -eq 1 -and $TargetMatchIndexes.Count -eq 1) {
+            # jump to target
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0])
+            return
         }
-        $potentialCode = $key.KeyChar.ToString()
-        if (-not (Test-PartialMatch -Codes $codes -InputCode $potentialCode)) {
-            [Console]::Beep()
-            # no match, warning
-            $icon = "⚠️"
-            $tooltip = "MetaJump: No matches for last character, please type code on screen or 'Esc' to cancel."
-            continue
+        if ($firstLoop -and $InitialKey) {
+            $key = $InitialKey
+            $firstLoop = $false
         }
         else {
-            # shrink codes
-            $newCodes = @()
-            $newTargetMatchIndexes = @()
-            foreach ($c in $codes) {
-                if ($c.StartsWith($potentialCode)) {
-                    $newTargetMatchIndexes += $TargetMatchIndexes[$codes.IndexOf($c)]
-                    $newCodes += $c
-                }
+            $key = Get-TargetChar $BufferInfo $icon $tooltip
+            if ($key.Key -eq 'Escape') {
+                return @()
             }
-            $TargetMatchIndexes = $newTargetMatchIndexes
-            $codes = $newCodes
-            # check if only one match index and code
-            if ($codes.Count -eq 1 -and $TargetMatchIndexes.Count -eq 1) {
-                # jump to target
-                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0])
-                return
+            $potentialCode = $key.KeyChar.ToString()
+            if (-not (Test-PartialMatch -Codes $codes -InputCode $potentialCode)) {
+                [Console]::Beep()
+                # no match, warning
+                $icon = "⚠️"
+                $tooltip = "MetaJump: No matches for last character, please type code on screen or 'Esc' to cancel."
+                continue
             }
-            Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterText $TargetFilterTextLength -Config $Config -isRipple $false
-            # reset info icon
-            $icon = "ℹ️"
-            $tooltip = $guidingInfo
         }
+
+        # shrink codes
+        $newCodes = @()
+        $keyChar = $key.KeyChar.ToString()
+        $newTargetMatchIndexes = @()
+        foreach ($c in $codes) {
+            if ($c.StartsWith($keyChar)) {
+                $newTargetMatchIndexes += $TargetMatchIndexes[$codes.IndexOf($c)]
+                $newCodes += $c
+            }
+        }
+        $TargetMatchIndexes = $newTargetMatchIndexes
+        $codes = $newCodes
+        Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterLength $FilterLength -Config $Config -isRipple $false
+        # reset info icon
+        $icon = "ℹ️"
+        $tooltip = $guidingInfo
+
     }
 }
 
@@ -463,7 +475,10 @@ function Invoke-MetaJump {
 
     try {
         $res = Ripple $info $MetaJumpConfig
-        Navigate $res[0] $res[1] $res[2] $info $MetaJumpConfig
+        if ( $res.Count -eq 0) { return } # cancelled
+
+        $initKey = if ($res.Count -ge 4) { $res[3] } else { $null }
+        Navigate $res[0] $res[1] $res[2] $info $MetaJumpConfig $initKey
     }
     finally {
         [Console]::CursorVisible = $cursorVisible

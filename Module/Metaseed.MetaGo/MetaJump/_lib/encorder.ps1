@@ -1,13 +1,13 @@
 . $PSScriptRoot\foreach-combination.ps1
 
 function Get-UsableFirstDimensionCodeChars {
-	param([string[]]$CodeChars, [string] $BufferText, [int] $TargetTextLength)
+	param([string[]]$CodeChars, [string] $BufferText, [int] $TargetTextLength, [int[]]$TargetMatchIndexes)
 
 	$usableCodeChars = @()
 	foreach ($charCode in $CodeChars) {
 		$keepThisCharCode = $true
 		foreach ($idx in $TargetMatchIndexes) {
-			$nextChar = $BufferText[$idx + $TTargetTextLength] # note str[out of range] returns $null
+			$nextChar = $BufferText[$idx + $TargetTextLength] # note str[out of range] returns $null
 			if ($charCode -eq $nextChar) {
 				$keepThisCharCode = $false
 				break
@@ -119,7 +119,7 @@ function Get-JumpCodesForWave {
 	param([string[]]$CodeChars, [int[]]$TargetMatchIndexes, [string] $BufferText, [int]$TargetTextLength, [string[]]$AdditionalSingleCodeChars = @())
 
 		# usable code chars for the first jump code char, avoid chars that are same as next char after filter
-	$usableCodeCharsOfFirstDim = Get-UsableFirstDimensionCodeChars $CodeChars  $BufferText  $TargetTextLength
+	$usableCodeCharsOfFirstDim = Get-UsableFirstDimensionCodeChars -CodeChars $CodeChars -BufferText $BufferText -TargetTextLength $TargetTextLength -TargetMatchIndexes $TargetMatchIndexes
 
 	if ($usableCodeCharsOfFirstDim.Count -eq 0) {
 		return "please continue ripple-typing, or press 'enter' then navigating. (all code chars used by following chars, no enough code chars)" # cannot avoid next char conflict, return empty, continue doing ripple typing, to avoid confusion with codeSet
