@@ -222,14 +222,18 @@ function Write-BufferText {
     # $dbg = @{ContinueWidth=$BufferInfo.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
     $esc = [char]0x1b
     for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($i -eq 0) {
+        if ($i -eq 0 -and $BufferInfo.StartTop -ge 0) {
             [Console]::SetCursorPosition($BufferInfo.StartLeft, $BufferInfo.StartTop)
             # $dbg.Line += "$($BufferInfo.StartLeft):$($BufferInfo.StartTop}, "
         }
         else {
             $y = [Console]::CursorTop
-            if ([Console]::CursorLeft -gt 0 -or $lines[$i - 1].Length -eq 0) { $y++ }
-            [Console]::SetCursorPosition($BufferInfo.ContinuationPromptWidth, $y)
+            if ([Console]::CursorLeft -gt 0 -or $lines[$i - 1].Length -eq 0) {
+                $y++
+            }
+            if ($y -lt [Console]::BufferHeight) {
+                [Console]::SetCursorPosition($BufferInfo.ContinuationPromptWidth, $y)
+            }
             # $dbg.Line += "${Info.ContinuationPromptWidth}:$y}, "
         }
         # $dbg.Line += $lines[$i]
