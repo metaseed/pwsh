@@ -20,9 +20,9 @@ function Get-UsableFirstDimensionCodeChars {
 	return $usableCodeChars
 }
 
-function Get-JumpCodes{
+function Get-JumpCodes {
 	# the first dimension is special, the shape is [$firstCharCodeSetCount, $commonDimLen, $commonDimLen, ..., $commonDimLen]
-	param([int[]]$TargetMatchIndexes, [string[]]$firstDimCodeChars,[string[]]$commonDimCodeChars, [string[]]$AdditionalSingleCodeChars = @())
+	param([int[]]$TargetMatchIndexes, [string[]]$firstDimCodeChars, [string[]]$commonDimCodeChars, [string[]]$AdditionalSingleCodeChars = @())
 
 	$codes = @()
 	$targetCount = $TargetMatchIndexes.Count;
@@ -54,20 +54,20 @@ function Get-JumpCodes{
 	$lowDimsElementCount = [Math]::Ceiling($firstCharCodeSetCount * [Math]::Pow($commonDimLen, $midDims))
 	# note: but here we should use $firstCharCodeSetCount to replace $commonDimLen when dim is 1. so we do 1 dim handler above specially.
 	$usedInLowDim_Count = [Math]::Ceiling(($remainTargetCount - $lowDimsElementCount) / ($commonDimLen - 1<# high dim's elements growing from every elements of the lower dims#>))
-$global:_MetaJumpDebug.GetJumpCodes = @{
-	TargetMatchIndexes = $TargetMatchIndexes
-	firstDimCodeChars = $firstDimCodeChars
-	dimensions = $dimensions
-	midDims = $midDims
-	lowDimsElementCount = $lowDimsElementCount
-	usedInLowDim_Count = $usedInLowDim_Count
-	firstCharCodeSetCount = $firstCharCodeSetCount
-	commonDimLen = $commonDimLen
-	commonDimCodeChars = $commonDimCodeChars
-	AdditionalSingleCodeChars = $AdditionalSingleCodeChars
-	targetCount = $targetCount
+	# $global:_MetaJumpDebug.GetJumpCodes = @{
+	# 	TargetMatchIndexes = $TargetMatchIndexes
+	# 	firstDimCodeChars = $firstDimCodeChars
+	# 	dimensions = $dimensions
+	# 	midDims = $midDims
+	# 	lowDimsElementCount = $lowDimsElementCount
+	# 	usedInLowDim_Count = $usedInLowDim_Count
+	# 	firstCharCodeSetCount = $firstCharCodeSetCount
+	# 	commonDimLen = $commonDimLen
+	# 	commonDimCodeChars = $commonDimCodeChars
+	# 	AdditionalSingleCodeChars = $AdditionalSingleCodeChars
+	# 	targetCount = $targetCount
 
-}
+	# }
 	function Get-CodeOfFullDimensions {
 		param($skips = 0, $dimensionCount = $dimensions, $totalCodesToGet = $null)
 		if ($totalCodesToGet -le 0) { return @() }
@@ -136,16 +136,72 @@ $global:_MetaJumpDebug.GetJumpCodes = @{
 
 function Get-JumpCodesForWave {
 	# target is filter text
-	param([string[]]$CodeChars, [int[]]$TargetMatchIndexes, [string] $BufferText, [int]$TargetTextLength, [string[]]$AdditionalSingleCodeChars = @())
+	param([string[]]$CodeChars, [int[]]$TargetMatchIndexes, [string] $BufferText, [int]$TargetTextLength, [string[]]$AdditionalSingleCodeChars = @(), [int]$CursorIndex = 0)
 
-		# usable code chars for the first jump code char, avoid chars that are same as next char after filter
+	# usable code chars for the first jump code char, avoid chars that are same as next char after filter
 	$usableCodeCharsOfFirstDim = Get-UsableFirstDimensionCodeChars -CodeChars $CodeChars -BufferText $BufferText -TargetTextLength $TargetTextLength -TargetMatchIndexes $TargetMatchIndexes
 
 	if ($usableCodeCharsOfFirstDim.Count -eq 0) {
-		return "please continue ripple-typing, or press 'enter' then navigating. (all code chars used by following chars, no enough code chars)" # cannot avoid next char conflict, return empty, continue doing ripple typing, to avoid confusion with codeSet
+		throw "please continue ripple-typing, or press 'enter' then navigating. (all code chars used by following chars, no enough code chars)" # cannot avoid next char conflict, return empty, continue doing ripple typing, to avoid confusion with codeSet
 	}
 	$codes = Get-JumpCodes -TargetMatchIndexes $TargetMatchIndexes -firstDimCodeChars $usableCodeCharsOfFirstDim -commonDimCodeChars $CodeChars -AdditionalSingleCodeChars $AdditionalSingleCodeChars
+
+	if ($codes.Count -ne $TargetMatchIndexes.Count) {
+            throw "MetaJump: Code count mismatch:  codes($($codes.Count)) != TargetMatchIndexes($(TargetMatchIndexes.Count))"
+	}
+
+	# align codes around cursor since we have cursor index and targetMatchIndexes
+	$codes = Align-CodesAroundCursor -Codes $codes -TargetMatchIndexes $TargetMatchIndexes -CursorIndex $CursorIndex
+
 	return $codes
+}
+
+function Align-CodesAroundCursor {
+	param (
+		[string[]]$Codes,
+		[int[]]$TargetMatchIndexes,
+		[int]$CursorIndex
+	)
+	if($CursorIndex -eq 0) {
+		return $Codes
+	}
+
+	$newCodes = [string[]]::new($Codes.Count)
+	# find the index in TargetMatchIndexes of the first match that is after the cursor
+	$left = 0
+	for ($i = 0; $i -lt $TargetMatchIndexes.Count; $i++) {
+		if ($TargetMatchIndexes[$i] -gt $CursorIndex) {
+			$left = $i
+			break
+		}
+	}
+	$right = $left + 1
+	$index = 0
+
+	while($left -ge 0 -and $right -lt $TargetMatchIndexes.Count) {
+		$newCodes[$left] = $Codes[$index]
+		$newCodes[$right] = $Codes[$index + 1]
+		$left--;
+		$right++;
+		$index += 2
+	}
+	while ($left -ge 0) {
+		$newCodes[$left] = $Codes[$index]
+		$left--
+		$index++
+	}
+	while ($right -lt $TargetMatchIndexes.Count) {
+		$newCodes[$right] = $Codes[$index]
+		$right++
+		$index++
+	}
+	$global:_MetaJumpDebug.AlignCodesAroundCursor = @{
+		Codes = $Codes
+		TargetMatchIndexes = $TargetMatchIndexes
+		CursorIndex = $CursorIndex
+		NewCodes = $newCodes
+	}
+	return $newCodes
 }
 
 # $Config = @{

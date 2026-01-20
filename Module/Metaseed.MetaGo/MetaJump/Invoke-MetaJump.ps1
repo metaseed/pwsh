@@ -77,7 +77,8 @@ function Get-BufferInfo {
         }
     }
 
-    return @{
+
+    $info = @{
         Line                    = $line # line text include '\n'
         Cursor                  = $cursor # cursor x position in the whole text, 0-based
         ConsoleLeft             = $consoleLeft # cursor x position in console 0-based
@@ -87,6 +88,8 @@ function Get-BufferInfo {
         StartTop                = $startTop # the buffer's fist line's y position, 0-based
         ContinuationPromptWidth = $continuationPromptWidth # width of '>> ' be default
     }
+    # $global:_MetaJumpDebug.GetBufferInfo = $info
+    return $info
 }
 
 # enter key is used as ripple stopping key, so we don't need to avoid following char conflict for the wave
@@ -397,7 +400,7 @@ function Ripple {
 
         # Generate Codes
         try {
-            $codes = Get-JumpCodesForWave -TargetMatchIndexes $TargetMatchIndexes -CodeChars $Config.CodeChars -BufferText $BufferInfo.Line -TargetTextLength $filterText.Length -AdditionalSingleCodeChars $Config.AdditionalSingleCodeChars
+            $codes = Get-JumpCodesForWave -TargetMatchIndexes $TargetMatchIndexes -CodeChars $Config.CodeChars -BufferText $BufferInfo.Line -TargetTextLength $filterText.Length -AdditionalSingleCodeChars $Config.AdditionalSingleCodeChars -CursorIndex $BufferInfo.Cursor
         }
         catch {
             $errorMsg = $_.Exception.Message
@@ -405,9 +408,6 @@ function Ripple {
         }
 
         # Draw Overlay
-        if ($codes.Count -ne $TargetMatchIndexes.Count) {
-            # throw "MetaJump: Code count mismatch: $($codes.Count) != $($TargetMatchIndexes.Count)"
-        }
         # $global:_MetaJumpDebug.Ripple = @($TargetMatchIndexes, $codes, $filterText.Length, $BufferInfo, $Config)
         Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterLength $filterText.Length -Config $Config
     }
