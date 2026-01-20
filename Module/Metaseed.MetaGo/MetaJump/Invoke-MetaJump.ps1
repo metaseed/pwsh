@@ -311,7 +311,7 @@ function Get-ExactMatchIndex {
 function Test-PartialMatch {
     param($Codes, $InputCode)
     foreach ($c in $Codes) {
-        if ($c.StartsWith($InputCode)) {
+        if ("$c".StartsWith($InputCode)) {
             return $true
         }
     }
@@ -484,7 +484,7 @@ function Navigate {
         Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterLength $FilterLength -Config $Config -isRipple $false
         # reset info icon
         $icon = "ℹ️"
-        $tooltip = "" #$guidingInfo
+        $tooltip = $guidingInfo
 
     }
 }
