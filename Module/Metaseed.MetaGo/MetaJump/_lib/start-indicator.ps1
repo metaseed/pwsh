@@ -1,31 +1,32 @@
 function Show-StartIndicator {
-    param($Info)
+	param($Info, [string]$icon = "🏃")
 
-    # the 🏃is 2 char width, so move back 1 char or better ui view
-    $drawLeft = if ($Info.ConsoleLeft -gt 0) { $Info.ConsoleLeft - 1 } else { $Info.ConsoleLeft }
-    [Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
-    [Console]::Write("🏃")
-    [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop) # Restore cursor
-    return $null
+	# the 🏃is 2 char width, so move back 1 char or better ui view
+	$len = $icon.Length
+	$halfLen = [Math]::Floor($len / 2)
+
+	$drawLeft = if ($Info.ConsoleLeft -gt 0) { $Info.ConsoleLeft - $halfLen } else { $Info.ConsoleLeft }
+	[Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
+	[Console]::Write($icon)
+	[Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop) # Restore cursor
+	# write-host "Show-StartIndicator"
+	return $icon.Length
 }
 
 function Restore-StartIndicator {
-    param($Info, $SavedState)
+	param($Info, $len=2) # len is used of the icon
 
-    $drawLeft = if ($Info.ConsoleLeft -gt 0) { $Info.ConsoleLeft - 1 } else { $Info.ConsoleLeft }
-    [Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
+	$drawLeft = $Info.ConsoleLeft
+	$restoreText = $Info.Line[$Info.Cursor..($Info.Cursor + $len - 1)]
 
-    # Restore 2 chars (width of runner)
-    $startIdx = $Info.Cursor - ($Info.ConsoleLeft - $drawLeft)
-    $restoreText = ""
-    for ($i = 0; $i -lt 2; $i++) {
-        $idx = $startIdx + $i
-        if ($idx -ge 0 -and $idx -lt $Info.Line.Length) {
-            $restoreText += $Info.Line[$idx]
-        } else {
-            $restoreText += " "
-        }
-    }
-    [Console]::Write($restoreText)
-    [Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop)
+	if ($Info.ConsoleLeft -gt 0) {
+		$halfLen = [Math]::Floor($len / 2)
+		$drawLeft = $Info.ConsoleLeft - $halfLen
+		$restoreText = $Info.Line[($Info.Cursor - $halfLen)..($Info.Cursor + $len - $halfLen - 1)]
+	}
+	[Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
+
+	# Restore 2 chars (width of runner)
+	[Console]::Write([string]::new($restoreText))
+	[Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop)
 }

@@ -2,16 +2,17 @@ using namespace System.Management.Automation
 using namespace System.Collections.Generic
 . $PSScriptRoot\_lib\Tooltip.ps1
 . $PSScriptRoot\_lib\start-indicator.ps1
+. $PSScriptRoot\_lib\encorder.ps1
 
 # Configuration
 $MetaJumpConfig = @{
-    CodeChars            = "k, j, d, f, l, s, a, h, g, i, o, n, u, r, v, c, w, e, x, m, b, p, q, t, y, z" -split ',' | ForEach-Object { $_.Trim() }
+    CodeChars                 = "k, j, d, f, l, s, a, h, g, i, o, n, u, r, v, c, w, e, x, m, b, p, q, t, y, z" -split ',' | ForEach-Object { $_.Trim() }
     # only appears as one char decoration codes
     AdditionalSingleCodeChars = "J,D,F,L,A,H,G,I,N,R,E,M,B,Q,T,Y, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0" -split ',' | ForEach-Object { $_.Trim() }
     # bgColors for one-length code, two-length code, 3-length code, ect..
     # if the code length is larger than the array length, the last color is used
-    CodeBackgroundColors = @("Yellow", "Blue", "Cyan", "Magenta")
-    TooltipText          = "Jump: type target char..."
+    CodeBackgroundColors      = @("Yellow", "Blue", "Cyan", "Magenta")
+    TooltipText               = "Jump: type target char..."
 }
 
 
@@ -87,22 +88,7 @@ function Get-BufferInfo {
         ContinuationPromptWidth = $continuationPromptWidth # width of '>> ' be default
     }
 }
-# returns array of match start indexes, 0-based
-function Get-Matches {
-    param($Line, $FilterText)
 
-    if ([string]::IsNullOrEmpty($FilterText)) { return @() }
-
-    $matches = @()
-    $index = 0
-    while ($true) {
-        $index = $Line.IndexOf($FilterText, $index, [System.StringComparison]::OrdinalIgnoreCase)
-        if ($index -eq -1) { break }
-        $matches += $index
-        $index++
-    }
-    return $matches
-}
 # enter key is used as ripple stopping key, so we don't need to avoid following char conflict for the wave
 enum ForegroundColorAnsi {
     Black = 30 # 0x1E 0b0001 1110
@@ -157,27 +143,21 @@ function Get-AnsiColor {
     }
 }
 function Draw-Overlay {
-    param($Info, $Matches, $Codes, $FilterText, $Config)
+    param($BufferInfo, $Matches, $Codes, $TargetFilterTextLength, $Config, $isRipple = $true)
 
     # Reconstruct the line with visual indicators
     $esc = [char]0x1b
     $reset = "${esc}[0m"
 
-    # Pre-calculate ANSI codes
-    $bg1 = $Config.CodeBackgroundColors[0]
-    $bg1Color = Get-AnsiColor -Name $bg1 -IsBg $true
-    $bg2 = $Config.CodeBackgroundColors[1]
-    $bg2Color = Get-AnsiColor -Name $bg2 -IsBg $true
-
     # We need to map linear index to (Left, Top)
     $GetPos = {
         param($idx)
 
-        $offset = Get-VisualOffset -Line $Info.Line -Index $idx -StartLeft $Info.StartLeft -BufferWidth  $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
-        return @{ X = $offset.X; Y = $Info.StartTop + $offset.Y }
+        $offset = Get-VisualOffset -Line $BufferInfo.Line -Index $idx -StartLeft $BufferInfo.StartLeft -BufferWidth  $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
+        return @{ X = $offset.X; Y = $BufferInfo.StartTop + $offset.Y }
     }
 
-    $filterLen = $FilterText.Length
+    $filterLen = $TargetFilterTextLength
 
     # 1. Draw Backgrounds (Filter + Next)
     foreach ($idx in $Matches) {
@@ -185,22 +165,24 @@ function Draw-Overlay {
 
         # Draw Filtered Text
         if ($filterLen -gt 0) {
-            $txt = $Info.Line.Substring($idx, $filterLen)
+            $txt = $BufferInfo.Line.Substring($idx, $filterLen)
             # Using Underline (4)
             $ansi = "${esc}[4m$txt$reset"
             [Console]::SetCursorPosition($pos.X, $pos.Y)
             [Console]::Write($ansi)
         }
 
-        # Draw Next Char
-        $nextIdx = $idx + $filterLen
-        if ($nextIdx -lt $Info.Line.Length) {
-            $nextPos = &$GetPos $nextIdx
-            $nextChar = $Info.Line[$nextIdx]
-            # Using Italics (3)
-            $ansi = "${esc}[3m$nextChar$reset"
-            [Console]::SetCursorPosition($nextPos.X, $nextPos.Y)
-            [Console]::Write($ansi)
+        if ($isRipple) {
+            # Draw Next Char
+            $nextIdx = $idx + $filterLen
+            if ($nextIdx -lt $BufferInfo.Line.Length) {
+                $nextPos = &$GetPos $nextIdx
+                $nextChar = $BufferInfo.Line[$nextIdx]
+                # Using Italics (3)
+                $ansi = "${esc}[3m$nextChar$reset"
+                [Console]::SetCursorPosition($nextPos.X, $nextPos.Y)
+                [Console]::Write($ansi)
+            }
         }
     }
 
@@ -210,8 +192,11 @@ function Draw-Overlay {
         $code = $Codes[$i]
         $pos = &$GetPos $idx
 
-        $bg = if ($code.Length -gt 1) { $bg2Color } else { $bg1Color }
-        $ansi = "${esc}[$($bg)m${esc}[30m$code$reset"
+        # Pre-calculate ANSI codes
+        $bgName = $Config.CodeBackgroundColors[$code.Length - 1] ?? $Config.CodeBackgroundColors[-1]
+        $bgColor = Get-AnsiColor -Name $bgName -IsBg $true
+
+        $ansi = "${esc}[$($bgColor)m${esc}[30m$code$reset"
 
         [Console]::SetCursorPosition($pos.X, $pos.Y)
         [Console]::Write($ansi)
@@ -220,71 +205,81 @@ function Draw-Overlay {
 }
 
 function Write-BufferText {
-    param($Info)
+    param($BufferInfo)
     # Handle CRLF: remove CR so it doesn't mess up cursor position logic
     ## NOTE: we should not add -1 to -split like below, otherwise we only return 1 element in $lines
-    # $lines = ($Info.Line -replace "`r", "") -split "`n" , -1
-    $lines = ($Info.Line -replace "`r", "") -split "`n"
-    # $dbg = @{ContinueWidth=$Info.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
+    # $lines = ($BufferInfo.Line -replace "`r", "") -split "`n" , -1
+    $lines = ($BufferInfo.Line -replace "`r", "") -split "`n"
+    # $dbg = @{ContinueWidth=$BufferInfo.ContinuationPromptWidth; Line = "" ;Lines = $lines.Count }
     for ($i = 0; $i -lt $lines.Count; $i++) {
         if ($i -eq 0) {
-            [Console]::SetCursorPosition($Info.StartLeft, $Info.StartTop)
-            # $dbg.Line += "${Info.StartLeft}:${Info.StartTop}, "
+            [Console]::SetCursorPosition($BufferInfo.StartLeft, $BufferInfo.StartTop)
+            # $dbg.Line += "$($BufferInfo.StartLeft):$($BufferInfo.StartTop}, "
         }
         else {
             $y = [Console]::CursorTop
             if ([Console]::CursorLeft -gt 0 -or $lines[$i - 1].Length -eq 0) { $y++ }
-            [Console]::SetCursorPosition($Info.ContinuationPromptWidth, $y)
+            [Console]::SetCursorPosition($BufferInfo.ContinuationPromptWidth, $y)
             # $dbg.Line += "${Info.ContinuationPromptWidth}:$y}, "
         }
         # $dbg.Line += $lines[$i]
         # $dbg.Line+= "`n"
         [Console]::Write($lines[$i])
     }
-    # Show-ObjAsTooltip -Info $Info -Obj $dbg
+    # Show-ObjAsTooltip -BufferInfo $BufferInfo -Obj $dbg
 }
 
 function Show-ObjAsTooltip {
-    param($Info, $Obj)
-    $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
-    $tooltipTop = $Info.StartTop + $endOffset.Y + 1
+    param($BufferInfo, $Obj)
+    $endOffset = Get-VisualOffset -Line $BufferInfo.Line -Index $BufferInfo.Line.Length -StartLeft $BufferInfo.StartLeft -BufferWidth $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
+    $tooltipTop = $BufferInfo.StartTop + $endOffset.Y + 1
     $tooltipLen = Show-Tooltip -Top $tooltipTop -Text ($Obj | ConvertTo-Json -Compress)
     return $tooltipLen
 }
 
-function Get-InitTargetChar {
-    param($Info, $Config)
-
-    $endOffset = Get-VisualOffset -Line $Info.Line -Index $Info.Line.Length -StartLeft $Info.StartLeft -BufferWidth $Info.ConsoleWidth -ContinuationPromptWidth $Info.ContinuationPromptWidth
-    $tooltipTop = $Info.StartTop + $endOffset.Y + 1
-
+function Get-TargetChar {
+    param($BufferInfo, $icon = "", $toolTip = "")
+    # write-host "Get-TargetChar: icon='$icon', tooltip='$toolTip'"
     try {
-        $tooltipLen = Show-Tooltip -Top $tooltipTop -Text $Config.TooltipText
-        $startIndicator = Show-StartIndicator -Info $Info
+        if ($toolTip) {
+            $endOffset = Get-VisualOffset -Line $BufferInfo.Line -Index $BufferInfo.Line.Length -StartLeft $BufferInfo.StartLeft -BufferWidth $BufferInfo.ConsoleWidth -ContinuationPromptWidth $BufferInfo.ContinuationPromptWidth
+            $tooltipTop = $BufferInfo.StartTop + $endOffset.Y + 1
+            $tooltipLen = Show-Tooltip $tooltipTop  $toolTip
+        }
+        if ($icon) {
+            $startIndicator = Show-StartIndicator $BufferInfo  $icon
+        }
         $key = [Console]::ReadKey($true)
     }
+    catch {
+        throw $_
+    }
     finally {
-        Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
-        # Restore start indicator before drawing overlay
-        Restore-StartIndicator -Info $Info -SavedState $startIndicator
+        if ($toolTip) {
+            Clear-Tooltip -Top $tooltipTop -Length $tooltipLen
+        }
+        if ($icon) {
+            # Restore start indicator before drawing overlay
+            Restore-StartIndicator $BufferInfo  $startIndicator
+        }
     }
     return $key
 }
 
 function Reset-View {
-    param($Info)
+    param($BufferInfo)
     # Clean Slate (Restore Line Text)
     # We must restore original text to clear previous overlays
-    Write-BufferText -Info $Info
+    Write-BufferText -BufferInfo $BufferInfo
 }
 function Restore-Visuals {
-    param($Info)
+    param($BufferInfo)
 
     # 1. Clear overlays by overwriting with original plain text
     $currentLeft = [Console]::CursorLeft
     $currentTop = [Console]::CursorTop
 
-    Write-BufferText -Info $Info
+    Write-BufferText -BufferInfo $BufferInfo
 
     # 2. Restore cursor and force PSReadLine to refresh (restore syntax highlighting)
     [Console]::SetCursorPosition($currentLeft, $currentTop)
@@ -310,61 +305,148 @@ function Test-PartialMatch {
     }
     return $false
 }
+# returns array of match start indexes, 0-based
+function Get-Matches {
+    param(
+        [string]$Line,
+        [string]$TargetFilterText
+    )
 
-function Invoke-JumpLoop {
-    param($Info, $InitialChar, $Config)
+    if ([string]::IsNullOrEmpty($TargetFilterText)) { return @() }
 
-    $filterText = "$($InitialChar)"
-    $currentCodeInput = ""
+    $targetMatchIndexes = @()
+    $index = 0
+    while ($true) {
+        $index = $Line.IndexOf($TargetFilterText, $index, [System.StringComparison]::OrdinalIgnoreCase)
+        if ($index -eq -1) { break }
+        $targetMatchIndexes += $index
+        $index++
+    }
+    return $targetMatchIndexes
+}
+function Get-ContinueRippleTargets {
+    param([string]$inputChar, [string]$BufferText, [int[]]$TargetMatchIndexes, [int]$inputCharOffset<#the filter text length#>)
+    if ($null -eq $TargetMatchIndexes -or $TargetMatchIndexes.Count -eq 0) { return Get-Matches $BufferText $inputChar }
+
+    $newTargetMatchIndexes = @()
+
+    foreach ($idx in $TargetMatchIndexes) {
+        $nextChar = $BufferText[$idx + $inputCharOffset] # note str[out of range] returns $null
+        if ($inputChar -eq $nextChar) {
+            $newTargetMatchIndexes += $idx
+        }
+    }
+    return $newTargetMatchIndexes
+}
+
+function Ripple {
+    param($BufferInfo, $Config)
+
+    $filterText = ""
+    $codes = @()
+    $TargetMatchIndexes = @()
+    $errorMsg = ""
 
     while ($true) {
-        Reset-View -Info $Info
+        if ($errorMsg) {
+            $icon = "⚠️"
+            $tooltip = $errorMsg
+            $errorMsg = ""
+        }
+        elseif ($filterText.Length -eq 0) {
+            $icon = "🏃"
+            $tooltip = "MetaJump: Please type target char to jump..."
+        }
+        else {
+            $icon = "" # no icon
+            $tooltip = "MetaJump: Please type code to jump to or continue typing target chars..."
+        }
+# write-host "Ripple: icon='$icon', tooltip='$tooltip', filterText='$filterText', codes='$codes"
+        $key = Get-TargetChar $BufferInfo  $icon  $tooltip
+        if ($key.Key -eq 'Escape') {
+            return @()
+        }
 
-        # Find Matches
-        $matches = Get-Matches -Line $Info.Line -FilterText $filterText
-        if ($matches.Count -eq 0) {
-            [Console]::Beep()
-            # Backtrack logic or exit?
-            # If filtered to 0, maybe revert last char?
-            if ($filterText.Length -gt 1) {
-                $filterText = $filterText.Substring(0, $filterText.Length - 1)
-                continue
+        if (Test-PartialMatch -Codes $codes -InputCode $key.KeyChar) {
+            return @($TargetMatchIndexes, $codes, $filterText.Length)
+        }
+        else {
+            # Find Matches
+            $TargetMatchIndexes = Get-ContinueRippleTargets "$($key.KeyChar)" $BufferInfo.Line  $TargetMatchIndexes  $filterText.Length
+
+            if ($TargetMatchIndexes.Count -gt 0) {
+                $filterText += $key.KeyChar
             }
             else {
-                return # Nothing matches start char
+                [Console]::Beep()
+                # Backtrack logic or exit?
+                # If filtered to 0, maybe revert last char?
+                $errorMsg = "MetaJump: No matches for last character"
+                continue
             }
         }
 
         # Generate Codes
-        $codes = Get-JumpCodesForWave -Charset $Config.CodeChars -TargetMatchIndexes $matches -BufferText $Info.Line -FilterText $filterText
+        try {
+            $codes = Get-JumpCodesForWave -TargetMatchIndexes $TargetMatchIndexes -CodeChars $Config.CodeChars -BufferText $BufferInfo.Line -TargetTextLength $filterText.Length -AdditionalSingleCodeChars $Config.AdditionalSingleCodeChars
+        }
+        catch {
+            $errorMsg = $_.Exception.Message
+            continue
+        }
 
         # Draw Overlay
-        Draw-Overlay -Info $Info -Matches $matches -Codes $codes -FilterText $filterText -Config $Config
+        Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterText $filterText.Length -Config $Config
+    }
+}
 
-        # Wait for Selection / Filter
-        $key = [Console]::ReadKey($true)
-        if ($key.Key -eq 'Escape') { return }
-        $inputChar = $key.KeyChar
+<#
+shrink the codes and when only 1 code and match index available, navigate to target location.
+if the typing char is not in the starting chars of any code, warning to let user to type the code on screen or 'Esc' to cancel.
+#>
+function Navigate {
+    param($TargetMatchIndexes,  $codes, $TargetFilterTextLength, $BufferInfo, $Config)
 
-        $potentialCode = $currentCodeInput + $inputChar
-
-        # Check for Exact Match
-        $jumpIndex = Get-ExactMatchIndex -Codes $codes -Matches $matches -InputCode $potentialCode
-        if ($jumpIndex -ne -1) {
-            # Jump!
-            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($jumpIndex)
-            return
+    $guidingInfo = "MetaJump: Type codes to jump to target, or 'Esc' to cancel."
+    # info icon
+    $icon = "ℹ️"
+    $tooltip = $guidingInfo
+    while ($true) {
+        $key = Get-TargetChar $BufferInfo  $icon  $tooltip
+        if ($key.Key -eq 'Escape') {
+            return @()
         }
-
-        # Check for Partial Match
-        if (Test-PartialMatch -Codes $codes -InputCode $potentialCode) {
-            $currentCodeInput = $potentialCode
-            continue # Wait for next char to complete code
+        $potentialCode = $key.KeyChar.ToString()
+        if (-not (Test-PartialMatch -Codes $codes -InputCode $potentialCode)) {
+            [Console]::Beep()
+            # no match, warning
+            $icon = "⚠️"
+            $tooltip = "MetaJump: No matches for last character, please type code on screen or 'Esc' to cancel."
+            continue
         }
-
-        # Not a code match (full or partial) -> Treat as filter
-        $currentCodeInput = "" # Reset partial code
-        $filterText += $inputChar
+        else {
+            # shrink codes
+            $newCodes = @()
+            $newTargetMatchIndexes = @()
+            foreach ($c in $codes) {
+                if ($c.StartsWith($potentialCode)) {
+                    $newTargetMatchIndexes += $TargetMatchIndexes[$codes.IndexOf($c)]
+                    $newCodes += $c
+                }
+            }
+            $TargetMatchIndexes = $newTargetMatchIndexes
+            $codes = $newCodes
+            # check if only one match index and code
+            if ($codes.Count -eq 1 -and $TargetMatchIndexes.Count -eq 1) {
+                # jump to target
+                [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0])
+                return
+            }
+            Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterText $TargetFilterTextLength -Config $Config -isRipple $false
+            # reset info icon
+            $icon = "ℹ️"
+            $tooltip = $guidingInfo
+        }
     }
 }
 
@@ -380,14 +462,11 @@ function Invoke-MetaJump {
     [Console]::CursorVisible = $false
 
     try {
-        # 1. Init & Visuals, First Input (Target)
-        $key = Get-InitTargetChar -Info $info -Config $MetaJumpConfig
-        if ($null -eq $key -or $key.Key -eq 'Escape') { return }
-
-        Invoke-JumpLoop -Info $info -InitialChar $key.KeyChar -Config $MetaJumpConfig
+        $res = Ripple $info $MetaJumpConfig
+        Navigate $res[0] $res[1] $res[2] $info $MetaJumpConfig
     }
     finally {
         [Console]::CursorVisible = $cursorVisible
-        Restore-Visuals -Info $info
+        Restore-Visuals $info
     }
 }
