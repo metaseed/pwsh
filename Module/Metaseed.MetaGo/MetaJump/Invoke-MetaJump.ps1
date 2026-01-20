@@ -379,7 +379,7 @@ function Ripple {
             return @()
         }
 
-        if (Test-PartialMatch -Codes $codes -InputCode $key.KeyChar) {
+        if (($key.Key -eq 'Enter') -or (Test-PartialMatch -Codes $codes -InputCode $key.KeyChar)) {
             return @($TargetMatchIndexes, $codes, $filterText.Length, $key)
         }
         else {
@@ -433,7 +433,7 @@ function Navigate {
             [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0])
             return
         }
-        if ($firstLoop -and $InitialKey) {
+        if ($firstLoop -and $InitialKey -and $InitialKey.Key -ne 'Enter') {
             $key = $InitialKey
             $firstLoop = $false
         }
