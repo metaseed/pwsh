@@ -148,6 +148,8 @@ function Draw-Overlay {
     if ( $Matches.Count -eq 0 -or $Codes.Count -eq 0) {
         return
     }
+
+    Reset-View -BufferInfo $BufferInfo
     # Reconstruct the line with visual indicators
     $esc = [char]0x1b
     $reset = "${esc}[0m"
@@ -400,7 +402,7 @@ function Ripple {
         }
 
         # Draw Overlay
-        if($codes.Count -ne $TargetMatchIndexes.Count){
+        if ($codes.Count -ne $TargetMatchIndexes.Count) {
             # throw "MetaJump: Code count mismatch: $($codes.Count) != $($TargetMatchIndexes.Count)"
         }
         # $global:_MetaJumpDebug.Ripple = @($TargetMatchIndexes, $codes, $filterText.Length, $BufferInfo, $Config)
@@ -451,18 +453,35 @@ function Navigate {
         $newCodes = @()
         $keyChar = $key.KeyChar.ToString()
         $newTargetMatchIndexes = @()
-        foreach ($c in $codes) {
-            if ($c.StartsWith($keyChar)) {
-                $newTargetMatchIndexes += $TargetMatchIndexes[$codes.IndexOf($c)]
-                $newCodes += $c
+        for ($i = 0; $i -lt $codes.Count; $i++) {
+            $c = $codes[$i]
+            if ($c.Length -eq 0) {
+                if ($c -eq $keyChar) {
+                    $newCodes = @($c)
+                    $newTargetMatchIndexes = @($TargetMatchIndexes[$i])
+                    break
+                }
+            }
+            else {
+                if ($c.StartsWith($keyChar)) {
+                    $newTargetMatchIndexes += $TargetMatchIndexes[$i]
+                    $newCodes += $c.Substring(1)
+                }
             }
         }
+        # Show-ObjAsTooltip -BufferInfo $BufferInfo -Obj @{
+        #     OldCodes = $codes
+        #     NewCodes = $newCodes
+        #     OldTargetMatchIndexes = $TargetMatchIndexes
+        #     NewTargetMatchIndexes = $newTargetMatchIndexes
+        # }
+
         $TargetMatchIndexes = $newTargetMatchIndexes
         $codes = $newCodes
         Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterLength $FilterLength -Config $Config -isRipple $false
         # reset info icon
         $icon = "ℹ️"
-        $tooltip = $guidingInfo
+        $tooltip = "" #$guidingInfo
 
     }
 }
@@ -481,7 +500,7 @@ function Invoke-MetaJump {
     try {
         $res = Ripple $info $MetaJumpConfig
         if ( $res.Count -eq 0) { return } # cancelled
-$global:_MetaJump = $res
+
         $initKey = if ($res.Count -ge 4) { $res[3] } else { $null }
         Navigate $res[0] $res[1] $res[2] $info $MetaJumpConfig $initKey
     }
