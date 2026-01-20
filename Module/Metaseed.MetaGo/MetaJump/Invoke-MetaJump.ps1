@@ -199,7 +199,8 @@ function Draw-Overlay {
         $bgName = $Config.CodeBackgroundColors[$code.Length - 1] ?? $Config.CodeBackgroundColors[-1]
         $bgColor = Get-AnsiColor -Name $bgName -IsBg $true
 
-        $ansi = "${esc}[$($bgColor)m${esc}[30m$code$reset"
+        $ansi = "${esc}[$($bgColor)m${esc}[30m$code$reset" # foreground is black
+        # $ansi = "${esc}[$($bgColor)m$code$reset" # foreground is white
 
         [Console]::SetCursorPosition($pos.X, $pos.Y)
         [Console]::Write($ansi)
@@ -399,6 +400,10 @@ function Ripple {
         }
 
         # Draw Overlay
+        if($codes.Count -ne $TargetMatchIndexes.Count){
+            # throw "MetaJump: Code count mismatch: $($codes.Count) != $($TargetMatchIndexes.Count)"
+        }
+        # $global:_MetaJumpDebug.Ripple = @($TargetMatchIndexes, $codes, $filterText.Length, $BufferInfo, $Config)
         Draw-Overlay -BufferInfo $BufferInfo -Matches $TargetMatchIndexes -Codes $codes -FilterLength $filterText.Length -Config $Config
     }
 }
@@ -476,7 +481,7 @@ function Invoke-MetaJump {
     try {
         $res = Ripple $info $MetaJumpConfig
         if ( $res.Count -eq 0) { return } # cancelled
-
+$global:_MetaJump = $res
         $initKey = if ($res.Count -ge 4) { $res[3] } else { $null }
         Navigate $res[0] $res[1] $res[2] $info $MetaJumpConfig $initKey
     }

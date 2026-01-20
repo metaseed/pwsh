@@ -3,3 +3,4 @@
 # need to dot source the function otherwise the file dotsourced in the Export-Functions would not be included in moudle scope
 # after dotsource the function, it's the same as the function is defined here in the same file.
 . Export-Functions $PSScriptRoot
+$global:_MetaJumpDebug = @{}

@@ -1,3 +1,6 @@
+function IsFirstCharOfLine($Info){
+    return $Info.Cursor -eq 0 -or $Info.Line.Substring(0, $Info.Cursor).LastIndexOf("`n") -eq $Info.Cursor - 1
+}
 function Show-StartIndicator {
 	param($Info, [string]$icon = "🏃")
 
@@ -5,7 +8,7 @@ function Show-StartIndicator {
 	$len = $icon.Length
 	$halfLen = [Math]::Floor($len / 2)
 
-	$drawLeft = if ($Info.ConsoleLeft -gt 0) { $Info.ConsoleLeft - $halfLen } else { $Info.ConsoleLeft }
+	$drawLeft = if (IsFirstCharOfLine $Info){ $Info.ConsoleLeft } else { $Info.ConsoleLeft - $halfLen }
 	[Console]::SetCursorPosition($drawLeft, $Info.ConsoleTop)
 	[Console]::Write($icon)
 	[Console]::SetCursorPosition($Info.ConsoleLeft, $Info.ConsoleTop) # Restore cursor
@@ -19,7 +22,7 @@ function Restore-StartIndicator {
 	$drawLeft = $Info.ConsoleLeft
 	$restoreText = $Info.Line[$Info.Cursor..($Info.Cursor + $len - 1)]
 
-	if ($Info.ConsoleLeft -gt 0) {
+	if (-not (IsFirstCharOfLine $Info)) {
 		$halfLen = [Math]::Floor($len / 2)
 		$drawLeft = $Info.ConsoleLeft - $halfLen
 		$restoreText = $Info.Line[($Info.Cursor - $halfLen)..($Info.Cursor + $len - $halfLen - 1)]

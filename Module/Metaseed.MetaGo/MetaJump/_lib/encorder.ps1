@@ -54,34 +54,54 @@ function Get-JumpCodes{
 	$lowDimsElementCount = [Math]::Ceiling($firstCharCodeSetCount * [Math]::Pow($commonDimLen, $midDims))
 	# note: but here we should use $firstCharCodeSetCount to replace $commonDimLen when dim is 1. so we do 1 dim handler above specially.
 	$usedInLowDim_Count = [Math]::Ceiling(($remainTargetCount - $lowDimsElementCount) / ($commonDimLen - 1<# high dim's elements growing from every elements of the lower dims#>))
+$global:_MetaJumpDebug.GetJumpCodes = @{
+	TargetMatchIndexes = $TargetMatchIndexes
+	firstDimCodeChars = $firstDimCodeChars
+	dimensions = $dimensions
+	midDims = $midDims
+	lowDimsElementCount = $lowDimsElementCount
+	usedInLowDim_Count = $usedInLowDim_Count
+	firstCharCodeSetCount = $firstCharCodeSetCount
+	commonDimLen = $commonDimLen
+	commonDimCodeChars = $commonDimCodeChars
+	AdditionalSingleCodeChars = $AdditionalSingleCodeChars
+	targetCount = $targetCount
 
+}
 	function Get-CodeOfFullDimensions {
 		param($skips = 0, $dimensionCount = $dimensions, $totalCodesToGet = $null)
 		if ($totalCodesToGet -le 0) { return @() }
 
-		$fullDimCodes = @()
+		$fullDimCodes = [System.Collections.Generic.List[string]]::new()
 		$dimensionList = @($firstCharCodeSetCount)
-		for ($i = 1; $i -lt $dimensionCount - 1; $i++) { $dimensionList += $commonDimLen }
+		for ($i = 1; $i -lt $dimensionCount; $i++) { $dimensionList += $commonDimLen }
 
 		if ($null -eq $totalCodesToGet) {
 			$totalCodesToGet = $firstCharCodeSetCount * [Math]::Pow($commonDimLen, $dimensionCount - 1)
 		}
-		$skipsCounter = 0
+		$state = @{ skipsCounter = 0 }
 
 		foreach-combination -Dimensions $dimensionList -Action {
 			param([int[]]$indexes) # x, y, z, ... low to high
-			if ($skipsCounter -lt $skips) { $skipsCounter++; return }
+			if ($state.skipsCounter -lt $skips) { $state.skipsCounter++; return }
 
 			$code = $firstDimCodeChars[$indexes[0]]
 			for ($j = 1; $j -lt $indexes.Count; $j++) {
 				$code += $commonDimCodeChars[$indexes[$j]]
 			}
-			$fullDimCodes += $code
+			# $global:_MetaJumpDebug.GetCodeOfFullDimensionsForeach += @(@{index = $indexes; code = $code})
+			$fullDimCodes.Add($code)
 			if ($fullDimCodes.Count -eq $totalCodesToGet) {
 				return $false # break
 			}
 		}
-
+		# $global:_MetaJumpDebug.GetCodeOfFullDimensions = @{
+		# 	skips = $skips
+		# 	dimensionList = $dimensionList
+		# 	totalCodesToGet = $totalCodesToGet
+		# 	dimensionCount = $dimensionCount
+		# 	fullDimCodes = $fullDimCodes
+		# }
 		return $fullDimCodes
 	}
 
@@ -124,6 +144,17 @@ function Get-JumpCodesForWave {
 	if ($usableCodeCharsOfFirstDim.Count -eq 0) {
 		return "please continue ripple-typing, or press 'enter' then navigating. (all code chars used by following chars, no enough code chars)" # cannot avoid next char conflict, return empty, continue doing ripple typing, to avoid confusion with codeSet
 	}
-	$codes = Get-JumpCodes -TargetMatchIndexes $TargetMatchIndexes -firstDimCodeChars $usableCodeCharsOfFirstDim -CodeChars $CodeChars -AdditionalSingleCodeChars $AdditionalSingleCodeChars
+	$codes = Get-JumpCodes -TargetMatchIndexes $TargetMatchIndexes -firstDimCodeChars $usableCodeCharsOfFirstDim -commonDimCodeChars $CodeChars -AdditionalSingleCodeChars $AdditionalSingleCodeChars
 	return $codes
 }
+
+# $Config = @{
+#     CodeChars                 = "k, j, d, f, l, s, a, h, g, i, o, n, u, r, v, c, w, e, x, m, b, p, q, t, y, z" -split ',' | ForEach-Object { $_.Trim() }
+#     # only appears as one char decoration codes
+#     AdditionalSingleCodeChars = "J,D,F,L,A,H,G,I,N,R,E,M,B,Q,T,Y, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0" -split ',' | ForEach-Object { $_.Trim() }
+#     # bgColors for one-length code, two-length code, 3-length code, ect..
+#     # if the code length is larger than the array length, the last color is used
+#     CodeBackgroundColors      = @("Yellow", "Blue", "Cyan", "Magenta")
+#     TooltipText               = "Jump: type target char..."
+# }
+# Get-JumpCodesForWave $Config.CodeChars
