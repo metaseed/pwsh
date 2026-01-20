@@ -234,7 +234,7 @@ function Write-BufferText {
         }
         # $dbg.Line += $lines[$i]
         # $dbg.Line+= "`n"
-        # if the code is show outiside the end of line, i.e. for multiple char code, how to clear it, the write will not override the virsual
+        # if the code is show outside the end of line, i.e. for multiple char code, how to clear it, the write will not override the virsual
         # with clear to end of line
         [Console]::Write($lines[$i] + "$esc[K")
     }
