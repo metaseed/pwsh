@@ -247,7 +247,7 @@ function Navigate {
         # check if only one match index and code
         if ($codes.Count -eq 1 -and $TargetMatchIndexes.Count -eq 1) {
             # jump to target
-            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0])
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0]+1<#behind the char#>)
             return
         }
         if ($firstLoop -and $InitialKey -and $InitialKey.Key -ne 'Enter') {
