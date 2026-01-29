@@ -155,7 +155,6 @@ function Get-Matches {
 }
 function Get-ContinueRippleTargets {
     param([string]$inputChar, [string]$BufferText, [int[]]$TargetMatchIndexes, [int]$inputCharOffset<#the filter text length#>)
-    if ($null -eq $TargetMatchIndexes -or $TargetMatchIndexes.Count -eq 0) { return Get-Matches $BufferText $inputChar }
 
     $newTargetMatchIndexes = @()
 
@@ -188,7 +187,7 @@ function Ripple {
         }
         else {
             $icon = "" # no icon
-            $tooltip = "MetaJump: Please type code to jump to or continue typing target chars..."
+            $tooltip = "MetaJump: Please type code to jump to or continue typing chars following target char..."
         }
         # write-host "Ripple: icon='$icon', tooltip='$tooltip', filterText='$filterText', codes='$codes"
         $key = Get-TargetChar $BufferInfo  $icon  $tooltip
@@ -200,11 +199,31 @@ function Ripple {
             return @($TargetMatchIndexes, $codes, $filterText.Length, $key)
         }
         else {
+            if ($key.Key -eq 'Backspace') {
+                # if ($filterText.Length -gt 0) {
+                #     $filterText = $filterText.Substring(0, $filterText.Length - 1)
+                #     # Recalculate Matches
+                #     $TargetMatchIndexes = @()
+                #     $char = $filterText # to get all matches
+                # }
+                # else {
+                #     [Console]::Beep()
+                #     $errorMsg = "MetaJump: No more characters to backspace"
+                #     continue
+                # }
+            }
+            else {
+                $char = $key.KeyChar.ToString()
+            }
             # Find Matches
-            $TargetMatchIndexes = Get-ContinueRippleTargets "$($key.KeyChar)" $BufferInfo.Line  $TargetMatchIndexes  $filterText.Length
-
+            if ($null -eq $TargetMatchIndexes -or $TargetMatchIndexes.Count -eq 0) {
+                $TargetMatchIndexes = Get-Matches $BufferInfo.Line $char
+            }
+            else {
+                $TargetMatchIndexes = Get-ContinueRippleTargets $char $BufferInfo.Line  $TargetMatchIndexes  $filterText.Length
+            }
             if ($TargetMatchIndexes.Count -gt 0) {
-                $filterText += $key.KeyChar
+                $filterText += $char
             }
             else {
                 [Console]::Beep()
@@ -247,7 +266,7 @@ function Navigate {
         # check if only one match index and code
         if ($codes.Count -eq 1 -and $TargetMatchIndexes.Count -eq 1) {
             # jump to target
-            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0]+1<#behind the char#>)
+            [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($TargetMatchIndexes[0] + 1<#behind the char#>)
             return
         }
         if ($firstLoop -and $InitialKey -and $InitialKey.Key -ne 'Enter') {

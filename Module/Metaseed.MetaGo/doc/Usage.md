@@ -27,9 +27,10 @@ Set-PSReadLineKeyHandler -Chord 'Alt+.' -ScriptBlock {
 3.  **Jump:** Type the code shown over your desired location.
     *   **Multi-character codes:** If a code is 'fa', type 'f' then 'a'. The jump will happen automatically when the full code is typed.
 4.  **Refine (Filter):** If you see too many matches, you can filter them.
-    *   The "next character" of each match is **underlined**.
-    *   Type that underlined character to narrow down the matches to those specific locations.
+    *   The "next character" of each match is **italicized**.
+    *   Type that italicized character to narrow down the matches to those specific locations.
     *   *Note:* If your input matches the start of a jump code, it is treated as a code input. If it doesn't match any code, it is treated as a filter input.
+    *   Press `Enter` to stop filtering, and start typing the code to navigate to the location.
 5.  **Exit:** Press `Esc` to cancel at any time.
 
 ## Visuals

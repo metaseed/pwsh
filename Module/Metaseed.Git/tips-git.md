@@ -46,3 +46,25 @@ git checkout -- .
 `git commit --amend -m "new message"`
 `git commit --amend -a --no-edit`
 
+## change branch by navigate reflog history
+`git chechout -` same as `git checkout @{-1}` : switch to last used branch
+
+Key point:
+- takes you to whatever you checked out last, whether that's:
+A branch name → you'll be on that branch
+A commit hash → you'll be in detached HEAD state
+A tag → detached HEAD at that tag's commit
+
+> @{-n}: previous n checkout.
+
+> Head@{-n}: is also take count commits, it count every head move.
+
+> ^ and ~
+     A---B---C (main)
+         \   \
+          D---E (feature)
+If HEAD is at C (a merge commit):
+
+HEAD^1 or HEAD~1 → B (first parent, the branch you were on)
+HEAD^2 → E (second parent, the branch you merged in)
+HEAD~2 → A (following first parent lineage)

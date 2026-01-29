@@ -25,11 +25,13 @@ function Git-SyncParent {
     $branch = git branch --show-current
     if (!$parent) {
       $parent = git-parent;
-      $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of is: $parent, use it?(current branch: $branch)", @('&Yes', '&No'), 0)
-      if ($choiceIndex -eq 1) {
-        $parent = Read-Host "Please enter the parent branch name to sync from."
-        Confirm-Continue "parent branch of current branch is: $parent"
-      }
+      ## now we can trust the git-parent result
+      # $choiceIndex = $Host.UI.PromptForChoice('Confirm the parent branch to sync from', "parent branch of is: $parent, use it?(current branch: $branch)", @('&Yes', '&No'), 0)
+      # if ($choiceIndex -eq 1) {
+      #   $parent = Read-Host "Please enter the parent branch name to sync from."
+      #   Confirm-Continue "parent branch of current branch is: $parent"
+      # }
+      write-Notice "detected parent branch: $parent"
     }
 
 
@@ -86,7 +88,7 @@ function Git-SyncParent {
         ## master
         # strategy or with option prefer
         # if ours: we bump version and then conflict found online, then merge master with 'ours', the version in master is not used.
-        # if theirs: I modified a file, and other developer submited the change of same location to master, after async, ours is overrided.
+        # if theirs: I modified a file, and other developer submitted the change of same location to master, after async, ours is overridden.
         # so we solve conflict manually by default
         if ($strategyOption) {
           Write-Execute "git merge master -s ort -X $strategyOption"

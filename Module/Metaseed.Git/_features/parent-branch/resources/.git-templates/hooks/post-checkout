@@ -2,6 +2,9 @@
 warning() {
     echo -e "\033[0;33m[WARNING]\033[0m $*" >&2
 }
+info() {
+    echo -e "\033[0;32m[INFO]\033[0m $*"
+}
 # use git-setupHooks to setup this hook to repo
 
 # symbolic link to: /m:/tools/git/post-checkout
@@ -25,9 +28,7 @@ IS_BRANCH_CHECKOUT=$3
 if [ "$IS_BRANCH_CHECKOUT" -eq 1 ]; then
     ## 1. the Previous HEAD and New HEAD are the same (indicating a branch creation)
     if [ "$PREV_HEAD" != "$NEW_HEAD" ]; then
-        warning "📝post-checkout: previous HEAD and new HEAD are different."
-        warning "📝post-checkout: previous HEAD: $PREV_HEAD"
-        warning "📝post-checkout: new HEAD: $NEW_HEAD"
+        info "ℹ️post-checkout: previous HEAD($PREV_HEAD) and new HEAD($NEW_HEAD)."
 
         exit 0 # not try to create a new branch
     else
