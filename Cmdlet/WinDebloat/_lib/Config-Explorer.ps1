@@ -130,11 +130,24 @@ New-Item -Path $downloadsRegPath -Force | Out-Null
 New-ItemProperty -Path $downloadsRegPath -Name "System.IsPinnedToNameSpaceTree" -PropertyType DWord -Value 1 -Force | Out-Null
 # Stop-Process -Name explorer -Force
 
+# Minimal version - disables animations and transparency
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0"
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value 0
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name "VisualFXSetting" -Value 2
 ## restart explorer
 # need to restart explor to take effect:
 # * Touchpad Four-finger gestures after registery modification
 # * Disable taskbar on secondary monitors
 # *  show the Recycle Bin in the explorer navigation pane
+
+## disable smart screen from explorer process for apps, i.e. if I run metatool.exe and a notification shows up: Open File Security Warning: the publisher could not ve verified. Are you sure you want to run this software?(unknown publisher)
+## Settings → Privacy & Security → Windows Security → App & browser control,  Reputation-based protection settings,  Check apps and files
+# Disable SmartScreen (set to Off)
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "Off"
+# # Alternative: Set to Warn (shows warning but allows bypass)
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "Warn"
+# # To re-enable (Recommended default)
+# Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "RequireAdmin"
 gps explorer|spps
 
 ## not easy

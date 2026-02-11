@@ -52,6 +52,12 @@ $global:__specialDays = @{
 				Day   = 20
 			},
 			@{
+				Lable = '娟妈'
+				Lunar = $true
+				Month = 12
+				Day   = 14
+			},
+			@{
 				Lable = '祺'
 				Lunar = $false
 				Month = 8
