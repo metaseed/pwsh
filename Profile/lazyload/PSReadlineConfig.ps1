@@ -181,6 +181,20 @@ Set-PSReadLineKeyHandler -Key Alt+. `
     param($key, $arg)
     Invoke-MetaJump
 }
+Set-PSReadLineKeyHandler -Key Alt+> `
+    -BriefDescription jumpSelect `
+    -LongDescription "select from cursor to target location in the current command line" `
+    -ScriptBlock {
+    param($key, $arg)
+    Invoke-MetaJumpSelect
+}
+Set-PSReadLineKeyHandler -Key Alt+a `
+    -BriefDescription jumpSwapAnchor `
+    -LongDescription "swap the selection anchor and cursor position" `
+    -ScriptBlock {
+    param($key, $arg)
+    Invoke-MetaJumpSwapAnchor
+}
 <#
 Get-PSReadLineKeyHandler -Bound -Unbound
 Ctrl+s    ForwardSearchHistory    Search history forward interactively

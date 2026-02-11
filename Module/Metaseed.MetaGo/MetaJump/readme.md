@@ -23,6 +23,9 @@ cursor jumping to the char location in console's input buffer by minimum key typ
    2. user can continue type the chars following the location char instead of the code on location to further filter out the possible locations, the location encoding indicators would be updated accordingly. user can type the code to jump at any time like previous step described.
 7. Restore: Refresh the PSReadLine interface.
 
+## MetaJumpSelect
+`Invoke-MetaJumpSelect` selects a range of text from the current cursor to a target location using the same Ripple + Navigate workflow as `Invoke-MetaJump`. After navigation, it moves the cursor back to the original position and uses PSReadLine's `SelectForwardChar`/`SelectBackwardChar` to create a selection, enabling cut/copy/delete on the selected range.
+
 # Implementation
 * it mainly using the PSReadline function, so the repo here(https://github.com/PowerShell/PSReadLine) is the first reference for implementation, especially the file in the `PSReadLine/SamplePSReadLineProfile.ps1`
 * to use the Module, the user just need to install the module and call one init function in the profile config.

@@ -12,9 +12,9 @@
 
 Set-PsFzfOption `
 -PSReadlineChordSetLocation 'Alt+RightArrow'  <# find dir from current dir/subdir and setLocation to it #> `
--PSReadlineChordReverseHistoryArgs 'Alt+a'  <# find arg from input history#> `
+-PSReadlineChordReverseHistoryArgs 'Alt+r'  <# find arg from input history#> `
 -PSReadlineChordProvider 'Alt+f' <# find file/dir from current dir/subdir or the dir at current cursor, i.e.: cd m:app(|cursor here) and then press a-f, type soft, <enter> <enter> cd to the software folder#> `
--PSReadlineChordReverseHistory 'Alt+r' <# find full line input from input history#>
+-PSReadlineChordReverseHistory 'Alt+i' <# find full line input from input history#>
 # -EnableAliasFuzzyZLocation `
 # -EnableAliasFuzzySetEverything
 
