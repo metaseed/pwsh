@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
 Retrieves process information that has a file handle open to the specified path.
-.LINK 
+.LINK
 We extract the output from the handle.exe utility from SysInternals:
 https://docs.microsoft.com/en-us/sysinternals/downloads/handle
 
-.Example 
+.Example
 Find-LockingProcess -Path $Env:LOCALAPPDATA
 
 .Example
@@ -20,6 +20,10 @@ function Find-LockingProcess {
     )
     $HandleDir = "$env:MS_App\handle"
     $HandleApp = "$HandleDir\handle.exe"
+    if (!(Test-Path -Path $HandleApp)) {
+        # Add-PathEnv $HandleDir
+        DownloadHandleApp -Path $HandleDir
+    }
     $AppInfo = Get-Command $HandleApp -ErrorAction Stop
     if ($AppInfo) {
         findLocking $Path $AppInfo | sort -Unique -Property Pid, User, Path
@@ -41,21 +45,20 @@ function findLocking {
 
     $HandleDir = "$env:MS_App\handle"
     $HandleApp = "$HandleDir\handle.exe"
-    if (!(Test-Path -Path $HandleApp)) {
-        # Add-PathEnv $HandleDir
-        DownloadHandleApp -Path $HandleDir
-    }
 
     #Initialize-SystemInternalsApp -AppRegName "Handle"
     $PathName = (Resolve-Path -Path $Path).Path.TrimEnd("\") # Ensures proper .. expansion & slashe \/ type
     #   -u         Show the owning user name when searching for handles.
     $LineS = & $AppInfo.Path -accepteula -u $PathName -nobanner
 
-    
+
     foreach ($Line in $LineS) {
         write-verbose $Line
+        # new version(20260219) of handle.exe has a new format:
+        # explorer.exe       pid: 16652  type: File          DIR\JSong12               5ad808X M:\Workspace\metatool\src\app\LeaveScr\obj
+        # old version of handle.exe has a format with a ':' after the handle number:
         # "pwsh.exe           pid: 5808   type: File          Domain\UserName             48: D:\MySuff\Modules"
-        if ($Line -match "(?<proc>.+)\s+pid: (?<pid>\d+)\s+type: (?<type>\w+)\s+(?<user>.+)\s+(?<hnum>\w+)\:\s+(?<path>.*)\s*") {
+        if ($Line -match "(?<proc>.+)\s+pid: (?<pid>\d+)\s+type: (?<type>\w+)\s+(?<user>.+)\s+(?<hnum>\w+)\:?\s+(?<path>.*)\s*") {
             $Proc = $Matches.proc.Trim()
             if (@("handle.exe", "Handle64.exe") -notcontains $Proc) {
                 $Retval = [PSCustomObject]@{
@@ -67,6 +70,8 @@ function findLocking {
                 }
                 Write-Output $Retval
             }
+        } else {
+            write-verbose "can not extract info from line: $Line"
         }
     }
 }
@@ -90,3 +95,4 @@ function DownloadHandleApp($Path) {
     }
 }
 
+# Find-LockingProcess -Path "M:\Workspace\metatool\src\app\LeaveScr\obj"

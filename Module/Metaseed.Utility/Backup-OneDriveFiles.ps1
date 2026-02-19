@@ -186,7 +186,7 @@ function Backup-OneDriveFiles {
 
         # If sending email, check if the saved token has the required permission.
         # This handles the case where the user previously authenticated without the Mail.Send scope.
-        if ((-not [string]::IsNullOrEmpty($EmailTo)) -and $savedToken) {
+        if (($savedToken -and -not [string]::IsNullOrEmpty($EmailTo))) {
             # Check if the 'scope' property exists, for backwards compatibility with old token files
             if ($savedToken.PSObject.Properties.Name -contains 'scope') {
                 $grantedScopes = $savedToken.scope -split " "

@@ -3,12 +3,12 @@
 Kills all processes that have a file handle open to the specified path.
 
 .Example
-Stop-LockingProcess -Path $Home\Documents 
+Stop-LockingProcess -Path $Home\Documents
 #>
 function Stop-LockingProcess {
     [CmdletBinding()]
     param (
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ValueFromPipeline = $true)]
         [object] $Path
     )
 
@@ -18,3 +18,4 @@ function Stop-LockingProcess {
     Kill-Process -ProcessId $ProcS.Pid
 }
 
+Set-Alias unlock Stop-LockingProcess
