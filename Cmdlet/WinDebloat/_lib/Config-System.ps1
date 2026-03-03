@@ -86,3 +86,13 @@ if(gcm Install-Language -ErrorAction SilentlyContinue) {
   # enable double pinyin
   sp "HKCU:\Software\Microsoft\InputMethod\Settings\CHS" "Enable Double Pinyin" 1
 }
+
+### sticky keys
+# 1. Update StickyKeys Flags (506 = Off + Shortcut Disabled)
+Set-ItemProperty -Path 'HKCU:\Control Panel\Accessibility\StickyKeys' -Name 'Flags' -Value '506'
+
+# 2. Update Keyboard Response (Filter Keys) Flags (122 = Off)
+Set-ItemProperty -Path 'HKCU:\Control Panel\Accessibility\Keyboard Response' -Name 'Flags' -Value '122'
+
+# 3. Update ToggleKeys Flags (58 = Off)
+Set-ItemProperty -Path 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58'

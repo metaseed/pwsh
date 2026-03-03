@@ -18,19 +18,21 @@ function Split-RemainParameters {
 
 			# Check if it's a parameter name (starts with - or has an = sign)
 			if ($current -is [string] -and ($current -match "^-" -or $current -match "=")) {
-				# It's a named parameter
+				# It's a named parameter: -param=value
+				# Note: native pwsh does not support '-param=value' format, but we support it for convenience
 				if ($current -match "^-(\w+)=(.*)$") {
 					# Handle -param=value format
 					$NamedParams[$matches[1]] = $matches[2]
 				}
+				# Handle '-param value' format
 				elseif ($current -match "^-(\w+)$" -and ($i + 1) -lt $InputParameters.Count -and
+				# next is not -param2, so it's a value for current param
 					   !($InputParameters[$i + 1] -is [string] -and $InputParameters[$i + 1] -match "^-")) {
-					# Handle -param value format
 					$NamedParams[$matches[1]] = $InputParameters[$i + 1]
 					$i++ # Skip the next item as we've used it as a value
 				}
+				# It's a switch parameter
 				else {
-					# It's a switch parameter
 					$paramName = $current.TrimStart('-')
 					$NamedParams[$paramName] = $true
 				}

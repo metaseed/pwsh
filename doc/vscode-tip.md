@@ -26,3 +26,8 @@ shift+F4: show previous search results
 
 ## Switch terminal tabs
 `ctrl+pageDown`
+
+## open console output from command in vscode
+`ipconfig -all|code -`
+`code -h|code -` // - means from stdin
+`code -h|oc codeHelp.md` // out-code can give a name to support syntax hight and formatting
