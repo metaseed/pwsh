@@ -94,5 +94,3 @@ function DownloadHandleApp($Path) {
         Throw "Failed to download dependency: handle.exe from: $Uri"
     }
 }
-
-# Find-LockingProcess -Path "M:\Workspace\metatool\src\app\LeaveScr\obj"
