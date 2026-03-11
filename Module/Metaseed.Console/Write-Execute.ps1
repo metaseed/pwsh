@@ -26,8 +26,9 @@ function Write-Execute {
   process {
     $msgIcon = $env:TERM_NERD_FONT ?  "💬:": "@:"
     $exe = $command ? $command : $script.ToString().Trim()
-    $msg = "$exe $($message ? "$msgIcon $message": '')"
-    Write-Action $msg $replay
+    $msg = "$exe"
+    $additionalMsg = "$($message ? "$msgIcon $message": '')"
+    Write-Action $msg $replay -additionalMessage $additionalMsg
     # note: if put parenthesis around: return (iex $command), the command output would be no color
     # i.e. Write-Execute 'git status', if there are git modification, no red text for modification files
     if ($command) {

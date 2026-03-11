@@ -6,7 +6,8 @@ function Write-Action {
     [Parameter(Position = 1)]
     [switch]$replay = $false,
     [switch]$Speak,
-    [string]$SpeakMessage
+    [string]$SpeakMessage,
+    [string]$AdditionalMessage
   )
   $execute = ++$__PSReadLineSessionScope.execute
   $StepInfo = ""
@@ -25,6 +26,6 @@ function Write-Action {
 
   $allExe = ($null -ne $__PSReadLineSessionScope.Step) -or ($null -ne $__PSReadLineSessionScope.SubStep) ? "($($exeStep))": ''
   $ic = $env:TERM_NERD_FONT ? '🚀' : ''
-  Write-Host "${indents}▐${ic}Action $StepInfo$execute$allExe$icon" -ForegroundColor Blue -NoNewline
-  Write-Host $message
+  Write-Host "${indents}▐${ic}Action $StepInfo$execute$allExe$icon $message" -ForegroundColor Blue -NoNewline
+  Write-Host " $AdditionalMessage"
 }
