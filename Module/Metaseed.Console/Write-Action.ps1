@@ -25,5 +25,6 @@ function Write-Action {
 
   $allExe = ($null -ne $__PSReadLineSessionScope.Step) -or ($null -ne $__PSReadLineSessionScope.SubStep) ? "($($exeStep))": ''
   $ic = $env:TERM_NERD_FONT ? '🚀' : ''
-  Write-Host "${indents}▐${ic}Action $StepInfo$execute$allExe$icon $message" -ForegroundColor Blue
+  Write-Host "${indents}▐${ic}Action $StepInfo$execute$allExe$icon" -ForegroundColor Blue -NoNewline
+  Write-Host $message
 }

@@ -25,10 +25,10 @@ function Git-NewBranch {
     }
 
     # removes references to remote branches that no longer exist on the remote repository (origin)
-    # Write-Execute 'git remote prune origin' # use --prune in pull
+    # Write-Execute 'git remote prune origin' # same: use --prune in pull
     ## rebase master onto remote
     Write-Execute 'git pull --prune' #  --rebase
 
-    Write-Execute "git checkout -b $BranchName"
+    Write-Execute "git switch -c $BranchName" # same: "git checkout -b $BranchName"
   }
 }

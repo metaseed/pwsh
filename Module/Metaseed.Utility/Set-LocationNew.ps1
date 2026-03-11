@@ -19,7 +19,7 @@ function Set-LocationNew {
     if ($dirExist) {
         if ($Force) {
             Remove-Item -Path $Path -Force -recurse
-            New-Item -ItemType Directory -Force -Path $Path -ErrorAction Stop
+            &$newDir
         }
     }
     else {

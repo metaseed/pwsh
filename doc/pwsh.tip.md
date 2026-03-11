@@ -1,44 +1,52 @@
-* ghp
-ghp -o ls
+## ghp: get-help
 ghp Get-ChildItem -Online
+ghp gci -o
 
-* reload profile
+## reload profile
 ```
 & $profile.CurrentUserAllHosts
-
-* to reload the module after changing:
 ```
-ipmo metaseed.git -fo
+
+## to reload the module after changing:
 import-module metaseed.git -force
+ipmo metaseed.git -fo
+
+remove-module metaseed.git # if needed
 rmo metaseed.git
 ```
 * copy current dir
 ```
-# get sub dirs
-gci -at d
+## get sub dirs
 get-childItem -attribute directory
-gci -n
+gci -at d
 get-childItem -Name # only show dir name
+gci -n
 
-# pwd: print work directory
+## view all properties of an obj
+gl|select -p *|fl #get-location|select-object -property *|format-list
+> note: gl|gm # get-location|get-memeber # will list all members
+> (gl).gettype() # to get the type
+```
+gps msedge|Out-GridView
+gps msedge|select -p *|out-gridView
+```
+
+## pwd: print work directory
+> scb: set-clipboard; gcb: get-clipboard; gl: get-location
+
 > gl|scb
 > gcb
-
+```s
 $pwd is a context variable
 ''pwd' and 'gl' is the alias of get-location
 (pwd).path|scb
 (pwd).gettype()
-note: (pwd).path|clip when gcb would return [the-path, ''], it's an string array
+note: (pwd).path|clip when gcb would return [the-path, ''], it's a 2 strings array.
 
 clip is C:\WINDOWS\system32\clip.exe # gcm clip
 scb (gl).path
 gl|gp|fl #get-location|get-property|format-list
-# view all properties of an obj
-gl|select -p *|fl #get-location|select-object -property *|format-list
-> note: gl|gm # get-location|get-memeber # will list all members
-> (gl).gettype() # to get the type
 
-# scb: set-clipboard; gcb: get-clipboard; gl: get-location
 scb (pwd).path
 pwd|scb
 gl|scb
@@ -47,7 +55,7 @@ pwd and gl is the aliases of get-location
 ## create file from clipboard
 gcb > 1.txt
 
-* make dir and change to that dir
+## make dir and change to that dir
 ```
 # Set-LocationNew  is a function in Utility module
 sln dir # set to location, create new dir if not exist)
@@ -192,12 +200,15 @@ $a = @{}
 1,2,3|% -Parallel {write-host $_; ($using:a).b = $_}
 
 ## open 'this pc'
-explorer file:
-start file:
-sa file:
-* open c:
+explorer file-path
+start fp
+sa fp
+ii fp # same as double click, open with default exe
+ii .# open current dir
+* open cs:
 explorer c:
 start c:
+sa c:
 ## -contains operator
 work on list not on string
 'abc' -contains 'a' not work
@@ -211,18 +222,24 @@ saps chrome
 start chrome
 sa firefox
 
-# open file/dir from pipeline in vscode
+## open file/dir from pipeline in vscode
 > vscode does not accept parameter from stdin,
 > so it's not valid: `gi *.json|code`
+> but this cmd work: `gi *.json|code -`
+
+`code -h|code -`
+> we have a out-code oc command to give a file name.
+
 
 gci|%{code $_}
 
-# how to open multiple files from command line
+
+## how to open multiple files from command line
 ```pwsh
 gi *.json |%{ code $_ }
 ```
 
-# resource monitor
+## resource monitor
 resmon
 taskmgr
 
@@ -250,9 +267,15 @@ gi c:\app|format-list -p(roperty) *
 gi c:\app|fl -p * # ft: format-table
 gi c:\app|select -p* #select-object
 
-## open solution
+## run all visual studio solutions in folder
+```
+invoke-item *.sln
+ii *.sln
+// open code and solution
+code .;ii *.sln
+```
 sa (find-fromParent *.sln)
-> `find-fromParent *.sln|sa will` not work, as the `sa` does not accept pipeline arg
+> `find-fromParent *.sln|sa` not work, as the `sa` does not accept pipeline arg
 find-fromParent *.sln|ii
 find-fromParent *.sln|invoke-item # to Opens a file or directory using its default associated application
 
@@ -264,11 +287,23 @@ https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 ctrl-l just scroll the screen
 cls clear the buffer
 
-## check windows version
-winver
+## Helpful windows exe
 
-## quickly open the 'optional features' dialog
-type `OptionalFeatures` in terminal
+* check windows version: winver
+* quickly open the 'optional features' dialog: OptionalFeatures
+* system config: msconfig
+* resources monitor: resmon
+* programs and features: appwiz.cpl
+* network connections: ncpa.cpl(network control panel applet)
+* System Device Manager: sysdm.cpl
+* main input settings(mouse properties): main.cpl
+* desktop settings: desk.cpl
+* power configuration:powercfg.cpl
+* firewall: firewall.cpl
+* disk management: diskmgmt
+* dxdiag: directX diagnostic tool
+* fix system broken files: sfc /scannow
+> opss have a lot open system settings
 
 ## new/delete/rename/copy/paste/view-property file/dir
 ni test
@@ -277,6 +312,8 @@ ri test
 mi test test1
 copy test test2
 get-itemProperty *
+gp *
+gp .
 
 view sizes in folder `a wizTree -- $pwd`
 
@@ -301,11 +338,12 @@ Get-PSReadlineKeyHandler
 
 
 ## file management
+```
 cd sl
 ga cd
 ga -d set-location
 ga -d Get-ChildItem
-
+```
 z location
 https://github.com/vors/ZLocation
 
@@ -313,12 +351,12 @@ start c:\app
 https://github.com/mgunyho/tere
 
 shortcuts: search, home, end
-
+```
 ni test
 ni test -ty d # type directory
 ri test
 mi test test1
-
+```
 * zip (compress)
 Compress-Archive
 ca listOfFilesOrFolders z.zip
@@ -355,7 +393,7 @@ https://github.com/microsoft/vscode/issues/185057
 # split and combine file of fix size
 `a 7z a -- -h`
 Usage: 7z <command> [<switches>...] <archive_name> [<file_names>...] [@listfile]
-
+```
 split files:
 // 1G
 // large_file.iso: original large file
@@ -368,9 +406,9 @@ combine files:
 copy /b file1 file2 file3 file
 or
 7z x large_file.7z.001
-
+```
 ## navigating inside location history
-```pwsh
+```
 alt+[: cd - # previous location
 alt+]: cd + # next location
 `sl` or `sl ~` change to home directory
@@ -482,7 +520,8 @@ ${a}?[0]
 for the shortcuts of searching
 
 
-# make sure the output is a array
+## make sure the output is a array
+```
 $a = 1
 @($a)
 ,1
@@ -532,5 +571,29 @@ gps|? ProcessName -like *dex|spps
   $expandedText = $execContext.SessionState.InvokeCommand.ExpandString($this.Text)
 
   use exanding string: write with "" and change it to '', then it will be evaluated at runtime dynamically.
-  example: 
+  example:
     $global:GitPromptSettings.BeforePath.Text = '$($global:GitStatus ? "":"")'
+
+## weird $null comparison
+> $null behaves like "less than zero" for ordering when compared against 0 or positive numbers, but coerces to 0 when compared against negative numbers.
+> pwsh comparison coerce left type to right type then do comparison
+> so: when compare with number, $null is coerced to a value between (-,0)
+> but when do type coercing it's zero.
+
+```
+[int]$null is 0
+$null -le 0 is true
+$null -lt 0 is true
+$null -eq 0 is false
+$null -lt 2 is true
+$null -le -1 is false
+$null -gt -1 is true
+$null -lt -2 is false
+
+function func($a = $null){
+  if($a -le 0){...} # when null
+  else if($null -eq $a){...} # not reachable
+  else {...}
+}
+}
+```

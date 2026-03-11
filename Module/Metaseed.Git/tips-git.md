@@ -48,6 +48,9 @@ git checkout -- .
 
 ## change branch by navigate reflog history
 `git chechout -` same as `git checkout @{-1}` : switch to last used branch
+> Note: when in pwsh we need add '' to {}, `git checkout '@{-1}` or `git checkout -`
+> there is no `git checkout -2`
+> here all `checkout` can be replaced with `switch`, because it's about branch operation(for file, it's `restore`)
 
 Key point:
 - takes you to whatever you checked out last, whether that's:
@@ -68,3 +71,11 @@ If HEAD is at C (a merge commit):
 HEAD^1 or HEAD~1 → B (first parent, the branch you were on)
 HEAD^2 → E (second parent, the branch you merged in)
 HEAD~2 → A (following first parent lineage)
+
+## git stage/unstage changes
+> temp storage. i.e. work with AI
+
+`git add -A .`
+
+`git restore --staged .`
+`git restore --staged <file>`

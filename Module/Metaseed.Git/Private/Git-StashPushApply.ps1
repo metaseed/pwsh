@@ -5,13 +5,14 @@ function Git-StashPushApply {
 	)
 
 	try {
-		$parentFunc = "Func:"
+		$parentFunc = ""
 		$callStack = Get-PSCallStack
-		if ($callStack.Count -gt 2) {
+		if ($callStack.Count -ge 2) {
 			$parentFunc += "$($callStack[1].Command)"
 		}
-		$guard = & Git-Stash -message "callFrom $parentFunc"
+		$guard = & Git-Stash -message "callFrom Func:$parentFunc"
 		Write-Verbose "Running main code..."
+		# with &, can use var outside, but can not modify, if needed can be changed to .
 		& $Code
 	}
 	catch {
@@ -19,7 +20,7 @@ function Git-StashPushApply {
 		throw
 	}
 	finally {
-		Write-Verbose "Running post-execution..."
+		Write-Verbose "Running git post-execution..."
 		if ($guard -eq [GitSaftyGuard]::Stashed) {
 			# --index: not merge index into worktree, the same as the state before stash
 			Write-Execute 'git stash apply --index' 'restore index&tree&untracked'

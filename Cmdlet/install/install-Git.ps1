@@ -25,7 +25,7 @@ write-host "add git utilities to user path"
 # note in bash, use ctrl+u to start over
 Add-PathEnv "$env:ProgramFiles\Git\bin" User
 Add-PathEnv "$env:ProgramFiles\Git\cmd" User -append # gitk
-# Add-PathEnv "$env:ProgramFiles\Git\usr\bin" User -append # is added by installation, git.exe,bash.exe,sh.exe is here
+Add-PathEnv "$env:ProgramFiles\Git\usr\bin" User -append # is added by installation, git.exe,bash.exe,sh.exe is here
 Add-PathEnv "$env:ProgramFiles\Git\mingw64\bin" User -append # Minimum GNU for Windows 64 bit,  It's the name of a compiler used to build an extra copy of bash that "git for Windows" includes.
 Update-ProcessEnvVar
 

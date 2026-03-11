@@ -34,6 +34,8 @@ function ForEach-Combination {
 }
 
 # Usage: Return $false to break
+# $var = 0;
+# # when modify outside var use $state={var=0}
 # ForEach-Combination @(3, 4, 5) {
 #     param($indices)
 #     Write-Host "i=$($indices[0]), j=$($indices[1]), k=$($indices[2])"
@@ -42,5 +44,7 @@ function ForEach-Combination {
 #     if ($indices[0] -eq 1 -and $indices[1] -eq 2) {
 #         return $false
 #     }
+# 	$var = $var+1
 #     # by default return $null
 # }
+# $var

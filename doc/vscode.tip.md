@@ -31,3 +31,6 @@ shift+F4: show previous search results
 `ipconfig -all|code -`
 `code -h|code -` // - means from stdin
 `code -h|oc codeHelp.md` // out-code can give a name to support syntax hight and formatting
+
+## git panel
+* use `ctrl+0` to go back to the left panel

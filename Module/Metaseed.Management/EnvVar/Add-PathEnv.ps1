@@ -48,7 +48,7 @@ function Add-PathEnv {
         Write-Verbose "'$Dir' was added to current `$env:Path"
     }
     else {
-        Write-Verbose "current `$env:Path already contains $Dir"
+        Write-Verbose "`$env:Path already contains $Dir, skip adding"
     }
 
     $isAdmin = Test-Admin
@@ -57,11 +57,11 @@ function Add-PathEnv {
     $envPathUser = [Environment]::GetEnvironmentVariable("Path", 'User')
     $envPathMachine = [Environment]::GetEnvironmentVariable("Path", 'Machine')
     if (Test-DirInPathStr $envPathUser $Dir) {
-        Write-Verbose "'User' Environment Variable Path already contains $Dir, not need to add it"
+        Write-Warning "'User' Environment Variable Path already contains $Dir, not need to add it"
         return
     }
     if (Test-DirInPathStr $envPathMachine $Dir) {
-        Write-Verbose "'Machine' Environment Variable Path already contains $Dir, not need to add it"
+        Write-Warning "'Machine' Environment Variable Path already contains $Dir, not need to add it"
         return
     }
 
@@ -70,11 +70,11 @@ function Add-PathEnv {
         return
     }
 
-    $PathToUse = $Scope == 'User' ? $envPathUser : $envPathMachine
+    $PathToUse = $Scope -eq 'User' ? $envPathUser : $envPathMachine
     $PathToUse = $append ? "$PathToUse;$Dir" : "$Dir;$PathToUse"
 
     [Environment]::SetEnvironmentVariable("Path", $PathToUse, $Scope)
-    Write-Verbose "'$Dir' was added to Environment $Scope scope variable: Path"
+    Write-Information "'$Dir' was added to Environment $Scope scope variable: Path"
 }
 
 function Test-DirInPathStr {

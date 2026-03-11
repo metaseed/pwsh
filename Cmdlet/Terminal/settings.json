@@ -155,7 +155,7 @@
     {
         "defaults": 
         {
-            "backgroundImage": "%MS_WTBackground%\\res\\bg\\space.gif",
+            "backgroundImage": "%MS_WTBackground%\\res\\bg\\wave.gif",
             "backgroundImageAlignment": "center",
             "backgroundImageOpacity": 0.4,
             "backgroundImageStretchMode": "none",
