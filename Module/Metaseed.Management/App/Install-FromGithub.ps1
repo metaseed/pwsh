@@ -26,6 +26,20 @@ function Install-FromGithub {
 		[scriptblock]$getOnlineVer = {
 			[CmdletBinding()]
 			param($name, $tag_name)
+			function version($str) {
+				Write-Verbose "extract version from: $name"
+				$versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
+				# 1.77.3.
+				$r = $str -match $versionRegex #>$null
+				$ver_ = $null
+				if ($r) {
+					$ver_ = [Version]::new($matches[1].TrimEnd('.'))
+				}
+				else {
+					write-warning "'$str' can not match '$versionRegex'"
+				}
+				return $ver_
+			}
 			# $versionRegex = "_(\d+\.\d+\.?\d*\.*\d*)_x64"
 			# $_.name -match $versionRegex >$null
 			# $ver_online = [Version]::new($matches[1])
@@ -36,19 +50,11 @@ function Install-FromGithub {
 					Write-Verbose "online ver: $ver_online"
 				}
 				else {
-					$ver_online = [Version]::new($ver_online)
+					$ver_online = version($ver_online)
 				}
 			}
 			catch {
-				$versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
-				# 1.77.3.
-				Write-Verbose $name
-				$r = $name -match $versionRegex #>$null
-				if($r) {
-					$ver_online = [Version]::new($matches[1].TrimEnd('.'))
-				} else {
-					write-error "'$name' can not match '$versionRegex'"
-				}
+				$ver_online = version($name)
 			}
 			$ver_online
 		},
@@ -105,7 +111,7 @@ function Install-FromGithub {
 		% {
 			$assets = $_
 			if ($assets.Count -ne 1 ) {
-				 Write-Error "Expected one asset, but found $($assets.Count)"
+				Write-Error "Expected one asset, but found $($assets.Count)"
 				break;
 			}
 			Write-Verbose "$_"
@@ -127,7 +133,7 @@ function Install-FromGithub {
 		% {
 			$path = $_
 			$Folder ??= $env:MS_App
-			$des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder,$CreateFolder, $newName, $versionLocal
+			$des = Invoke-Command -ScriptBlock $installScript -ArgumentList "$path", "$ver_online", $Folder, $CreateFolder, $newName, $versionLocal
 			write-host "app installed to $des"
 			$appPath = $des
 		}

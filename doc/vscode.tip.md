@@ -23,9 +23,14 @@ shift+F4: show previous search results
   "command": "search.focus.nextInputBox",
   "when": "inSearchEditor && inputBoxFocus || inputBoxFocus && searchViewletVisible"
 }
-
-## Switch terminal tabs
-`ctrl+pageDown`
+## Terminal Panel
+> Terminal part in: C:\Users\jsong12\AppData\Roaming\Code\User\keybindings.json
+* Focus Terminal Tabs View: `ctrl+shift+\`
+* Switch terminal tabs: `ctrl+PageUp/PageDown`
+* Open external terminal with current proj path: `ctrl+shift+c`
+* Toggle the maximized bottom panel: `ctrl+; m`
+* new terminal: 'ctrl+shift+`'
+* new terminal window: 'ctrl+shift+alt+`'
 
 ## open console output from command in vscode
 `ipconfig -all|code -`
@@ -34,3 +39,7 @@ shift+F4: show previous search results
 
 ## git panel
 * use `ctrl+0` to go back to the left panel
+## claude code extension
+* `ctrl+alt+/` to focus to chat input. (forward the selection if there is selection in editor)
+* `ctrl+n` to start a new chat session.
+* /clear command: to reset current session without start a new session.

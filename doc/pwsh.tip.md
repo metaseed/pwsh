@@ -170,8 +170,10 @@ gcm mkdir|% scriptblock| Set-Content c:\tmp\tt.ps1; code C:\tmp\tt.ps1
 1. beep-DingDong: just the Ctrl+G: inclose the Ctrl+G in a string and output it. (type ctrl+g in console and copy it to file: )
 1. [Console]::Beep(), [Console]::Beep(1000,1000)
 
-* show unicode: [char]0x2261
+* show char from unicode number: [char]0x2261
 ≡
+* show unicode number from char: [int]('≡'[0])
+8801 # to hexStr: `'0x{0:X}' -f 8801` 0x2261
 
 ## write format table to host
   $process = [System.Diagnostics.Process]::GetCurrentProcess()

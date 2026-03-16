@@ -96,3 +96,20 @@ Set-ItemProperty -Path 'HKCU:\Control Panel\Accessibility\Keyboard Response' -Na
 
 # 3. Update ToggleKeys Flags (58 = Off)
 Set-ItemProperty -Path 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58'
+
+### auto-start app slow problem
+# Define the registry path
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize"
+
+# Create the 'Serialize' key if it doesn't exist
+if (!(Test-Path $registryPath)) {
+    New-Item -Path $registryPath -Force | Out-Null
+}
+
+# 1. Set the Startup Delay to 0ms
+Set-ItemProperty -Path $registryPath -Name "StartupDelayInMSec" -Value 0 -Type DWord
+
+# 2. Disable the 'Wait for Idle' check (Crucial for Win 11)
+Set-ItemProperty -Path $registryPath -Name "WaitForIdleState" -Value 0 -Type DWord
+
+# Write-Host "Registry keys updated. Please restart your PC or Sign Out/In to apply changes." -ForegroundColor Cyan

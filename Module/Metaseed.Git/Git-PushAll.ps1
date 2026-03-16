@@ -1,6 +1,6 @@
 function Git-PushAll {
   [CmdletBinding()]
-  [alias('gitp')]
+  [alias('gtp')]
   param (
     # commit message
     [Parameter()]

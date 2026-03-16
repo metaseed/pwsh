@@ -48,7 +48,7 @@ function Install-App {
 	Write-Host "Install $appName from $downloadedFilePath"
 	## stop app
 	$app = "$toLocation\$name.exe"
-	gps $name -ErrorAction SilentlyContinue |% {
+	gps $name -ErrorAction SilentlyContinue | % {
 		Write-Host "force stop app $name"
 		spps $_ -Force
 	}
@@ -75,6 +75,10 @@ function Install-App {
 		if ($newName) {
 			$exe = Split-Path $downloadedFilePath -Leaf
 			Rename-Item "$toLocation\$exe" -NewName "$newName.exe"
+		}
+		if (!$verLocal -or $verLocal -ne $ver_online) {
+			write-host "modify app version from $verLocal to $ver_online"
+			rcedit-x64 "$toLocation\$newName.exe" --set-file-version $ver_online --set-product-version $ver_online
 		}
 		return $toLocation
 	}
@@ -120,7 +124,7 @@ function Install-App {
 	# many children and no need to pickup
 	if (($children.count -ne 1 -and !$filesToPickup) -or $CreateFolder) {
 		$toLocation = "$toLocation\${name}"
-		Write-Verbose "from location: $($children[0].Parent) to location: $toLocation"
+		Write-Verbose "from location: $($children[0].PSParentPath) to location: $toLocation"
 		$from = $children[0].PSParentPath
 
 		Move-Item $from -Destination $toLocation -Force
