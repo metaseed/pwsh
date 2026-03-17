@@ -14,7 +14,8 @@ function global:__zoxide_bin {
         [Console]::OutputEncoding = [System.Text.Utf8Encoding]::new()
         $result = zoxide @args
         return $result
-    } finally {
+    }
+    finally {
         [Console]::OutputEncoding = $encoding
     }
 }
@@ -31,7 +32,8 @@ function global:__zoxide_pwd {
 function global:__zoxide_cd($dir, $literal) {
     $dir = if ($literal) {
         Set-Location -LiteralPath $dir -Passthru -ErrorAction Stop
-    } else {
+    }
+    else {
         if ($dir -eq '-' -and ($PSVersionTable.PSVersion -lt 6.1)) {
             Write-Error "cd - is not supported below PowerShell 6.1. Please upgrade your version of PowerShell."
         }
@@ -95,24 +97,48 @@ function global:__zoxide_z {
         __zoxide_cd $args[0] $false
     }
     else {
-        $result = __zoxide_pwd
-        if ($null -ne $result) {
-            $result = __zoxide_bin query --exclude $result "--" @args
+        if ($args -contains '-h' -or $args -contains '--help' -or
+            $args -contains '-V' -or $args -contains '--version') {
+            $result = __zoxide_bin @args
         }
         else {
-            $result = __zoxide_bin query "--" @args
+            $result = __zoxide_pwd
+            if ($null -ne $result) {
+                $result = __zoxide_bin query --exclude $result "--" @args
+            }
+            else {
+                $result = __zoxide_bin query "--" @args
+            }
         }
         if ($LASTEXITCODE -eq 0) {
-            __zoxide_cd $result $true
+            # both handle $result is a path string or an array of string, i.e. from -h
+            # note: -V will return a string too, we need to make sure it's a dir
+            if ($result -is [string] -and (Test-Path -PathType Container -LiteralPath $result)) {
+                __zoxide_cd $result $true
+            }
+            else {
+                $result
+            }
         }
     }
 }
 
 # Jump to a directory using interactive search.
 function global:__zoxide_zi {
-    $result = __zoxide_bin query -i "--" @args
+    if ($args -contains '-h' -or $args -contains '--help' -or
+        $args -contains '-V' -or $args -contains '--version') {
+        $result = __zoxide_bin query @args
+    }
+    else {
+        $result = __zoxide_bin query -i -- @args
+    }
     if ($LASTEXITCODE -eq 0) {
-        __zoxide_cd $result $true
+        if ($result -is [string] -and (Test-Path -PathType Container -LiteralPath $result)) {
+            __zoxide_cd $result $true
+        }
+        else {
+            $result
+        }
     }
 }
 
@@ -131,3 +157,9 @@ Set-Alias -Name zi -Value __zoxide_zi -Option AllScope -Scope Global -Force
 #
 # Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
+# z -V
+# z -h
+# z D:\
+# z pwsh
+# zi -V
+# zi -h
