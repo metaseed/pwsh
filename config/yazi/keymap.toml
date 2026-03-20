@@ -1,5 +1,6 @@
 [mgr]
 prepend_keymap = [
 	{ on = "<A-->", run = "hardlink", desc = "Hardlink yanked files" },
-	{ on = ["c", "r"], run = "plugin path-from-root", desc = "Copies path from git root"}
+	{ on = ["c", "r"], run = "plugin path-from-root", desc = "Copies path from git root"},
+	{ on = ["g", "i"], run = '''shell --block -- exiftool -k "%1"''', desc = "show file info with exiftool"}
 ]
