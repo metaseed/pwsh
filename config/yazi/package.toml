@@ -1,0 +1,19 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+rev = "1962818"
+hash = "33241d0d2c0f65d80d03e3388ba9e0e3"
+
+[[plugin.deps]]
+use = "aresler/path-from-root"
+rev = "3daa62f"
+hash = "16074f7e417082341ba0c1aa550f6f97"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:dracula"
+rev = "9511cb0"
+hash = "fee9eeb8bf3ac3ed251812cbc0452bbd"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "9511cb0"
+hash = "5ebc8659108fcb68fe853e523115ed3c"

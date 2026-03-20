@@ -26,35 +26,12 @@ function Install-FromGithub {
 		[scriptblock]$getOnlineVer = {
 			[CmdletBinding()]
 			param($name, $tag_name)
-			function version($str) {
-				Write-Verbose "extract version from: $name"
-				$versionRegex = "(\d+\.\d+\.?\d*\.?\d*)"
-				# 1.77.3.
-				$r = $str -match $versionRegex #>$null
-				$ver_ = $null
-				if ($r) {
-					$ver_ = [Version]::new($matches[1].TrimEnd('.'))
-				}
-				else {
-					write-warning "'$str' can not match '$versionRegex'"
-				}
-				return $ver_
+			$ver_online = Get-VersionFromString ($tag_name.Trim('v', 'e', 'r'))
+			if (!$ver_online) {
+				$ver_online = Get-VersionFromString $name
 			}
-			# $versionRegex = "_(\d+\.\d+\.?\d*\.*\d*)_x64"
-			# $_.name -match $versionRegex >$null
-			# $ver_online = [Version]::new($matches[1])
-			$ver_online = $tag_name.trim('v', 'e', 'r')
-			try {
-				if ( $ver_online -match '^\d+$' ) {
-					$ver_online = [Version]::new($matches[0] + '.0')
-					Write-Verbose "online ver: $ver_online"
-				}
-				else {
-					$ver_online = version($ver_online)
-				}
-			}
-			catch {
-				$ver_online = version($name)
+			if (!$ver_online) {
+				Write-Warning "Cannot extract version from tag '$tag_name' or name '$name'"
 			}
 			$ver_online
 		},

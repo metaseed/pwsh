@@ -66,21 +66,13 @@ function Install-FromWeb {
 		if (!$isAbsolute){
 			$fileUrl = New-Object System.Uri([System.Uri]$url, $fileUrl)
 		}
-		$verOnline = ''
-		## find ver from file name in url
-		if ($fileNameWithVer -match '\d+\.\d+\.?\d*\.?\d*') {
-			$verOnline = $Matches[0].trim('.')
-		}
-		if(!$verOnline -and ($fileNameWithVer -match '\d+_\d+_?\d*_?\d*')) {
-			$verOnline = $Matches[0].replace('_', '.').trim('.')
-		}
 		# wiztree_4_25_portable
 		$nameFromOnline = $fileNameWithVer -replace '(\.|-|_|_v|-v|_version|ver)\d+(\.\d+)*.*', ''
 		$name = ($newName) ?? $nameFromOnline
+		$verOnline = Get-VersionFromString $fileNameWithVer
 		if (!$verOnline) {
-			$verOnline = ReadHost "please input the version of the online app (i.e. 1.0.0)"
+			$verOnline = [Version](Read-Host "Please input the version of the online app (e.g. 1.0.0)")
 		}
-		$verOnline = [Version]$verOnline
 
 		## local version
 		$localInfo = Get-LocalAppInfo $name $toLocation

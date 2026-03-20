@@ -2,22 +2,25 @@ using namespace System.IO
 
 <#
 Environment Variables scopes:
-Process: Current process environment variable:
-    1. System-wide environment variable loaded first
-    2. User-specific environment variable loaded second, can override the system-wide environment variable
-    3. Process specific environment variable loaded last
 User: User-specific environment variable
 Machine: System-wide environment variable
 
-EXAMPLES:
-system: Path=C:\Windows\system32
-user: Path=C:\Users\user\AppData\Roaming\npm
-process: Path=C:\Users\user\AppData\Roaming\npm;C:\Windows\system32
+Process: Current process environment variable:
+    1. System-wide environment variable loaded first
+    2. User-specific environment variable loaded second, can override the system-wide environment variable
+    3. Process specific environment variable loaded last, can override aboves
+
+But for the Path env:
+Windows searches for that executable in a very specific order:
+    1. Current Directory: It looks exactly where your terminal is currently pointed.
+    2. System Path: It scans every folder listed in the System variables.
+    3. User Path: Only if it finds nothing in the first two steps does it check your personal User Path.
+> that means the system path will override path. i.e. If you have Python 3.12 installed in your System Path, but you want to use Python 3.13 located in your User Path, typing python will launch version 3.12.
 
 NOTE:
 * $env:<varName> is the current process environment variable
 * app run in user mode, can read both user and system variables, so the process environment variable is a combination of all three scopes, same for the admin mode app.
-* but, the user mode app can only the process environment variables and user environment variables, not the machine environment variables, the admin app can modify the machine environment variables too.
+* but, the user mode app can only modify the process environment variables and user environment variables, not the machine environment variables, the admin app can modify the machine environment variables too.
 #>
 
 <#
@@ -30,10 +33,10 @@ function Add-PathEnv {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [String]
         $Dir,
-        # Machine or User, default: if the session is Admin, use the Machine scope
+        # Machine or User, default: user
         [object]
         [ValidateSet('Machine', 'User')]
-        $Scope = $null,
+        $Scope = 'User',
         # prepend by default
         [switch]
         $append
@@ -45,14 +48,12 @@ function Add-PathEnv {
     if (-not (Test-DirInPathStr $env:Path $Dir)) {
         $PathToUse = $append ? "$env:path;$Dir" : "$Dir;$env:Path"
         $env:Path = $PathToUse
-        Write-Verbose "'$Dir' was added to current `$env:Path"
+        Write-Information "'$Dir' was added to current `$env:Path"
     }
     else {
-        Write-Verbose "`$env:Path already contains $Dir, skip adding"
+        Write-Information "`$env:Path already contains $Dir, skip adding"
     }
-
     $isAdmin = Test-Admin
-    $Scope = $Scope ?? ($isAdmin ? "Machine": "User")
 
     $envPathUser = [Environment]::GetEnvironmentVariable("Path", 'User')
     $envPathMachine = [Environment]::GetEnvironmentVariable("Path", 'Machine')
@@ -97,31 +98,33 @@ function Remove-PathEnv {
         # directory to remove from path
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [String]
-        $Dir
+        $Dir,
+        [ValidateSet('User', 'Machine', 'Process', 'All')]
+        $Scope = 'All'
     )
 
     # resolve-path return a PathInfo object
     $Dir = [Path]::GetFullPath($Dir)
 
-    if (Test-DirInPathStr $env:Path $Dir) {
+    if (($Scope -eq 'All' -or $Scope -eq 'Process') -and (Test-DirInPathStr $env:Path $Dir)) {
         $env:Path = Remove-DirFromPathStr $env:Path $Dir
-        Write-Verbose "'$Dir' was removed from current `$env:Path"
+        Write-Information "'$Dir' was removed from current Process's `$env:Path"
     }
     else {
-        Write-Verbose "current `$env:Path does not contain $Dir"
+        Write-Information "current `$env:Path does not contain $Dir"
     }
 
     $IsAdmin = Test-Admin
     $EnvPathUser = [Environment]::GetEnvironmentVariable("Path", 'User')
     $EnvPathMachine = [Environment]::GetEnvironmentVariable("Path", 'Machine')
-    if (Test-DirInPathStr $EnvPathUser $Dir) {
+    if (($Scope -eq 'All' -or $Scope -eq 'User') -and (Test-DirInPathStr $EnvPathUser $Dir)) {
         $EnvPathUser = Remove-DirFromPathStr $EnvPathUser $Dir
         [Environment]::SetEnvironmentVariable("Path", $EnvPathUser, 'User')
-        Write-Verbose "'$Dir' was removed from Environment User scope variable: Path"
+        Write-Information "'$Dir' was removed from Environment User scope variable: Path"
         return
     }
 
-    if (Test-DirInPathStr $EnvPathMachine $Dir) {
+    if (($Scope -eq 'All' -or $Scope -eq 'Machine') -and (Test-DirInPathStr $EnvPathMachine $Dir)) {
         if(!$IsAdmin) {
             Write-Warning "Find the $Dir in the Machine environment variables, `nbut you are NOT running as Admin, cannot modify Machine environment variables"
             return
@@ -129,7 +132,7 @@ function Remove-PathEnv {
 
         $EnvPathMachine = Remove-DirFromPathStr $EnvPathMachine $Dir
         [Environment]::SetEnvironmentVariable("Path", $EnvPathMachine, 'Machine')
-        Write-Verbose "'$Dir' was removed from Environment Machine scope variable: Path"
+        Write-Information "'$Dir' was removed from Environment Machine scope variable: Path"
         return
     }
 

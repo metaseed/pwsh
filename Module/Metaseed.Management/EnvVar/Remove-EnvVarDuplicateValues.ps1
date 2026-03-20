@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
     remove duplicate values separated by ';' in the environment variable, by default 'Path'
+    Note: Machine path is checked first.
 #>
 function Remove-EnvVarDuplicateValues {
     [CmdletBinding()]
@@ -10,7 +11,7 @@ function Remove-EnvVarDuplicateValues {
         $var = 'Path',
         [object]
         [ValidateSet('Machine', 'User')]
-        $scope = 'Machine'
+        $scope = 'User'
     )
     function clean {
         param (
@@ -23,27 +24,28 @@ function Remove-EnvVarDuplicateValues {
         )
 
         # trick: $scope is object not string, so we can use ??= with $null, note: empty string not work for ??=
-        $scope ??= ((Test-Admin) ? "Machine": "User")
+        $scope ??= "User"
 
         $newPath = [System.Collections.ArrayList]::new()
         $v = [Environment]::GetEnvironmentVariable($var, $scope)
-        
+
         if ($null -eq $v) {
             write-warning "scope: $scope, do not have the env var:$var"
             return
         }
-        
+
         Write-Notice "current value of scope: $scope, env:$var = $v"
 
         write-host "process scope: $scope, env:$var..."
         try {
-            
+            $changed = $false
             $null = $v.Split(';') |
             % {
                 if (!$_) { return } # return nothing in % to filter out it
 
                 if ($removeDead -and -not (Test-Path $_)) {
-                    write-host "remove dead path: $_"
+                    write-host "remove dead path: $_" -ForegroundColor Yellow
+                    $changed = $true
                     return # return nothing to filter it out
                 }
 
@@ -62,14 +64,20 @@ function Remove-EnvVarDuplicateValues {
                     $newPath.Add($path_test)
                 }
                 else {
+                    $changed = $true
                     write-host "remove duplication: $_"
                 }
             }
 
-            $p = $newPath -join ';'
-            [Environment]::SetEnvironmentVariable($var, $p, $scope)
-            Write-Notice "updated value of scope: $scope, env:$var = $p"
-            return
+            if ($changed) {
+                $p = $newPath -join ';'
+                [Environment]::SetEnvironmentVariable($var, $p, $scope)
+                Write-Notice "updated value of scope: $scope, env:$var"
+            }
+            else {
+                Write-Notice "No duplication in scope: $scope, env:$var"
+            }
+            return $newPath
         }
         catch {
             Write-Notice "Error occurred while processing scope: $scope, env:$var, so recover the original value"
@@ -79,3 +87,4 @@ function Remove-EnvVarDuplicateValues {
 
     clean $scope
 }
+

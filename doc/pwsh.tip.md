@@ -381,6 +381,7 @@ rni test test1 # rename test to test1
 
 # to show verbose for all sub function calls in module
  $VerbosePreference = 'Continue'
+ $InformationPreference = 'Continue'
 
 # how to monitor log file
 tail -f logfile| bat --paging=never -l log

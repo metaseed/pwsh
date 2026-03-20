@@ -29,4 +29,5 @@ if($IsAdmin) {
 #   $env:MS_PWSH = [System.Environment]::GetEnvironmentVariable("MS_PWSH", "User")
 # }
 
-# $InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
+# $VerbosePreference = 'Continue' # silentlyContinue (default); to help debugging
+$InformationPreference = 'Continue' # SilentlyContinue (default); to display Write-Information message
