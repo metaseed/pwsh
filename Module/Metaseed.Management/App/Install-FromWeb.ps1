@@ -34,6 +34,16 @@ function Install-FromWeb {
 
 		},
 
+		# scriptblock to get the online version from the file name
+		[Parameter()]
+		[scriptblock]
+		$getOnlineVer,
+
+		# scriptblock to override install-app
+		[Parameter()]
+		[scriptblock]
+		$installScript,
+
 		# whether to create a subfolder with the name
 		[Parameter()]
 		[switch]
@@ -69,7 +79,11 @@ function Install-FromWeb {
 		# wiztree_4_25_portable
 		$nameFromOnline = $fileNameWithVer -replace '(\.|-|_|_v|-v|_version|ver)\d+(\.\d+)*.*', ''
 		$name = ($newName) ?? $nameFromOnline
-		$verOnline = Get-VersionFromString $fileNameWithVer
+		if ($getOnlineVer) {
+			$verOnline = Invoke-Command -ScriptBlock $getOnlineVer -ArgumentList $fileNameWithVer
+		} else {
+			$verOnline = Get-VersionFromString $fileNameWithVer
+		}
 		if (!$verOnline) {
 			$verOnline = [Version](Read-Host "Please input the version of the online app (e.g. 1.0.0)")
 		}
@@ -81,8 +95,10 @@ function Install-FromWeb {
 		$isInstall = $true
 		if ($verLocal) {
 			$isInstall = Test-AppInstallation $name $verLocal $verOnline -force:$force
-			$name = split-path $localInfo.folder -Leaf
-			$newName = $newName ?? $name
+			if (!$newName) {
+				$name = split-path $localInfo.folder -Leaf
+				$newName = $name
+			}
 		}
 
 		if (!$isInstall) {
@@ -103,15 +119,19 @@ function Install-FromWeb {
 		}
 
 		$localFolder = $toLocation ?? $env:MS_App
-		$toLocation = install-app $downloadedFilePath $verOnline $name $localFolder -filesToPickup $filesToPickup -restoreList $restoreList -verLocal $verLocal -CreateFolder:$CreateFolder $newName
+		if ($installScript) {
+			$toLocation = Invoke-Command -ScriptBlock $installScript -ArgumentList $downloadedFilePath, $verOnline, $name, $localFolder, $verLocal
+		} else {
+			$toLocation = install-app $downloadedFilePath $verOnline $name $localFolder -filesToPickup $filesToPickup -restoreList $restoreList -verLocal $verLocal -CreateFolder:$CreateFolder $newName
+		}
 
 		if ($postInstallScript) {
 			Invoke-Command -ScriptBlock $postInstallScript -ArgumentList $name, $localInfo, $toLocation
 		}
 	}
 	else {
-		write-error 'can not parse the returned html to find the download file url with the filter:' + $filter
+		write-error "can not parse the returned html to find the download file url with the filter: $filter"
 	}
 }
-import-Module metaseed.utility -Force
+# import-Module metaseed.utility -Force
 

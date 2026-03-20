@@ -42,7 +42,8 @@ function Install-App {
 		# just pickup the files from downloaded files in zip, not folders
 		[string[]]$filesToPickup,
 		# folders or files in toLocation to backup and restore
-		[string[]]$restoreList = @('_'))
+		[string[]]$restoreList = @('_')
+		)
 
 	$name = $newName ? $newName : $appName
 	Write-Host "Install $appName from $downloadedFilePath"
@@ -114,7 +115,7 @@ function Install-App {
 		break
 	}
 
-	## install
+	## install(copy)
 	$children = @(gci "$env:temp\temp")
 	while ($children.Count -eq 1 -and $children[0].PSIsContainer) {
 		Write-Verbose "goto $($children[0].FullName)"
