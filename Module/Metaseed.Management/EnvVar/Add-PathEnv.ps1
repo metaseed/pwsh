@@ -58,11 +58,11 @@ function Add-PathEnv {
     $envPathUser = [Environment]::GetEnvironmentVariable("Path", 'User')
     $envPathMachine = [Environment]::GetEnvironmentVariable("Path", 'Machine')
     if (Test-DirInPathStr $envPathUser $Dir) {
-        Write-Warning "'User' Environment Variable Path already contains $Dir, not need to add it"
+        Write-Warning "'User' Environment Variable 'Path' already contains $Dir, not need to add it"
         return
     }
     if (Test-DirInPathStr $envPathMachine $Dir) {
-        Write-Warning "'Machine' Environment Variable Path already contains $Dir, not need to add it"
+        Write-Warning "'Machine' Environment Variable 'Path' already contains $Dir, not need to add it"
         return
     }
 
@@ -100,11 +100,12 @@ function Remove-PathEnv {
         [String]
         $Dir,
         [ValidateSet('User', 'Machine', 'Process', 'All')]
+        [string]
         $Scope = 'All'
-    )
+        )
 
-    # resolve-path return a PathInfo object
-    $Dir = [Path]::GetFullPath($Dir)
+        # resolve-path return a PathInfo object
+        $Dir = [Path]::GetFullPath($Dir)
 
     if (($Scope -eq 'All' -or $Scope -eq 'Process') -and (Test-DirInPathStr $env:Path $Dir)) {
         $env:Path = Remove-DirFromPathStr $env:Path $Dir
@@ -159,7 +160,19 @@ function Remove-DirFromPathStr {
     $list -join ';'
 }
 
-Export-ModuleMember -Function Remove-PathEnv
+function Get-EnvVar {
+    [CmdletBinding()]
+    param(
+        [string]
+        $Var = 'Path',
+        [object]
+        [ValidateSet('Process', 'User', 'Machine')]
+        $Scope = 'Process'
+    )
+    [Environment]::GetEnvironmentVariable($Var, $Scope)
+}
+
+Export-ModuleMember -Function Remove-PathEnv, Get-EnvVar
 
 # Test-DirInPathStr "c:\temp;d:\temp" "c:\temp"
 

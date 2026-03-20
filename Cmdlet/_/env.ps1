@@ -4,7 +4,7 @@ $CmdLetFolder = Resolve-Path "$PSScriptRoot\.."
 $env:path = "$CmdLetFolder;$env:path"
 
 ## add important app path
-$env:path += ";C:\App\7-Zip"
+# $env:path += ";C:\App\7-Zip"
 
 # -exclude only the leaf name start with '_'(here it's dir: -Attributes Directory)
 # -Name -Attribute Directory will return the dir path after $CmdLetFolder, i.e. a\aliases, a, then we do filter to remove the leaf part name start with '_', tests folders

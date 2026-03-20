@@ -5,7 +5,8 @@ param (
 )
 
 ipmo Metaseed.Management -Force
-Install-FromGithub 'https://github.com/sharkdp/bat' '-x86_64-pc-windows-gnu\.zip$' -versionType 'preview'  @Remaining
+Install-FromGithub 'https://github.com/sharkdp/bat' '-x86_64-pc-windows-msvc\.zip$' -versionType 'preview'  @Remaining
+# Install-FromGithub 'https://github.com/sharkdp/bat' '-x86_64-pc-windows-gnu\.zip$' -versionType 'preview'  @Remaining
 
 # # not work, when invode: rg.exe --column --line-number --no-heading --color=always --smart-case test
 # # it will complain about: unknow parameter --column--line-number (space removed)

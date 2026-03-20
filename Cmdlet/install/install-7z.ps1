@@ -17,3 +17,4 @@ $exts |
   cmd /C assoc "$_=7-Zip$_"
   cmd /C ftype "7-Zip$_=$env:ms_app\7-Zip\7zFM.exe"
 }
+Add-PathEnv 'C:\App\7-Zip'
