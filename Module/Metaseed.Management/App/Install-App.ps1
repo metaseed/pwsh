@@ -43,7 +43,7 @@ function Install-App {
 		[string[]]$filesToPickup,
 		# folders or files in toLocation to backup and restore
 		[string[]]$restoreList = @('_')
-		)
+	)
 
 	$name = $newName ? $newName : $appName
 	Write-Host "Install $appName from $downloadedFilePath"
@@ -104,7 +104,7 @@ function Install-App {
 		}
 		tar -xf $downloadedFilePath -C "$env:temp\temp"
 	}
-	elseif ($downloadedFilePath -match '\.tar\.xz') {
+	elseif ($downloadedFilePath -match '\.tar\.(xz|zst)') {
 		if (!(test-path $env:temp\temp)) {
 			$null = ni $env:temp\temp -ItemType Directory
 		}
@@ -119,6 +119,7 @@ function Install-App {
 	$children = @(gci "$env:temp\temp")
 	while ($children.Count -eq 1 -and $children[0].PSIsContainer) {
 		Write-Verbose "goto $($children[0].FullName)"
+		# $name =  $newName ? $newName : $children[0].Name
 		$children = @(gci $children[0])
 	}
 

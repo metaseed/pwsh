@@ -5,3 +5,7 @@ linemode = "size_and_mtime"
 prepend_fetchers = [
     { id = "git", url = "*", run = "git" },
 ]
+[preview]
+# run after change: yazi --clear-cache
+max_width = 1920 # 900 default
+max_height = 1200 # 600 default

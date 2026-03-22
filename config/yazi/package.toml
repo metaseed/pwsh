@@ -8,6 +8,31 @@ use = "aresler/path-from-root"
 rev = "3daa62f"
 hash = "16074f7e417082341ba0c1aa550f6f97"
 
+[[plugin.deps]]
+use = "kkv9/compress"
+rev = "46a6b9f"
+hash = "c626ff7f8d9b152fb0a9b875139fb332"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:zoom"
+rev = "1962818"
+hash = "95b6348b374ab93067073759987d84ce"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:jump-to-char"
+rev = "1962818"
+hash = "6e67c36d6c25fc84cb0976aac8a3ff5"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+rev = "1962818"
+hash = "2ede7b0f1beade8390be1b52cfed6a49"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "1962818"
+hash = "abb7633bc6e643c91a925122e79031d6"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:dracula"
 rev = "9511cb0"

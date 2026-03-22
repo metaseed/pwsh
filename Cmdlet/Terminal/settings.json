@@ -1,10 +1,10 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": 
+    "actions":
     [
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "index": 2,
@@ -13,14 +13,14 @@
             "id": "User.splitPane.227DFB6"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "closeTab"
             },
             "id": "User.closeTab.0"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "globalSummon",
                 "desktop": "onCurrent",
@@ -29,7 +29,7 @@
             "id": "User.globalSummon.25C9281C"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "index": 1,
@@ -38,20 +38,24 @@
             "id": "User.splitPane.125D7ADA"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "globalSummon"
             },
             "id": "User.globalSummon.51A3D78C"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "index": 0,
                 "split": "auto"
             },
             "id": "User.splitPane.48B6353E"
+        },
+        {
+            "keys": "alt+enter",
+            "command": "unbound"
         }
     ],
     "alwaysShowNotificationIcon": true,
@@ -60,7 +64,7 @@
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "focusFollowMouse": true,
     "initialCols": 180,
-    "keybindings": 
+    "keybindings":
     [
         {
             "id": "User.globalSummon.25C9281C",
@@ -142,25 +146,26 @@
             "id": "Terminal.SwitchSelectionEndpoint",
             "keys": "alt+s"
         }
+
     ],
     "launchMode": "default",
     "minimizeToNotificationArea": false,
-    "newTabMenu": 
+    "newTabMenu":
     [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": 
+    "profiles":
     {
-        "defaults": 
+        "defaults":
         {
             "backgroundImage": "%MS_WTBackground%\\res\\bg\\wave.gif",
             "backgroundImageAlignment": "center",
             "backgroundImageOpacity": 0.4,
             "backgroundImageStretchMode": "none",
             "elevate": true,
-            "font": 
+            "font":
             {
                 "face": "CaskaydiaCove Nerd Font Mono"
             },
@@ -168,7 +173,7 @@
             "startingDirectory": ".",
             "useAcrylic": false
         },
-        "list": 
+        "list":
         [
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
@@ -228,7 +233,7 @@
                 "colorScheme": "Ubuntu",
                 "commandline": "C:\\WINDOWS\\system32\\wsl.exe --distribution-id {bf881aaf-04c0-4f83-96eb-81f917fcd471} --cd ~",
                 "cursorShape": "filledBox",
-                "font": 
+                "font":
                 {
                     "size": 13
                 },

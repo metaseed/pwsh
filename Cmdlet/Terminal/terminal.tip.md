@@ -18,7 +18,8 @@
 * `alt+shift+1/2/3`: new pane profile index 1/2/3
 * `ctrl+alt+1/2/3`: switch tab 1/2/3
 * `ctrl+tab`: list tabs
-* `ctrl+shift+n`: new window
+* `ctrl+shift+n`: new `window
+* `alt+enter`: toggle full screen
 * `alt+shift+z`: toggle pane zoom
 * `ctrl+up/down`: scroll up/down
 * `ctrl+shift+up/down`: scroll up/down

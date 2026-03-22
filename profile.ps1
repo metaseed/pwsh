@@ -5,7 +5,7 @@
 # . m:\script\pwsh\profile.ps1
 
 # note: reload profile if modified codes in this repo
-# & $profile.CurrentUserAllHosts
+# . $profile.CurrentUserAllHosts # should not use & as it will hide some var updating
 
 . $PSScriptRoot\profile\main.ps1
 . $PSScriptRoot\update.ps1 -days 3
