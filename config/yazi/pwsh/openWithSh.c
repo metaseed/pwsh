@@ -12,9 +12,9 @@
 // How it works:
 //   1. Resolve the file argument to an absolute path (GetFullPathNameW).
 //   2. Spawn C:\WINDOWS\system32\OpenWith.exe with CreateProcessW.
-//   3. Wait for the dialog window to appear by enumerating top-level windows
-//      and matching the spawned process ID (locale-independent — no title
-//      string matching needed).
+//   3. Wait for the dialog window to appear by enumerating the child's
+//      main thread windows via EnumThreadWindows (locale-independent —
+//      no title string matching needed).
 //   4. Bring the dialog to the foreground, then synthesise a Tab key press
 //      via SendInput so the app list receives focus.
 //   5. Exit (the dialog continues to run independently).
@@ -31,6 +31,16 @@
 #endif
 #include <windows.h>
 #include <wchar.h>
+
+// --- Callback for EnumThreadWindows: finds the first visible window ------
+typedef struct { HWND hwnd; } FindCtx;
+static BOOL CALLBACK FindVisibleWnd(HWND w, LPARAM lp) {
+    if (IsWindowVisible(w)) {
+        ((FindCtx *)lp)->hwnd = w;
+        return FALSE;
+    }
+    return TRUE;
+}
 
 int wmain(int argc, wchar_t *argv[]) {
     if (argc < 2) return 1;
@@ -67,31 +77,21 @@ int wmain(int argc, wchar_t *argv[]) {
     if (!CreateProcessW(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
         return 1;
 
-    // --- Step 3: Find the dialog window by process ID -----------------------
-    // First let the child process initialise its message queue.
+    // --- Step 3: Find the dialog window via the child's main thread --------
     WaitForInputIdle(pi.hProcess, 5000);
 
     HWND hwnd = NULL;
-    for (int i = 0; i < 50; i++) {          // poll up to ~5 seconds
-        Sleep(100);
-        hwnd = NULL;
-        // Enumerate all top-level windows looking for one owned by our child.
-        HWND w = NULL;
-        while ((w = FindWindowExW(NULL, w, NULL, NULL)) != NULL) {
-            DWORD wndPid = 0;
-            GetWindowThreadProcessId(w, &wndPid);
-            if (wndPid == pi.dwProcessId && IsWindowVisible(w)) {
-                hwnd = w;
-                break;
-            }
-        }
-        if (hwnd) break;
+    for (int i = 0; i < 100; i++) {          // poll up to ~2 seconds
+        Sleep(20);
+        FindCtx ctx = {0};
+        EnumThreadWindows(pi.dwThreadId, FindVisibleWnd, (LPARAM)&ctx);
+        if (ctx.hwnd) { hwnd = ctx.hwnd; break; }
     }
 
     // --- Step 4: Send Tab to move focus onto the app list -------------------
     if (hwnd) {
         SetForegroundWindow(hwnd);
-        Sleep(200);                          // let the dialog finish rendering
+        Sleep(20);                          // let the dialog finish rendering
 
         // Synthesise a Tab key-down + key-up via SendInput.
         INPUT inp[2] = {0};

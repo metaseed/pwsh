@@ -1,3 +1,5 @@
+# https://github.com/sxyazi/yazi/blob/main/yazi-config/preset/keymap-default.toml
+#
 [[mgr.prepend_keymap]]
 on   = "!"
 for  = "windows"
@@ -97,11 +99,20 @@ desc = "Show or hide the preview pane"
 on   = "<A-S-p>"
 run  = "plugin toggle-pane max-preview"
 desc = "Maximize or restore the preview pane"
-
+## Parent Panel
 [[mgr.prepend_keymap]]
-on  = "K"
+on  = "<A-Up>"
 run = "plugin parent-arrow -1"
 
 [[mgr.prepend_keymap]]
-on  = "J"
+on  = "<A-Down>"
 run = "plugin parent-arrow 1"
+
+[[mgr.prepend_keymap]]
+on = "<A-Left>" # default is H
+run = "back"
+desc = "Back to previous directory"
+[[mgr.prepend_keymap]]
+on = "<A-Right>" # default is L
+run = "forward"
+desc = "Forward to next directory"
