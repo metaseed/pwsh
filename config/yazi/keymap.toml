@@ -20,6 +20,8 @@ on   = [ "c", "r" ]
 run  = "plugin path-from-root"
 desc = "Copies path from git root"
 
+# to check later
+# https://github.com/boydaihungst/file-extra-metadata.yazi
 [[mgr.prepend_keymap]]
 on   = [ "g", "i" ]
 run  = '''shell --block -- exiftool -k "%1"'''
@@ -95,3 +97,11 @@ desc = "Show or hide the preview pane"
 on   = "<A-S-p>"
 run  = "plugin toggle-pane max-preview"
 desc = "Maximize or restore the preview pane"
+
+[[mgr.prepend_keymap]]
+on  = "K"
+run = "plugin parent-arrow -1"
+
+[[mgr.prepend_keymap]]
+on  = "J"
+run = "plugin parent-arrow 1"

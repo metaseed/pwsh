@@ -5,6 +5,27 @@ linemode = "size_and_mtime"
 prepend_fetchers = [
     { id = "git", url = "*", run = "git" },
 ]
+append_previewers = [
+    { url = "*", run = "file-extra-metadata" },
+]
+append_spotters = [
+    { url = "*", run = "file-extra-metadata" },
+]
+
+[opener]
+openwith = [
+    { run = '"M:\Script\Pwsh\config\yazi\pwsh\openwithsh.exe" "%1"', orphan = true, desc = "Open with...", for = "windows" },
+]
+
+[open]
+prepend_rules = [
+    { mime = "text/*", use = [ "edit", "openwith", "reveal" ] },
+    { mime = "image/*", use = [ "open", "openwith", "reveal" ] },
+    { mime = "{audio,video}/*", use = [ "play", "openwith", "reveal" ] },
+    { mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "openwith", "reveal" ] },
+    { url = "*", use = [ "open", "openwith", "reveal" ] },
+]
+
 [preview]
 # run after change: yazi --clear-cache
 max_width = 1920 # 900 default

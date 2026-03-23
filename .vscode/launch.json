@@ -10,6 +10,35 @@
             "request": "launch",
             "script": "${file}",
             "cwd": "${file}"
+        },
+        {
+            "name": "C/C++: Debug active file",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
+            "args": ["${input:debugArgs}"],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/App/msys64/ucrt64/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc.exe build active file"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "debugArgs",
+            "type": "promptString",
+            "description": "Arguments to pass to the program",
+            "default": ""
         }
     ]
 }

@@ -3,6 +3,11 @@ Install-FromGithub https://github.com/msys2/msys2-installer 'msys2-base-x86_64-.
 ## install the gcc tool chain
 # -l — login shell (loads the MSYS2 environment/PATH)
 # -c — run command
-C:\app\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm mingw-w64-ucrt-x86_64-toolchain"the gcc tool chain
+C:\app\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm base-devel mingw-w64-ucrt-x86_64-toolchain" #the gcc tool chain
 Add-PathEnv 'C:\app\msys64\ucrt64\bin'
 Add-PathEnv 'C:\app\msys64\usr\bin'
+
+# -S (Sync): Tells pacman to look at the remote repositories.
+# -y (Refresh): Downloads a fresh copy of the master package list.
+# -u (Sysupgrade): Upgrades all installed packages that have a newer version available.
+# pacman -Syu

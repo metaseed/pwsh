@@ -33,6 +33,11 @@ use = "yazi-rs/plugins:toggle-pane"
 rev = "1962818"
 hash = "abb7633bc6e643c91a925122e79031d6"
 
+[[plugin.deps]]
+use = "boydaihungst/file-extra-metadata"
+rev = "871ba3c"
+hash = "cb35d8ae5a44361934e52e1bcc19a904"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:dracula"
 rev = "9511cb0"
