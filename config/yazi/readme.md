@@ -1,4 +1,4 @@
-> Set-Env YAZI_CONFIG_HOME M:/Script/Pwsh/config/yazi
+> Set-EnvVar YAZI_CONFIG_HOME M:/Script/Pwsh/config/yazi
 >
 ## Quick Start
 https://yazi-rs.github.io/docs/quick-start
