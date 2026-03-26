@@ -56,14 +56,13 @@ Set-PSReadlineKeyHandler -Key Shift+Alt+C `
     -LongDescription "Copies the current path to the clipboard.(gl).path|scb" `
     -ScriptBlock { (Resolve-Path -LiteralPath $pwd).ProviderPath.Trim() | scb } #if using clip, gcb would return a string array: [the-path, '']
 
-Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
+function MS_ReadlineHandler {
     # session scale variables
     # __SetStepSessionVariables
     # https://stackoverflow.com/questions/67136144/getting-powershell-current-line-before-enter-is-pressed
     # cursor is the cursor position in the line, start from 0
     $line = $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref] $line, [ref] $cursor)
-
     $lastSessionScope = $global:__PSReadLineSessionScope
     # the time when press enter key
     $global:__PSReadLineSessionScope = @{SessionStartTime = [datetime]::Now; LastSessionStartTime = ($lastSessionScope.SessionStartTime ?? [datetime]::Now) }
@@ -76,6 +75,9 @@ Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
         cursor    = $cursor;
     }
 
+}
+Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
+    MS_ReadlineHandler;
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
@@ -213,3 +215,9 @@ ctrl+end: delete to end of line
 alt+2, alt+3, f: type f 23 times
 alt+8,left: move cursor left 8 times
 #>
+
+# pwsh -noprofile -c "Get-Content Function:\prompt"
+# removed the default 'PS' string, add the isAdmin icon
+Set-PSReadLineKeyHandler -Key Alt+p -ScriptBlock {
+    __ToggleStarshipPrompt
+}

@@ -1,0 +1,46 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+# command_timeout = 500
+format = """
+${env_var.PRE_PROMPT}\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+${env_var.GIT_INFO}\
+$directory\
+$line_break\
+└─$character"""
+
+[env_var.PRE_PROMPT]
+variable = "PRE_PROMPT"
+format = "$env_value"
+
+[env_var.GIT_INFO]
+variable = "GIT_INFO"
+format = "$env_value"
+
+[git_branch]
+format ='[$symbol$branch(:$remote_branch)]($style) '
+[git_commit]
+# only_detached = false   # show on branches too
+tag_disabled = false    # also show tags
+# https://www.nerdfonts.com/cheat-sheet
+# https://starship.rs/config/#git-status
+[git_status]
+# use_git_executable = true # not better for performance
+ahead = '⇡${count} '
+diverged = '⇕⇡${ahead_count}⇣${behind_count} '
+behind = '⇣${count} '
+conflicted = '[⊘$count](red) '
+
+deleted = '[-$count](red) '
+untracked = '[?$count](purple) ' #
+modified = '[~$count](yellow) '
+typechanged = '[󰗴$count](blue) ' # file type changed
+
+stashed  = '[$count](yellow)'
+renamed = '[»$count](green) '# 
+staged = '[$count](green) ' # include modified and added on stage
+format = '\($ahead_behind$conflicted:$deleted$untracked$modified󰄋:$staged$renamed$typechanged$stashed\)'

@@ -13,5 +13,5 @@ function __change_directory(){
 }
 # it is for ls+cd (gci+sl)
 # `scb (tere)` will copy the directory to clipboard
-Set-Alias d __get_directory
+Set-Alias gd __get_directory
 Set-Alias l __change_directory

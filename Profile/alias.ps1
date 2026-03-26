@@ -3,6 +3,9 @@ Set-Alias ghp Get-Help # gh collide with gh.exe github cli
 Set-Alias ca Compress-Archive
 Set-Alias sa Start-Process # default: saps, start
 Set-Alias np New-ItemProperty # rp: Remove-ItemProperty; gp: Get-ItemProperty
+
+Set-Alias c cursor
+
 . $PSScriptRoot\..\Cmdlet\_\alias.ps1
 
 & { # prevent $codePath leak in to profile variable: provider
