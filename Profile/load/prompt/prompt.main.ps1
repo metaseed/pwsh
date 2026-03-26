@@ -31,20 +31,55 @@ $loadStarship = {
 
 }
 function global:prompt {
-    $usrIcon = $env:IsAdmin ? "`e[93m󰀋`e[0m " : ''
-    $dir = $executionContext.SessionState.Path.CurrentLocation.Path
-    if($dir -eq $HOME) {
-        $dir = '~'
-    }
-    "$usrIcon$dir$('>' * ($nestedPromptLevel + 1)) "
+	$global:__promptIdleUpgrade = $null
+
+	$usrIcon = $env:IsAdmin ? "`e[93m󰀋`e[0m " : ''
+	$dir = $executionContext.SessionState.Path.CurrentLocation.Path
+	if ($dir -eq $HOME) {
+		$dir = '~'
+	}
+	Set-PSReadLineOption -ExtraPromptLineCount 0
+	"$usrIcon$dir$('>' * ($nestedPromptLevel + 1)) "
+}
+
+if ($global:__idlePromptSub) {
+	Unregister-Event -SubscriptionId $global:__idlePromptSub.Id -ErrorAction SilentlyContinue
+}
+# Auto-replace the simple prompt with starship after 5s of no typing.
+# OnIdle fires repeatedly (~300-500ms) while user sits at the prompt.
+# $global:__promptIdleUpgrade: $null -> start tracking, [DateTime] -> tracking, $true -> upgraded
+$global:__idlePromptSub = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
+	$s = $global:__promptIdleUpgrade
+	if ($s -eq $true) { return }
+	if ($global:_starshipPrompt -and $function:prompt -eq $global:_starshipPrompt) { return }
+
+	$line = $cursor = $null
+	[Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+	if ($line.Length -gt 0) { $global:__promptIdleUpgrade = $null; return }
+
+	if ($null -eq $s) {
+		$global:__promptIdleUpgrade = [DateTime]::UtcNow
+		return
+	}
+	if (([DateTime]::UtcNow - $s).TotalSeconds -ge 5) {
+		$global:__promptIdleUpgrade = $true
+		if (-not $global:_starshipPrompt) {
+			$savedPrompt = $function:prompt
+			$loadStarship.Invoke()
+			$function:prompt = $savedPrompt
+		}
+		$function:prompt = $global:_starshipPrompt
+		[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+		$function:prompt = $global:__defaultPrompt
+	}
 }
 
 function __ToggleStarshipPrompt {
+	$global:__promptIdleUpgrade = $null
 	if ($function:prompt -eq $global:_starshipPrompt) {
 		$function:prompt = $global:__defaultPrompt
 	}
 	else {
-		# The .Invoke() method runs the scriptblock in the SessionState where it was originally created, not in the current function scope. so we can lazy load the starship prompt at global scope. which make the profile load faster.(from 2.5s to 1.2s)
 		$loadStarship.Invoke()
 		$function:prompt = $global:_starshipPrompt
 	}
