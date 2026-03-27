@@ -95,17 +95,12 @@ if ($host.Name -ne 'Visual Studio Code Host') {
 			return
 		}
 
-		try {
-			if (!$global:_starshipPrompt) { $loadStarship.Invoke() }
-			$idleState.Value = $true
-			$function:prompt = $global:_starshipPrompt
-			[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-			$function:prompt = $global:__defaultPrompt
-		}
-		catch [System.Management.Automation.PSInvalidOperationException] {
-			# VS Code runs OnIdle inside an existing pipeline; retry next tick
-			$idleState.Value = $now
-		}
+		if (!$global:_starshipPrompt) { $loadStarship.Invoke() }
+		$idleState.Value = $true
+		$function:prompt = $global:_starshipPrompt
+		[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+		$function:prompt = $global:__defaultPrompt
+
 	}
 }
 
