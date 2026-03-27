@@ -44,9 +44,7 @@ function global:prompt {
 }
 
 # Unregister previous subscription on profile reload
-if ($global:__idlePromptSub) {
-	Unregister-Event -SubscriptionId $global:__idlePromptSub.Id -ErrorAction SilentlyContinue
-}
+$null = Unregister-Event -SourceIdentifier "PowerShell.OnIdle" -ErrorAction Ignore
 
 # Hashtable shared via closure — OnIdle can't persist $global: writes
 # .Value : $null → [DateTime](tracking) → $true(upgraded)
@@ -56,28 +54,58 @@ $idleState = $global:__promptIdleState
 
 # Auto-upgrade to starship after idle delay. OnIdle stops during typing,
 # so a tick gap is used to detect and reset after keyboard activity.
-$global:__idlePromptSub = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
-	$state = $idleState.Value
-	# already upgraded
-	if ($state -eq $true) { return }
-	# already in starship prompt
-	if ($function:prompt -eq $global:_starshipPrompt) { return }
+# Skip in VS Code — its host runs OnIdle actions inside an existing pipeline, causing crashes.
+if ($host.Name -ne 'Visual Studio Code Host') {
+	$null = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
+		# already in starship prompt
+		if ($function:prompt -eq $global:_starshipPrompt) { return }
 
-	# gap in OnIdle ticks → user was typing → reset the timer
-	$now = [DateTime]::UtcNow
-	$gap = $idleState.LastTick -and ($now - $idleState.LastTick).TotalMilliseconds -gt 1000
-	$idleState.LastTick = $now
-	if ($gap -or $null -eq $state) {
-		$idleState.Value = $now
-		return
-	}
+		$state = $idleState.Value
+		# already upgraded
+		if ($state -eq $true) { return }
 
-	if (($now - $state).TotalMilliseconds -ge 3000) {
-		$idleState.Value = $true
-		if (!$global:_starshipPrompt) { $loadStarship.Invoke() }
-		$function:prompt = $global:_starshipPrompt
-		[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-		$function:prompt = $global:__defaultPrompt
+		$now = [DateTime]::UtcNow
+
+		# new prompt
+		if ($null -eq $state) {
+			$idleState.Value = $now
+			return
+		}
+
+		# gap in OnIdle ticks → user was typing → reset the timer
+		# user has input something, which paused the idle event when not debugging in vscode,
+		# when triggered again.(i.e. remove the input), in this case we assume the pause interval is > 1s
+		$onInputGap = $idleState.LastTick -and ($now - $idleState.LastTick).TotalMilliseconds -gt 1000
+		$idleState.LastTick = $now
+		if ($onInputGap) {
+			$idleState.Value = $now
+			return
+		}
+
+		# the delay
+		if (($now - $state).TotalMilliseconds -le 3000) {
+			return
+		}
+
+		# in vscode debug console, after reload the profile even the buffer has something, if not further input, the handler still trigger
+		$line = $cursor = $null
+		[Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+		if ($line.Length -gt 0) {
+			$idleState.Value = $now
+			return
+		}
+
+		try {
+			if (!$global:_starshipPrompt) { $loadStarship.Invoke() }
+			$idleState.Value = $true
+			$function:prompt = $global:_starshipPrompt
+			[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+			$function:prompt = $global:__defaultPrompt
+		}
+		catch [System.Management.Automation.PSInvalidOperationException] {
+			# VS Code runs OnIdle inside an existing pipeline; retry next tick
+			$idleState.Value = $now
+		}
 	}
 }
 
