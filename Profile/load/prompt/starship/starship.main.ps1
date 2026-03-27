@@ -4,3 +4,4 @@ $env:STARSHIP_LOG = "error" # "trace"
 $ENV:STARSHIP_CACHE = "$PSScriptRoot\.log"
 
 . $PSScriptRoot/.config/starship-init.ps1
+# Enable-TransientPrompt

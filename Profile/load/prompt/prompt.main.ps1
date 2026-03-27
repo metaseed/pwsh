@@ -31,7 +31,8 @@ $loadStarship = {
 
 }
 function global:prompt {
-	$global:__promptIdleUpgrade = $null
+	$global:__promptIdleState.Value = $null
+	$global:__promptIdleState.LastTick = $null
 
 	$usrIcon = $env:IsAdmin ? "`e[93m󰀋`e[0m " : ''
 	$dir = $executionContext.SessionState.Path.CurrentLocation.Path
@@ -42,32 +43,38 @@ function global:prompt {
 	"$usrIcon$dir$('>' * ($nestedPromptLevel + 1)) "
 }
 
+# Unregister previous subscription on profile reload
 if ($global:__idlePromptSub) {
 	Unregister-Event -SubscriptionId $global:__idlePromptSub.Id -ErrorAction SilentlyContinue
 }
-# Auto-replace the simple prompt with starship after 5s of no typing.
-# OnIdle fires repeatedly (~300-500ms) while user sits at the prompt.
-# $global:__promptIdleUpgrade: $null -> start tracking, [DateTime] -> tracking, $true -> upgraded
+
+# Hashtable shared via closure — OnIdle can't persist $global: writes
+# .Value : $null → [DateTime](tracking) → $true(upgraded)
+# .LastTick: previous OnIdle time — gap > 1s means user was typing
+$global:__promptIdleState = @{ Value = $null; LastTick = $null }
+$idleState = $global:__promptIdleState
+
+# Auto-upgrade to starship after idle delay. OnIdle stops during typing,
+# so a tick gap is used to detect and reset after keyboard activity.
 $global:__idlePromptSub = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
-	$s = $global:__promptIdleUpgrade
-	if ($s -eq $true) { return }
-	if ($global:_starshipPrompt -and $function:prompt -eq $global:_starshipPrompt) { return }
+	$state = $idleState.Value
+	# already upgraded
+	if ($state -eq $true) { return }
+	# already in starship prompt
+	if ($function:prompt -eq $global:_starshipPrompt) { return }
 
-	$line = $cursor = $null
-	[Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-	if ($line.Length -gt 0) { $global:__promptIdleUpgrade = $null; return }
-
-	if ($null -eq $s) {
-		$global:__promptIdleUpgrade = [DateTime]::UtcNow
+	# gap in OnIdle ticks → user was typing → reset the timer
+	$now = [DateTime]::UtcNow
+	$gap = $idleState.LastTick -and ($now - $idleState.LastTick).TotalMilliseconds -gt 1000
+	$idleState.LastTick = $now
+	if ($gap -or $null -eq $state) {
+		$idleState.Value = $now
 		return
 	}
-	if (([DateTime]::UtcNow - $s).TotalSeconds -ge 5) {
-		$global:__promptIdleUpgrade = $true
-		if (-not $global:_starshipPrompt) {
-			$savedPrompt = $function:prompt
-			$loadStarship.Invoke()
-			$function:prompt = $savedPrompt
-		}
+
+	if (($now - $state).TotalMilliseconds -ge 3000) {
+		$idleState.Value = $true
+		if (!$global:_starshipPrompt) { $loadStarship.Invoke() }
 		$function:prompt = $global:_starshipPrompt
 		[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 		$function:prompt = $global:__defaultPrompt
@@ -75,13 +82,17 @@ $global:__idlePromptSub = Register-EngineEvent -SourceIdentifier "PowerShell.OnI
 }
 
 function __ToggleStarshipPrompt {
-	$global:__promptIdleUpgrade = $null
+	$global:__promptIdleState.Value = $null
+	$global:__promptIdleState.LastTick = $null
 	if ($function:prompt -eq $global:_starshipPrompt) {
 		$function:prompt = $global:__defaultPrompt
 	}
 	else {
-		$loadStarship.Invoke()
+		if (!$global:_starshipPrompt) {
+			$loadStarship.Invoke()
+		}
 		$function:prompt = $global:_starshipPrompt
 	}
-	[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+	[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+	# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # not inplace replace the prompt
 }
