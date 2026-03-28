@@ -14,7 +14,9 @@ if ($env:__MS_PWSH_PARENT -ne 'true') {
 }
 
 
-$IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+$IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+$env:IsAdmin = $IsAdmin
+
 $cl="`e[0m"
 "`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
 if($IsAdmin) {

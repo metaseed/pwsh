@@ -6,8 +6,6 @@ $env:HostsFilePath = "$env:windir\System32\drivers\etc\hosts"
 # when in vscode $env:TERM_PROGRAM is vscode
 $env:TERM_NERD_FONT = $env:WT_SESSION -or $env:TERM_PROGRAM
 # $env:PSModulePath += ";$(Resolve-Path $PSScriptRoot\..\Module)"
-$env:IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-
 $env:Path += ';M:\Workspace\ff\bin\Release\net9.0'
 # hack: when run 'pwsh' the parent 'pwsh' is not closed, and the new 'pwsh' inherits the env vars
 if ($env:ms_pwshPathPatched -ne 'true') {
