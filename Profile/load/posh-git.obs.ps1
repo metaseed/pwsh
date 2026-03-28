@@ -23,8 +23,9 @@
 # if(!(git rev-parse --is-inside-work-tree 2>$null)){
 #   return
 # }
-. $PSScriptRoot/_prompt/specialDays.ps1
-. $PSScriptRoot/_prompt/promptPrefix.ps1
+. $PSScriptRoot/prompt/specialDays.ps1
+. $PSScriptRoot/prompt/promptLunarDate.ps1
+. $PSScriptRoot/prompt/promptPrefix.ps1
 
 function global:__GetPrefixPrompt {
   return "┌─ $(($global:__adminIcon ??= __GetAdminIcon)) $(__GetDateStr)$(__GetLunarDateStr)$(__GetSpecialDayStr)$(__GetPSReadLineSessionExeTime) "

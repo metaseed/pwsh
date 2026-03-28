@@ -1,8 +1,8 @@
+. $PSScriptRoot/promptPrefix.ps1
 $loadStarship = {
 	$global:__defaultPrompt = $function:prompt
-
+	. $PSScriptRoot/promptLunarDate.ps1
 	. $PSScriptRoot/specialDays.ps1
-	. $PSScriptRoot/promptPrefix.ps1
 	# used by starship prompt
 	function global:Invoke-Starship-PreCommand {
 		$isGitRepo = Test-GitRepo
@@ -30,17 +30,18 @@ $loadStarship = {
 	}
 
 }
+# default prompt
 function global:prompt {
 	$global:__promptIdleState.Value = $null
 	$global:__promptIdleState.LastTick = $null
 
-	$usrIcon = $env:IsAdmin ? "`e[93m󰀋`e[0m " : ''
 	$dir = $executionContext.SessionState.Path.CurrentLocation.Path
 	if ($dir -eq $HOME) {
 		$dir = '~'
 	}
 	Set-PSReadLineOption -ExtraPromptLineCount 0
-	"$usrIcon$dir$('>' * ($nestedPromptLevel + 1)) "
+	"$(($global:__adminIcon ??= __GetAdminIcon)) $(__GetDateStr) $dir$('>' * ($nestedPromptLevel + 1)) "
+	# "$dir$('>' * ($nestedPromptLevel + 1)) "
 }
 
 # Unregister previous subscription on profile reload
@@ -57,13 +58,12 @@ $idleState = $global:__promptIdleState
 # Skip in VS Code — its host runs OnIdle actions inside an existing pipeline, causing crashes.
 if ($host.Name -ne 'Visual Studio Code Host') {
 	$null = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
-		# already in starship prompt
-		if ($function:prompt -eq $global:_starshipPrompt) { return }
-
 		$state = $idleState.Value
 		# already upgraded
 		if ($state -eq $true) { return }
 
+		# already in starship prompt
+		if ($function:prompt -eq $global:_starshipPrompt) { return }
 		$now = [DateTime]::UtcNow
 
 		# new prompt
@@ -102,6 +102,17 @@ if ($host.Name -ne 'Visual Studio Code Host') {
 		$function:prompt = $global:__defaultPrompt
 
 	}
+}
+$script:DoesUseLists = (Get-PSReadLineOption).PredictionViewStyle -eq 'ListView'
+
+function TransientPrompt {
+	$savedPrompt = $function:prompt
+	$function:prompt = $global:__defaultPrompt
+	[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+	if ($Script:DoesUseLists) {
+		[Console]::Write("`e[J") # clear residual ListView predictions below the prompt
+	}
+	$function:prompt = $savedPrompt
 }
 
 function __ToggleStarshipPrompt {

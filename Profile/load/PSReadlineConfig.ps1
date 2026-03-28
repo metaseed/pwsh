@@ -74,6 +74,9 @@ function MS_ReadlineHandler {
         line      = $line;
         cursor    = $cursor;
     }
+    if(Test-Path function:TransientPrompt){
+        TransientPrompt
+    }
 
 }
 Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
