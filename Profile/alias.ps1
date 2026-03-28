@@ -8,14 +8,12 @@ Set-Alias c cursor
 
 . $PSScriptRoot\..\Cmdlet\_\alias.ps1
 
-& { # prevent $codePath leak in to profile variable: provider
-    $codePath = (Get-Command code -ErrorAction Ignore).Source
-    if ($null -eq $codePath) {
-        $codePath = (Get-Command 'code-insiders' -ErrorAction Ignore).Source
-        if ($null -ne $codePath) {
-            # "C:\Users\metaseed\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
-            Set-Alias code code-insiders -Scope Global
-        }
+# "C:\Users\metaseed\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
+# perf: -Type Application avoids searching aliases/functions/cmdlets (~13ms saved);
+#       only runs the fallback branch when 'code' is absent
+if (-not (Get-Command code -Type Application -ErrorAction Ignore)) {
+    if (Get-Command 'code-insiders' -Type Application -ErrorAction Ignore) {
+        Set-Alias code code-insiders -Scope Global
     }
 }
 
@@ -30,9 +28,7 @@ Set-Alias c cursor
 # gp r:a myKey # get prop `myKey`
 # rp r:a myKey # remove
 # ri r:a # clear all
-if (-not (Test-Path "HKCU:\MS_PWSH")) {
-    New-Item -Path "HKCU:\MS_PWSH"
-}
-if (!(Test-Path 'R:')) {
-    New-PSDrive -Name R -PSProvider Registry -Root "HKCU:\MS_PWSH" > $null
-}
+# perf: use -ErrorAction Ignore instead of Test-Path; Test-Path "HKCU:\..." triggers
+#       a full registry provider init (~60ms), direct create with Ignore avoids that
+$null = New-Item -Path "HKCU:\MS_PWSH" -ErrorAction Ignore
+$null = New-PSDrive -Name R -PSProvider Registry -Root "HKCU:\MS_PWSH" -ErrorAction Ignore

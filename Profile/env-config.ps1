@@ -10,16 +10,19 @@ if ($env:__MS_PWSH_PARENT -ne 'true') {
 	# the solution:
 	# 1. in `windows terminal` pwsh profile, we use `pwsh -nologo` to launch pwsh (not used)
 	# 2. used the inherited env var added in profile.(used)
-	Clear-Host;
+	# 3. we do pwsh -nologo in win terminal
+	if (!$env:WT_SESSION) {
+		Clear-Host;
+	}
 }
 
 
 $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 $env:IsAdmin = $IsAdmin
 
-$cl="`e[0m"
+$cl = "`e[0m"
 "`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
-if($IsAdmin) {
+if ($IsAdmin) {
 	if ($PWD.ProviderPath -ieq (Join-Path $env:SystemRoot 'System32')) {
 		Set-Location -Path $env:USERPROFILE
 	}

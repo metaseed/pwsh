@@ -7,17 +7,10 @@
             "command":
             {
                 "action": "splitPane",
-                "index": 2,
+                "index": 1,
                 "split": "auto"
             },
-            "id": "User.splitPane.227DFB6"
-        },
-        {
-            "command":
-            {
-                "action": "closeTab"
-            },
-            "id": "User.closeTab.0"
+            "id": "User.splitPane.125D7ADA"
         },
         {
             "command":
@@ -31,11 +24,18 @@
         {
             "command":
             {
+                "action": "closeTab"
+            },
+            "id": "User.closeTab.0"
+        },
+        {
+            "command":
+            {
                 "action": "splitPane",
-                "index": 1,
+                "index": 2,
                 "split": "auto"
             },
-            "id": "User.splitPane.125D7ADA"
+            "id": "User.splitPane.227DFB6"
         },
         {
             "command":
@@ -52,10 +52,6 @@
                 "split": "auto"
             },
             "id": "User.splitPane.48B6353E"
-        },
-        {
-            "keys": "alt+enter",
-            "command": "unbound"
         }
     ],
     "alwaysShowNotificationIcon": true,
@@ -67,12 +63,16 @@
     "keybindings":
     [
         {
-            "id": "User.globalSummon.25C9281C",
-            "keys": "win+`"
+            "id": null,
+            "keys": "alt+enter"
         },
         {
             "id": "User.globalSummon.51A3D78C",
             "keys": "win+alt+z"
+        },
+        {
+            "id": "User.globalSummon.25C9281C",
+            "keys": "win+`"
         },
         {
             "id": "Terminal.MoveFocusPreviousInOrder",
@@ -83,16 +83,16 @@
             "keys": "ctrl+down"
         },
         {
+            "id": "Terminal.TogglePaneZoom",
+            "keys": "alt+shift+z"
+        },
+        {
             "id": "User.closeTab.0",
             "keys": "ctrl+shift+w"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "alt+shift+c"
-        },
-        {
-            "id": "Terminal.TogglePaneZoom",
-            "keys": "alt+shift+z"
         },
         {
             "id": "Terminal.ScrollUp",
@@ -103,12 +103,12 @@
             "keys": "alt+v"
         },
         {
-            "id": "User.splitPane.125D7ADA",
-            "keys": "alt+shift+2"
-        },
-        {
             "id": "Terminal.MoveFocusNextInOrder",
             "keys": "alt+end"
+        },
+        {
+            "id": "User.splitPane.125D7ADA",
+            "keys": "alt+shift+2"
         },
         {
             "id": "Terminal.ToggleFocusMode",
@@ -131,12 +131,12 @@
             "keys": "alt+shift+1"
         },
         {
-            "id": "Terminal.PasteFromClipboard",
-            "keys": "ctrl+v"
-        },
-        {
             "id": "Terminal.FindText",
             "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "Terminal.PasteFromClipboard",
+            "keys": "ctrl+v"
         },
         {
             "id": "User.splitPane.227DFB6",
@@ -146,7 +146,6 @@
             "id": "Terminal.SwitchSelectionEndpoint",
             "keys": "alt+s"
         }
-
     ],
     "launchMode": "default",
     "minimizeToNotificationArea": false,
@@ -160,9 +159,9 @@
     {
         "defaults":
         {
-            "backgroundImage": "%MS_WTBackground%\\res\\bg\\wave.gif",
+            "backgroundImage": "%MS_WTBackground%\\res\\bg\\circle.gif",
             "backgroundImageAlignment": "center",
-            "backgroundImageOpacity": 0.4,
+            "backgroundImageOpacity": 0.3,
             "backgroundImageStretchMode": "none",
             "elevate": true,
             "font":
@@ -176,6 +175,7 @@
         "list":
         [
             {
+                "commandline": "\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\"  -nologo",
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "pwsh",

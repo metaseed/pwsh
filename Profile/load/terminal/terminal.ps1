@@ -2,11 +2,10 @@
 # Import-Module Metaseed.Terminal  -DisableNameChecking
 if ($env:WT_SESSION) {
   # deferred to background to reduce profile load time (~0.3s saved)
+  # use [powershell]::Create() instead of Start-ThreadJob to avoid ~48ms ThreadJob module init
   $__wtSettingsPath = "$PSScriptRoot\settings.json"
-  [void](Start-ThreadJob -ArgumentList $__wtSettingsPath -StreamingHost $host {
-      param($settingsPath)
-      Start-WTCyclicBgImg $settingsPath
-  })
+  $__ps = [powershell]::Create().AddScript({ param($p); Start-WTCyclicBgImg $p }).AddArgument($__wtSettingsPath)
+  $null = $__ps.BeginInvoke()
 }
 # if ($env:WT_SESSION) {
 #   # Register-EngineEvent -SourceIdentifier 'PWSH_PROFILE_LOADED_EVENT' {
