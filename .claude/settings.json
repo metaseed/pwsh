@@ -1,8 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:*)"
-
+      "WebFetch(domain:*)",
+      "Read(//m/Script/drilldev/**)"
+    ],
+    "additionalDirectories": [
+      "M:\\Script\\drilldev"
     ]
   }
 }

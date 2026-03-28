@@ -9,6 +9,3 @@
 
 . $PSScriptRoot\profile\main.ps1
 . $PSScriptRoot\update.ps1 -days 3
-
-# pixi auto completion
-(& pixi completion --shell powershell) | Out-String | Invoke-Expression

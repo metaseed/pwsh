@@ -10,19 +10,31 @@
 
 # https://github.com/powercode/PSEverything
 
-Set-PsFzfOption `
--PSReadlineChordSetLocation 'Alt+RightArrow'  <# find dir from current dir/subdir and setLocation to it #> `
--PSReadlineChordReverseHistoryArgs 'Alt+r'  <# find arg from input history#> `
--PSReadlineChordProvider 'Alt+f' <# find file/dir from current dir/subdir or the dir at current cursor, i.e.: cd m:app(|cursor here) and then press a-f, type soft, <enter> <enter> cd to the software folder#> `
--PSReadlineChordReverseHistory 'Alt+i' <# find full line input from input history#>
-# -EnableAliasFuzzyZLocation `
-# -EnableAliasFuzzySetEverything
+# Defer PSFzf module load (~250ms) until first Tab press or fzf alias use.
+function global:__LoadPsFzf {
+	if ($global:__psfzfLoaded) { return }
+	$global:__psfzfLoaded = $true
+	Import-Module PSFzf -Global
+	Set-PsFzfOption `
+	-PSReadlineChordSetLocation 'Alt+RightArrow'  <# find dir from current dir/subdir and setLocation to it #> `
+	-PSReadlineChordReverseHistoryArgs 'Alt+r'  <# find arg from input history#> `
+	-PSReadlineChordProvider 'Alt+f' <# find file/dir from current dir/subdir or the dir at current cursor, i.e.: cd m:app(|cursor here) and then press a-f, type soft, <enter> <enter> cd to the software folder#> `
+	-PSReadlineChordReverseHistory 'Alt+i' <# find full line input from input history#>
+	# -EnableAliasFuzzyZLocation `
+	# -EnableAliasFuzzySetEverything
 
-Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
-# Set-PSReadLineKeyHandler -Key 'Alt+a' -ScriptBlock { Invoke-FzfPsReadlineHandlerHistoryArgs } -Description 'Run fzf to search through command line arguments in PSReadline history'
-# Set-PSReadLineKeyHandler -Key 'Alt+d' -ScriptBlock { Invoke-FzfPsReadlineHandlerSetLocation } -Description 'Run fzf to select directory to set current location'
-# Set-PSReadLineKeyHandler -Key 'Alt+h' -ScriptBlock { Invoke-FzfPsReadlineHandlerHistory } -Description 'Run fzf to search through PSReadline history'
-# Set-PSReadLineKeyHandler -Key 'Alt+f' -ScriptBlock { Invoke-FzfPsReadlineHandlerProvider } -Description 'Run fzf for current provider based on current token'
+	Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
+	# Set-PSReadLineKeyHandler -Key 'Alt+a' -ScriptBlock { Invoke-FzfPsReadlineHandlerHistoryArgs } -Description 'Run fzf to search through command line arguments in PSReadline history'
+	# Set-PSReadLineKeyHandler -Key 'Alt+d' -ScriptBlock { Invoke-FzfPsReadlineHandlerSetLocation } -Description 'Run fzf to select directory to set current location'
+	# Set-PSReadLineKeyHandler -Key 'Alt+h' -ScriptBlock { Invoke-FzfPsReadlineHandlerHistory } -Description 'Run fzf to search through PSReadline history'
+	# Set-PSReadLineKeyHandler -Key 'Alt+f' -ScriptBlock { Invoke-FzfPsReadlineHandlerProvider } -Description 'Run fzf for current provider based on current token'
+}
+
+# Lazy-load on first Tab press: import PSFzf then invoke tab completion
+Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
+	__LoadPsFzf
+	Invoke-FzfTabCompletion
+}
 
 Set-Alias ifz    -Scope global Invoke-Fzf
 
@@ -53,4 +65,3 @@ Set-Alias fgb    -Scope global Invoke-PsFzfGitBranches
 tab completion for git, gps,saps, gsv, spsv
 i.e. gps <tab>code
 #>
-

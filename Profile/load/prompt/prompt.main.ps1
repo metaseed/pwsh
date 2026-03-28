@@ -55,7 +55,7 @@ $idleState = $global:__promptIdleState
 
 # Auto-upgrade to starship after idle delay. OnIdle stops during typing,
 # so a tick gap is used to detect and reset after keyboard activity.
-# Skip in VS Code — its host runs OnIdle actions inside an existing pipeline, causing crashes.
+# Skip in VS Code Debugging Console2 — its host runs OnIdle actions inside an existing pipeline, causing crashes.
 if ($host.Name -ne 'Visual Studio Code Host') {
 	$null = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
 		$state = $idleState.Value
@@ -75,7 +75,7 @@ if ($host.Name -ne 'Visual Studio Code Host') {
 		# gap in OnIdle ticks → user was typing → reset the timer
 		# user has input something, which paused the idle event when not debugging in vscode,
 		# when triggered again.(i.e. remove the input), in this case we assume the pause interval is > 1s
-		$onInputGap = $idleState.LastTick -and ($now - $idleState.LastTick).TotalMilliseconds -gt 1000
+		$onInputGap = $idleState.LastTick -and ($now - $idleState.LastTick).TotalMilliseconds -gt 800
 		$idleState.LastTick = $now
 		if ($onInputGap) {
 			$idleState.Value = $now
@@ -83,17 +83,18 @@ if ($host.Name -ne 'Visual Studio Code Host') {
 		}
 
 		# the delay
-		if (($now - $state).TotalMilliseconds -le 3000) {
+		if (($now - $state).TotalMilliseconds -le 1800) {
 			return
 		}
 
+		## not need, we do not do auto prompt switching in vscode debugging console
 		# in vscode debug console, after reload the profile even the buffer has something, if not further input, the handler still trigger
-		$line = $cursor = $null
-		[Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-		if ($line.Length -gt 0) {
-			$idleState.Value = $now
-			return
-		}
+		# $line = $cursor = $null
+		# [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+		# if ($line.Length -gt 0) {
+		# 	$idleState.Value = $now
+		# 	return
+		# }
 
 		if (!$global:_starshipPrompt) { $loadStarship.Invoke() }
 		$idleState.Value = $true
