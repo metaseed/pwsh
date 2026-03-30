@@ -106,7 +106,9 @@ if ($host.Name -ne 'Visual Studio Code Host') {
 }
 $script:DoesUseLists = (Get-PSReadLineOption).PredictionViewStyle -eq 'ListView'
 
+# used in PS_ReadLineHandler of Enter key
 function TransientPrompt {
+	if ($null -eq $global:__defaultPrompt) { return } # ne need to do Transient
 	$savedPrompt = $function:prompt
 	$function:prompt = $global:__defaultPrompt
 	[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()

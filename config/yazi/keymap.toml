@@ -116,3 +116,76 @@ desc = "Back to previous directory"
 on = "<A-Right>" # default is L
 run = "forward"
 desc = "Forward to next directory"
+
+## bookmarks
+[[mgr.prepend_keymap]]
+on = "["
+run = "plugin whoosh jump_by_key"
+desc = "Jump bookmark by key"
+
+# Direct fuzzy search access
+[[mgr.prepend_keymap]]
+on = "}"
+run = "plugin whoosh jump_by_fzf"
+desc = "Direct fuzzy search for bookmarks"
+
+# Basic bookmark operations
+[[mgr.prepend_keymap]]
+on = [ "]", "a" ]
+run = "plugin whoosh save"
+desc = "Add bookmark (hovered file/directory)"
+
+[[mgr.prepend_keymap]]
+on = [ "]", "A" ]
+run = "plugin whoosh save_cwd"
+desc = "Add bookmark (current directory)"
+
+# Temporary bookmarks
+[[mgr.prepend_keymap]]
+on = [ "]", "t" ]
+run = "plugin whoosh save_temp"
+desc = "Add temporary bookmark (hovered file/directory)"
+
+[[mgr.prepend_keymap]]
+on = [ "]", "T" ]
+run = "plugin whoosh save_cwd_temp"
+desc = "Add temporary bookmark (current directory)"
+
+# Jump to bookmarks
+[[mgr.prepend_keymap]]
+on = "<A-k>"
+run = "plugin whoosh jump_key_k"
+desc = "Jump directly to bookmark with key k"
+
+[[mgr.prepend_keymap]]
+on = [ "]", "f" ]
+run = "plugin whoosh jump_by_fzf"
+desc = "Jump bookmark by fzf"
+
+# Delete bookmarks
+[[mgr.prepend_keymap]]
+on = [ "]", "d" ]
+run = "plugin whoosh delete_by_key"
+desc = "Delete bookmark by key"
+
+[[mgr.prepend_keymap]]
+on = [ "]", "D" ]
+run = "plugin whoosh delete_by_fzf"
+desc = "Delete bookmarks by fzf (use TAB to select multiple)"
+
+[[mgr.prepend_keymap]]
+on = [ "]", "C" ]
+run = "plugin whoosh delete_all"
+desc = "Delete all user bookmarks"
+
+# Rename bookmarks
+[[mgr.prepend_keymap]]
+on = [ "]", "r" ]
+run = "plugin whoosh rename_by_key"
+desc = "Rename bookmark by key"
+
+[[mgr.prepend_keymap]]
+on = [ "]", "R" ]
+run = "plugin whoosh rename_by_fzf"
+desc = "Rename bookmark by fzf"
+## end of Bookmark keymaps
