@@ -14,7 +14,7 @@ append_spotters = [
 
 [opener]
 openwith = [
-    { run = '"M:\Script\Pwsh\config\yazi\pwsh\openwithsh.exe" "%1"', orphan = true, desc = "Open with...", for = "windows" },
+    { run = 'M:\Script\Pwsh\config\yazi\pwsh\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
 ]
 
 [open]

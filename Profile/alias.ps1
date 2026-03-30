@@ -26,6 +26,8 @@ if (-not (Get-Command code -Type Application -ErrorAction Ignore)) {
 # ni r:a # create subKey `a`
 # np r:a myKey -v 1 # new prop `myKey`
 # gp r:a myKey # get prop `myKey`
+# gpv r:a myKey # get prop value only
+# sp r:a myKey -v value # set prop value
 # rp r:a myKey # remove
 # ri r:a # clear all
 # perf: use -ErrorAction Ignore instead of Test-Path; Test-Path "HKCU:\..." triggers

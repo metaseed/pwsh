@@ -1,13 +1,13 @@
 -- You can configure your bookmarks using simplified syntax
 local bookmarks = {
-  { tag = "Desktop", path = "~/Desktop", key = "d" },
+  { tag = "Desktop",   path = "~/Desktop",   key = "d" },
   { tag = "Documents", path = "~/Documents", key = "D" },
   { tag = "Downloads", path = "~/Downloads", key = "o" },
 }
 
 -- You can also configure bookmarks with key arrays
 local bookmarks = {
-  { tag = "Desktop", path = "~/Desktop", key = { "d", "D" } },
+  { tag = "Desktop",   path = "~/Desktop",   key = { "d", "D" } },
   { tag = "Documents", path = "~/Documents", key = { "d", "d" } },
   { tag = "Downloads", path = "~/Downloads", key = "o" },
 }
@@ -40,32 +40,32 @@ require("whoosh"):setup {
   -- Configure the built-in menu action hotkeys
   -- false - hide menu item
   special_keys = {
-    create_temp = "<Enter>",         -- Create a temporary bookmark from the menu
-    fuzzy_search = "<Space>",        -- Launch fuzzy search (fzf)
-    history = "<Tab>",               -- Open directory history
-    previous_dir = "<Backspace>",    -- Jump back to the previous directory
+    create_temp = "<Enter>",      -- Create a temporary bookmark from the menu
+    fuzzy_search = "<Space>",     -- Launch fuzzy search (fzf)
+    history = "<Tab>",            -- Open directory history
+    previous_dir = "<Backspace>", -- Jump back to the previous directory
   },
 
   -- File path for storing user bookmarks
   bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\plugins\\whoosh.yazi\\bookmarks") or
-         (os.getenv("HOME") .. "/.config/yazi/plugins/whoosh.yazi/bookmarks"),
+      (os.getenv("HOME") .. "/.config/yazi/plugins/whoosh.yazi/bookmarks"),
 
   -- Replace home directory with "~"
-  home_alias_enabled = true,                            -- Toggle home aliasing in displays
+  home_alias_enabled = true, -- Toggle home aliasing in displays
 
   -- Path truncation in navigation menu
-  path_truncate_enabled = false,                        -- Enable/disable path truncation
-  path_max_depth = 3,                                   -- Maximum path depth before truncation
+  path_truncate_enabled = false, -- Enable/disable path truncation
+  path_max_depth = 3,            -- Maximum path depth before truncation
 
   -- Path truncation in fuzzy search (fzf)
-  fzf_path_truncate_enabled = false,                    -- Enable/disable path truncation in fzf
-  fzf_path_max_depth = 5,                               -- Maximum path depth before truncation in fzf
+  fzf_path_truncate_enabled = false, -- Enable/disable path truncation in fzf
+  fzf_path_max_depth = 5,            -- Maximum path depth before truncation in fzf
 
   -- Long folder name truncation
-  path_truncate_long_names_enabled = false,             -- Enable in navigation menu
-  fzf_path_truncate_long_names_enabled = false,         -- Enable in fzf
-  path_max_folder_name_length = 20,                     -- Max length in navigation menu
-  fzf_path_max_folder_name_length = 20,                 -- Max length in fzf
+  path_truncate_long_names_enabled = false,     -- Enable in navigation menu
+  fzf_path_truncate_long_names_enabled = false, -- Enable in fzf
+  path_max_folder_name_length = 20,             -- Max length in navigation menu
+  fzf_path_max_folder_name_length = 20,         -- Max length in fzf
 
   -- History directory settings
   history_size = 10,                                    -- Number of directories in history (default 10)

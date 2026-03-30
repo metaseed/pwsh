@@ -48,14 +48,6 @@ int wmain(int argc, wchar_t *argv[]) {
     // --- Step 1: Reconstruct the file path from all remaining arguments -----
     // When the caller does not quote the path, spaces cause it to be split
     // across multiple argv entries.  Join argv[1..argc-1] back together.
-    //
-    // NOTE: Even when the path IS quoted and argc == 2, copying into a local
-    // buffer via wcscat empirically fixes space-handling issues.  The MinGW
-    // CRT (-municode wmain) strips surrounding quotes from argv, but the
-    // resulting pointer may originate from the raw command-line buffer in a
-    // way that confuses GetFullPathNameW in certain call contexts (e.g. when
-    // spawned by yazi's shell runner).  Copying to a clean stack buffer
-    // ensures a well-formed, independently-owned wide string is passed.
     wchar_t rawpath[MAX_PATH] = {0};
     for (int i = 1; i < argc; i++) {
         if (i > 1) wcscat(rawpath, L" ");
