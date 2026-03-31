@@ -38,7 +38,13 @@ shift+F4: show previous search results
 `code -h|oc codeHelp.md` // out-code can give a name to support syntax hight and formatting
 
 ## git panel
-* use `ctrl+0` to go back to the left panel
+* `ctrl+shift+g`: View: Show Changes, on input box
+* `shift+tab`: blur the input box
+* `up`|`down`: navigate the changes file list
+* `space`: view the current file's changes
+* `ctrl+0`: to go back to the left panel
+* `ctrl+shift+p`, type 'git changes` or 'git staged' to view changes or staged changes
+*
 ## claude code extension
 * `ctrl+alt+/` to focus to chat input. (forward the selection if there is selection in editor)
 * `ctrl+n` to start a new chat session.

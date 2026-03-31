@@ -27,8 +27,4 @@ require("git"):setup {
 	order = 1500,
 }
 
--- require("smart-enter"):setup {
--- 	open_multi = true,
--- }
-
 dofile(os.getenv("YAZI_CONFIG_HOME") .. "/bookmarks/whoosh.init.lua")

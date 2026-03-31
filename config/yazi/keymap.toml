@@ -38,7 +38,7 @@ desc = "show file info with properties"
 
 [[mgr.prepend_keymap]]
 on   = "<A-o>"
-run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\pwsh\openwithsh.exe %1'''
+run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\open-with\openwithsh.exe %1'''
 desc = "Open with..."
 
 ## Archive

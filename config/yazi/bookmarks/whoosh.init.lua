@@ -1,31 +1,32 @@
 -- You can configure your bookmarks using simplified syntax
-local bookmarks = {
-  { tag = "Desktop",   path = "~/Desktop",   key = "d" },
-  { tag = "Documents", path = "~/Documents", key = "D" },
-  { tag = "Downloads", path = "~/Downloads", key = "o" },
-}
+-- local bookmarks = {
+--   { tag = "Desktop",   path = "~/Desktop",   key = "d" },
+--   { tag = "Documents", path = "~/Documents", key = "D" },
+--   { tag = "Downloads", path = "~/Downloads", key = "o" },
+-- }
 
 -- You can also configure bookmarks with key arrays
 local bookmarks = {
-  { tag = "Desktop",   path = "~/Desktop",   key = { "d", "D" } },
+  { tag = "Desktop",   path = "~/Desktop",   key = { "d", "t" } },
   { tag = "Documents", path = "~/Documents", key = { "d", "d" } },
-  { tag = "Downloads", path = "~/Downloads", key = "o" },
+  { tag = "Downloads", path = "~/Downloads", key = { "d", "l" } },
+  -- { tag = "Downloads", path = "~/Downloads", key = "o" },
 }
 
 -- Windows-specific bookmarks
-if ya.target_family() == "windows" then
-  local home_path = os.getenv("USERPROFILE")
-  table.insert(bookmarks, {
-    tag = "Scoop Local",
-    path = os.getenv("SCOOP") or (home_path .. "\\scoop"),
-    key = "p"
-  })
-  table.insert(bookmarks, {
-    tag = "Scoop Global",
-    path = os.getenv("SCOOP_GLOBAL") or "C:\\ProgramData\\scoop",
-    key = "P"
-  })
-end
+-- if ya.target_family() == "windows" then
+--   local home_path = os.getenv("USERPROFILE")
+--   table.insert(bookmarks, {
+--     tag = "Scoop Local",
+--     path = os.getenv("SCOOP") or (home_path .. "\\scoop"),
+--     key = "p"
+--   })
+--   table.insert(bookmarks, {
+--     tag = "Scoop Global",
+--     path = os.getenv("SCOOP_GLOBAL") or "C:\\ProgramData\\scoop",
+--     key = "P"
+--   })
+-- end
 
 require("whoosh"):setup {
   -- Configuration bookmarks (cannot be deleted through plugin)
@@ -47,9 +48,9 @@ require("whoosh"):setup {
   },
 
   -- File path for storing user bookmarks
-  bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\plugins\\whoosh.yazi\\bookmarks") or
-      (os.getenv("HOME") .. "/.config/yazi/plugins/whoosh.yazi/bookmarks"),
-
+  -- bookmarks_path = (ya.target_family() == "windows" and os.getenv("APPDATA") .. "\\yazi\\config\\plugins\\whoosh.yazi\\bookmarks") or
+  -- (os.getenv("HOME") .. "/.config/yazi/plugins/whoosh.yazi/bookmarks"),
+  bookmarks_path = os.getenv("YAZI_CONFIG_HOME") .. "/bookmarks/whoosh",
   -- Replace home directory with "~"
   home_alias_enabled = true, -- Toggle home aliasing in displays
 

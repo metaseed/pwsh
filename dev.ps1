@@ -8,7 +8,7 @@ param (
   # clone depth
   [Parameter()]
   [int]
-  $CloneDepth = 1
+  $CloneDepth = -1
 )
 
 if(!(Get-Command git -ErrorAction Ignore)) {
@@ -35,17 +35,17 @@ if (!(Test-Path $PWSHParentFolder -PathType Container)) {
   New-Item -ItemType Directory -Path $PWSHParentFolder -Force | Out-Null
 }
 
-$root = "$PWSHParentFolder\pwsh"
-if (Test-Path $root -type Container) {
+$repoRoot = "$PWSHParentFolder\pwsh"
+if (Test-Path $repoRoot -type Container) {
   try {
-    Push-Location $root
+    Push-Location $repoRoot
     $status = git status
     $dirtyMsg = $status -match 'modified:|Untracked files:|Your branch is ahead of'
     if ($dirtyMsg.length -gt 0) {
-      $decision = $Host.UI.PromptForChoice('Override Local Changes?', "You have local changes in $root?,`ndo you want to continue to hard reset local changes?", @('&Yes', '&No'), 0)
+      $decision = $Host.UI.PromptForChoice('Override Local Changes?', "You have local changes in $repoRoot?,`ndo you want to continue to hard reset local changes?", @('&Yes', '&No'), 0)
       if ($decision -eq 0) {
         git reset --hard
-        # Remove-Item -force -Recurse "$root"
+        # Remove-Item -force -Recurse "$repoRoot"
       }
       else {
         'please check local changes and rerun the command'
@@ -68,13 +68,13 @@ try {
     Pop-Location
   }
   else {
-    git clone http://github.com/metasong/pwsh.git --depth $CloneDepth
+    git clone http://github.com/metasong/pwsh.git ($CloneDepth -eq -1 ? '': "--depth $CloneDepth")
   }
 
-  . "$root/config.ps1"
+  . "$repoRoot/config.ps1"
 
-  if (gcm code -ErrorAction Ignore) {
-    code $root
+  if (Get-Command code -ErrorAction Ignore) {
+    code $repoRoot
     code $PROFILE.CurrentUserAllHosts
   }
 }
