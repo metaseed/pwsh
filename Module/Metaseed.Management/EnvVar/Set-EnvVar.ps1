@@ -10,6 +10,7 @@
 #>
 function Set-EnvVar {
     [Alias('setv')]
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory, Position = 0)]
         [string]$Name,
@@ -29,7 +30,7 @@ function Set-EnvVar {
         return
     }
 
-    function Set-ValueToScope($Name, $Value, $persistScope) {
+    function Set-EnvVarValueByScope($Name, $Value, $persistScope) {
         $v = [Environment]::GetEnvironmentVariable($Name, $persistScope)
         if ($v) {
             Write-Information "Original value: '$Name' is '$Value' ($persistScope scope)"
@@ -42,8 +43,8 @@ function Set-EnvVar {
             }
         }
     }
-    Set-ValueToScope $Name $Value 'Process'
-    Set-ValueToScope $Name $Value $persistScope
+    Set-EnvVarValueByScope $Name $Value 'Process'
+    Set-EnvVarValueByScope $Name $Value $persistScope
 
 }
 

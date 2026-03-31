@@ -1,8 +1,8 @@
-# leak into (varriable:)
+# leak into (variable:)
 # variable or gci variable
 $m = [PSCustomObject]@{
   pwsh = "$env:MS_PWSH"
-  metatool = 'M:\Workspace\metatool'
+  metatool = '$env:MetatoolDir'
 }
 
 # prevent error when debugging

@@ -2,7 +2,7 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force
 "config ms_pwsh ..."
 if ($PSVersionTable.PSVersion.Major -lt 7) {
-  if (!(gcm pwsh -ErrorAction Ignore)) {
+  if (!(Get-Command pwsh -ErrorAction Ignore)) {
     . "$PSScriptRoot\Lib\install-pwsh.ps1"
   }
   Start-Process pwsh "-NoExit -ExecutionPolicy Bypass -file `"$($MyInvocation.MyCommand.Path)`""
@@ -19,13 +19,13 @@ else {
 
 ## set profile
 $p = ". $(Resolve-Path $PSScriptRoot\profile.ps1)"
-$has = gc $profile.CurrentUserAllHosts | ? { $_ -like $p }
+$has = Get-Content $profile.CurrentUserAllHosts | Where-Object { $_ -like $p }
 if (!$has) {
   $hasOld = $false
   $p1 = ''
   if ($env:MS_PWSH) {
     $p1 = ". $(Resolve-Path $env:MS_PWSH\profile.ps1)"
-    $hasOld = gc $profile.CurrentUserAllHosts | ? { $_ -like $p1 }
+    $hasOld = gc $profile.CurrentUserAllHosts | Where-Object { $_ -like $p1 }
   }
   if ($hasOld) {
     # means $MS_PWSH is not the current $PSScriptRoot
@@ -41,7 +41,7 @@ if (!$has) {
   }
 }
 else {
-  write-host "no action, because already added to profie: $p"
+  write-host "no action, because already added to profile: $p"
 }
 
 ## set $env:PSModulePath
@@ -73,12 +73,8 @@ else {
 $env:MS_PWSH = $PSScriptRoot
 write-host "set env:MS_PWSH to $($env:MS_PWSH)"
 
-## app
-# $App = "C:\App"
-# $env:MS_App = $App
-# [System.Environment]::SetEnvironmentVariable("MS_App", $App, 'User')
-
-. $PSScriptRoot\Cmdlet\Mount-AppFoder.ps1
+## c:\app folder
+. $PSScriptRoot\Cmdlet\Mount-AppFolder.ps1
 
 . $PSScriptRoot\Lib\update-modules.ps1
 # rebuilds the command cache and re-examines all modules in all PowerShell default locations

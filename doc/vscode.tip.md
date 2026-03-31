@@ -36,6 +36,7 @@ shift+F4: show previous search results
 `ipconfig -all|code -`
 `code -h|code -` // - means from stdin
 `code -h|oc codeHelp.md` // out-code can give a name to support syntax hight and formatting
+* open a file path with pipe: `$env:HostsFilePath |% {code $_}`
 
 ## git panel
 * `ctrl+shift+g`: View: Show Changes, on input box

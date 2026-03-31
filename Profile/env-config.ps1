@@ -21,7 +21,7 @@ $IsAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 $env:IsAdmin = $IsAdmin
 
 $cl = "`e[0m"
-"`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
+Write-Host "`e[5mpwsh$cl v$($Host.Version) `e[33;3;4m$($IsAdmin ? 'admin':'')`e[0m" #; profile: $PSCommandPath"
 if ($IsAdmin) {
 	if ($PWD.ProviderPath -ieq (Join-Path $env:SystemRoot 'System32')) {
 		Set-Location -Path $env:USERPROFILE
