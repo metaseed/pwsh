@@ -38,6 +38,16 @@ use = "boydaihungst/file-extra-metadata"
 rev = "871ba3c"
 hash = "cb35d8ae5a44361934e52e1bcc19a904"
 
+[[plugin.deps]]
+use = "ciarandg/cd-git-root"
+rev = "a0e0f4b"
+hash = "e98b7ce77798c7932a24806a187b4b5b"
+
+[[plugin.deps]]
+use = "orhnk/system-clipboard"
+rev = "75a5330"
+hash = "9ab2a0e74968f7f0e46893021764cb66"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:dracula"
 rev = "9511cb0"

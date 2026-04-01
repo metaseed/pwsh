@@ -22,7 +22,7 @@ function Set-EnvVar {
         [Alias('m')]
         [switch]$Machine
     )
-
+    $Value = Regulate-IfIsFullPath $Value
     $persistScope = if ($Machine) { 'Machine' } else { 'User' }
 
     if ($Machine -and -not (Test-Admin)) {
@@ -47,5 +47,43 @@ function Set-EnvVar {
     Set-EnvVarValueByScope $Name $Value $persistScope
 
 }
+
+function Regulate-IfIsFullPath {
+    <#
+    .SYNOPSIS
+        Normalizes the path if it is already an absolute (rooted) path.
+        If the path is not rooted, returns the original input unchanged.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    # 1. Check for illegal characters
+    $invalidChars = [System.IO.Path]::GetInvalidPathChars()
+    if ($Path.ToCharArray().Where{ $invalidChars -contains $_ }) {
+        Write-Warning "Path contains invalid characters, returning original input."
+        return $Path
+    }
+
+    # 2. Check if the path is rooted
+    if (-not [System.IO.Path]::IsPathRooted($Path)) {
+        # Return original input if not an absolute path
+        return $Path
+    }
+
+    # 3. If it IS rooted, attempt to normalize (resolve dots and separators)
+    try {
+        return [System.IO.Path]::GetFullPath($Path)
+    }
+    catch {
+        Write-Warning "Failed to normalize rooted path, returning original input."
+        return $Path
+    }
+}
+
+# Examples:
+# Regulate-FullPath "C:/Users/Documents/../Desktop"
+# Output: C:\Users\Desktop (Windows automatically converts / to \)
 
 # Export-ModuleMember -Function Set-EnvVar -Alias setv

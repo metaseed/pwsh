@@ -139,12 +139,18 @@ function Install-App {
 	else {
 		# need pickup
 		if ($filesToPickup) {
-			$app = gci -Recurse -include $filesToPickup "$env:temp\temp\*"
+			# $app = gci -Recurse -include $filesToPickup "$env:temp\temp\*"
+			$app = gci -Recurse "$env:temp\temp\*" | ? { $_.Name -match $filesToPickup }
+			if ($app.Count -eq 0) {
+				write-error "can not find files to pickup with pattern: $filesToPickup"
+				break
+			}
 		}
 		# only one file: *.exe
 		else {
 			$app = @($children[0])
 		}
+
 
 		$app | % {
 			$ver_online -match "^[\d\.]+" > $null

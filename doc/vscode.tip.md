@@ -45,8 +45,14 @@ shift+F4: show previous search results
 * `space`: view the current file's changes
 * `ctrl+0`: to go back to the left panel
 * `ctrl+shift+p`, type 'git changes` or 'git staged' to view changes or staged changes
-*
+
+## side panel
+* `ctrl+b`: toggle primary side panel
+* `ctrl+alt+b`: toggle second side panel
+* `ctrl+0`: focus primary side panel
+* `ctrl+alt+0`: focus second side panel
+
 ## claude code extension
-* `ctrl+alt+/` to focus to chat input. (forward the selection if there is selection in editor)
-* `ctrl+n` to start a new chat session.
+* `ctrl+i,ctrl+i` to focus/blur to chat input. (forward the selection if there is selection in editor)
+* `ctrl+n` to start a new chat session, when in the claude code panel
 * /clear command: to reset current session without start a new session.

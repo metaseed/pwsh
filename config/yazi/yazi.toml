@@ -14,7 +14,14 @@ append_spotters = [
 
 [opener]
 openwith = [
-    { run = 'M:\Script\Pwsh\config\yazi\open-with\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
+    { run = 'M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
+]
+openfiledialog = [
+    { run = 'M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %0', desc = "Open file dialog", for = "windows" },
+]
+openfolderdialog = [
+    # block = true,
+    { run = 'M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %0', desc = "Open folder dialog", for = "windows" },
 ]
 
 [open]
