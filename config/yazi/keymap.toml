@@ -45,12 +45,12 @@ desc = "Open with..."
 [[mgr.prepend_keymap]]
 on   = "<C-o>"
 # note: --block to open as modal dialog
-run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %0'''
+run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %d'''
 desc = "Open file dialog(drag/drop supported)"
 
 [[mgr.prepend_keymap]]
 on   = "<C-S-o>"
-run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %0'''
+run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %d'''
 desc = "Open folder dialog"
 
 ## Archive
