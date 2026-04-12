@@ -14,5 +14,7 @@ Cmdlet/lf/_config/lf/marks
 Cmdlet/lf/_config/lf/tags
 Cmdlet/lf/_config/lf/files
 config/yazi/flavors
-config/yazi/plugins
+config/yazi/plugins/*
+!config/yazi/plugins/show-context-menu.yazi
+!config/yazi/plugins/parent-arrow.yazi
 .log
