@@ -17,6 +17,9 @@ Windows searches for that executable in a very specific order:
     3. User Path: Only if it finds nothing in the first two steps does it check your personal User Path.
 > that means the system path will override path. i.e. If you have Python 3.12 installed in your System Path, but you want to use Python 3.13 located in your User Path, typing python will launch version 3.12.
 
+> note: $env:path is constructed as [system path] + [user path], system path first, so it will override user's path
+> $env:PATH -split ';'
+
 NOTE:
 * $env:<varName> is the current process environment variable
 * app run in user mode, can read both user and system variables, so the process environment variable is a combination of all three scopes, same for the admin mode app.

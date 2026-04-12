@@ -44,7 +44,7 @@ shift+F4: show previous search results
 * `up`|`down`: navigate the changes file list
 * `space`: view the current file's changes
 * `ctrl+0`: to go back to the left panel
-* `ctrl+shift+p`, type 'git changes` or 'git staged' to view changes or staged changes
+* `ctrl+shift+p`, type 'git changes` or 'git staged' to view changes or staged changes(ctrl+m,g and ctrl+m,ctrl+g)
 
 ## side panel
 * `ctrl+b`: toggle primary side panel

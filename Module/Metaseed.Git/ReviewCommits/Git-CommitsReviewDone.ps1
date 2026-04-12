@@ -3,7 +3,11 @@ function Git-CommitsReviewDone {
 		# commit message
 		[Parameter()]
 		[string]
-		$CommitMessage = ""
+		$CommitMessage = "",
+		# continue review?
+		[Parameter()]
+		[switch]
+		$ContinueReview
 	)
 
 	# get tipRef
@@ -12,7 +16,7 @@ function Git-CommitsReviewDone {
 	if (!$tipRef) {
 		$currentBranchName = (git branch --show-current)
 		$tipRefTest = "refs/heads/${currentBranchName}-mark"
-		git show -s --format="%h %s" "$tipRefTest"
+		write-execute { git show -s --format="%h %s" "$tipRefTest" }
 		if ($LASTEXITCODE -eq 0) {
 			$choiceIndex = $Host.UI.PromptForChoice('Move Current Branch Head', "Move the branch Head to the commit: ${tipRefTest}?", @('&Yes', '&No'), 0)
 			if ($choiceIndex -eq 0) {
@@ -20,7 +24,8 @@ function Git-CommitsReviewDone {
 				$inputRefCommit = $false
 			}
 		}
-	} else {
+	}
+ 	else {
 		$inputRefCommit = $false
 	}
 
@@ -51,6 +56,19 @@ function Git-CommitsReviewDone {
 		git-pushAll "$CommitMessage"
 	}
 
-	# delete the ref
-	git update-ref -d $tipRef
+	if ($ContinueReview) {
+		# update the tip mark to latest remote tip before resetting
+		git pull
+		$tipRef = $global:__git_commits_reivew_branch_tip_mark
+		if ($tipRef) {
+			git update-ref $tipRef head
+		}
+
+		$commitFrom = $Global:__git_commits_review_from
+		git reset $commitFrom --soft
+	}
+	else {
+		# delete the ref
+		git update-ref -d $tipRef
+	}
 }

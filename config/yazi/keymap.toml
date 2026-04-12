@@ -46,12 +46,22 @@ desc = "Open with..."
 on   = "<C-o>"
 # note: --block to open as modal dialog
 run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %d'''
-desc = "Open file dialog(drag/drop supported)"
+desc = "Open file dialog(drag/drop)"
 
 [[mgr.prepend_keymap]]
 on   = "<C-S-o>"
 run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %d'''
-desc = "Open folder dialog"
+desc = "Open folder dialog(drag/drop)"
+
+[[mgr.prepend_keymap]]
+on   = "<S-f>"
+run  = "plugin show-context-menu"
+desc = "Show shell context menu at active item"
+
+[[mgr.prepend_keymap]]
+on   = [ "<C-k>", "r" ]
+run  = 'shell "explorer /select,\"%1\"" --orphan'
+desc = "Reveal in Windows Explorer"
 
 ## Archive
 [[mgr.prepend_keymap]]
@@ -215,3 +225,4 @@ desc = "Go to git repo root"
 on   = "<C-y>"
 run  = "plugin system-clipboard"
 desc = "yank&copy to system clipboard"
+

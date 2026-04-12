@@ -20,5 +20,6 @@ if (Test-Path $__cmdletPathCache) {
     $joined = $folders -join ';'
     $env:path = "$joined;$env:path"
     $null = New-Item -ItemType Directory -Path (Split-Path $__cmdletPathCache) -Force -ErrorAction Ignore
-    Set-Content -Path $__cmdletPathCache -Value $joined -Force
+    Set-Content -Path $__cmdletPathCache -Value $joined -Force -NoNewline
 }
+# rm $__cmdletPathCache

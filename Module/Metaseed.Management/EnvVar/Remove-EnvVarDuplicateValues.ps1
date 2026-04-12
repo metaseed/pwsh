@@ -11,7 +11,9 @@ function Remove-EnvVarDuplicateValues {
         $var = 'Path',
         [object]
         [ValidateSet('Machine', 'User')]
-        $scope = 'User'
+        $scope = 'User',
+        [switch]
+        $removeDead
     )
     function clean {
         param (
@@ -52,7 +54,8 @@ function Remove-EnvVarDuplicateValues {
                 $hasDup = $false
                 # getFullPath would not throw if path is not exist
                 # resolve-path throw if not exist
-                $path_test = [Path]::GetFullPath($_)
+                # note: [Path]::GetFullPath($_) will keep the end '\' so c:\a\ and c:\a is different
+                $path_test = [Path]::GetFullPath($_).TrimEnd('\','/')
                 foreach ($p in $newPath) {
                     if ($p.Equals($path_test, [StringComparison]::OrdinalIgnoreCase) ) {
                         $hasDup = $true
@@ -85,6 +88,6 @@ function Remove-EnvVarDuplicateValues {
         }
     }
 
-    clean $scope
+    clean $scope -removeDead:$removeDead
 }
 

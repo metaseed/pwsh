@@ -1,3 +1,6 @@
+# Skip PSReadLine config when running without a real console (e.g. redirected I/O, CI, IDE tool shells)
+try { [Console]::CursorVisible | Out-Null } catch { return }
+
 # https://megamorf.gitlab.io/cheat-sheets/powershell-psreadline/
 # C:\Program Files\PowerShell\7\Modules\PSReadLine\SamplePSReadLineProfile.ps1
 $PSReadLineOptions = @{

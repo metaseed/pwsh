@@ -4,7 +4,7 @@
 
 #>
 function Update-ProcessEnvVarPath {
-	@("Machine", "User")  |
+	@( "User", "Machine")  |
 	% {
 		$pathEnv = [Environment]::GetEnvironmentVariable('Path', $_)
 		$updatedPathEnv = ("${pathEnv};${env:Path}" -split ';' |?{$_}<#filter out empties i.e.: ;;#>| select -Unique) -join ';'

@@ -15,6 +15,7 @@ function Git-CommitsReview {
 	$currentBranchName = (git branch --show-current)
 	if ($LASTEXITCODE -ne 0) { throw 'not in a repo' }
 
+	# checkout the branch to review
 	if([string]::IsNullOrEmpty($Branch)) {
 		$choiceIndex = $Host.UI.PromptForChoice("The branch to review: ?", "$currentBranchName", @('&Yes', '&No'), 0)
 		if ($choiceIndex -ne 0) {
@@ -30,6 +31,8 @@ function Git-CommitsReview {
 			return
 		}
 	}
+	# get latest changes from remote
+	git pull
 
 	if ([string]::IsNullOrEmpty($CommitFrom)) {
 		$CommitFrom = Git-ParentCommit
@@ -58,6 +61,8 @@ function Git-CommitsReview {
 	if (!$?){ # is commit
 		$CommitFrom = "$CommitFrom~1" # previous one
 	}
+
+	$Global:__git_commits_review_from = $CommitFrom
 	# keep the current branch head commit in the a ref
 	$tipRef = "refs/heads/${currentBranchName}-mark"
 
