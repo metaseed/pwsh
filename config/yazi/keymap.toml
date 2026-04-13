@@ -52,11 +52,21 @@ desc = "Open file dialog(drag/drop)"
 on   = "<C-S-o>"
 run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %d'''
 desc = "Open folder dialog(drag/drop)"
+# same as --modern, so not used here
+# [[mgr.prepend_keymap]]
+# on   = "<S-f>"
+# run  = "plugin show-context-menu"
+# desc = "Show shell context menu (classic)"
+
+[[mgr.prepend_keymap]]
+on   = "<A-f>"
+run  = 'plugin show-context-menu -- --modern'
+desc = "Show shell context menu (modern/Win11)"
 
 [[mgr.prepend_keymap]]
 on   = "<S-f>"
-run  = "plugin show-context-menu"
-desc = "Show shell context menu at active item"
+run  = 'plugin show-context-menu -- --background'
+desc = "Show folder background context menu (New, Paste, ...)"
 
 [[mgr.prepend_keymap]]
 on   = [ "<C-k>", "r" ]
