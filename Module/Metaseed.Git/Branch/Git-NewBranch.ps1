@@ -20,14 +20,14 @@ function Git-NewBranch {
       Write-Execute "git checkout $ParentBranchName"
       if ($LASTEXITCODE -ne 0) {
         Write-Error "Error when checkout $ParentBranchName, nothing changed."
-        return
+        break
       }
     }
 
     # removes references to remote branches that no longer exist on the remote repository (origin)
     # Write-Execute 'git remote prune origin' # same: use --prune in pull
     ## rebase master onto remote
-    Write-Execute 'git pull --prune' #  --rebase
+    Write-Execute 'git pull' # --prune why the prune return 1' #  --rebase
 
     Write-Execute "git switch -c $BranchName" # same: "git checkout -b $BranchName"
   }

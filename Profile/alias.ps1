@@ -4,8 +4,6 @@ Set-Alias ca Compress-Archive
 Set-Alias sa Start-Process # default: saps, start
 Set-Alias np New-ItemProperty # rp: Remove-ItemProperty; gp: Get-ItemProperty
 
-Set-Alias c cursor
-
 . $PSScriptRoot\..\Cmdlet\_\alias.ps1
 
 # "C:\Users\metaseed\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
