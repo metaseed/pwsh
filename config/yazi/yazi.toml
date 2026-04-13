@@ -13,17 +13,24 @@ append_spotters = [
 ]
 
 [opener]
+# Windows: `start ""` opens with the default associated app (same as Explorer double-click).
+system_open = [
+    { run = 'start "" %s1', desc = "Open", for = "windows", orphan = true },
+]
+
 openwith = [
     { run = 'M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
 ]
 
 [open]
 prepend_rules = [
+    # `url = "*"` does not match dirs (`foo/`); without this, preset `*/` uses `edit` first (VS Code).
+    { url = "*/", use = [ "system_open", "edit", "openwith", "reveal" ] },
     { mime = "text/*", use = [ "edit", "openwith", "reveal" ] },
     { mime = "image/*", use = [ "open", "openwith", "reveal" ] },
     { mime = "{audio,video}/*", use = [ "play", "openwith", "reveal" ] },
     { mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "openwith", "reveal" ] },
-    { url = "*", use = [ "open", "openwith", "reveal" ] },
+    { url = "*", use = [ "system_open", "openwith", "reveal" ] },
 ]
 
 [preview]

@@ -13,7 +13,7 @@ function Get-LocalAppInfo {
 	Write-Verbose "appName: $appName; toLocation: $toLocation; newName: $newName"
 	# get version info from the app's property
 	if (!$versionLocal) {
-		$it = @(gci $toLocation -Filter "$appName*.exe" -File -FollowSymlink -Depth 1 -ErrorAction Ignore)
+		$it = @(gci $toLocation -Filter "$appName*.exe" -File -FollowSymlink -Depth 1 -ErrorAction Ignore|?  { $_.FullName -notlike '*\_shim\*' -and $_.Name -ne '_shim' })
 		if ($it) {
 			if ($it.count -gt 1) {
 				Write-Warning "find more than one app in $toLocation : $($it.FullName) "
