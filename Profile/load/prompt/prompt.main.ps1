@@ -108,9 +108,12 @@ $script:DoesUseLists = (Get-PSReadLineOption).PredictionViewStyle -eq 'ListView'
 
 # used in PS_ReadLineHandler of Enter key
 function TransientPrompt {
-	if ($null -eq $global:__defaultPrompt) { return } # ne need to do Transient
+	if ($null -eq $global:__defaultPrompt) { return } # no need to do Transient
+
 	$savedPrompt = $function:prompt
 	$function:prompt = $global:__defaultPrompt
+	[Microsoft.PowerShell.PSConsoleReadLine]::EndOfLine() # when cursor is not at the end, and user `enter` to execute the cmd, it will cut off the remaining content and just show partial of the last executed cmd. So move to end to avoid the problem.
+	# InvokePrompt: 1. erase the full prompt; 2. re-run prompt function to draw the shorter transient version prompt; 3. redraw the command line buffer(problem here when cursor is in middle);
 	[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 	if ($Script:DoesUseLists) {
 		[Console]::Write("`e[J") # clear residual ListView predictions below the prompt
@@ -131,5 +134,5 @@ function __ToggleStarshipPrompt {
 		$function:prompt = $global:_starshipPrompt
 	}
 	[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-	# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # not inplace replace the prompt
+	# [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() # not in place replace the prompt
 }

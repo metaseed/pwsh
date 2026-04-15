@@ -4,4 +4,5 @@
 . $PSScriptRoot\terminal\terminal.ps1
 . $PSScriptRoot\configPsFzf.ps1
 . $PSScriptRoot\zoxide.config.ps1
+. $PSScriptRoot\zoxide.helper.ps1
 . $PSScriptRoot\yazi.config.ps1

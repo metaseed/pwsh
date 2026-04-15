@@ -3,7 +3,6 @@ why better than `code -h|code -`?
 1. give a name with extension, alow formate the doc and syntax highlight, also easy to find in temp dir
 #>
 function Out-Code {
-    [Alias('oc')]
     [CmdletBinding(PositionalBinding = $false)]
     param(
         [Parameter(ValueFromPipeline = $true)]
@@ -25,4 +24,6 @@ function Out-Code {
     }
 }
 
+
 # code -h|out-code a.txt
+

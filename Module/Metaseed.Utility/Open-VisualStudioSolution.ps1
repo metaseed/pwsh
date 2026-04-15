@@ -1,58 +1,91 @@
+#region Private helpers
+
+function Find-SolutionPath {
+	param([string]$SolutionPathOrDir)
+	if (!$SolutionPathOrDir) { $SolutionPathOrDir = '.' }
+	if (Test-Path $SolutionPathOrDir -PathType Container) {
+		$sln = (Get-ChildItem $SolutionPathOrDir -Filter *.sln | Select-Object -First 1).FullName
+		if (!$sln) {
+			Write-Host -Foreground Yellow "No Visual Studio solution found in dir: $SolutionPathOrDir"
+			return $null
+		}
+		return $sln
+	}
+
+	if ($SolutionPathOrDir -notlike '*.sln') {
+		Write-Host -Foreground Yellow "Not a Visual Studio solution file: $SolutionPathOrDir"
+		return $null
+	}
+
+	return $SolutionPathOrDir
+}
+
+function Get-DevenvProcess {
+	param([string]$Title)
+
+	$procs = Get-Process devenv -ErrorAction SilentlyContinue |
+	Where-Object { ($_.MainWindowHandle -ne 0) -and ($_.MainWindowTitle -like "*${Title}*") }
+
+	if ($procs.Count -gt 1) {
+		Write-Host -Foreground Yellow "$($procs.Count) instances of '$Title' open in Visual Studio, using first"
+		return $procs | Select-Object -First 1
+	}
+
+	return $procs  # single match or $null
+}
+
+#endregion
+
 function Open-VisualStudioSolution {
 	[CmdletBinding()]
-	[alias('vs')]
+	[Alias('ov')]
 	param (
-		[Parameter(Mandatory = $true)]
+		[Parameter(ValueFromPipeline)]
 		[string]$SolutionPathOrDir
 	)
-	if(Test-Path $SolutionPathOrDir -PathType Container){
-		$SolutionPath = (Get-ChildItem $SolutionPathOrDir -Filter *.sln | Select-Object -First 1).FullName
-		if(!$SolutionPath) {
-			Write-Notice "No Visual Studio solution found in dir: $SolutionPathOrDir"
-			return
-		}
-	}
 
-	if($SolutionPathOrDir -notlike '*.sln') {
-		Write-Notice "the file path is not a Visual Studio solution file, path: $SolutionPathOrDir"
-		return
-	} else {
-		$SolutionPath = $SolutionPathOrDir
-	}
+	$sln = Find-SolutionPath $SolutionPathOrDir
+	if (!$sln) { return }
 
-	$abs = (Resolve-Path $SolutionPath).Path
+	$abs = (Resolve-Path $sln).Path
+	$title = Split-Path $abs -LeafBase
+	$proc = Get-DevenvProcess $title
 
-	# Check if any devenv has this solution open via its window title
-	$running = Get-Process devenv -ErrorAction SilentlyContinue | Where-Object {
-		$_.MainWindowTitle -like "*$(Split-Path $abs -LeafBase)*"
-	}
-	if ($running.length -gt 1) {
-		$running = $running | Select-Object -First 1
-	}
-
-	if ($running) {
-		# Bring existing instance to foreground
-		if (-not ([System.Management.Automation.PSTypeName]'Win32_VisualStudio').Type) {
-			Add-Type @"
-			using System;
-			using System.Runtime.InteropServices;
-			public class Win32_VisualStudio {
-				[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
-				[DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-				[DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hWnd);
-			}
-"@
-		}
-
-		$hwnd = $running.MainWindowHandle
-		if ([Win32]::IsIconic($hwnd)) {
-			[Win32]::ShowWindow($hwnd, 9)  # SW_RESTORE only if minimized
-			[Win32]::SetForegroundWindow($hwnd)
-		}
+	if ($proc) {
+		Show-Window $proc.MainWindowHandle
+		Write-Host "$title already open by Visual Studio"
 	}
 	else {
-		# C:\Program Files\Microsoft Visual Studio\18\Professional\Common7\IDE
-		# in path
-		& "devenv.exe" $abs
+		if (Get-Command devenv -ErrorAction SilentlyContinue) {
+			& devenv.exe $abs
+		}
+		else {
+			Invoke-Item $abs
+		}
 	}
 }
+
+function Close-VisualStudioSolution {
+	[CmdletBinding()]
+	[Alias('cv')]
+	param (
+		[Parameter(ValueFromPipeline)]
+		[string]$SolutionPathOrDir
+	)
+
+	$sln = Find-SolutionPath $SolutionPathOrDir
+	if (!$sln) { return }
+
+	$abs = (Resolve-Path $sln).Path
+	$title = Split-Path $abs -LeafBase
+	$proc = Get-DevenvProcess $title
+
+	if (!$proc) {
+		Write-Host -Foreground Yellow "$title is not opened by Visual Studio"
+		return
+	}
+
+	$proc.CloseMainWindow() | Out-Null
+}
+
+Export-ModuleMember -Function @('Close-VisualStudioSolution')

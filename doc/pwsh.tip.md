@@ -600,3 +600,12 @@ function func($a = $null){
 }
 }
 ```
+
+## coding
+`dir|c`: open code, cursor and visualStudio on dir
+`dir|oc`: open dir with code
+`dir|vs`: open with visualStudio the .sln file in dir
+`dir|os`: open dir with cursor
+
+> example
+> zz opcua|c

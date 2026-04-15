@@ -9,7 +9,7 @@ process {
 	if(!$Dir) {$Dir= '.'}
 	$Dir = Resolve-Path $Dir
 
-	oc $Dir
-	os $Dir
-	ov $Dir
+	cc $Dir
+	cs $Dir
+	cv $Dir
 }

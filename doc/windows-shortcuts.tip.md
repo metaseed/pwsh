@@ -13,7 +13,7 @@
 | `Win+D`                | Show desktop.                                                                  |
 | `Win+I`                | Settings                                                                       |
 | `Win+B`                | Show hidden icons in notification area|
-| `Win+Number`           | Start the program pinned to the Taskbar. `Enter` to open|
+| `Win+Number`           | Start the program pinned to the Taskbar. `Enter` to open, win+shift+number to open new instance, i.e. edge|
 | `Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                        |
 | `Win+T`                | Cycle through the apps on the taskbar                                          |
 | `Win+Shift+Left/Right` | move window to another screen                                                  |
@@ -89,7 +89,7 @@
 | ----------------------------- | ------------------ | ---- |
 | `ctrl+alt+home` | Activate the connection bar | then we could use `alt+tab` to switch to the app in host windows |
 
-Win+r, then type 'mstsc'	Microsoft Terminal Services Client.
+`Win+r`, then type 'mstsc'	Microsoft Terminal Services Client(remote desktop).
 
 Ctrl + Alt + Break to toggle remote desktop fullscreen mode.
 ## On Hyper-v
