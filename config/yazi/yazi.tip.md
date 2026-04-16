@@ -1,3 +1,5 @@
+https://yazi-rs.github.io/docs/quick-start/
+
 ## shortcuts
 > view the keymap.toml
 * switch driver dir: `g, space` type d: `enter`

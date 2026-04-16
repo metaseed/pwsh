@@ -20,7 +20,7 @@ function Test-AppInstallation {
   }
   else {
     if ($versionOnline -le $versionLocal) {
-      Write-Notice "You are using the latest version of $appName.`n$versionLocal is the latest version available."
+      Write-Notice "You are using the latest version($(:: $versionLocal LightBlue -Bold -Underlined)) of $appName."
       if (!$force) {
         return $false
       }

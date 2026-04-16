@@ -13,7 +13,7 @@
 | `Win+D`                | Show desktop.                                                                  |
 | `Win+I`                | Settings                                                                       |
 | `Win+B`                | Show hidden icons in notification area|
-| `Win+Number`           | Start the program pinned to the Taskbar. `Enter` to open, win+shift+number to open new instance, i.e. edge|
+| `Win+Number`           | Start the program pinned to the Taskbar. `Enter` to open, win+shift+number to open new instance. i.e. if edge is open, it will show/hide it|
 | `Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                        |
 | `Win+T`                | Cycle through the apps on the taskbar                                          |
 | `Win+Shift+Left/Right` | move window to another screen                                                  |
@@ -98,3 +98,4 @@ Ctrl + Alt + Left: Mouse release, to move focus from VM to it's connection windo
 CTRL+ALT+END	Equivalent of CTRL+ALT+DELETE in the virtual machine
 CTRL+ALT+BREAK	Switch from full-screen mode back to windowed mode
 you could press Ctrl+Alt+Left to unfocus and then press Ctrl+O to open setting(shortcut in the menu)...
+

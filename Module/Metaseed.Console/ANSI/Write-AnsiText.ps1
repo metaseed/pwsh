@@ -3,7 +3,7 @@ $help = @'
 ANSI/VT100 escape sequences can be used in every programming languages.
 `e: escape character 27(decimal),033(oct) 0x1B(hex); `e=$([char]27)
 [: introducer
-;: argument seperator
+;: argument separator
 m: SGR(Select/Set Graphics Rendition) function
 
 
@@ -147,6 +147,7 @@ function Show-AnsiColors8Bits {
 
 function Get-AnsiText {
   [CmdletBinding(DefaultParameterSetName = "8bit")]
+  [Alias('::')]
   param (
     [Parameter(Position = 0)]
     [string]

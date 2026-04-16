@@ -251,3 +251,11 @@ on   = "<C-y>"
 run  = "plugin system-clipboard"
 desc = "yank&copy to system clipboard"
 
+[[mgr.prepend_keymap]]
+on   = "<Delete>"
+run = "remove"
+desc = "Move selection to trash" # exec = "remove --permanently"
+# [[mgr.prepend_keymap]]
+# on   = [ "d" ]
+# run = ""
+# desc = "Disabled d for deletion"

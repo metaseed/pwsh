@@ -38,7 +38,7 @@ function Get-GithubRelease {
   #   # first one is the latest release
   #   $response = $response.SyncRoot[0]
   # }
-  write-host "$version"
+  # write-host "$version"
   # Write-Verbose "$response"
   foreach ($release in $response) {
     if ($version -eq 'stable' -and $release.prerelease) {

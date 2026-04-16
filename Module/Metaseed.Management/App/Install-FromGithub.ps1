@@ -75,7 +75,7 @@ function Install-FromGithub {
 	$org = $v[-2]
 	$repo = $v[-1]
 
-	Write-Host "$org $repo $newName"
+	Write-Verbose "org:$org, repo:$repo, newName:$newName"
 	$appPath = $null
 
 	$Folder = $null

@@ -26,8 +26,8 @@ function Split-RemainParameters {
 				}
 				# Handle '-param value' format
 				elseif ($current -match "^-(\w+)$" -and ($i + 1) -lt $InputParameters.Count -and
-				# next is not -param2, so it's a value for current param
-					   !($InputParameters[$i + 1] -is [string] -and $InputParameters[$i + 1] -match "^-")) {
+					# next is not -param2, so it's a value for current param
+					!($InputParameters[$i + 1] -is [string] -and $InputParameters[$i + 1] -match "^-")) {
 					$NamedParams[$matches[1]] = $InputParameters[$i + 1]
 					$i++ # Skip the next item as we've used it as a value
 				}
@@ -45,9 +45,24 @@ function Split-RemainParameters {
 	}
 
 	end {
-		return $PositionalParams,$NamedParams
+		return $PositionalParams, $NamedParams
 	}
-  }
+}
+
+function Get-RemainParametersString {
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+		[AllowEmptyCollection()]
+		[object[]]$InputParameters
+	)
+	$positional, $named = Split-RemainParameters $InputParameters
+	$par = $positional -join ' '
+	$par += ($named.GetEnumerator() |%{ "-$($_.key) $($_.value -eq 'True' -or $_.value -eq 'False' ? '': $_.Value)"}) -join ' '
+	return $par
+}
+
+Export-ModuleMember -Function @('Get-RemainParametersString')
 
 <#
 [CmdletBinding()]

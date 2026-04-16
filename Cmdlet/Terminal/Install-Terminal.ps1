@@ -7,19 +7,21 @@ param (
 # ipmo Metaseed.Management -Force
 #ipmo Metaseed.Utils -Force
 # spps
-$positional, $named = Split-RemainParameters $Remaining
-
+# $positional, $named = Split-RemainParameters $Remaining
+$par = Get-RemainParametersString $Remaining
 $installScript = @"
-    Install-FromGithub https://github.com/microsoft/terminal '_x64.zip$' -versionType preview  @positional @named
+    Install-FromGithub https://github.com/microsoft/terminal '_x64.zip$' -versionType stable  $par
     # Show-MessageBox "windows terminal updated"
-    Read-Host "press any key to close"
-
+    Read-Host "press <Enter> key to close"
+    exit
 "@
 $wts = get-process -name "WindowsTerminal" -ErrorAction SilentlyContinue
 
 if ($wts) {
   Confirm-Continue "Windows Terminal is running. Do you want to kill it?"
+  conhost.exe pwsh.exe -NoExit -ExecutionPolicy Bypass -Command "$installScript"
   stop-process -name "WindowsTerminal", "OpenConsole", "ShellExperienceHost" -force
+  return
 }
 # run pwsh outside of wt
 # conhost.exe --headless pwsh.exe -NoProfile -ExecutionPolicy Bypass -Command "$installScript"
