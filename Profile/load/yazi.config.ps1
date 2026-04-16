@@ -13,10 +13,19 @@ function f {
 		return
 	}
 	$tmp = (New-TemporaryFile).FullName
-	C:\App\yazi\yazi.exe @allArgs --cwd-file="$tmp"
+
+	$positional, $named = Split-RemainParameters $allArgs
+	$paths = @($positional|%{
+		if(test-path $_) { return $_;}
+
+		return zz $_
+	})
+	C:\App\yazi\yazi.exe @paths @named --cwd-file="$tmp"
 	$cwd = Get-Content -Path $tmp -Encoding UTF8
 	if ($cwd -and $cwd -ne $PWD.Path -and (Test-Path -LiteralPath $cwd -PathType Container)) {
 		Set-Location -LiteralPath (Resolve-Path -LiteralPath $cwd).Path
 	}
 	Remove-Item -Path $tmp
 }
+
+# f opcua
