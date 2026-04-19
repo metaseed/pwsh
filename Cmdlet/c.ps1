@@ -6,8 +6,8 @@ param (
 	$Dir
 )
 process {
-	if(!$Dir) {$Dir= '.'}
-	$Dir = Resolve-Path $Dir
+	if (!$Dir) { $Dir = '.' }
+	else { $Dir = zz $Dir }
 
 	oc $Dir
 	os $Dir

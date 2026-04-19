@@ -48,6 +48,11 @@ use = "orhnk/system-clipboard"
 rev = "75a5330"
 hash = "9ab2a0e74968f7f0e46893021764cb66"
 
+[[plugin.deps]]
+use = "hankertrix/augment-command"
+rev = "681158d"
+hash = "64b05a482eccdd2ce0986d7625844139"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:dracula"
 rev = "9511cb0"

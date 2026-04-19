@@ -13,6 +13,11 @@ run = "tasks:show"
 desc = "Show task manager"
 
 [[mgr.prepend_keymap]]
+on = ["g","t"]
+run = "cd ~/..tmp"
+desc = "Go to temp directory"
+
+[[mgr.prepend_keymap]]
 on   = "<A-->"
 run  = "hardlink"
 desc = "Hardlink yanked files"
@@ -23,6 +28,10 @@ desc = "Hardlink yanked files"
 on   = [ "g", "i" ]
 run  = '''shell --block -- exiftool -k "%1"'''
 desc = "show file info with exiftool"
+
+[[mgr.prepend_keymap]]
+on  = [ "g", "R" ]
+run = '''shell "start shell:RecycleBinFolder"'''
 
 [[mgr.prepend_keymap]]
 on   = "<Home>"
@@ -84,7 +93,11 @@ desc = "Show folder background context menu (New, Paste, ...)"
 on   = [ "<C-k>", "r" ]
 run  = 'shell "explorer /select,\"%1\"" --orphan'
 desc = "Reveal in Windows Explorer"
-
+## Extract Archive
+[[mgr.prepend_keymap]]
+on = "E"
+run = "plugin augment-command -- extract"
+desc = "Extract with 7z (augmented)"
 ## Archive
 [[mgr.prepend_keymap]]
 on   = [ "c", "a", "a" ]
@@ -245,11 +258,17 @@ on   = [ "c", "r" ]
 run  = "plugin path-from-root"
 desc = "Copies path from git root"
 
+[[mgr.prepend_keymap]]
+on  = "y"
+for = "windows"
+run = ["plugin system-clipboard", "yank"]
+desc = "Yank + copy files to Windows clipboard"
 
 [[mgr.prepend_keymap]]
-on   = "<C-y>"
-run  = "plugin system-clipboard"
-desc = "yank&copy to system clipboard"
+on  = "<S-p>"
+for = "windows"
+run = ["plugin clipboard"]
+desc = "Paste from Windows clipboard"
 
 [[mgr.prepend_keymap]]
 on   = "<Delete>"

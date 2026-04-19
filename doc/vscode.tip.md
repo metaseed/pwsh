@@ -24,29 +24,34 @@ shift+F4: show previous search results
   "when": "inSearchEditor && inputBoxFocus || inputBoxFocus && searchViewletVisible"
 }
 ## Terminal Panel
-> Terminal part in: C:\Users\jsong12\AppData\Roaming\Code\User\keybindings.json
-* Focus Terminal Tabs View: `ctrl+shift+\`
+* Focus Terminal Tabs View: `ctrl+shift+\`, then `up/down` to select.
 * Switch terminal tabs: `ctrl+PageUp/PageDown`
 * Open external terminal with current proj path: `ctrl+shift+c`
 * Toggle the maximized bottom panel: `ctrl+; m`
 * new terminal: 'ctrl+shift+`'
 * new terminal window: 'ctrl+shift+alt+`'
+* kill terminal: 'alt+`'
+* split: `ctrl+\`
+
+> more in `--- terminal ---` part in: C:\Users\jsong12\AppData\Roaming\Code\User\keybindings.json
 
 ## open console output from command in vscode
-`ipconfig -all|code -`
-`code -h|code -` // - means from stdin
-`code -h|oc codeHelp.md` // out-code can give a name to support syntax hight and formatting
+* `ipconfig -all|code -`
+* `code -h|code -` // - means from stdin
+* `code -h|out-code codeHelp.md` // out-code can give a name to support syntax hight and formatting
 * open a file path with pipe: `$env:HostsFilePath |% {code $_}`
+* open a path/file from pipe: `zz opcua|oc`, `$env:HostsFilePath|oc`
 
 ## git panel
 * `ctrl+shift+g`: View: Show Changes, on input box
 * `shift+tab`: blur the input box
-* `up`|`down`: navigate the changes file list
+* `up`|`down`: navigate between the changes file list
 * `space`: view the current file's changes
 * `ctrl+0`: to go back to the left panel
-* `ctrl+shift+p`, type 'git changes` or 'git staged' to view changes or staged changes(ctrl+m,g and ctrl+m,ctrl+g)
+* `ctrl+shift+p`: type 'git changes' or 'git staged' to view changes or staged changes( `ctrl+m,g` and `ctrl+m,ctrl+g`)
+* `alt+f5` or `shift+alt+f5`: to move to next/previous changes.
 
-## side panel
+## side panels
 * `ctrl+b`: toggle primary side panel
 * `ctrl+alt+b`: toggle second side panel
 * `ctrl+0`: focus primary side panel

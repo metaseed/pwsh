@@ -17,4 +17,5 @@ config/yazi/flavors
 config/yazi/plugins/*
 !config/yazi/plugins/show-context-menu.yazi
 !config/yazi/plugins/parent-arrow.yazi
+ !config/yazi/plugins/clipboard.yazi
 .log

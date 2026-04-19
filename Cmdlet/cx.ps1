@@ -7,7 +7,7 @@ param (
 )
 process {
 	if(!$Dir) {$Dir= '.'}
-	$Dir = Resolve-Path $Dir
+	else {$Dir = zz $Dir}
 
 	cc $Dir
 	cs $Dir

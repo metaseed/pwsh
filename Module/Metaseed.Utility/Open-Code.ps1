@@ -4,7 +4,16 @@ function Invoke-Editor {
         [object]$InputObject
     )
     if (!$InputObject) { $InputObject = '.' }
-    & $Command $InputObject
+    else {
+        if(test-path $inputObject) {
+            $path = Resolve-Path $InputObject
+        }
+        else {
+             $path = zz $InputObject
+        }
+    }
+
+    & $Command $path
 }
 
 function Stop-Editor {
@@ -14,17 +23,20 @@ function Stop-Editor {
     )
     if (!$Path) {
         $title = Split-Path -Leaf (Get-Location)
-    } elseif (Test-Path $Path) {
+    }
+    elseif (Test-Path $Path) {
         $title = Split-Path -Leaf (Resolve-Path $Path)
-    } else {
-        $title = $Path
+    }
+    else {
+        $Path = zz $Path
+        $title = Split-Path -Leaf $Path
     }
 
     $matched = Get-Process -Name $ProcessName -ErrorAction SilentlyContinue |
-        Where-Object { $_.MainWindowTitle -like "*$title*" }
+    Where-Object { $_.MainWindowTitle -like "*$title*" }
 
     if (!$matched) {
-        Write-Host "No $ProcessName window found matching '$title'" -ForegroundColor Yellow
+        Write-Host "No '$ProcessName' window found matching '$title'" -ForegroundColor Yellow
         return
     }
 

@@ -13,7 +13,7 @@ function Get-LocalAppInfo {
 	Write-Verbose "appName: $appName; toLocation: $toLocation; newName: $newName"
 	# get version info from the app's property
 	if (!$versionLocal) {
-		$it = @(gci $toLocation -Filter "$appName*.exe" -File -FollowSymlink -Depth 1 -ErrorAction Ignore|?  { $_.FullName -notlike '*\_shim\*' -and $_.Name -ne '_shim' })
+		$it = @(gci $toLocation -Filter "$appName*.exe" -File -FollowSymlink -Depth 1 -ErrorAction Ignore | ? { $_.FullName -notlike '*\_shim\*' -and $_.Name -ne '_shim' })
 		if ($it) {
 			if ($it.count -gt 1) {
 				Write-Warning "find more than one app in $toLocation : $($it.FullName) "
@@ -109,9 +109,9 @@ function Get-LocalAppInfo {
 			}
 		}
 	}
-
-	Write-Host "local version: $(:: $versionLocal Green), installationTime: $(:: $installationTime green), folder: $(:: $appFolder green)"
-
+	if ($versionLocal) {
+		Write-Host "appName: $(:: $appName LightBlue), local version: $(:: $versionLocal Green), installationTime: $(:: $installationTime green), folder: $(:: $appFolder green)"
+	}
 	if (!$versionLocal -and $newName) {
 		Write-Verbose "try to get info with new name: $newName"
 		$PSBoundParameters.appName = $newName

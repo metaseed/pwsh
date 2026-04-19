@@ -140,7 +140,7 @@ function Install-App {
 		# need pickup
 		if ($filesToPickup) {
 			# $app = gci -Recurse -include $filesToPickup "$env:temp\temp\*"
-			$app = gci -Recurse "$env:temp\temp\*" | ? { $_.Name -match $filesToPickup }
+			$app = @(gci -Recurse "$env:temp\temp\*" | ? { $_.Name -match $filesToPickup })
 			if ($app.Count -eq 0) {
 				write-error "can not find files to pickup with pattern: $filesToPickup"
 				break
@@ -175,7 +175,7 @@ function Install-App {
 			gps $baseName -ErrorAction SilentlyContinue | spps
 			Move-Item $_ -Destination $toLocation -Force
 
-			if ($newName -and (app.count -eq 1)) {
+			if ($newName -and ($app.count -eq 1)) {
 				$name = Split-Path $_ -Leaf
 				$ext = split-path $_ -Extension
 				write-host "new name: $newName$ext"
