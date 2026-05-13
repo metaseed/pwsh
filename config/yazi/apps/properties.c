@@ -102,7 +102,8 @@ int wmain(int argc, wchar_t *argv[]) {
     // Open the properties dialog (returns immediately; dialog runs on a shell thread).
     // If a dialog for the exact same path is already open, the shell brings it
     // to the foreground instead of creating a new one. so the g_dialog is still set for 2nd invoke.
-    SHObjectProperties(NULL, SHOP_FILEPATH, fullpath, NULL);
+    // we can also specify the page to show, e.g. L"Details" for the Details page.
+    SHObjectProperties(NULL, SHOP_FILEPATH, fullpath, L"Details");
 
     // Initial 2s delay to allow the dialog to appear, then 500ms periodic check.
     // SetTimer with NULL hwnd assigns its own ID via the return value.
