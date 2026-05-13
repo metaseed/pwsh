@@ -14,8 +14,8 @@
 | `Win+I`                | Settings                                                                       |
 | `Win+B`                | Show hidden icons in notification area|
 | `Win+Number`           | Start the program pinned to the Taskbar. `Enter` to open, win+shift+number to open new instance. i.e. if edge is open, it will show/hide it|
-| `Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                        |
-| `Win+T`                | Cycle through the apps on the taskbar                                          |
+| `Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                        | **useful!!**
+| `Win+T`                | Cycle through the apps on the taskbar                                          | then use `arrow` key to select if multiple instance of app, and `enter` to switch
 | `Win+Shift+Left/Right` | move window to another screen                                                  |
 | `Win+Up/Down`          | maximize/restore/minimize window                                               |
 | `Ctrl+Shift+Esc`       | Open task manager                                                              |

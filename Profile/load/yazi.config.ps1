@@ -23,6 +23,7 @@ function f {
 				return zz $_
 			})
 	}
+
 	C:\App\yazi\yazi.exe @paths @named --cwd-file="$tmp"
 	$cwd = Get-Content -Path $tmp -Encoding UTF8
 	if ($cwd -and $cwd -ne $PWD.Path -and (Test-Path -LiteralPath $cwd -PathType Container)) {

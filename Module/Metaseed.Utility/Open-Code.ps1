@@ -3,7 +3,7 @@ function Invoke-Editor {
         [string]$Command,
         [object]$InputObject
     )
-    if (!$InputObject) { $InputObject = '.' }
+    if (!$InputObject) { $path = '.' }
     else {
         if(test-path $inputObject) {
             $path = Resolve-Path $InputObject
