@@ -341,7 +341,10 @@ int wmain(int argc, wchar_t *argv[]) {
 
     // ── Show & collect results ──────────────────────────────────────────
 
-    hr = IFileOpenDialog_Show(pDialog, NULL);
+    // Use the current foreground window as owner so the dialog stays in
+    // front and doesn't lose focus to the caller (e.g. terminal/yazi).
+    HWND hwndOwner = GetForegroundWindow();
+    hr = IFileOpenDialog_Show(pDialog, hwndOwner);
 
     if (hr != HRESULT_FROM_WIN32(ERROR_CANCELLED) && SUCCEEDED(hr)) {
         IShellItemArray *pResults = NULL;
