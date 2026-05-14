@@ -1,6 +1,7 @@
 // ===========================================================================
 // openWithSh.c — Open the "Open With" dialog and auto-focus the app list.
 //
+// use shift-tab to focus on the 'just once' button
 // Problem:
 //   When you launch C:\WINDOWS\system32\OpenWith.exe <file>, the dialog
 //   opens but keyboard focus lands on a search/description area instead of

@@ -64,6 +64,7 @@ run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\properties.exe %1'''
 desc = "show file info with properties"
 
 # show shell open with dialog
+# use shift-tab to focus on the 'just once' button
 [[mgr.prepend_keymap]]
 on   = "<A-o>"
 run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1'''
