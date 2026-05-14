@@ -1,10 +1,11 @@
 # https://github.com/sxyazi/yazi/blob/main/yazi-config/preset/keymap-default.toml
-#
+# F1: to learn all keymaps.
+
 [[mgr.prepend_keymap]]
 on   = "!"
 for  = "windows"
 run  = 'shell "pwsh.exe" --block'
-desc = "Open PowerShell here"
+desc = "Open pwsh to run commands"
 
 # Tasks, same as 'w'
 [[mgr.prepend_keymap]]
@@ -17,6 +18,11 @@ on = ["g","t"]
 run = "cd ~/..tmp"
 desc = "Go to temp directory"
 
+# X and Y: cancel yank status(and cancel highlight on left side of UI)
+# -: Symblink yank - absolute path
+# _: Symlink yank - relative path: useful for portable tree move(target and link move together)
+# <C-->: Hardlink yank - absolute path, is used by windoows-terminal to zoom in
+# Hardlink: file only. a second directory entry pointing at the same file data.
 [[mgr.prepend_keymap]]
 on   = "<A-->"
 run  = "hardlink"
@@ -46,7 +52,7 @@ desc = "Go to bottom (same as G)"
 ## change dir
 # switch driver dir: `g, space` type d: `enter`
 
-## Open
+## Open with
 # `shift+enter`: open with(`enter`: open)
 
 [[mgr.prepend_keymap]]
@@ -69,10 +75,12 @@ on   = "<C-o>"
 run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %1'''
 desc = "Open file dialog(drag/drop)"
 
-[[mgr.prepend_keymap]]
-on   = "<C-S-o>"
-run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %1'''
-desc = "Open folder dialog(drag/drop)"
+# not useful, comment it out for now
+# [[mgr.prepend_keymap]]
+# on   = "<C-S-o>"
+# run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %1'''
+# desc = "Open folder dialog(drag/drop)"
+
 # same as --modern, so not used here
 # [[mgr.prepend_keymap]]
 # on   = "<S-f>"
