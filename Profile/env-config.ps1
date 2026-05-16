@@ -12,7 +12,8 @@ if ($env:__MS_PWSH_PARENT -ne 'true') {
 	# 2. used the inherited env var added in profile.(used)
 	# 3. we do pwsh -nologo in win terminal
 	if (!$env:WT_SESSION) {
-		Clear-Host;
+		# IDE/agent shells often have no real console handle; Clear-Host uses RawUI and throws.
+		try { Clear-Host } catch { }
 	}
 }
 

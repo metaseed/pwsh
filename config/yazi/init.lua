@@ -27,16 +27,7 @@ require("git"):setup {
 	order = 1500,
 }
 
-function Entity:click(event, up)
-	if up or event.is_middle then return end
-	ya.emit("reveal", { self._file.url })
-	if event.is_right then
-		ya.emit("plugin", { "show-context-menu" })
-	else
-		-- ya.emit("open", {})
-	end
-end
-
+dofile(os.getenv("YAZI_CONFIG_HOME") .. "/click-config.lua")
 dofile(os.getenv("YAZI_CONFIG_HOME") .. "/bookmarks/whoosh.init.lua")
 -- https://github.com/hankertrix/augment-command.yazi
 -- Using the default configuration

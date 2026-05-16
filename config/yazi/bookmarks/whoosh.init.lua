@@ -10,7 +10,8 @@ local bookmarks = {
   { tag = "Desktop",   path = "~/Desktop",   key = { "d", "t" } },
   { tag = "Documents", path = "~/Documents", key = { "d", "d" } },
   { tag = "Downloads", path = "~/Downloads", key = { "d", "l" } },
-  -- { tag = "Downloads", path = "~/Downloads", key = "o" },
+  { tag = "Home", path = "~", key = { "h" } },
+  { tag = "Tmp", path = "~/..tmp", key = { "t" } },
 }
 
 -- Windows-specific bookmarks
