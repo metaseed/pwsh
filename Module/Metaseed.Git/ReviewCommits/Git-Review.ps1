@@ -63,7 +63,7 @@ function Git-Review {
 	if ($targetIsLocalBranch) { # if $Target is a SHA, it will not be a local branch
 		# updates that local branch from origin/$Target.
 		# merge-base uses whatever commit $Target currently points to. If local main is behind origin/main, you get the wrong common ancestor
-		git fetch origin "${CommitFrom}:${CommitFrom}" 2>$null
+ 		git fetch origin "${Target}:${Target}" 2>$null
 	}
 
 	# find the merge-base: the common ancestor that excludes merge noise
@@ -78,7 +78,7 @@ function Git-Review {
 	}
 
 	# persist review state in git-native storage (works across terminals)
-	git config --local review.commitFrom $Target
+	git config --local review.target $Target
 
 	# keep the current branch tip in a ref for recovery
 	$tipRef = "refs/heads/${currentBranchName}-mark"

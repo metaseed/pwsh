@@ -27,8 +27,8 @@ function Git-ReviewDone {
 	if ($hasChanges) {
 		if ([string]::IsNullOrEmpty($CommitMessage)) {
 			$currentCommitInfo = git log -1 --format="%h %s"
-			$commitFrom = git config review.commitFrom
-			$CommitMessage = "review-changes on '$currentCommitInfo' (against $commitFrom)"
+			$target = git config review.target
+			$CommitMessage = "review-changes on '$currentCommitInfo' (against $target)"
 			$choiceIndex = $Host.UI.PromptForChoice('Use this as commit message?', "$CommitMessage", @('&Yes', '&No'), 0)
 			if ($choiceIndex -ne 0) {
 				$CommitMessage = Read-Host 'please input commit message'
@@ -52,8 +52,8 @@ function Git-ReviewDone {
 		# update tip mark to latest
 		git update-ref $tipRef HEAD
 
-		$commitFrom = git config review.commitFrom
-		$mergeBase = git merge-base $commitFrom HEAD
+		$target = git config review.target
+		$mergeBase = git merge-base $target HEAD
 
 		git reset --soft $mergeBase
 
@@ -64,7 +64,7 @@ function Git-ReviewDone {
 		if ($tipRef) {
 			git update-ref -d $tipRef
 		}
-		git config --unset review.commitFrom 2>$null
+		git config --unset review.target 2>$null
 		Write-Host "Review complete. Branch restored to tip." -ForegroundColor Green
 	}
 }
