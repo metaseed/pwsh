@@ -3,5 +3,5 @@
   ModuleVersion = '1.0.2'
   AliasesToExport = @('gitb', 'gtp')
   CmdletsToExport = @()
-  FunctionsToExport = @('Git-Branch', 'Git-CleanBranches', 'Git-CommitsReview', 'Git-CommitsReviewDone', 'Git-HasLocalChanges', 'Git-HasRemoteBranch', 'Git-IsDirty', 'Git-NewBranch', 'Git-Parent', 'Git-ParentCommit', 'Git-ParentCommitMessage', 'Git-Push', 'Git-PushAll', 'Git-ReDate', 'Git-Review', 'Git-Root', 'Git-SetParent', 'Git-SetupHooks', 'Git-Stash', 'Git-StashClean', 'Git-StashPushApply', 'Git-SwitchRemoteBranch', 'Git-SyncParent', 'Test-GitInstalled', 'Test-GitRepo')
+  FunctionsToExport = @('Git-Branch', 'Git-CleanBranches', 'Git-HasLocalChanges', 'Git-HasRemoteBranch', 'Git-IsDirty', 'Git-NewBranch', 'Git-Parent', 'Git-ParentCommit', 'Git-ParentCommitMessage', 'Git-Push', 'Git-PushAll', 'Git-ReDate', 'Git-ResetToRemote', 'Git-Review', 'Git-ReviewDone', 'Git-Root', 'Git-SetParent', 'Git-SetupHooks', 'Git-Stash', 'Git-StashClean', 'Git-StashPushApply', 'Git-SwitchRemoteBranch', 'Git-SyncParent', 'Test-GitInstalled', 'Test-GitRepo')
 }

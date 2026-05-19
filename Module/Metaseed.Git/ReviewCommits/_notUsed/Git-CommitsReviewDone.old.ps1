@@ -1,4 +1,4 @@
-function Git-CommitsReviewDone {
+function Git-CommitsReviewDone_old {
 	param (
 		# commit message
 		[Parameter()]

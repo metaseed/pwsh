@@ -5,76 +5,100 @@ function Git-CommitsReview {
 		[string]
 		$Branch = "",
 
-		# from which to review all the commits, not include this commit
+		# the target branch (or commit number) to diff against
 		[Parameter()]
 		[string]
-		$CommitFrom = ""
+		$Target = ""
 	)
-	git pull
-
 	$currentBranchName = (git branch --show-current)
 	if ($LASTEXITCODE -ne 0) { throw 'not in a repo' }
 
+	# NOTE: avoid `git pull` — it fails silently after `git reset --soft` leaves HEAD behind the index
+	git fetch origin
+	git merge --ff-only "origin/$currentBranchName" 2>$null
+
 	# checkout the branch to review
-	if([string]::IsNullOrEmpty($Branch)) {
+	if ([string]::IsNullOrEmpty($Branch)) {
 		$choiceIndex = $Host.UI.PromptForChoice("The branch to review: ?", "$currentBranchName", @('&Yes', '&No'), 0)
 		if ($choiceIndex -ne 0) {
 			do {
 				Write-Host ""
 				$currentBranchName = Read-Host "please input the BRANCH name to switch to for reviewing"
 				git checkout $currentBranchName
-			}while ($LASTEXITCODE -ne 0);
-		}
-	} else {
-		git checkout $Branch
-		if ($LASTEXITCODE -ne 0) {
-			return
+			} while ($LASTEXITCODE -ne 0);
 		}
 	}
-	# get latest changes from remote
-	git pull
+	else {
+		git checkout $Branch
+		if ($LASTEXITCODE -ne 0) { return }
+		$currentBranchName = $Branch
+	}
+	# NOTE: avoid `git pull` — it fails silently after `git reset --soft` leaves HEAD behind the index
+	git fetch origin
+	git merge --ff-only "origin/$currentBranchName" 2>$null
 
-	if ([string]::IsNullOrEmpty($CommitFrom)) {
-		$CommitFrom = Git-ParentCommit
+	if ([string]::IsNullOrEmpty($Target)) {
+		$Target = Git-Parent
 		$needChange = $false
-		if([string]::IsNullOrEmpty($CommitFrom)){
+		if ([string]::IsNullOrEmpty($Target)) {
 			$needChange = $true
-		} else {
-			$choiceIndex = $Host.UI.PromptForChoice('Do you want to review from this commit(not include)?', "Parent Commit: $CommitFrom", @('&Yes', '&No'), 0)
+		}
+		else {
+			$choiceIndex = $Host.UI.PromptForChoice('Review against this target branch?', "Target: $Target", @('&Yes', '&No'), 0)
 			if ($choiceIndex -ne 0) {
 				$needChange = $true
 			}
 		}
 
-		if($needChange) {
+		if ($needChange) {
 			do {
 				Write-Host ""
-				$CommitFrom = Read-Host "please input the branch name (the commit not include in review) or commit id(include in review) to review from"
-				git show -s --format="%h %s" "$CommitFrom"
-			}while ($LASTEXITCODE -ne 0)
+				$Target = Read-Host "please input the TARGET branch name (e.g. master, main) to diff against"
+				git rev-parse --verify "$Target" 2>$null
+			} while ($LASTEXITCODE -ne 0)
 		}
-
-		# Confirm-Continue "we are going to review from this commit(not include): $CommitFrom"
 	}
 
-	git rev-parse --verify "refs/heads/$CommitFrom" 2>$null
-	if (!$?){ # is commit
-		$CommitFrom = "$CommitFrom~1" # previous one
+	# ensure we have the latest target branch for accurate merge-base
+	$targetIsLocalBranch = git rev-parse --verify "refs/heads/$Target" 2>$null
+	if ($targetIsLocalBranch) { # if $Target is a SHA, it will not be a local branch
+		# updates that local branch from origin/$Target.
+		# merge-base uses whatever commit $Target currently points to. If local main is behind origin/main, you get the wrong common ancestor
+		git fetch origin "${CommitFrom}:${CommitFrom}" 2>$null
 	}
 
-	$Global:__git_commits_review_from = $CommitFrom
-	# keep the current branch head commit in the a ref
+	# find the merge-base: the common ancestor that excludes merge noise
+	# A----C------D (master / target branch)
+	#       \       \
+	#        \---E---\---F---Head   (your feature branch)
+	# merge-base(master, Head) = D, so diff shows only E + F's unique changes
+	$mergeBase = git merge-base $Target HEAD
+	if ($LASTEXITCODE -ne 0) {
+		Write-Error "Could not find merge-base between '$Target' and HEAD"
+		return
+	}
+
+	# persist review state in git-native storage (works across terminals)
+	git config --local review.commitFrom $Target
+
+	# keep the current branch tip in a ref for recovery
 	$tipRef = "refs/heads/${currentBranchName}-mark"
+	git update-ref $tipRef HEAD
 
-	$global:__git_commits_reivew_branch_tip_mark = $tipRef
-	# this will create a file in the folder .git/refs/heads/ as ${currentBranchName}-mark
-	# or it will add a row in the .git/packed-refs
-	git update-ref $tipRef head
-	# move the branch head to the first commit
-	git reset $commitFrom --soft
-	Write-Notice "let's do the code rewiew now!"
-	Write-Notice "the original tip: $tipRef"
+	# --soft moves HEAD to merge-base but keeps index+working tree at feature tip.
+	# Result: "Staged Changes" = PR diff, user edits appear in "Changes" (unstaged)
+	git reset --soft $mergeBase
+
+	Write-Host ""
+	Write-Host "PR-style review is ready!" -ForegroundColor Green
+	Write-Host "  'Staged Changes' in VS Code = your PR diff (only feature changes, merges excluded)" -ForegroundColor Cyan
+	Write-Host "  Your edits during review will appear in 'Changes' (unstaged)" -ForegroundColor Cyan
+	Write-Host "  Working tree = branch tip code (debuggable, runnable)" -ForegroundColor Cyan
+	Write-Host ""
+	Write-Host "  merge-base: $mergeBase" -ForegroundColor DarkGray
+	Write-Host "  target:     $Target" -ForegroundColor DarkGray
+	Write-Host "  tip mark:   $tipRef" -ForegroundColor DarkGray
+	Write-Host ""
+	Write-Host "When done, run: " -ForegroundColor Yellow -NoNewline
+	Write-Host "Git-CommitsReviewDone" -ForegroundColor White
 }
-
-# sl C:\repos\SLB\_planck\planck\acquisition-opcua-plugin
-# git-commitsReview dev/rcalligrafi/activation
