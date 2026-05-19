@@ -18,11 +18,30 @@ function Git-ReviewDone {
 		$tipRef = Read-Host 'Could not find tip mark. Please input the branch tip ref/commit to restore to'
 	}
 
-	# Reset --mixed back to feature tip: moves branch pointer + index to tip, keeps working tree
-	# After this, only the user's review edits remain as unstaged changes
-	git reset --mixed $tipRef
+	# Reset --mixed back to feature tip unless HEAD already advanced past the mark (retry-safe)
+	$tipSha = git rev-parse $tipRef 2>$null
+	$headSha = git rev-parse HEAD
+	if ($LASTEXITCODE -ne 0 -or -not $tipSha) {
+		Write-Warning "Could not resolve tip ref: $tipRef"
+		return
+	}
+	if ($headSha -eq $tipSha) {
+		# moves branch pointer + index to tip; keeps working tree (review edits unstaged)
+		git reset --mixed $tipRef
+	}
+	else {
+		git merge-base --is-ancestor $tipSha $headSha 2>$null
+		if ($LASTEXITCODE -eq 0) {
+			Write-Verbose 'Skipping reset --mixed; branch already past review tip mark'
+		}
+		else {
+			Write-Warning "HEAD is not at or ahead of tip mark; resetting to $tipRef"
+			git reset --mixed $tipRef
+		}
+	}
 
-	$hasChanges = Git-HasLocalChanges
+	$status = git status
+	$hasChanges = $status -match 'modified:|Untracked files:|Your branch is ahead of| have diverged|deleted:'
 
 	if ($hasChanges) {
 		if ([string]::IsNullOrEmpty($CommitMessage)) {
@@ -38,16 +57,19 @@ function Git-ReviewDone {
 		$choiceIndex = $Host.UI.PromptForChoice('Confirm', 'please double check the changes in git!', @('&Yes', '&No'), 1)
 		if ($choiceIndex -ne 0) { return }
 
-		$CommitMessage = $CommitMessage -replace '-', ' '
+		if (-not (Sync-ReviewBranchWithOrigin $currentBranchName)) {
+			return
+		}
 		git add -A
 		git commit -m "$CommitMessage"
 		git push
 	}
 
 	if ($ContinueReview) {
-		# NOTE: avoid `git pull` — it fails silently after `git reset --soft` leaves HEAD behind the index
-		git fetch origin
-		git merge --ff-only "origin/$currentBranchName" 2>$null
+		if (-not (Sync-ReviewBranchWithOrigin $currentBranchName)) {
+			Write-Warning 'Could not sync with origin. Review state preserved; fix sync issues and run Git-ReviewDone -ContinueReview again.'
+			return
+		}
 
 		# update tip mark to latest
 		git update-ref $tipRef HEAD

@@ -115,6 +115,53 @@ function Exit-ReviewMode {
     git reset --mixed $tipRef 2>$null
 }
 
+# Helper: skip-reset logic from Git-ReviewDone (retry-safe)
+function Reset-ReviewDoneMixed {
+    param([string]$TipRef)
+    $tipSha = git rev-parse $TipRef
+    $headSha = git rev-parse HEAD
+    if ($headSha -eq $tipSha) {
+        git reset --mixed $TipRef 2>$null
+        return 'reset'
+    }
+    git merge-base --is-ancestor $tipSha $headSha 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        return 'skipped'
+    }
+    git reset --mixed $TipRef 2>$null
+    return 'forced-reset'
+}
+
+# Load private sync helper (not exported from module)
+$syncHelper = Join-Path $PSScriptRoot '../../Private/Sync-ReviewBranchWithOrigin.ps1'
+. $syncHelper
+
+function Setup-TestRepoWithOrigin {
+    $testDir = "$env:TEMP\git-review-sync-$(Get-Random)"
+    $bareDir = "$env:TEMP\git-review-sync-bare-$(Get-Random)"
+    New-Item -ItemType Directory -Path $testDir -Force | Out-Null
+    git init --bare -q $bareDir
+
+    Set-Location $testDir
+    git init -q
+    git config user.email "test@test.com"
+    git config user.name "Test"
+    git remote add origin $bareDir
+
+    "initial" | Set-Content file-a.txt
+    "shared" | Set-Content file-shared.txt
+    git add -A; git commit -q -m "A: initial"
+    git push -u origin master 2>$null
+
+    git checkout -q -b feature
+    "feature v1" | Set-Content file-shared.txt
+    "feature file" | Set-Content file-f.txt
+    git add -A; git commit -q -m "B: feature"
+    git push -u origin feature 2>$null
+
+    return @{ WorkDir = $testDir; BareDir = $bareDir }
+}
+
 # ============================================================
 Write-Host "`n==== TEST 1: Default mode - PR diff in STAGED, excludes master merge ====" -ForegroundColor Cyan
 
@@ -302,6 +349,109 @@ Assert-Contains $staged "file-new1.txt" "file-new1.txt still in staged (original
 Assert-Contains $staged "file-shared.txt" "file-shared.txt still in staged"
 
 Cleanup-TestRepo $testDir
+
+# ============================================================
+Write-Host "`n==== TEST 9: Sync when remote ahead and review edit blocks ff-only ====" -ForegroundColor Cyan
+
+$setup = Setup-TestRepoWithOrigin
+$testDir = $setup.WorkDir
+$bareDir = $setup.BareDir
+
+# Advance origin/feature without moving local branch
+git fetch origin
+$remoteTip = git rev-parse origin/feature
+"remote only" | Set-Content file-remote.txt
+git add file-remote.txt
+git commit -q -m "C: remote only"
+$remoteCommit = git rev-parse HEAD
+git push origin HEAD:feature 2>$null
+git reset --hard $remoteTip 2>$null
+
+# Simulate review edit overlapping a file origin also changed
+"review fix on shared" | Set-Content file-shared.txt
+
+$syncOk = Sync-ReviewBranchWithOrigin 'feature'
+Assert-Equal $true $syncOk "Sync succeeds when stash + ff-only handles dirty overlap"
+
+$headAfter = git rev-parse HEAD
+$originHead = git rev-parse origin/feature
+Assert-Equal $originHead $headAfter "HEAD fast-forwarded to origin/feature"
+
+$wtContent = Get-Content file-shared.txt -Raw
+Assert-Equal "review fix on shared" $wtContent.TrimEnd() "Review edit restored after stash pop"
+
+Cleanup-TestRepo $testDir
+Remove-Item $bareDir -Recurse -Force -ErrorAction SilentlyContinue
+
+# ============================================================
+Write-Host "`n==== TEST 10: Sync rebases when branch diverged from origin ====" -ForegroundColor Cyan
+
+$setup = Setup-TestRepoWithOrigin
+$testDir = $setup.WorkDir
+$bareDir = $setup.BareDir
+
+# Local-only commit (not pushed)
+"local only" | Set-Content file-local.txt
+git add file-local.txt
+git commit -q -m "C: local only"
+
+# Remote-only commit on feature
+git fetch origin
+$beforeRemote = git rev-parse HEAD
+git checkout -q origin/feature
+"remote on feature" | Set-Content file-remote2.txt
+git add file-remote2.txt
+git commit -q -m "D: remote on feature"
+git push origin HEAD:feature 2>$null
+git checkout -q feature
+git reset --hard $beforeRemote 2>$null
+
+"review fix diverged" | Set-Content file-shared.txt
+
+$syncOk = Sync-ReviewBranchWithOrigin 'feature'
+Assert-Equal $true $syncOk "Sync succeeds via rebase when branches diverged"
+
+Assert-Equal $true (Test-Path file-local.txt) "Local commit replayed after rebase"
+Assert-Equal $true (Test-Path file-remote2.txt) "Remote commit present after rebase"
+
+$wtContent = Get-Content file-shared.txt -Raw
+Assert-Equal "review fix diverged" $wtContent.TrimEnd() "Review edit preserved after rebase + stash pop"
+
+Cleanup-TestRepo $testDir
+Remove-Item $bareDir -Recurse -Force -ErrorAction SilentlyContinue
+
+# ============================================================
+Write-Host "`n==== TEST 11: Retry skips reset when HEAD already past tip mark ====" -ForegroundColor Cyan
+
+$setup = Setup-TestRepoWithOrigin
+$testDir = $setup.WorkDir
+$bareDir = $setup.BareDir
+
+$tipSha = git rev-parse HEAD
+git update-ref refs/heads/feature-mark $tipSha
+
+# Advance HEAD past tip mark (simulate successful sync)
+"remote ahead" | Set-Content file-remote3.txt
+git add file-remote3.txt
+git commit -q -m "E: remote ahead sim"
+git push origin feature 2>$null
+git fetch origin
+git merge --ff-only origin/feature 2>$null
+
+$headBefore = git rev-parse HEAD
+"review retry edit" | Set-Content file-shared.txt
+
+$resetResult = Reset-ReviewDoneMixed 'refs/heads/feature-mark'
+Assert-Equal 'skipped' $resetResult "reset --mixed skipped when HEAD past tip mark"
+
+$headAfter = git rev-parse HEAD
+Assert-Equal $headBefore $headAfter "HEAD unchanged when reset skipped"
+
+$wtContent = Get-Content file-shared.txt -Raw
+Assert-Equal "review retry edit" $wtContent.TrimEnd() "Review edit preserved when reset skipped"
+
+Cleanup-TestRepo $testDir
+Remove-Item $bareDir -Recurse -Force -ErrorAction SilentlyContinue
 
 # ============================================================
 # Summary

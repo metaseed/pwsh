@@ -67,16 +67,42 @@ Where **F** merges **D** (master) into your branch.
 
 ## ReviewDone flow
 
-1. `git reset --mixed {branch}-mark` — branch + index → feature tip; working tree kept
+1. **Conditional** `git reset --mixed {branch}-mark` — branch + index → feature tip unless `HEAD` is already past the mark (retry-safe after a partial sync)
 2. Only your **review edits** remain unstaged
-3. Optional: prompt for commit message → `git add -A` → `git commit` → `git push`
-4. **`-ContinueReview`**: `git fetch` + `merge --ff-only`, update mark, `reset --soft` to merge-base again
+3. Optional: prompt for commit message → **sync with origin** (see below) → `git add -A` → `git commit` → `git push`
+4. **`-ContinueReview`**: sync with origin, update mark, `reset --soft` to merge-base again
 5. **Otherwise**: delete `{branch}-mark`, `git config --unset review.target`
+
+### Sync with origin (`Sync-ReviewBranchWithOrigin`)
+
+Before commit/push (and before `-ContinueReview`), `Git-ReviewDone` integrates `origin/<branch>`:
+
+1. `git fetch origin`
+2. `git merge --ff-only origin/<branch>` — succeeds when local is strictly behind remote
+3. On failure: **stash** review edits → retry ff-only → **rebase** onto `origin/<branch>` if still diverged
+4. **Stash pop** to restore review edits on top of the synced branch
+
+Rebase is used on divergence (same preference as `Git-Push` / `Git-SyncParent`).
+
+### Retry after failure
+
+If sync or commit fails, `{branch}-mark` and `review.target` are preserved. Run `Git-ReviewDone` again:
+
+- When `HEAD` is already **at or ahead of** the tip mark (e.g. you finished a rebase manually), `reset --mixed` is **skipped** so sync progress is not undone.
+- When `HEAD` is still at the tip mark, `reset --mixed` runs as on the first attempt.
+
+### Failure recovery
+
+| Failure | State left | What to do |
+|---------|------------|------------|
+| Rebase conflict | Rebase aborted; review edits in stash | Fix upstream, `git rebase origin/<branch>`, `git stash pop`, run `Git-ReviewDone` again |
+| Stash pop conflict | Branch synced; stash entry kept | Resolve working tree conflicts, then `Git-ReviewDone` again or `git stash pop` |
+| Fetch / no remote ref | No sync | Fix remote/branch name, run `Git-ReviewDone` again |
 
 ### Avoid `git pull` during review
 
 After `reset --soft`, HEAD is behind the index. `git pull` can fail or behave oddly. The
-scripts use `git fetch` + `git merge --ff-only origin/<branch>` instead.
+scripts use `git fetch` + sync helper (`merge --ff-only`, then rebase if needed) instead.
 
 ## State diagram
 
@@ -91,12 +117,16 @@ flowchart TD
     F --> |"Working tree"| H["Feature tip code"]
     F --> |"User edits"| I["Unstaged Changes"]
     I --> J[Git-ReviewDone]
-    J --> K["git reset --mixed branch-mark"]
-    K --> L{"Local changes?"}
-    L --> |Yes| M["commit + push"]
-    L --> |No| O{"-ContinueReview?"}
-    M --> O
-    O --> |Yes| P["fetch + ff-merge + update mark + reset --soft"]
+    J --> K{"HEAD at tip mark?"}
+    K --> |yes| K2["reset --mixed branch-mark"]
+    K --> |no, past mark| K3[skip reset]
+    K2 --> L{"Local changes?"}
+    K3 --> L
+    L --> |Yes| M["sync: fetch, ff-only, stash, rebase, stash pop"]
+    M --> M2["commit + push"]
+    M2 --> O{"-ContinueReview?"}
+    L --> |No| O
+    O --> |Yes| P["sync + update mark + reset --soft"]
     O --> |No| N["Cleanup mark + config"]
     N --> Q["Done"]
     P --> F
@@ -130,8 +160,8 @@ Git-ReviewDone -ContinueReview
 | Enter review | `git reset --soft $mergeBase` | HEAD → merge-base; index/WT at feature tip |
 | VS Code | Staged Changes | PR diff (feature-only) |
 | VS Code | Changes | Your in-review edits (unstaged) |
-| Exit review | `git reset --mixed refs/heads/{branch}-mark` | Restore branch; review edits unstaged |
-| Commit fixes | `git add -A` + `git commit` + `git push` | After `Git-ReviewDone` confirms |
+| Exit review | `git reset --mixed refs/heads/{branch}-mark` (skipped if HEAD past mark) | Restore branch; review edits unstaged |
+| Commit fixes | Sync helper + `git add -A` + `git commit` + `git push` | After `Git-ReviewDone` confirms |
 | Re-enter | `git reset --soft $mergeBase` | With `-ContinueReview` |
 
 ## Tests
