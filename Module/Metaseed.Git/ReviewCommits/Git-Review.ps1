@@ -13,29 +13,12 @@ function Git-Review {
 	$currentBranchName = (git branch --show-current)
 	if ($LASTEXITCODE -ne 0) { throw 'not in a repo' }
 
-	# NOTE: avoid `git pull` — it fails silently after `git reset --soft` leaves HEAD behind the index
-	git fetch origin
-	git merge --ff-only "origin/$currentBranchName" 2>$null
-
-	# checkout the branch to review
-	if ([string]::IsNullOrEmpty($Branch)) {
-		$choiceIndex = $Host.UI.PromptForChoice("The branch to review: ?", "$currentBranchName", @('&Yes', '&No'), 0)
-		if ($choiceIndex -ne 0) {
-			do {
-				Write-Host ""
-				$currentBranchName = Read-Host "please input the BRANCH name to switch to for reviewing"
-				git checkout $currentBranchName
-			} while ($LASTEXITCODE -ne 0);
-		}
+	$status = git status
+	$hasChanges = $status -match 'modified:|Untracked files:|Your branch is ahead of| have diverged|deleted:'
+	if($hasChanges) {
+		Write-Warning "You have uncommitted changes. Please commit or stash them before starting a review."
+		return
 	}
-	else {
-		git checkout $Branch
-		if ($LASTEXITCODE -ne 0) { return }
-		$currentBranchName = $Branch
-	}
-	# NOTE: avoid `git pull` — it fails silently after `git reset --soft` leaves HEAD behind the index
-	git fetch origin
-	git merge --ff-only "origin/$currentBranchName" 2>$null
 
 	if ([string]::IsNullOrEmpty($Target)) {
 		$Target = Git-Parent
@@ -60,11 +43,32 @@ function Git-Review {
 
 	# ensure we have the latest target branch for accurate merge-base
 	$targetIsLocalBranch = git rev-parse --verify "refs/heads/$Target" 2>$null
-	if ($targetIsLocalBranch) { # if $Target is a SHA, it will not be a local branch
+	if ($targetIsLocalBranch) {
+		# if $Target is a SHA, it will not be a local branch
 		# updates that local branch from origin/$Target.
 		# merge-base uses whatever commit $Target currently points to. If local main is behind origin/main, you get the wrong common ancestor
- 		git fetch origin "${Target}:${Target}" 2>$null
+		git fetch origin "${Target}:${Target}" 2>$null
 	}
+
+	# checkout the branch to review
+	if ([string]::IsNullOrEmpty($Branch)) {
+		$choiceIndex = $Host.UI.PromptForChoice("The branch to review: ?", "$currentBranchName", @('&Yes', '&No'), 0)
+		if ($choiceIndex -ne 0) {
+			do {
+				Write-Host ""
+				$currentBranchName = Read-Host "please input the BRANCH name to switch to for reviewing"
+				git checkout $currentBranchName
+			} while ($LASTEXITCODE -ne 0);
+		}
+	}
+	else {
+		git checkout $Branch
+		if ($LASTEXITCODE -ne 0) { return }
+		$currentBranchName = $Branch
+	}
+	# NOTE: avoid `git pull` — it fails silently after `git reset --soft` leaves HEAD behind the index
+	git fetch origin
+	git merge --ff-only "origin/$currentBranchName" 2>$null
 
 	# find the merge-base: the common ancestor that excludes merge noise
 	# A----C------D (master / target branch)
