@@ -1,3 +1,16 @@
+<#
+.SYNOPSIS
+Exits review mode: optionally commits review edits, syncs with origin, and cleans up or continues review.
+.DESCRIPTION
+Resets branch/index to the feature tip mark ({branch}-mark), leaving review edits unstaged.
+When there are changes, prompts for commit message, syncs with origin, commits, and pushes.
+-ContinueReview updates the tip mark and re-enters soft-reset review state.
+Otherwise removes the tip mark and review.target config.
+.PARAMETER CommitMessage
+Commit message for review edits. When empty, offers a default derived from HEAD and review.target.
+.PARAMETER ContinueReview
+After handling changes, sync with origin, advance the tip mark, and git reset --soft to merge-base again.
+#>
 function Git-ReviewDone {
 
 	param (
@@ -10,23 +23,19 @@ function Git-ReviewDone {
 		$ContinueReview
 	)
 
-	# Discover tip ref from current branch name (git-native, works across terminals)
+	# Resolve tip ref from current branch (git-native; works across terminals)
 	$currentBranchName = (git branch --show-current)
 	$tipRef = "refs/heads/${currentBranchName}-mark"
-	git rev-parse --verify $tipRef 2>$null | Out-Null
-	if ($LASTEXITCODE -ne 0) {
-		$tipRef = Read-Host 'Could not find tip mark. Please input the branch tip ref/commit to restore to'
+	$tipSha = git rev-parse $tipRef 2>$null
+	if ($LASTEXITCODE -ne 0 -or -not $tipSha) {
+		$tipRef = Read-Host "Could not find tip mark for branch ${currentBranchName}. Please input the branch tip ref/commit to restore to"
+		$tipSha = git rev-parse $tipRef 2>$null
 	}
 
-	# Reset --mixed back to feature tip unless HEAD already advanced past the mark (retry-safe)
-	$tipSha = git rev-parse $tipRef 2>$null
+	# Reset branch + index to feature tip; keep working tree (review edits stay unstaged)
+	# Skip when HEAD already advanced past the mark (retry-safe after partial sync/rebase)
 	$headSha = git rev-parse HEAD
-	if ($LASTEXITCODE -ne 0 -or -not $tipSha) {
-		Write-Warning "Could not resolve tip ref: $tipRef"
-		return
-	}
 	if ($headSha -eq $tipSha) {
-		# moves branch pointer + index to tip; keeps working tree (review edits unstaged)
 		git reset --mixed $tipRef
 	}
 	else {
@@ -40,10 +49,12 @@ function Git-ReviewDone {
 		}
 	}
 
+	# Detect unstaged review edits, untracked files, or branch ahead/diverged from remote
 	$status = git status
 	$hasChanges = $status -match 'modified:|Untracked files:|Your branch is ahead of| have diverged|deleted:'
 
 	if ($hasChanges) {
+		# Build or confirm commit message for review fixes
 		if ([string]::IsNullOrEmpty($CommitMessage)) {
 			$currentCommitInfo = git log -1 --format="%h %s"
 			$target = git config review.target
@@ -54,9 +65,11 @@ function Git-ReviewDone {
 			}
 		}
 
+		# User confirms diff before commit/push
 		$choiceIndex = $Host.UI.PromptForChoice('Confirm', 'please double check the changes in git!', @('&Yes', '&No'), 1)
 		if ($choiceIndex -ne 0) { return }
 
+		# Integrate origin/<branch> before publishing review commit
 		if (-not (Sync-ReviewBranchWithOrigin $currentBranchName)) {
 			return
 		}
@@ -66,12 +79,12 @@ function Git-ReviewDone {
 	}
 
 	if ($ContinueReview) {
+		# Stay in review mode: sync, bump tip mark, soft-reset to merge-base again
 		if (-not (Sync-ReviewBranchWithOrigin $currentBranchName)) {
 			Write-Warning 'Could not sync with origin. Review state preserved; fix sync issues and run Git-ReviewDone -ContinueReview again.'
 			return
 		}
 
-		# update tip mark to latest
 		git update-ref $tipRef HEAD
 
 		$target = git config review.target
@@ -82,7 +95,7 @@ function Git-ReviewDone {
 		Write-Host "Review mode re-entered. merge-base: $mergeBase" -ForegroundColor Green
 	}
 	else {
-		# clean up git-native review state
+		# Exit review mode: remove tip mark and review.target config
 		if ($tipRef) {
 			git update-ref -d $tipRef
 		}
