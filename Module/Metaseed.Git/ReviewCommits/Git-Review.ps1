@@ -8,7 +8,14 @@ function Git-Review {
 		# the target branch (or commit number) to diff against
 		[Parameter()]
 		[string]
-		$Target = ""
+		$Target = "",
+
+		# When set, the branch's PR diff appears in "Staged Changes" and review edits in "Changes" (unstaged).
+		# Default ($false): PR diff in "Changes" (local/unstaged); and your review edits too, 
+		# run "Git-ReviewDone"(staged area the same with tip-mark) to JUST view your review edits in local changes.
+		[Parameter()]
+		[switch]
+		$ChangesStaged
 	)
 	$currentBranchName = (git branch --show-current)
 	if ($LASTEXITCODE -ne 0) { throw 'not in a repo' }
@@ -83,19 +90,32 @@ function Git-Review {
 
 	# persist review state in git-native storage (works across terminals)
 	git config --local review.target $Target
+	git config --local review.changesStaged ($ChangesStaged.IsPresent.ToString().ToLower())
 
 	# keep the current branch tip in a ref for recovery
 	$tipRef = "refs/heads/${currentBranchName}-mark"
 	git update-ref $tipRef HEAD
 
-	# --soft moves HEAD to merge-base but keeps index+working tree at feature tip.
-	# Result: "Staged Changes" = PR diff, user edits appear in "Changes" (unstaged)
-	git reset --soft $mergeBase
+	if ($ChangesStaged) {
+		# --soft: index stays at feature tip → "Staged Changes" = PR diff; edits appear unstaged
+		git reset --soft $mergeBase
+	}
+	else {
+		# --mixed: index+HEAD at merge-base, working tree at feature tip
+		# → "Changes" = PR diff + review edits (both unstaged); Git-ReviewDone reset --mixed to tip-mark leaves only review edits in Changes
+		git reset --mixed $mergeBase
+	}
 
 	Write-Host ""
 	Write-Host "PR-style review is ready!" -ForegroundColor Green
-	Write-Host "  'Staged Changes' in VS Code = your PR diff (only feature changes, merges excluded)" -ForegroundColor Cyan
-	Write-Host "  Your edits during review will appear in 'Changes' (unstaged)" -ForegroundColor Cyan
+	if ($ChangesStaged) {
+		Write-Host "  'Staged Changes' in VS Code = your PR diff (only feature changes, merges excluded)" -ForegroundColor Cyan
+		Write-Host "  Your edits during review will appear in 'Changes' (unstaged)" -ForegroundColor Cyan
+	}
+	else {
+		Write-Host "  'Changes' = PR diff + your review edits (both unstaged; merges excluded)" -ForegroundColor Cyan
+		Write-Host "  Run Git-ReviewDone → index matches tip-mark; only your review edits remain in Changes" -ForegroundColor Cyan
+	}
 	Write-Host "  Working tree = branch tip code (debuggable, runnable)" -ForegroundColor Cyan
 	Write-Host ""
 	Write-Host "  merge-base: $mergeBase" -ForegroundColor DarkGray
@@ -103,5 +123,5 @@ function Git-Review {
 	Write-Host "  tip mark:   $tipRef" -ForegroundColor DarkGray
 	Write-Host ""
 	Write-Host "When done, run: " -ForegroundColor Yellow -NoNewline
-	Write-Host "Git-CommitsReviewDone" -ForegroundColor White
+	Write-Host "Git-ReviewDone" -ForegroundColor White
 }

@@ -1,19 +1,45 @@
- # Local PR-Style Code Review
+# Local PR-Style Code Review
 
-Replicate an Azure DevOps PR diff locally in VS Code: **Staged Changes** = your feature
-changes only (merge commits excluded), **working tree** = branch tip (debuggable/runnable).
+Replicate an Azure DevOps PR diff locally in VS Code. **Working tree** = branch tip (debuggable/runnable).
 
-## Problem with naive `git reset --soft`
+By default the PR diff appears in **Changes** (local/unstaged). Pass `-ChangesStaged` to
+show it in **Staged Changes** instead.
+
+## `-ChangesStaged` switch
+
+| Mode | Reset | PR diff appears in | Review edits go to |
+|------|-------|--------------------|--------------------|
+| Default (`$false`) | `--mixed` | **Changes** (unstaged) | Same as PR diff until `Git-ReviewDone` isolates them |
+| `-ChangesStaged` | `--soft` | **Staged Changes** | **Changes** (unstaged) |
+
+`Git-Review` persists the mode in `git config --local review.changesStaged`.
+`Git-ReviewDone -ContinueReview` uses that config by default; pass `-ChangesStaged` (or
+`-ChangesStaged:$false`) on `Git-ReviewDone` to override for that re-entry.
+
+## Problem with naive reset
 
 Resetting to the **current branch's creation point on target branch** (e.g. `git reset --soft <commit Sha or master>`), but not to the `merge-base`, flattens the whole branch — including everything brought in by merge commits into the staged index. You cannot tell your feature work from merged upstream changes.
 
 > The fix is **not** “avoid `--soft`” — it is **reset to `merge-base`, not to the target tip**.
 
-## Solution: merge-base + `reset --soft`
+## Solution: merge-base + reset
 
 Azure DevOps PR review shows: `diff(merge-base(target_tip, source_tip), source_tip)`.
 
 After saving the feature tip and moving HEAD to the merge-base:
+
+### Default mode (`--mixed`)
+
+`git reset --mixed $mergeBase`
+
+1. **HEAD** (branch pointer) → merge-base
+2. **Index** → merge-base
+3. **Working tree** → unchanged (feature tip code)
+
+Result: VS Code **Changes** (unstaged) = `diff(merge-base, feature-tip)` = PR diff.
+Stage your review edits to separate them into **Staged Changes**.
+
+### `-ChangesStaged` mode (`--soft`)
 
 `git reset --soft $mergeBase`
 
@@ -49,19 +75,28 @@ Where **F** merges **D** (master) into your branch.
 2. `git merge-base master HEAD` = **D**
 3. `git update-ref feature-mark HEAD` — save tip for recovery
 4. `git config --local review.target master` — persist target across terminals
-5. `git reset --soft $mergeBase`
+5. `git config --local review.changesStaged` — persist mode across terminals
+6. `git reset --mixed $mergeBase` (default) or `git reset --soft $mergeBase` (`-ChangesStaged`)
 
-**Result:**
+**Result (default `--mixed`):**
 
-- **Staged Changes** = only E + post-merge feature work (F, not C/D/master-only files)
+- **Changes** (unstaged) = only E + post-merge feature work (F, not C/D/master-only files)
 - **Working tree** = Head — runnable/debuggable
 - Files identical at merge-base and tip do not appear in the diff
+- Stage your review edits to separate them
+
+**Result (`-ChangesStaged`):**
+
+- **Staged Changes** = only E + post-merge feature work
+- **Working tree** = Head — runnable/debuggable
+- Review edits appear in **Changes** (unstaged)
 
 ## Git-native state
 
 | Item | Location |
 |------|----------|
 | Target branch | `git config --local review.target` → `.git/config` |
+| Review mode | `git config --local review.changesStaged` → `.git/config` |
 | Feature tip mark | `refs/heads/{currentBranch}-mark` |
 | During review | Branch → merge-base; mark → feature tip |
 
@@ -70,8 +105,8 @@ Where **F** merges **D** (master) into your branch.
 1. **Conditional** `git reset --mixed {branch}-mark` — branch + index → feature tip unless `HEAD` is already past the mark (retry-safe after a partial sync)
 2. Only your **review edits** remain unstaged
 3. Optional: prompt for commit message → **sync with origin** (see below) → `git add -A` → `git commit` → `git push`
-4. **`-ContinueReview`**: sync with origin, update mark, `reset --soft` to merge-base again
-5. **Otherwise**: delete `{branch}-mark`, `git config --unset review.target`
+4. **`-ContinueReview`**: sync with origin, update mark, reset to merge-base again (same mode as original review)
+5. **Otherwise**: delete `{branch}-mark`, `git config --unset review.target`, `git config --unset review.changesStaged`
 
 ### Sync with origin (`Sync-ReviewBranchWithOrigin`)
 
@@ -101,8 +136,9 @@ If sync or commit fails, `{branch}-mark` and `review.target` are preserved. Run 
 
 ### Avoid `git pull` during review
 
-After `reset --soft`, HEAD is behind the index. `git pull` can fail or behave oddly. The
-scripts use `git fetch` + sync helper (`merge --ff-only`, then rebase if needed) instead.
+After reset, HEAD is behind the working tree (and the index in `--soft` mode). `git pull`
+can fail or behave oddly. The scripts use `git fetch` + sync helper (`merge --ff-only`,
+then rebase if needed) instead.
 
 ## State diagram
 
@@ -110,23 +146,27 @@ scripts use `git fetch` + sync helper (`merge --ff-only`, then rebase if needed)
 flowchart TD
     A[Git-Review] --> B["Git-Parent or -Target (commit sha or branch name)"]
     B --> C["git merge-base target HEAD"]
-    C --> D["update-ref branch-mark + config review.target"]
-    D --> E["git reset --soft mergeBase"]
-    E --> F["Review State"]
-    F --> |"Staged Changes"| G["PR diff only"]
+    C --> D["update-ref branch-mark + config review.target + review.changesStaged"]
+    D --> Mode{"-ChangesStaged?"}
+    Mode --> |No| E1["git reset --mixed mergeBase"]
+    Mode --> |Yes| E2["git reset --soft mergeBase"]
+    E1 --> F["Review State"]
+    E2 --> F
+    F --> |"Default: Changes = PR diff"| F1["stage review edits to separate"]
+    F --> |"-ChangesStaged: Staged = PR diff"| F2["edits appear unstaged"]
     F --> |"Working tree"| H["Feature tip code"]
-    F --> |"User edits"| I["Unstaged Changes"]
-    I --> J[Git-ReviewDone]
+    F1 --> J[Git-ReviewDone]
+    F2 --> J
     J --> K{"HEAD at tip mark?"}
     K --> |yes| K2["reset --mixed branch-mark"]
-    K --> |no, past mark| K3[skip reset]
+    K --> |"no, past mark(i.e. after manual rebase)"| K3[skip reset]
     K2 --> L{"Local changes?"}
     K3 --> L
     L --> |Yes| M["sync: fetch, ff-only, stash, rebase, stash pop"]
     M --> M2["commit + push"]
     M2 --> O{"-ContinueReview?"}
     L --> |No| O
-    O --> |Yes| P["sync + update mark + reset --soft"]
+    O --> |Yes| P["sync + update mark + reset to mergeBase using same mode"]
     O --> |No| N["Cleanup mark + config"]
     N --> Q["Done"]
     P --> F
@@ -137,9 +177,14 @@ flowchart TD
 ### Start review
 
 ```powershell
+# default: PR diff in "Changes" (unstaged)
 Git-Review
-# or:
-Git-Review -Branch feature/foo -CommitFrom master
+
+# PR diff in "Staged Changes" instead
+Git-Review -ChangesStaged
+
+# specify branch and target
+Git-Review -Branch feature/foo -Target master
 ```
 
 ### Finish review
@@ -148,8 +193,11 @@ Git-Review -Branch feature/foo -CommitFrom master
 # commit review fixes and push (prompts for message if omitted)
 Git-ReviewDone -CommitMessage "review fixes"
 
-# push then re-enter review mode on latest tip
+# push then re-enter review mode on latest tip (same mode as Git-Review)
 Git-ReviewDone -ContinueReview
+
+# re-enter with PR diff in Staged Changes even if review started in default mode
+Git-ReviewDone -ContinueReview -ChangesStaged
 ```
 
 ## Key commands
@@ -157,12 +205,13 @@ Git-ReviewDone -ContinueReview
 | Step | Command | Effect |
 |------|---------|--------|
 | Find base | `git merge-base $target HEAD` | Common ancestor; excludes merge noise |
-| Enter review | `git reset --soft $mergeBase` | HEAD → merge-base; index/WT at feature tip |
-| VS Code | Staged Changes | PR diff (feature-only) |
-| VS Code | Changes | Your in-review edits (unstaged) |
+| Enter review (default) | `git reset --mixed $mergeBase` | HEAD+index → merge-base; WT at feature tip |
+| Enter review (`-ChangesStaged`) | `git reset --soft $mergeBase` | HEAD → merge-base; index+WT at feature tip |
+| VS Code (default) | Changes (unstaged) | PR diff + review edits; `Git-ReviewDone` leaves only review edits |
+| VS Code (`-ChangesStaged`) | Staged Changes | PR diff; edits appear unstaged |
 | Exit review | `git reset --mixed refs/heads/{branch}-mark` (skipped if HEAD past mark) | Restore branch; review edits unstaged |
 | Commit fixes | Sync helper + `git add -A` + `git commit` + `git push` | After `Git-ReviewDone` confirms |
-| Re-enter | `git reset --soft $mergeBase` | With `-ContinueReview` |
+| Re-enter | reset to `$mergeBase` (same mode) | With `-ContinueReview` |
 
 ## Tests
 

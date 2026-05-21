@@ -1,0 +1,263 @@
+
+==== TEST 1: -ChangesStaged mode - PR diff in STAGED, excludes master merge ====
+  PASS: file-shared.txt (modified) in staged
+True
+  PASS: file-new1.txt (new) in staged
+True
+  PASS: file-new2.txt (new) in staged
+True
+  PASS: file-post-merge.txt (new) in staged
+True
+  PASS: file-del1.txt (deleted) in staged
+True
+  PASS: file-del2.txt (deleted) in staged
+True
+  PASS: file-master-c.txt (master) NOT in staged
+True
+  PASS: file-master-d.txt (master) NOT in staged
+True
+  PASS: file-master-base.txt (master) NOT in staged
+True
+  PASS: file-a.txt (unchanged) NOT in staged
+True
+  PASS: No unstaged changes in -ChangesStaged mode
+True
+
+==== TEST 2: Default mode - PR diff in CHANGES (unstaged), -ChangesStaged off ====
+  PASS: No staged PR diff in default (--mixed) mode
+True
+  PASS: file-shared.txt (modified) in Changes
+True
+  PASS: file-new1.txt (new) in Changes
+True
+  PASS: file-new2.txt (new) in Changes
+True
+  PASS: file-del1.txt (deleted) in Changes
+True
+  PASS: file-master-c.txt (master) NOT in Changes
+True
+  PASS: review.changesStaged is false in default mode
+True
+
+==== TEST 3: Working tree is at feature tip (debuggable) ====
+  PASS: file-new1.txt exists in working tree
+True
+  PASS: file-new2.txt exists in working tree
+True
+  PASS: file-post-merge.txt exists in working tree
+True
+  PASS: file-master-c.txt exists (from merge)
+True
+  PASS: file-master-d.txt exists (from merge)
+True
+  PASS: file-del1.txt NOT in working tree (deleted by feature)
+True
+  PASS: file-del2.txt NOT in working tree (deleted by feature)
+True
+
+==== TEST 4: ReviewDone (-ChangesStaged) isolates review edits ====
+Unstaged changes after reset:
+M	file-shared.txt
+  PASS: HEAD restored to feature tip
+True
+  PASS: Still on feature branch
+True
+  PASS: Only 1 file changed after ReviewDone
+True
+  PASS: file-shared.txt is the review edit
+True
+  PASS: No staged changes after ReviewDone
+True
+
+==== TEST 4b: ReviewDone (default) - PR diff + edits in Changes, then only review edits ====
+  PASS: During review: PR diff includes file-new1.txt in Changes
+True
+  PASS: During review: PR diff includes file-shared.txt in Changes
+True
+  PASS: During review: review edit still in Changes with PR diff
+True
+Unstaged changes after reset:
+M	file-shared.txt
+  PASS: HEAD restored to feature tip (default mode)
+True
+  PASS: After ReviewDone: only review edit in Changes
+True
+  PASS: After ReviewDone: file-shared.txt is the review edit
+True
+  PASS: After ReviewDone: PR diff file-new1.txt NOT in Changes
+True
+  PASS: After ReviewDone: staged area matches tip (empty staged diff)
+True
+
+==== TEST 5: ReviewDone with no edits leaves clean state ====
+  PASS: HEAD restored to feature tip
+True
+  PASS: Working tree is clean after ReviewDone with no edits
+True
+
+==== TEST 6: Branch without merge commits (simple case) ====
+  PASS: file-f.txt (new) in Changes
+True
+  PASS: file-a.txt (modified) in Changes
+True
+  PASS: file-m.txt (master) NOT in Changes
+True
+  PASS: file-m2.txt (master) NOT in Changes
+True
+  PASS: No staged PR diff (simple branch, default mode)
+True
+
+==== TEST 7: ContinueReview re-enters -ChangesStaged mode (PR diff staged) ====
+Unstaged changes after reset:
+M	file-shared.txt
+
+Name                           Value
+----                           -----
+ChangesStaged                  True
+MergeBase                      c52f96c59441cff631187c987fcd4c0072d43f2c
+  PASS: file-shared.txt in staged (PR diff)
+True
+  PASS: file-new1.txt in staged
+True
+  PASS: file-master-c.txt still excluded
+True
+  PASS: Review edit to file-shared.txt visible as unstaged
+True
+  PASS: review.changesStaged still true after ContinueReview
+True
+
+==== TEST 7b: ContinueReview re-enters default mode (PR diff unstaged) ====
+Unstaged changes after reset:
+D	file-del1.txt
+D	file-del2.txt
+M	file-shared.txt
+FeatureTip                     73d0650a44f330194b28d7db23a9f276323e04f0
+MergeBase                      103bef2a357bdc3276b0c608eec21f9eea07b74a
+ChangesStaged                  False
+Unstaged changes after reset:
+M	file-shared.txt
+Unstaged changes after reset:
+D	file-del1.txt
+D	file-del2.txt
+M	file-shared.txt
+ChangesStaged                  False
+MergeBase                      103bef2a357bdc3276b0c608eec21f9eea07b74a
+  PASS: No staged PR diff after ContinueReview in default mode
+True
+  PASS: file-new1.txt in Changes (PR diff restored)
+True
+  PASS: Review edit in Changes with PR diff
+True
+  PASS: review.changesStaged still false after ContinueReview
+True
+
+==== TEST 7c: Git-ReviewDone -ChangesStaged overrides default config on ContinueReview ====
+Unstaged changes after reset:
+D	file-del1.txt
+D	file-del2.txt
+M	file-shared.txt
+FeatureTip                     127200d270c3465a8d07bc44a23484a978e612ae
+MergeBase                      82a78cb344699e5c331bddaf66d4fea546b3b6e9
+ChangesStaged                  False
+Unstaged changes after reset:
+M	file-shared.txt
+ChangesStaged                  True
+MergeBase                      82a78cb344699e5c331bddaf66d4fea546b3b6e9
+  PASS: Override: PR diff in staged after -ChangesStaged ContinueReview
+True
+  PASS: Override: review.changesStaged updated to true
+True
+
+==== TEST 7d: Git-ReviewDone -ChangesStaged:$false overrides -ChangesStaged config ====
+FeatureTip                     51328a13a458ebdd37a75592f3cb5a4941c59ee2
+MergeBase                      2a6bf3a383dec1e4c007a62c6e733bc8ab4903f6
+ChangesStaged                  True
+Unstaged changes after reset:
+M	file-shared.txt
+Unstaged changes after reset:
+D	file-del1.txt
+D	file-del2.txt
+M	file-shared.txt
+ChangesStaged                  False
+MergeBase                      2a6bf3a383dec1e4c007a62c6e733bc8ab4903f6
+  PASS: Override: no staged PR diff when -ChangesStaged:$false
+True
+  PASS: Override: PR diff back in Changes (default mode)
+True
+  PASS: Override: review.changesStaged updated to false
+True
+
+==== TEST 8: User edit during review appears as unstaged (default staged mode) ====
+  PASS: Unstaged is empty before user edit
+True
+  PASS: User edit to file-new1.txt appears as unstaged change
+True
+  PASS: file-new1.txt still in staged (original PR diff)
+True
+  PASS: file-shared.txt still in staged
+True
+
+==== TEST 9: Sync when remote ahead and review edit blocks ff-only ====
+HEAD is now at 4ce715e B: feature
+  PASS: Sync succeeds when stash + ff-only handles dirty overlap
+True
+  PASS: HEAD fast-forwarded to origin/feature
+True
+  PASS: Review edit restored after stash pop
+True
+
+==== TEST 10: Sync rebases when branch diverged from origin ====
+HEAD is now at 8ef7f5f C: local only
+  PASS: Sync succeeds via rebase when branches diverged
+True
+  PASS: Local commit replayed after rebase
+True
+  PASS: Remote commit present after rebase
+True
+  PASS: Review edit preserved after rebase + stash pop
+True
+
+==== TEST 11: Retry skips reset when HEAD already past tip mark ====
+Already up to date.
+  PASS: reset --mixed skipped when HEAD past tip mark
+True
+  PASS: HEAD unchanged when reset skipped
+True
+  PASS: Review edit preserved when reset skipped
+True
+
+==== TEST 12: Rebase conflict aborts sync and leaves review edits in stash ====
+HEAD is now at 621f1d3 C: local diverge
+WARNING: Rebase stopped with conflicts and was aborted. Review edits are in stash (message: Git-ReviewDone: review edits).
+To fix: git rebase origin/feature, git stash pop, then Git-ReviewDone again.
+  PASS: Sync returns false when rebase conflicts
+True
+  PASS: Rebase aborted (no rebase in progress)
+True
+  PASS: Review edits preserved in stash after rebase abort
+True
+  PASS: Manual rebase completes after conflict resolution
+True
+Auto-merging file-shared.txt
+CONFLICT (content): Merge conflict in file-shared.txt
+On branch feature
+Your branch is up to date with 'origin/feature'.
+
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+	both modified:   file-shared.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+The stash entry is kept in case you need it again.
+Dropped refs/stash@{0} (6f1430c505b2d3ea0a02c72dfa74d02448fc6095)
+  PASS: stash pop restores review edits after manual rebase
+True
+  PASS: Review edit restored after rebase + stash pop
+True
+
+============================================================
+RESULTS: 79 passed, 0 failed
+============================================================
+
+
