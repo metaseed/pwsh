@@ -61,3 +61,8 @@ shift+F4: show previous search results
 * `ctrl+i,ctrl+i` to focus/blur to chat input. (forward the selection if there is selection in editor)
 * `ctrl+n` to start a new chat session, when in the claude code panel
 * /clear command: to reset current session without start a new session.
+
+## Cursor special
+* ai:
+  * /reset to clear chat
+  * ctrl+n to new session

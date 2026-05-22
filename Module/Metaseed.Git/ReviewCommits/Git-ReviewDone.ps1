@@ -86,7 +86,7 @@ function Git-ReviewDone {
 		}
 
 		# User confirms diff before commit/push
-		$choiceIndex = $Host.UI.PromptForChoice('Confirm', 'please double check the changes in git!', @('&Yes', '&No'), 1)
+		$choiceIndex = $Host.UI.PromptForChoice('Continue?', 'please double check the changes in git!', @('&Yes', '&No'), 1)
 		if ($choiceIndex -ne 0) { return }
 
 		# Integrate origin/<branch> before publishing review commit
