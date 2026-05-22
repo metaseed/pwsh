@@ -85,9 +85,18 @@ function Git-ReviewDone {
 			}
 		}
 
-		# User confirms diff before commit/push
-		$choiceIndex = $Host.UI.PromptForChoice('Continue?', 'please double check the changes in git!', @('&Yes', '&No'), 1)
-		if ($choiceIndex -ne 0) { return }
+		# User confirms diff before commit/push; can edit message without aborting
+		do {
+			$choiceIndex = $Host.UI.PromptForChoice(
+				'Continue?',
+				"please double check the changes in git!`nCommit message: $CommitMessage",
+				@('&Yes', '&Change message', '&No'),
+				1) # default is Change message.
+			if ($choiceIndex -eq 2) { return }
+			if ($choiceIndex -eq 1) {
+				$CommitMessage = Read-Host 'please input commit message'
+			}
+		} while ($choiceIndex -ne 0)
 
 		# Integrate origin/<branch> before publishing review commit
 		if (-not (Sync-ReviewBranchWithOrigin $currentBranchName)) {
