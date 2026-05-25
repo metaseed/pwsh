@@ -25,12 +25,12 @@ shift+F4: show previous search results
 }
 ## Terminal Panel
 * Focus Terminal Tabs View: `ctrl+shift+\`, then `up/down` to select.
-* Switch terminal tabs: `ctrl+PageUp/PageDown`
+* Directly switch terminal tabs: `ctrl+PageUp/PageDown`
 * Open external terminal with current proj path: `ctrl+shift+c`
 * Toggle the maximized bottom panel: `ctrl+; m`
-* new terminal: 'ctrl+shift+`'
 * new terminal window: 'ctrl+shift+alt+`'
-* kill terminal: 'alt+`'
+* new terminal: 'ctrl+shift+`'
+* close terminal: 'alt+`'
 * split: `ctrl+\`
 
 > more in `--- terminal ---` part in: C:\Users\jsong12\AppData\Roaming\Code\User\keybindings.json

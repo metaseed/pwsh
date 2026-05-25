@@ -32,6 +32,9 @@ if ($vm) {
   # Write-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Services\WinDefend' -Name 'start' -Value 4 # 2 is default
   # https://www.alitajran.com/turn-off-windows-defender-in-windows-10-permanently/
 
+  # config `Antimalware Service Executable` to reduce CPU usage when scanning
+  Set-MpPreference -ScanAvgCPULoadFactor 0.5 # maximum cup usage is 0.5%.
+
 }
 else {
 

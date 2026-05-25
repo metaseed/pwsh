@@ -35,13 +35,17 @@ function Set-EnvVar {
         if ($v) {
             Write-Information "Original value: '$Name' is '$Value' ($persistScope scope)"
             if ($v -eq $Value) {
-                Write-Warning "Original value is the same as the value to set in $persistScope scope"
+                Write-Warning "Original value is the same as the value to set in $persistScope scope, no change needed."
+                return
             }
             else {
                 [Environment]::SetEnvironmentVariable($Name, $Value, $persistScope)
-                Write-Information "Set '$Name' = '$Value' ($persistScope scope)"
+                Write-Information "New value set '$Name' = '$Value' ($persistScope scope), old value was '$v'"
+                return
             }
         }
+        [Environment]::SetEnvironmentVariable($Name, $Value, $persistScope)
+        Write-Information "Set new value '$Name' = '$Value' ($persistScope scope)"
     }
     Set-EnvVarValueByScope $Name $Value 'Process'
     Set-EnvVarValueByScope $Name $Value $persistScope

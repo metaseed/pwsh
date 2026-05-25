@@ -1,5 +1,5 @@
 <#
-Get all ps1 files except that start with '_' or in the subfolder that start with '_'.
+Get all ps1 files except those that start with '_', or live under a folder starting with '_', or under a folder named 'Private'.
 #>
 function Get-AllCmdFiles {
   [CmdletBinding()]
@@ -19,7 +19,7 @@ function Get-AllCmdFiles {
   ? {
     # if parent dirs of $Directory contains '_', it's valid
     $partialDir = $_.fullname.StartsWith($Directory) ? $_.FullName.Substring($Directory.Length) : $_.FullName
-    $partialDir -notmatch '\\_.*\\'
+    $partialDir -notmatch '(^|\\)_[^\\]*\\' -and $partialDir -notmatch '(^|\\)Private\\'
   }
 
   # use @() to make sure return is an array, even 1 or no item

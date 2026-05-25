@@ -138,14 +138,15 @@ Set-PSReadLineKeyHandler -Chord alt+e -ScriptBlock {
 # }
 
 #
-# Ctrl+Shift+j then type a key to mark the current directory.
-# Ctrl+j then the same key will change back to that directory without
+# Ctrl+m then type a key to mark the current directory.
+# Ctrl+' then the same key will change back to that directory without
+# alt+m to show the marked directories.
 # needing to type cd and won't change the command line.
 
 #
 $global:PSReadLineMarks = @{}
 
-Set-PSReadLineKeyHandler -Key Ctrl+J `
+Set-PSReadLineKeyHandler -Key Ctrl+m `
     -BriefDescription MarkDirectory `
     -LongDescription "Mark the current directory" `
     -ScriptBlock {
@@ -155,7 +156,7 @@ Set-PSReadLineKeyHandler -Key Ctrl+J `
     $global:PSReadLineMarks[$key.KeyChar] = $pwd
 }
 
-Set-PSReadLineKeyHandler -Key Ctrl+j `
+Set-PSReadLineKeyHandler -Key "Ctrl+'" `
     -BriefDescription JumpDirectory `
     -LongDescription "Goto the marked directory" `
     -ScriptBlock {
@@ -169,7 +170,7 @@ Set-PSReadLineKeyHandler -Key Ctrl+j `
     }
 }
 
-Set-PSReadLineKeyHandler -Key Alt+j `
+Set-PSReadLineKeyHandler -Key Alt+m `
     -BriefDescription ShowDirectoryMarks `
     -LongDescription "Show the currently marked directories" `
     -ScriptBlock {
