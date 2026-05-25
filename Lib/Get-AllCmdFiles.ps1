@@ -19,7 +19,7 @@ function Get-AllCmdFiles {
   ? {
     # if parent dirs of $Directory contains '_', it's valid
     $partialDir = $_.fullname.StartsWith($Directory) ? $_.FullName.Substring($Directory.Length) : $_.FullName
-    $partialDir -notmatch '(^|\\)_[^\\]*\\' -and $partialDir -notmatch '(^|\\)Private\\'
+    $partialDir -notmatch '(^|\\)_[^\\]*\\' # -and $partialDir -notmatch '(^|\\)Private\\'
   }
 
   # use @() to make sure return is an array, even 1 or no item

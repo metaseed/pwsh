@@ -9,6 +9,9 @@ function Export-Cmdlets {
 
   $All = Get-AllCmdFiles $path
 
-  $Public = $All | ? { $_.fullname.TrimStart($path) -notmatch '\\Private\\' }
+  $Public = $All | Where-Object {
+    $partial = $_.FullName.StartsWith($path) ? $_.FullName.Substring($path.Length) : $_.FullName
+    $partial -notmatch '(^|\\)Private\\'
+  }
   Export-ModuleMember -Cmdlet $($Public | Select-Object -ExpandProperty BaseName)
 }

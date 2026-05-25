@@ -48,6 +48,9 @@ function Export-Functions {
     }
 
     # export function for Modules
-    $Public = $All | ? { $_.fullname.TrimStart($path) -notmatch '\\Private\\' }
+    $Public = $All | Where-Object {
+        $partial = $_.FullName.StartsWith($path) ? $_.FullName.Substring($path.Length) : $_.FullName
+        $partial -notmatch '(^|\\)Private\\'
+    }
     Export-ModuleMember -Function $($Public | Select-Object -ExpandProperty BaseName) -Alias *
 }
