@@ -50,6 +50,10 @@ shift+F4: show previous search results
 * `ctrl+0`: to go back to the left panel
 * `ctrl+shift+p`: type 'git changes' or 'git staged' to view changes or staged changes( `ctrl+m,g` and `ctrl+m,ctrl+g`)
 * `alt+f5` or `shift+alt+f5`: to move to next/previous changes.
+### view and collapse Graph sub panel
+* ctrl+shift+p: show commands, type `graph` to `focus on graph view`, the view will show
+* Hide: press `shift+tab` to move focus to title, then  `ctrl+left` to collapse.
+* when in graph view: `space` to view detail of every changes. or `left` to collapse, and `right` to expand.
 
 ## side panels
 * `ctrl+b`: toggle primary side panel

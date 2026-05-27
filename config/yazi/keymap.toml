@@ -325,3 +325,4 @@ desc = "Permanently delete selected"
 [[mgr.append_keymap]]
 on = ["m", "a"]
 run = "linemode size_and_mtime"
+desc = "Linemode: size & mtime"

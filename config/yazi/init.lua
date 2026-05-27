@@ -1,10 +1,10 @@
 -- ~/.config/yazi/init.lua
 function Linemode:size_and_mtime()
-	local time = math.floor(self._file.cha.mtime or 0)
+	local time = math.floor(self._file.cha.mtime or 0) -- cha: is abbreviation of "characteristics(Attributes)", mtime: modification time
 	if time == 0 then
 		time = ""
-	elseif os.date("%Y", time) == os.date("%Y") then
-		time = os.date("%b %d %H:%M", time)
+	elseif os.date("%Y", time) == os.date("%Y") then -- same year
+		time = os.date("%b %d %H:%M", time) -- %b: abbreviated month name(Feb, Dec), %d: day of the month, %H:%M: hour and minute
 	else
 		time = os.date("%b %d  %Y", time)
 	end
