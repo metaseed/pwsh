@@ -66,6 +66,10 @@
 | `Ctrl+F3 or Ctrl+F`             | go to search box, your could then press Tab go to navigation pane, then press Tab go to file list.                 | Note: replaced by everything, but we could use Ctrl+E to use it. note: after press `Ctrl+e` then press `Esc` would go to file list directly |
 | `(Ctrl+E or Ctrl+F) then Esc`         | select the file pane(works for file explorer and open/save dialog)                                                 |
 
+> not for win11
+> ~~in file explorer, find the frequently used button on the Ribbon, and right click, select `Add to quick access toolbar`, base on the order, you can press `Alt+1..`to trigger this command. for example, I usually add the checkbox `Navigation pane` to the `quick access bar` so I can press `Alt+1` to show/hide it.~~
+
+
 ## Virtual desktops
 
 | Key                   | Function                 | Note |

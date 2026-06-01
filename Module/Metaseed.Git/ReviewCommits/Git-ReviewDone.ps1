@@ -78,7 +78,7 @@ function Git-ReviewDone {
 		if ([string]::IsNullOrEmpty($CommitMessage)) {
 			$currentCommitInfo = git log -1 --format="%h %s"
 			$target = git config review.target
-			$CommitMessage = "review-changes on '$currentCommitInfo' (against $target)"
+			$CommitMessage = "Code Review from: '$currentCommitInfo' (against $target)"
 			$choiceIndex = $Host.UI.PromptForChoice('Use this as commit message?', "$CommitMessage", @('&Yes', '&No'), 0)
 			if ($choiceIndex -ne 0) {
 				$CommitMessage = Read-Host 'please input commit message'
@@ -90,8 +90,8 @@ function Git-ReviewDone {
 			$choiceIndex = $Host.UI.PromptForChoice(
 				'Continue?',
 				"please double check the changes in git!`nCommit message: $CommitMessage",
-				@('&Yes', '&Change message', '&No'),
-				1) # default is Change message.
+				@('&Yes', '&No', '&Change message'),
+				0) # default is Yes
 			if ($choiceIndex -eq 2) { return }
 			if ($choiceIndex -eq 1) {
 				$CommitMessage = Read-Host 'please input commit message'

@@ -16,6 +16,7 @@ function Git-PushAll {
   $message = $message -replace '-', ' '
   if ($confirm) { Confirm-Continue }
 
+  Write-Execute {git submodule foreach "git add -A; git commit -m '$message' -q; git push"}
   Write-Execute 'git add -A' 'All: adds, modifies and removes index entries to match the working tree'
   Write-Execute "git commit -m `"$message`"" -ErrorAction SilentlyContinue
 

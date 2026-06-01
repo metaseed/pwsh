@@ -30,7 +30,7 @@ function Git-Stash {
         $message = "from: $($callStack[1].Command)"
     }
   }
-  $msg = "'Git-Stash, $message - $(Get-date) - branch:$branch'"
+  $msg = "'Git-Stash, $message - $(Get-date)'"
   # --keep-index would keep staged unsaved to stash (All changes already added to the index are left intact.).
   # here we want to save all changes, so we don't use --keep-index.
   $r = Write-Execute "git stash push --include-untracked --message  $msg" 'stash: index&tree&untracked'

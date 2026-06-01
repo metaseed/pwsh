@@ -9,8 +9,8 @@ function Git-Push {
 
   # are the local branch already pushed to remote?
   if (Git-HasRemoteBranch) {
-    # Write-Execute "git push" 
-    Write-Execute { git push } -noThrow -noStop #2>&1
+    # Write-Execute "git push"
+    Write-Execute { git push --recurse-submodules=on-demand } -noThrow -noStop #2>&1
     if ($LASTEXITCODE -ne 0) {
       Write-Execute {git pull --rebase; git push}
     }
