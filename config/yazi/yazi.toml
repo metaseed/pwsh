@@ -22,12 +22,18 @@ system_open = [
 openwith = [
     { run = 'M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
 ]
+# https://github.com/sxyazi/yazi/blob/ae4c138f49e00a64b478318ed9c7e9072fef8c52/yazi-config/preset/yazi-default.toml#L32
+edit = [
+    { run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+    { run = 'code %s', orphan = true, desc = "code", for = "windows" },
+    # { run = "code -w %s",       desc = "code (block)", for = "windows", block = true },
+]
 
 # default rule: https://github.com/sxyazi/yazi/blob/ae4c138f49e00a64b478318ed9c7e9072fef8c52/yazi-config/preset/yazi-default.toml#L66
 [open]
 prepend_rules = [
     # `url = "*"` does not match dirs (`foo/`); without this, preset `*/` uses `edit` first (VS Code).
-    { url = "*/", use = [ "system_open", "edit", "openwith", "reveal" ] },
+    { url = "*/", use = [ "edit", "openwith", "reveal", "system_open" ] },
     { mime = "text/*", use = [ "edit", "openwith", "reveal" ] },
     { mime = "image/*", use = [ "open", "openwith", "reveal" ] },
     { mime = "{audio,video}/*", use = [ "play", "openwith", "reveal" ] },
