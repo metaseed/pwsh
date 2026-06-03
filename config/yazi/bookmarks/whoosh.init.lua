@@ -8,7 +8,7 @@
 -- You can also configure bookmarks with key arrays
 local bookmarks = {
   { tag = "Desktop",   path = "~/Desktop",   key = { "d", "t" } },
-  { tag = "Documents", path = "~/Documents", key = { "d", "d" } },
+  { tag = "Documents", path = "~/Documents", key = { "d", "c" } },
   { tag = "Downloads", path = "~/Downloads", key = { "d", "l" } },
   { tag = "Home", path = "~", key = { "h" } },
   { tag = "Tmp", path = "~/..tmp", key = { "t" } },
