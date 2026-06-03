@@ -12,9 +12,10 @@
 | `Win+D`                | Show desktop.                                                                                                                                                                                                   |
 | `Win+I`                | Settings                                                                                                                                                                                                        |
 | `Win+B`                | Show hidden icons in notification area                                                                                                                                                                          |
-| `Win+Number`           | Start the program pinned to the Taskbar. `Enter` to open, `win+shift+number` to open new instance. i.e. if edge is open, it will show/hide it                                                                   |
-| `Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                                                                                                                                                         | **useful!!**                                                                      |
-| `Win+T`                | Cycle through the apps on the taskbar                                                                                                                                                                           | then use `arrow` key to select if multiple instance of app, and `enter` to switch |
+| `Win+Number`           | Start the program pinned to the Taskbar, if multiple instance of app is open, press again to cycle select, with `shift` to reverse the selection cycle, `win+shift+number` to open new instance.b|
+|`Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                                                                                                                                                         | **useful!!**                                                                      |
+| `Win+T`                | Cycle through the apps on the taskbar, then press `win+shift+t` to reverse the cycle, if there is multiple instance of app, press `up then left/right arrow` to select, and then `enter` to switch |
+| `Win+Shift+T`          | copy text from selected region by mouse(win11)|
 | `Win+Shift+Left/Right` | move window to another screen                                                                                                                                                                                   |
 | `Win+Up/Down`          | maximize/restore/minimize window                                                                                                                                                                                |
 | `Ctrl+Shift+Esc`       | Open task manager                                                                                                                                                                                               |
@@ -63,7 +64,7 @@
 | `Shift+F10(Apps)`         | Open the shortcut menu for the current selection (which is the same as a right-click).                             |
 | `Ctrl+Shift+1/2/.../8`                | View modes                | `Ctrl+Shift+3`: icons; `Ctrl+Shift+6`: details                                        |
 | `F11`                           | Toggle full-screen mode.                                                                                           |
-| `Ctrl+F3 or Ctrl+F`             | go to search box, your could then press Tab go to navigation pane, then press Tab go to file list.                 | Note: replaced by everything, but we could use Ctrl+E to use it. note: after press `Ctrl+e` then press `Esc` would go to file list directly |
+| `Ctrl+F3 or Ctrl+F`             | go to search box, your could then press Tab go to navigation pane, then press Tab go to file list.                 | Note: replaced by everything, but we could use Ctrl+E to use it. note: after press `Ctrl+e` then press `Esc` would go to file list directly |u
 | `(Ctrl+E or Ctrl+F) then Esc`         | select the file pane(works for file explorer and open/save dialog)                                                 |
 
 > not for win11
