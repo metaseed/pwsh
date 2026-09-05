@@ -1,7 +1,4 @@
 # included in `profile/env.ps1`
-# insert at head so that when 'lf' the alias is called
-$CmdLetFolder = Resolve-Path "$PSScriptRoot\.."
-$env:path = "$CmdLetFolder;$env:path"
 
 ## add important app path
 # $env:path += ";C:\App\7-Zip"
@@ -15,11 +12,30 @@ $env:path = "$CmdLetFolder;$env:path"
 $__cmdletPathCache = "$env:LOCALAPPDATA\pwsh-profile-cache\cmdlet-paths.txt"
 if (Test-Path $__cmdletPathCache) {
     $env:path = "$(Get-Content $__cmdletPathCache -Raw);$env:path"
-} else {
-    $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*','*_', 'tests' -Name |?{ !($_ -match '\\_|\\tests\\?|^tests\\|s\\') } | % { "$CmdLetFolder\$_" }
-    $joined = $folders -join ';'
-    $env:path = "$joined;$env:path"
+}
+else {
+    Update-CmdletPathEnv
+}
+# note: $__cmdletPathCache is a global variable, so we an always rm it to update the path
+# rm $__cmdletPathCache
+
+function Update-CmdletPathEnv {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [switch]
+        $Tidy
+    )
+    $CmdLetFolder = Resolve-Path "$PSScriptRoot\.."
+
+    $folders = Get-ChildItem -Attributes Directory -Path $CmdLetFolder -Recurse -Exclude '_*', '*_', 'tests' -Name | ? { !($_ -match '\\_|\\tests\\?|^tests\\|s\\') } | % { "$CmdLetFolder\$_" }
+    $joined = "$CmdLetFolder;" + ($folders -join ';')
+    $pathEnv = $env:path
+    if ($Tidy) {
+        $pathEnv = ($env:path -split ';' | ? { $_ -notlike "$CmdLetFolder*" } | Sort-Object -Unique) -join ';'
+    }
+
+    $env:path = "$joined;$pathEnv"
     $null = New-Item -ItemType Directory -Path (Split-Path $__cmdletPathCache) -Force -ErrorAction Ignore
     Set-Content -Path $__cmdletPathCache -Value $joined -Force -NoNewline
 }
-# rm $__cmdletPathCache

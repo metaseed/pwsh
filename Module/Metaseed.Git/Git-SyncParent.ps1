@@ -31,7 +31,12 @@ function Git-SyncParent {
       #   $parent = Read-Host "Please enter the parent branch name to sync from."
       #   Confirm-Continue "parent branch of current branch is: $parent"
       # }
-      write-Notice "detected parent branch: $parent"
+      if (!$parent) {
+        $parent = Read-Host "can not detect parent branch, please enter the parent branch name to sync from"
+      }
+      else {
+        write-Notice "detected parent branch: $parent"
+      }
     }
 
 

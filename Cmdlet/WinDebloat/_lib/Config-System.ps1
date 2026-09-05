@@ -113,3 +113,4 @@ Set-ItemProperty -Path $registryPath -Name "StartupDelayInMSec" -Value 0 -Type D
 Set-ItemProperty -Path $registryPath -Name "WaitForIdleState" -Value 0 -Type DWord
 
 # Write-Host "Registry keys updated. Please restart your PC or Sign Out/In to apply changes." -ForegroundColor Cyan
+. $PSScriptRoot\_lib\_systemConfigLib\Disable-LanguageSwitchHotkeys.ps1

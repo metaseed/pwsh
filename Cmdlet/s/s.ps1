@@ -19,7 +19,11 @@ param(
 
   [switch]
   [Alias('c')]
-  $code
+  $code,
+
+  [switch]
+  [Alias('s')]
+  $cursor
 )
 
 dynamicparam {
@@ -38,6 +42,11 @@ end {
     code $PSScriptRoot\..\..
     return
   }
+  if ($cursor) {
+    cursor $PSScriptRoot\..\..
+    return
+  }
+
 
   if (!$Command) {
     Write-AllSubCommands "$PSScriptRoot\_Commands"

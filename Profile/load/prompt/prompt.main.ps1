@@ -56,7 +56,7 @@ $idleState = $global:__promptIdleState
 # Auto-upgrade to starship after idle delay. OnIdle stops during typing,
 # so a tick gap is used to detect and reset after keyboard activity.
 # Skip in VS Code Debugging Console2 — its host runs OnIdle actions inside an existing pipeline, causing crashes.
-if ($host.Name -ne 'Visual Studio Code Host') {
+if ($false -and  $host.Name -ne 'Visual Studio Code Host') {  # use $false to disable auto prompt switching, as it is too slow
 	$null = Register-EngineEvent -SourceIdentifier "PowerShell.OnIdle" -Action {
 		$state = $idleState.Value
 		# already upgraded

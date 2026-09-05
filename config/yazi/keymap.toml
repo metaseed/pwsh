@@ -236,23 +236,23 @@ desc = "Direct fuzzy search for bookmarks"
 
 # Basic bookmark operations
 [[mgr.prepend_keymap]]
-on = ["]", "a"]
+on = ["]", "A"]
 run = "plugin whoosh save"
 desc = "Add bookmark (hovered file/directory)"
 
 [[mgr.prepend_keymap]]
-on = ["]", "A"]
+on = ["]", "a"]
 run = "plugin whoosh save_cwd"
 desc = "Add bookmark (current directory)"
 
 # Temporary bookmarks
 [[mgr.prepend_keymap]]
-on = ["]", "t"]
+on = ["]", "T"]
 run = "plugin whoosh save_temp"
 desc = "Add temporary bookmark (hovered file/directory)"
 
 [[mgr.prepend_keymap]]
-on = ["]", "T"]
+on = ["]", "t"]
 run = "plugin whoosh save_cwd_temp"
 desc = "Add temporary bookmark (current directory)"
 

@@ -14,12 +14,8 @@ append_spotters = [
 ]
 
 [opener]
-# Windows: `start ""` opens with the default associated app (same as Explorer double-click).
-system_open = [
-    { run = 'start "" %s1', desc = "Open", for = "windows", orphan = true },
-]
 
-openwith = [
+system_open_with = [
     { run = 'M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
 ]
 # https://github.com/sxyazi/yazi/blob/ae4c138f49e00a64b478318ed9c7e9072fef8c52/yazi-config/preset/yazi-default.toml#L32
@@ -32,19 +28,20 @@ edit = [
 # default rule: https://github.com/sxyazi/yazi/blob/ae4c138f49e00a64b478318ed9c7e9072fef8c52/yazi-config/preset/yazi-default.toml#L66
 [open]
 prepend_rules = [
+    # the first one is used when type 'enter' key.
     # `url = "*"` does not match dirs (`foo/`); without this, preset `*/` uses `edit` first (VS Code).
-    { url = "*/", use = [ "edit", "openwith", "reveal", "system_open" ] },
-    { mime = "text/*", use = [ "edit", "openwith", "reveal" ] },
-    { mime = "image/*", use = [ "open", "openwith", "reveal" ] },
-    { mime = "{audio,video}/*", use = [ "play", "openwith", "reveal" ] },
-    { mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "openwith", "reveal" ] },
+    { url = "*/", use = [ "edit", "system_open_with", "reveal", "open" ] }, # open is defined to by system default opener, it is in the default rules.
+    { mime = "text/*", use = [ "edit", "system_open_with", "reveal" ] },
+    { mime = "image/*", use = [ "open", "system_open_with", "reveal" ] },
+    { mime = "{audio,video}/*", use = [ "play", "system_open_with", "reveal" ] },
+    { mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "system_open_with", "reveal" ] },
     # Archive
-	{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", use = [ "extract", "openwith", "reveal" ] },
+	{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", use = [ "extract", "system_open_with", "reveal" ] },
 	# Empty file
-	{ mime = "inode/empty", use = [ "edit", "openwith", "reveal" ] },
+	{ mime = "inode/empty", use = [ "edit", "system_open_with", "reveal" ] },
 	# Virtual file system
 	{ mime = "vfs/{absent,stale}", use = "download" },
-    { url = "*", use = [ "system_open", "openwith", "reveal" ] },
+    { url = "*", use = [ "open", "system_open_with", "reveal" ] },
 ]
 
 [preview]
