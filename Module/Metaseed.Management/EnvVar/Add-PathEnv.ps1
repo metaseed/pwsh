@@ -40,16 +40,16 @@ function Add-PathEnv {
         [object]
         [ValidateSet('Machine', 'User')]
         $Scope = 'User',
-        # prepend by default
+        # append by default
         [switch]
-        $append
+        $prepend
     )
 
     # resolve-path return a PathInfo object
     $Dir = [Path]::GetFullPath($Dir)
 
     if (-not (Test-DirInPathStr $env:Path $Dir)) {
-        $PathToUse = $append ? "$env:path;$Dir" : "$Dir;$env:Path"
+        $PathToUse = $prepend ? "$Dir;$env:Path": "$env:path;$Dir"
         $env:Path = $PathToUse
         Write-Information "'$Dir' was added to current `$env:Path"
     }
@@ -75,7 +75,7 @@ function Add-PathEnv {
     }
 
     $PathToUse = $Scope -eq 'User' ? $envPathUser : $envPathMachine
-    $PathToUse = $append ? "$PathToUse;$Dir" : "$Dir;$PathToUse"
+    $PathToUse = $prepend ? "$Dir;$PathToUse": "$PathToUse;$Dir"
 
     [Environment]::SetEnvironmentVariable("Path", $PathToUse, $Scope)
     Write-Information "'$Dir' was added to Environment $Scope scope variable: Path"

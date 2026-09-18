@@ -4,7 +4,8 @@ linemode = "size_and_mtime"
 
 [plugin]
 prepend_fetchers = [
-    { id = "git", url = "*", run = "git" },
+    { group = "git", url = "*", run = "git" },
+    { group = "git", url = "*/", run = "git" },
 ]
 append_previewers = [
     { url = "*", run = "file-extra-metadata" },

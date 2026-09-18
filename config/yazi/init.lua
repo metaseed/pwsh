@@ -14,14 +14,18 @@ function Linemode:size_and_mtime()
 end
 
 th.git = th.git or {}
-th.git.unknown_sign = " "
-th.git.ignored_sign = ""
-th.git.untracked_sign = "?"
-th.git.modified_sign = "~" --""
-th.git.added_sign = "+" --""
-th.git.deleted_sign = "-" --""
-th.git.updated_sign = "⨤" --"✔" -- staged or index
-th.git.clean_sign = " "
+-- One sign per category (not full XY porcelain); unstaged/staged both use "M", distinguished by color
+th.git.unknown_sign = " "   -- status not yet determined
+th.git.ignored_sign = "!"   -- ignored by .gitignore
+th.git.untracked_sign = "?" -- untracked file
+th.git.unstaged_sign = "M"  -- modified in working tree, not staged (.M, .T), T means the file type changed, i.e. regular file → symlink
+th.git.staged_sign = "M"    -- staged in index (M , T , etc.)
+th.git.added_sign = "A"     -- new file staged for commit
+th.git.deleted_sign = "D"   -- file deleted (staged or unstaged)
+th.git.updated_sign = "U"   -- unmerged / merge conflict (UU, AA, DD, …)
+th.git.clean_sign = " "     -- no changes
+-- R / C (rename/copy) aren’t separate categories in the plugin;
+
 require("git"):setup {
 	-- Order of status signs showing in the linemode
 	order = 1500,
