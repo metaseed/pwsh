@@ -225,6 +225,6 @@ alt+8,left: move cursor left 8 times
 
 # pwsh -noprofile -c "Get-Content Function:\prompt"
 # removed the default 'PS' string, add the isAdmin icon
-Set-PSReadLineKeyHandler -Key Alt+p -ScriptBlock {
-    __ToggleStarshipPrompt
-}
+# Set-PSReadLineKeyHandler -Key Alt+p -ScriptBlock {
+#     __ToggleStarshipPrompt
+# }
