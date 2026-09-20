@@ -95,7 +95,7 @@ function Backup-OneDriveFiles {
             }
 
             try {
-                $tokenResponse = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body -ErrorAction Stop
+                $tokenResponse = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body -ErrorAction Stop 2>$null
                 Write-Host "Authentication successful!" -ForegroundColor Green
                 return $tokenResponse
             }
@@ -136,7 +136,7 @@ function Backup-OneDriveFiles {
         }
 
         try {
-            $response = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body
+            $response = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body -ErrorAction Stop 2>$null
             return $response
         }
         catch {

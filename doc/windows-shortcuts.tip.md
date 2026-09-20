@@ -13,7 +13,10 @@
 | `Win+I`                | Settings                                                                                                                                                                                                        |
 | `Win+B`                | Show hidden icons in notification area                                                                                                                                                                          |
 | `Win+Number`           | Start the program pinned to the Taskbar, if multiple instance of app is open, press again to cycle select, with `shift` to reverse the selection cycle, `win+shift+number` to open new instance.b|
-|`Win+Alt+Number`       | Open the right-click menu for the app pinned in Taskbar                                                                                                                                                         | **useful!!**                                                                      |
+|`Win+Alt+Number`       | Open the right-click menu for the app pinned in
+Taskbar                                                                                                                                                         |
+**useful!!**                                                                      |
+|`Win+Ctrl+number`| if the app has multiple instance, activate the lasted used one|
 | `Win+T`                | Cycle through the apps on the taskbar, then press `win+shift+t` to reverse the cycle, if there is multiple instance of app, press `up then left/right arrow` to select, and then `enter` to switch |
 | `Win+Shift+T`          | copy text from selected region by mouse(win11)|
 | `Win+Shift+Left/Right` | move window to another screen                                                                                                                                                                                   |

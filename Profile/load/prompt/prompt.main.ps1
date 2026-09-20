@@ -49,7 +49,7 @@ function global:prompt {
 	if ($script:TransientPrompt) {
 		$script:TransientPrompt = $false
 		Set-PSReadLineOption -ExtraPromptLineCount 0
-		return __GetDirStr
+		return "$(__GetDirStr)> "
 	}
 	Set-PSReadLineOption -ExtraPromptLineCount 1
 	return __PromptStr
