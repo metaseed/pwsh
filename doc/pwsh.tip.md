@@ -609,3 +609,7 @@ function func($a = $null){
 
 > example
 > zz opcua|c
+
+## get file hash
+certutil -hashfile "C:\path\to\your\file.ext" MD5
+(Get-FileHash "C:\path\to\your\file.ext" -Algorithm MD5).Hash -eq "EXPECTED_HASH_HERE"

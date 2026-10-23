@@ -17,7 +17,7 @@ append_spotters = [
 [opener]
 
 system_open_with = [
-    { run = 'M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1', orphan = true, desc = "Open with...", for = "windows" },
+    { run = 'M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %s1', orphan = true, desc = "Open with...", for = "windows" },
 ]
 # https://github.com/sxyazi/yazi/blob/ae4c138f49e00a64b478318ed9c7e9072fef8c52/yazi-config/preset/yazi-default.toml#L32
 edit = [

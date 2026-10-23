@@ -1,17 +1,33 @@
 # https://github.com/sxyazi/yazi/blob/main/yazi-config/preset/keymap-default.toml
 # F1: to learn all keymaps.
 
+# NOTE: `shell` command param placeholders (see https://yazi-rs.github.io/docs/configuration/keymap#mgr.shell)
+# The old Windows placeholders %1, %2, ..., %* and %0 are DEPRECATED. Use instead:
+#   %h    - path of the hovered/current file (empty if none)
+#   %s    - paths of all selected files
+#   %sN   - path of the N-th selected file, e.g. %s1, %s2
+#   %H/%S/%SN - same as above but as URLs instead of paths
+# Yazi expands AND quotes these itself, so do NOT wrap them in manual quotes (e.g. use `%h`, not `"%h"`).
+# Use `--` before the raw command to disable Yazi's own escaping if you need a raw string.
+#
+# IMPORTANT: `%h` (hovered file) is ONLY valid in the `shell` command (used in keymap.toml).
+# It does NOT work in `[opener]` rules (yazi.toml) - "hovered file within the opener" was removed
+# (see yazi PR #3226/#3232). Openers only ever act on the *selected* files, so use `%s`/`%s1`
+# there instead. If nothing is selected when using an opener, Yazi implicitly treats the hovered
+# file as "selected" for that single action - so `%s1` is the correct equivalent of the old `%1`.
+
 [[mgr.prepend_keymap]]
 on = "!"
 for = "windows"
 run = 'shell "pwsh.exe" --block'
-desc = "Open pwsh to run commands"
+desc = "Open pwsh to run commands('exit' to return)"
 
 # Tasks, same as 'w'
-[[mgr.prepend_keymap]]
-on = "<C-`>"
-run = "tasks:show"
-desc = "Show task manager"
+# intercepted by windows terminal, use 'w' for now
+# [[mgr.prepend_keymap]]
+# on = "<C-`>"
+# run = "tasks:show"
+# desc = "Show task manager"
 
 # [[mgr.prepend_keymap]]
 # on = ["[","t"]
@@ -47,7 +63,7 @@ desc = "Hardlink yanked files"
 # https://github.com/boydaihungst/file-extra-metadata.yazi
 [[mgr.prepend_keymap]]
 on = ["g", "i"]
-run = '''shell --block -- exiftool -k "%1"'''
+run = '''shell --block -- exiftool -k %h'''
 desc = "show file info with exiftool"
 
 [[mgr.prepend_keymap]]
@@ -78,10 +94,10 @@ desc = "Go to bottom (same as G)"
 
 [[mgr.prepend_keymap]]
 on = "<A-Enter>"
-# run  = '''shell -- pwsh -NoProfile -NoLogo -NonInteractive -File "M:\Script\Pwsh\config\yazi\pwsh\properties.ps1" "%1"'''
-# run  = '''shell --orphan -- "M:\Script\Pwsh\config\yazi\pwsh\properties.exe" --no-focus "%1"'''
-# run  = '''shell --orphan -- "M:\Script\Pwsh\config\yazi\pwsh\properties.exe" "%1"'''
-run = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\properties.exe %1'''
+# run  = '''shell -- pwsh -NoProfile -NoLogo -NonInteractive -File "M:\Script\Pwsh\config\yazi\pwsh\properties.ps1" %h'''
+# run  = '''shell --orphan -- "M:\Script\Pwsh\config\yazi\pwsh\properties.exe" --no-focus %h'''
+# run  = '''shell --orphan -- "M:\Script\Pwsh\config\yazi\pwsh\properties.exe" %h'''
+run = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\properties.exe %h'''
 desc = "show file info with properties"
 
 [[mgr.prepend_keymap]]
@@ -95,27 +111,27 @@ desc = "Open selected files interactively"
 # press shift+enter again to hide the quicklook.
 [[mgr.prepend_keymap]]
 on = "<S-Enter>"
-run = '''shell -- C:\app\QuickLook\QuickLook.exe %1'''
+run = '''shell -- C:\app\QuickLook\QuickLook.exe %h'''
 desc = "Quick Look (Preview selected file with QuickLook)"
 
 # show shell open with dialog
 # use shift-tab to focus on the 'just once' button
 [[mgr.prepend_keymap]]
 on = "O"
-run = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %1'''
+run = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openwithsh.exe %h'''
 desc = "Open with..."
 
 [[mgr.prepend_keymap]]
 on = "<C-o>"
 # note: --block to open as modal dialog
-run = '''shell --orphan  -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %1'''
+run = '''shell --orphan  -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --title "Open File" %h'''
 desc = "Open file dialog(drag/drop)"
 
 
 # not useful, comment it out for now
 # [[mgr.prepend_keymap]]
 # on   = "<C-S-o>"
-# run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %1'''
+# run  = '''shell --orphan -- M:\Script\Pwsh\config\yazi\apps\openFileDialog.exe --folder --title "Open Folder" %h'''
 # desc = "Open folder dialog(drag/drop)"
 
 # same as --modern, so not used here
@@ -136,13 +152,13 @@ desc = "Show folder background context menu (New, Paste, ...)"
 
 [[mgr.prepend_keymap]]
 on = ["<C-k>", "r"]
-run = 'shell "explorer /select,\"%1\"" --orphan'
+run = 'shell --orphan -- explorer /select,%h'
 desc = "Reveal in Windows Explorer"
 
 ## Extract Archive
 [[mgr.prepend_keymap]]
 on = "E"
-run = "plugin augment-command -- extract"
+run = "plugin augment-command.extract"
 desc = "Extract with 7z (augmented)"
 ## Archive
 [[mgr.prepend_keymap]]
@@ -306,10 +322,12 @@ for = "windows"
 run = ["plugin system-clipboard", "yank"]
 desc = "Yank + copy files to Windows clipboard"
 
+# if cb occasionally hanging on Win11
+# Remove-Item "$env:TEMP\Clipboard\0\metadata\lock" -Force -ErrorAction SilentlyContinue
 [[mgr.prepend_keymap]]
 on = "<S-p>"
 for = "windows"
-run = ["plugin clipboard"]
+run = ["plugin clipboard-cb"]
 desc = "Paste from Windows clipboard"
 
 [[mgr.prepend_keymap]]
@@ -326,3 +344,17 @@ desc = "Permanently delete selected"
 on = ["m", "a"]
 run = "linemode size_and_mtime"
 desc = "Linemode: size & mtime"
+
+# Mixed sort by modified time: folders and files interleaved by mtime,
+# like Windows Explorer's "Date modified" sort (default `,m`/`,M` keep
+# folders grouped first via the global `sort_dir_first` setting).
+
+[[mgr.prepend_keymap]]
+on = [",", "t"]
+run = ["sort mtime --reverse=yes --dir-first=no", "linemode mtime"]
+desc = "Sort by modified time (reverse), folders & files mixed"
+
+[[mgr.prepend_keymap]]
+on = [",", "T"]
+run = ["sort mtime --reverse=no --dir-first=no", "linemode mtime"]
+desc = "Sort by modified time, folders & files mixed"
